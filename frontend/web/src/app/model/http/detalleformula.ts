@@ -70,6 +70,7 @@ export class IFormulaDetalleReq {
     isContainer?: boolean;
     isLabel?: boolean;
     assignedBatches?: ISaveAssignedBatches[];
+    managedByBatches?: boolean;
 }
 
 export class ISaveAssignedBatches {

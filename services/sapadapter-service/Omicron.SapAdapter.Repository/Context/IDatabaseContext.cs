@@ -50,6 +50,14 @@ namespace Omicron.SapAdapter.Entities.Context
         DbSet<ProductoModel> ProductoModel { get; set; }
 
         /// <summary>
+        /// Gets or sets UnitCatalogModel.
+        /// </summary>
+        /// <value>
+        /// Object  UnitCatalogModel.
+        /// </value>
+        DbSet<UnitCatalogModel> UnitCatalogModel { get; set; }
+
+        /// <summary>
         /// Gets or sets salesPersonModel.
         /// </summary>
         /// <value>

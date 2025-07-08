@@ -1600,6 +1600,22 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return await query.ToListAsync();
         }
 
+        /// <inheritdoc/>
+        public async Task<IEnumerable<ProductoModel>> GetProductsUnits(List<string> itemCodes)
+        {
+            var query = from product in this.databaseContext.ProductoModel
+                        where itemCodes.Contains(product.ProductoId)
+                        join unitCatalog in this.databaseContext.UnitCatalogModel
+                            on product.UnitId equals unitCatalog.Id into unitGroup
+                        from unit in unitGroup.DefaultIfEmpty()
+                        select new ProductoModel
+                        {
+                            ProductoId = product.ProductoId,
+                            UnitDescription = unit != null ? unit.Code : string.Empty,
+                        };
+
+            return await RetryQuery(query);
+        }
 
         private IQueryable<InvoiceHeaderModel> GetInvoiceHeaderJoinDoctorBaseQuery()
         {
@@ -1679,6 +1695,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                     Stock = p.OnHand,
                     WarehouseQuantity = datoToAssign.OnHand,
                     IsLabel = !string.IsNullOrEmpty(p.IsLabel) && p.IsLabel.ToUpper() == "Y",
+                    ManagedByBatches = !string.IsNullOrEmpty(p.ManagedBatches) && p.ManagedBatches?.ToUpper() == "Y"
                 });
             });
 

@@ -213,5 +213,12 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="classifications"> classifications collection to search. </param>
         /// <returns>A <see cref="Task{ResultModel}"/> containing the classification data.</returns>
         Task<ResultModel> GetClassificationsByDescription(List<string> classifications);
+
+        /// <summary>
+        /// Gets the matching warehouse.
+        /// </summary>
+        /// <param name="itemCodes"> warehouse collection to search. </param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultModel> GetUnitProducts(List<string> itemCodes);
     }
 }
