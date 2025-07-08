@@ -56,8 +56,12 @@ export class PlaceOrderDialogComponent implements OnInit {
             this.errorService.httpError(error);
             this.dialogRef.close();
         });
-        this.clasificationList = this.localstorageService.getClasificationList().sort((a, b) =>
-            a.value.localeCompare(b.value));
+        this.getClasifications();
+    }
+
+    getClasifications(): void {
+        this.clasificationList = this.localstorageService.getClasificationList().filter(clasification =>
+            clasification.value !== 'MQ').sort((a, b) => a.value.localeCompare(b.value));
     }
 
     changePlaceManual() {
