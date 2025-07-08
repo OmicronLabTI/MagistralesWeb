@@ -99,7 +99,7 @@ namespace Omicron.Catalogos.Services.Catalogs
         public async Task<ResultModel> GetActiveAllClassificationQfb()
         {
             var textInfo = CultureInfo.CurrentCulture.TextInfo;
-            var classifications = (await this.catalogDao.GetActiveAllClassificationColorsByRoutes(ServiceConstants.Routes))
+            var classifications = (await this.catalogDao.GetActiveClassificationColorsByRoutes(ServiceConstants.Routes))
                 .Select(x => new ClassificationMagistralModel
                 {
                     Value = x.ClassificationCode,

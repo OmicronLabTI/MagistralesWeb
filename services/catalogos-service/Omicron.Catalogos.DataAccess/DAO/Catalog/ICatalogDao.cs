@@ -95,12 +95,6 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
         /// <returns>Active classification colors by routes.</returns>
         Task<List<ConfigRoutesModel>> GetActiveClassificationColorsByRoutes(List<string> routes);
 
-        /// <summary>
-        /// GetActiveAllClassificationColorsByRoutes.
-        /// </summary>
-        /// <returns>Active all classification colors by routes.</returns>
-        Task<List<ConfigRoutesModel>> GetActiveAllClassificationColorsByRoutes(List<string> routes);
-
         /// Method to insert new producttypecolors.
         /// </summary>
         /// <param name="producttypecolors"> new producttypecolors to be inserted. </param>

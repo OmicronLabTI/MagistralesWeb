@@ -146,14 +146,5 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
                 .AsNoTracking()
                 .ToListAsync();
         }
-
-        /// <inheritdoc/>
-        public async Task<List<ConfigRoutesModel>> GetActiveAllClassificationColorsByRoutes(List<string> routes)
-        {
-            return await this.databaseContext.ConfigRoutesModel
-                .Where(x => x.IsActive)
-                .AsNoTracking()
-                .ToListAsync();
-        }
     }
 }
