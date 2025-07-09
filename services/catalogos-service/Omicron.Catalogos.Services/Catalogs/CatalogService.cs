@@ -284,6 +284,11 @@ namespace Omicron.Catalogos.Services.Catalogs
             var nomatching = configWarehousesFile.Except(configWarehousesFile).Select(x => x.Mainwarehouse).ToList();
             var comments = nomatching.Count > 0 ? string.Format(ServiceConstants.NoMatching, JsonConvert.SerializeObject(nomatching)) : null;
 
+            await this.redisService.WriteToRedis(
+            ServiceConstants.ConfigWareshouses,
+            JsonConvert.SerializeObject(configWarehousesFile),
+            TimeSpan.FromHours(12));
+
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, comments);
         }
 
