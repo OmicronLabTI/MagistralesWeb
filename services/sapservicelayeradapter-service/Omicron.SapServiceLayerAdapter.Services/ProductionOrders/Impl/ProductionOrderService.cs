@@ -368,7 +368,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                         newComponent.BaseQuantity = (double)component.BaseQuantity;
                         newComponent.PlannedQuantity = (double)component.RequiredQuantity;
                         newComponent.DocumentAbsoluteEntry = orderId;
-                        newComponent.BatchNumbers = AssignedBatchesOnNewComponent(component);
+                        newComponent.BatchNumbers = AssignedBatchesOnNewComponent(component, lastLinenumber);
                         newComponent.UoMEntry = component.UnitCode;
                         newComponent.UoMCode = component.UnitCode;
                         newComponent.LineNumber = lastLinenumber;
@@ -380,7 +380,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             return completeList;
         }
 
-        private static List<ProductionOrderItemBatchDto> AssignedBatchesOnNewComponent(CompleteDetalleFormulaDto component)
+        private static List<ProductionOrderItemBatchDto> AssignedBatchesOnNewComponent(CompleteDetalleFormulaDto component, int baseLinenumber)
         {
             if (component.AssignedBatches.ListIsNullOrEmpty())
             {
@@ -392,7 +392,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                 BatchNumber = ab.BatchNumber,
                 Quantity = ab.AssignedQty,
                 ItemCode = component.ProductId,
-                BaseLineNumber = 0,
+                BaseLineNumber = baseLinenumber,
                 SystemSerialNumber = ab.SysNumber,
             }).ToList();
         }
