@@ -146,5 +146,14 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
                 .AsNoTracking()
                 .ToListAsync();
         }
+
+        /// <inheritdoc/>
+        public async Task<bool> InsertConfigWarehouses(List<ConfigWarehouseModel> configWarehouses)
+        {
+            this.databaseContext.ConfigWarehousesModel.UpdateRange(configWarehouses);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+
+            return true;
+        }
     }
 }

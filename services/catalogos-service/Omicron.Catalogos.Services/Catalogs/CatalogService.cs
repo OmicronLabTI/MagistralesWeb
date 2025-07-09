@@ -15,6 +15,7 @@ namespace Omicron.Catalogos.Services.Catalogs
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using AutoMapper;
+    using DocumentFormat.OpenXml.Wordprocessing;
     using Microsoft.IdentityModel.Tokens;
     using Omicron.Catalogos.DataAccess.DAO.Catalog;
     using Omicron.Catalogos.Dtos.User;
@@ -264,6 +265,26 @@ namespace Omicron.Catalogos.Services.Catalogs
 
             var filterColors = colors.ToList().Where(x => themesIds.Any(theme => ServiceUtils.NormalizeComplete(theme) == ServiceUtils.NormalizeComplete(x.TemaId)));
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, this.mapper.Map<List<ProductColorsDto>>(filterColors.ToList()), null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> PostConfigWarehouses()
+        {
+            var configWarehousesFile = await this.GetConfigWarehousesFromExcel();
+
+            configWarehousesFile.ForEach(x => x.Mainwarehouse = NormalizeAndToUpper(x.Mainwarehouse));
+
+            configWarehousesFile = configWarehousesFile
+                .GroupBy(w => new { w.Mainwarehouse })
+                .Select(g => g.First())
+                .ToList();
+
+            await this.catalogDao.InsertConfigWarehouses(configWarehousesFile);
+
+            var nomatching = configWarehousesFile.Except(configWarehousesFile).Select(x => x.Mainwarehouse).ToList();
+            var comments = nomatching.Count > 0 ? string.Format(ServiceConstants.NoMatching, JsonConvert.SerializeObject(nomatching)) : null;
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, comments);
         }
 
         private static List<string> GetValidStringList(string value)
@@ -759,6 +780,33 @@ namespace Omicron.Catalogos.Services.Catalogs
             }).ToList();
 
             return sortingroute;
+        }
+
+        private async Task<List<ConfigWarehouseModel>> GetConfigWarehousesFromExcel()
+        {
+            var table = await this.ObtainDataFromExcel(ServiceConstants.WarehousesFileUrl, 2);
+
+            var columns = table.Columns.Cast<DataColumn>().Select(x => x.ColumnName).ToList();
+
+            var mainWarehouse = columns[0];
+            var manufacturers = columns[1];
+            var products = columns[2];
+            var active = columns[3];
+            var excepetions = columns[4];
+            var alternativesWarehouse = columns[5];
+
+            var configWarehouses = table.AsEnumerable()
+            .Select(row => new ConfigWarehouseModel
+            {
+                Mainwarehouse = row[mainWarehouse].ToString().Trim(),
+                Manufacturers = row[manufacturers].ToString(),
+                Products = row[products].ToString(),
+                IsActive = row[active].ToString().Trim().Equals(ServiceConstants.IsActiveProduct, StringComparison.OrdinalIgnoreCase),
+                Exceptions = row[excepetions].ToString(),
+                Alternativewarehouses = row[alternativesWarehouse].ToString(),
+            }).ToList();
+
+            return configWarehouses;
         }
 
         private async Task<DataTable> ObtainDataFromExcel(string url, int sheet)
