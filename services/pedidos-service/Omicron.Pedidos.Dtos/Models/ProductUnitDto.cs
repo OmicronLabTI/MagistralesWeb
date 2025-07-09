@@ -24,5 +24,23 @@ namespace Omicron.Pedidos.Dtos.Models
         /// </summary>
         /// <value>The code.</value>
         public string UnitDescription { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public int Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string Code { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string Description { get; set; }
     }
 }
