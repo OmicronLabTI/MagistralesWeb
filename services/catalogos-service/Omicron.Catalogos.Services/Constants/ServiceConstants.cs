@@ -76,6 +76,11 @@ namespace Omicron.Catalogos.Services.Constants
         /// <summary>
         /// AzureAdEnvDataKey.
         /// </summary>
+        public const string WarehousesData = "get/configwarehouses";
+
+        /// <summary>
+        /// AzureAdEnvDataKey.
+        /// </summary>
         public const string Products = "products";
 
         /// <summary>

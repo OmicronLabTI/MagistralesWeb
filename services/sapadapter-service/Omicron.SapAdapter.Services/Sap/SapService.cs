@@ -895,7 +895,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <inheritdoc/>
         public async Task<ResultModel> GetConfigWarehouses(ConfigWareshousesModel configWareshousesModel)
         {
-            var warehouses = await this.sapDao.GetWarehousesConfig(configWareshousesModel.Wareshouses);
+            var warehouses = await this.sapDao.GetWarehousesConfig(configWareshousesModel.Warehouses);
             var manufacturers = await this.sapDao.GetManufacturers(configWareshousesModel.Manufacturers);
             var products = await this.sapDao.GetProducts(configWareshousesModel.Products);
 

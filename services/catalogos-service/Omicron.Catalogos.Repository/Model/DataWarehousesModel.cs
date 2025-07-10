@@ -1,19 +1,21 @@
 ﻿// <summary>
-// <copyright file="ConfigWareshousesModel.cs" company="Axity">
+// <copyright file="DataWarehousesModel.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
 
-namespace Omicron.SapAdapter.Entities.Model.BusinessModels
+namespace Omicron.Catalogos.Entities.Model
 {
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     /// <summary>
-    /// Config Wareshouses Dto.
+    /// Table for params.
     /// </summary>
-    public class ConfigWareshousesModel
+    public class DataWarehousesModel
     {
         /// <summary>
         /// Gets or sets Code.

@@ -279,6 +279,15 @@ namespace Omicron.Catalogos.Services.Catalogs
                 .Select(g => g.First())
                 .ToList();
 
+            var configWarehousesDto = new ConfigWareshousesDto
+            {
+                Products = configWarehousesFile.Select(x => x.Products).Distinct().ToList(),
+                Manufacturers = configWarehousesFile.Select(x => x.Manufacturers).Distinct().ToList(),
+                Wareshouses = configWarehousesFile.Select(x => x.Mainwarehouse).Distinct().ToList(),
+            };
+
+            var data = await this.GetWarehousesData(configWarehousesDto);
+
             await this.catalogDao.InsertConfigWarehouses(configWarehousesFile);
 
             var nomatching = configWarehousesFile.Except(configWarehousesFile).Select(x => x.Mainwarehouse).ToList();
@@ -758,6 +767,14 @@ namespace Omicron.Catalogos.Services.Catalogs
             }).ToList();
 
             return warehouses;
+        }
+
+        private async Task<ConfigWareshousesDto> GetWarehousesData(ConfigWareshousesDto warehousesfile)
+        {
+            var response = await this.sapAdapter.Post(warehousesfile, ServiceConstants.WarehousesData);
+            var data = JsonConvert.DeserializeObject<ConfigWareshousesDto>(response.Response.ToString());
+
+            return data;
         }
 
         private async Task<List<ConfigRoutesModel>> GetConfigurationRoutesFromExcel()
