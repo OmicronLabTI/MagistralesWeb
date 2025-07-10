@@ -709,6 +709,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <param name="itemCodes">itemCodes.</param>
         /// <returns>the data.</returns>
-        Task<IEnumerable<ProductoModel>> GetProductsUnits(List<string> itemCodes);
+        Task<IEnumerable<UnitCatalogModel>> GetProductsUnits(List<string> itemCodes);
     }
 }
