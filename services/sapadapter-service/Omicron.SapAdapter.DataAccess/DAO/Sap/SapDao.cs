@@ -1601,16 +1601,19 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<ProductoModel>> GetProductsUnits(List<string> itemCodes)
+        public async Task<IEnumerable<UnitCatalogModel>> GetProductsUnits(List<string> itemCodes)
         {
             var query = from product in this.databaseContext.ProductoModel
                         where itemCodes.Contains(product.ProductoId)
                         join unitCatalog in this.databaseContext.UnitCatalogModel
                             on product.UnitId equals unitCatalog.Id into unitGroup
                         from unit in unitGroup.DefaultIfEmpty()
-                        select new ProductoModel
+                        select new UnitCatalogModel
                         {
                             ProductoId = product.ProductoId,
+                            Id = unit != null ? unit.Id : 0,
+                            Code = unit != null ? unit.Code : string.Empty,
+                            Description = unit != null ? unit.Description : string.Empty,
                             UnitDescription = unit != null ? unit.Code : string.Empty,
                         };
 
