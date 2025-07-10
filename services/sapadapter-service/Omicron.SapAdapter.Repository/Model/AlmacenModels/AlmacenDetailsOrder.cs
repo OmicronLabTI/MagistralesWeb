@@ -15,7 +15,7 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
     /// <summary>
     /// The class for almacen batch.
     /// </summary>
-    public class AlmacenDetailsOrder
+    public class AlmacenDetailsOrder : BaseProductColorModel
     {
         /// <summary>
         /// Gets or sets Code.

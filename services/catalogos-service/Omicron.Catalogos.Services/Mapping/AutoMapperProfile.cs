@@ -27,6 +27,7 @@ namespace Omicron.Catalogos.Services.Mapping
             this.CreateMap<UserDto, UserModel>();
             this.CreateMap<ResultModel, ResultDto>();
             this.CreateMap<ResultDto, ResultModel>();
+            this.CreateMap<ProductTypeColorsModel, ProductColorsDto>();
         }
     }
 }

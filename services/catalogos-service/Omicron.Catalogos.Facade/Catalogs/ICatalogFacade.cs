@@ -38,6 +38,12 @@ namespace Omicron.Catalogos.Facade.Catalogs
         Task<ResultDto> GetActiveClassificationQfb();
 
         /// <summary>
+        /// Get All classification qfb.
+        /// </summary>
+        /// <returns>All Classification qfb.</returns>
+        Task<ResultDto> GetActiveAllClassificationQfb();
+
+        /// <summary>
         /// Import of valid warehouses through the Excel file.
         /// </summary>
         /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
@@ -67,5 +73,18 @@ namespace Omicron.Catalogos.Facade.Catalogs
         /// </summary>
         /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
         Task<ResultDto> GetActiveRouteConfigurationsForProducts();
+
+        /// <summary>
+        /// GetActiveRouteConfigurationsForProducts.
+        /// </summary>
+        /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
+        Task<ResultDto> UploadProductTypeColorsFromExcel();
+
+        /// <summary>
+        /// GetProductsColors.
+        /// </summary>
+        /// <param name="themesIds">the dictionary.</param>
+        /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
+        Task<ResultDto> GetProductsColors(List<string> themesIds);
     }
 }

@@ -30,6 +30,10 @@ export class UsersService {
   getClasifications(): Observable<ClasificationsResponse> {
     return this.consumeService.httpGet(Endpoints.users.getClasifications);
   }
+
+  getColors(): Observable<ClasificationsResponse> {
+    return this.consumeService.httpGet(Endpoints.users.getColors);
+  }
   getTehcnicalUsers(): Observable<TechnicalListResponse> {
     return this.consumeService.httpGet(Endpoints.users.getTechnical);
   }
