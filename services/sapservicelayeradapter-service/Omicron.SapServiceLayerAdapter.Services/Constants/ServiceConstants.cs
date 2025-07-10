@@ -369,6 +369,16 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string DeleteComponent = "delete";
 
         /// <summary>
+        /// the value to delete the conmponent.
+        /// </summary>
+        public const string InsertComponent = "insert";
+
+        /// <summary>
+        /// the value to delete the conmponent.
+        /// </summary>
+        public const string UpdateComponent = "update";
+
+        /// <summary>
         /// error while inserting.
         /// </summary>
         public const string ErrorCreateFabOrd = "ErrorCreateFabOrd";

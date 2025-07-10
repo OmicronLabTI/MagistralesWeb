@@ -150,6 +150,15 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> UpdateComponents(UpdateFormulaModel updateFormula)
         {
+            var ugpCodesResponse = await this.sapAdapter.PostSapAdapter(updateFormula.Components.Select(x => x.ProductId).ToList(), ServiceConstants.ProductUnit);
+            var ugpData = JsonConvert.DeserializeObject<List<ProductUnitDto>>(ugpCodesResponse.Response.ToString());
+
+            updateFormula.Components.ForEach(item =>
+            {
+                var selectedUnit = ugpData.FirstOrDefault(x => x.ProductoId == item.ProductId) ?? new ProductUnitDto() { Id = 0 };
+                item.UnitCode = selectedUnit.Id;
+            });
+
             var resultSapApi = await this.serviceLayerAdapterService.PostAsync(updateFormula, ServiceConstants.UpdateFormula);
             if (ServiceShared.CalculateAnd(resultSapApi.Success, !string.IsNullOrEmpty(updateFormula.Comments)))
             {
