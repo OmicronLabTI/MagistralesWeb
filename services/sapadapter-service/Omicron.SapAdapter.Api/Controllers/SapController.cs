@@ -484,5 +484,18 @@ namespace Omicron.SapAdapter.Api.Controllers
             var response = await this.sapFacade.GetClassificationsByDescription(classifications);
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// Gets the matching configWarehouseDto.
+        /// </summary>
+        /// <param name="configWarehouseDto"> warehouses collection to search. </param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        [Route("/get/configwarehouses")]
+        [HttpPost]
+        public async Task<IActionResult> GetConfigWarehouses(ConfigWareshousesDto configWarehouseDto)
+        {
+            var response = await this.sapFacade.GetConfigWarehouses(configWarehouseDto);
+            return this.Ok(response);
+        }
     }
 }
