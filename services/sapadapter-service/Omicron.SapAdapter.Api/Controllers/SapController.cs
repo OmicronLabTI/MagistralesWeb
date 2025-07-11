@@ -498,6 +498,7 @@ namespace Omicron.SapAdapter.Api.Controllers
             return this.Ok(response);
         }
 
+        /// <summary>
         /// Gets the matching warehouses.
         /// </summary>
         /// <param name="itemCodes"> itemCodes collection to search. </param>
