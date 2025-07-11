@@ -155,5 +155,38 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
 
             return true;
         }
+
+        public async Task<List<string>> GetExistingManufacturers(List<string> manufacturers)
+        {
+            return await this.databaseContext.ConfigWarehousesModel
+                .Where(x => manufacturers.Contains(x.Manufacturers))
+                .Select(x => x.Manufacturers)
+                .Distinct()
+                .ToListAsync();
+        }
+
+        public async Task<bool> UpdateConfigWarehouses(List<ConfigWarehouseModel> configWarehouses)
+        {
+            foreach (var item in configWarehouses)
+            {
+                var existing = await this.databaseContext.ConfigWarehousesModel
+                    .FirstOrDefaultAsync(x => x.Manufacturers == item.Manufacturers);
+
+                if (existing != null)
+                {
+
+                    existing.Mainwarehouse = item.Mainwarehouse; 
+                    existing.Products = item.Products;
+                    existing.Exceptions = item.Exceptions;
+                    existing.Alternativewarehouses = item.Alternativewarehouses;
+                    existing.IsActive = item.IsActive;
+                    
+                }
+            }
+
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
     }
 }

@@ -272,33 +272,25 @@ namespace Omicron.Catalogos.Services.Catalogs
         {
             var configWarehousesFile = await this.GetConfigWarehousesFromExcel();
 
-            configWarehousesFile.ForEach(x => x.Mainwarehouse = NormalizeAndToUpper(x.Mainwarehouse));
+            this.NormalizeConfigWarehousesData(configWarehousesFile);
 
-            configWarehousesFile = configWarehousesFile
-                .GroupBy(w => new { w.Mainwarehouse })
-                .Select(g => g.First())
-                .ToList();
-
-            var configWarehousesDto = new ConfigWareshousesDto
+            var duplicateValidationResult = this.ValidateDuplicateManufacturerWarehouses(configWarehousesFile);
+            if (!duplicateValidationResult.IsValid)
             {
-                Products = configWarehousesFile.Select(x => x.Products).Distinct().ToList(),
-                Manufacturers = configWarehousesFile.Select(x => x.Manufacturers).Distinct().ToList(),
-                Wareshouses = configWarehousesFile.Select(x => x.Mainwarehouse).Distinct().ToList(),
-            };
+                return duplicateValidationResult.Result;
+            }
 
-            var data = await this.GetWarehousesData(configWarehousesDto);
+            var uniqueConfigWarehouses = this.RemoveDuplicateManufacturers(configWarehousesFile);
+            var configWarehousesDto = this.CreateConfigWarehousesDto(uniqueConfigWarehouses);
+            var sapData = await this.GetWarehousesData(configWarehousesDto);
 
-            await this.catalogDao.InsertConfigWarehouses(configWarehousesFile);
+            var existingManufacturers = await this.GetExistingManufacturersSet(uniqueConfigWarehouses);
+            var validationResult = this.ValidateConfigWarehouses(uniqueConfigWarehouses, sapData);
 
-            var nomatching = configWarehousesFile.Except(configWarehousesFile).Select(x => x.Mainwarehouse).ToList();
-            var comments = nomatching.Count > 0 ? string.Format(ServiceConstants.NoMatching, JsonConvert.SerializeObject(nomatching)) : null;
+            await this.ProcessValidConfigurations(validationResult.ValidConfigs, existingManufacturers);
+            await this.CacheValidConfigurations(validationResult.ValidConfigs);
 
-            await this.redisService.WriteToRedis(
-            ServiceConstants.ConfigWareshouses,
-            JsonConvert.SerializeObject(configWarehousesFile),
-            TimeSpan.FromHours(12));
-
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, comments);
+            return this.CreateFinalResult(validationResult.InvalidWarehouses);
         }
 
         private static List<string> GetValidStringList(string value)
@@ -500,6 +492,229 @@ namespace Omicron.Catalogos.Services.Catalogs
 
             invalids.AddRange(notallowed);
             valids.RemoveAll(x => notallowed.Contains(x));
+        }
+
+        private void NormalizeConfigWarehousesData(List<ConfigWarehouseModel> configWarehouses)
+        {
+            configWarehouses.ForEach(x =>
+            {
+                x.Mainwarehouse = NormalizeAndToUpper(x.Mainwarehouse);
+                x.Alternativewarehouses = NormalizeAndToUpper(x.Alternativewarehouses);
+                x.Manufacturers = NormalizeAndToUpper(x.Manufacturers);
+                x.Products = NormalizeAndToUpper(x.Products);
+                x.Exceptions = NormalizeAndToUpper(x.Exceptions);
+            });
+        }
+
+        private (bool IsValid, ResultModel Result) ValidateDuplicateManufacturerWarehouses(List<ConfigWarehouseModel> configWarehouses)
+        {
+            var fabricantsWithMultipleWarehouses = configWarehouses
+                .Where(x => !string.IsNullOrEmpty(x.Manufacturers))
+                .GroupBy(w => w.Manufacturers)
+                .Where(g => g.Select(x => x.Mainwarehouse).Distinct().Count() > 1)
+                .ToList();
+
+            if (!fabricantsWithMultipleWarehouses.Any())
+            {
+                return (true, null);
+            }
+
+            var duplicateWarehousesList = fabricantsWithMultipleWarehouses
+                .SelectMany(group => group.Select(x => x.Mainwarehouse).Distinct())
+                .Distinct()
+                .ToList();
+
+            var duplicateErrorComments = string.Format(ServiceConstants.NoMatching, JsonConvert.SerializeObject(duplicateWarehousesList));
+            var result = ServiceUtils.CreateResult(false, (int)HttpStatusCode.BadRequest, null, null, duplicateErrorComments);
+
+            return (false, result);
+        }
+
+        private List<ConfigWarehouseModel> RemoveDuplicateManufacturers(List<ConfigWarehouseModel> configWarehouses)
+        {
+            return configWarehouses
+                .GroupBy(w => w.Manufacturers)
+                .Select(g => g.First())
+                .ToList();
+        }
+
+        private ConfigWareshousesDto CreateConfigWarehousesDto(List<ConfigWarehouseModel> configWarehouses)
+        {
+            return new ConfigWareshousesDto
+            {
+                Products = this.GetAllProducts(configWarehouses),
+                Manufacturers = configWarehouses.Select(x => x.Manufacturers).Distinct().ToList(),
+                Wareshouses = this.GetAllWarehouses(configWarehouses),
+            };
+        }
+
+        private List<string> GetAllProducts(List<ConfigWarehouseModel> configWarehouses)
+        {
+            var products = configWarehouses.Select(x => x.Products);
+            var exceptionProducts = configWarehouses
+                .SelectMany(x => this.SplitAndTrimString(x.Exceptions));
+
+            return products.Union(exceptionProducts)
+                .Where(p => !string.IsNullOrEmpty(p))
+                .Distinct()
+                .ToList();
+        }
+
+        private IEnumerable<string> SplitAndTrimString(string input)
+        {
+            return (input ?? string.Empty)
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(item => item.Trim());
+        }
+
+        private List<string> GetAllWarehouses(List<ConfigWarehouseModel> configWarehouses)
+        {
+            var mainWarehouses = configWarehouses.Select(x => x.Mainwarehouse);
+            var alternativeWarehouses = configWarehouses
+                .SelectMany(x => this.SplitAndTrimString(x.Alternativewarehouses));
+
+            return mainWarehouses.Union(alternativeWarehouses)
+                .Where(w => !string.IsNullOrEmpty(w))
+                .Distinct()
+                .ToList();
+        }
+
+        private async Task<HashSet<string>> GetExistingManufacturersSet(List<ConfigWarehouseModel> configWarehouses)
+        {
+            var manufacturersToCheck = configWarehouses
+                .Where(x => !string.IsNullOrEmpty(x.Manufacturers))
+                .Select(x => x.Manufacturers)
+                .Distinct()
+                .ToList();
+
+            var existingManufacturers = await this.catalogDao.GetExistingManufacturers(manufacturersToCheck);
+            return existingManufacturers.ToHashSet();
+        }
+
+        private (List<ConfigWarehouseModel> ValidConfigs, List<string> InvalidWarehouses) ValidateConfigWarehouses(
+            List<ConfigWarehouseModel> configWarehouses,
+            ConfigWareshousesDto sapData)
+        {
+            var validConfigs = new List<ConfigWarehouseModel>();
+            var invalidWarehouses = new List<string>();
+
+            foreach (var config in configWarehouses)
+            {
+                if (this.IsConfigurationValid(config, sapData))
+                {
+                    validConfigs.Add(config);
+                }
+                else
+                {
+                    invalidWarehouses.Add(config.Mainwarehouse);
+                }
+            }
+
+            return (validConfigs, invalidWarehouses);
+        }
+
+        private bool IsConfigurationValid(ConfigWarehouseModel config, ConfigWareshousesDto sapData)
+        {
+            return this.IsMainWarehouseValid(config, sapData) &&
+                   this.IsAlternativeWarehousesValid(config, sapData) &&
+                   this.IsManufacturerValid(config, sapData) &&
+                   this.IsProductValid(config, sapData) &&
+                   this.IsExceptionsValid(config, sapData) &&
+                   this.HasRequiredFields(config);
+        }
+
+        private bool IsMainWarehouseValid(ConfigWarehouseModel config, ConfigWareshousesDto sapData)
+        {
+            return sapData.Wareshouses.Contains(config.Mainwarehouse);
+        }
+
+        private bool IsAlternativeWarehousesValid(ConfigWarehouseModel config, ConfigWareshousesDto sapData)
+        {
+            if (string.IsNullOrEmpty(config.Alternativewarehouses))
+            {
+                return true;
+            }
+
+            var alternativeWarehouses = this.SplitAndTrimString(config.Alternativewarehouses)
+                .Where(w => !string.IsNullOrEmpty(w));
+
+            return alternativeWarehouses.All(w => sapData.Wareshouses.Contains(w));
+        }
+
+        private bool IsManufacturerValid(ConfigWarehouseModel config, ConfigWareshousesDto sapData)
+        {
+            if (string.IsNullOrEmpty(config.Manufacturers))
+            {
+                return true;
+            }
+
+            return sapData.Manufacturers.Contains(config.Manufacturers);
+        }
+
+        private bool IsProductValid(ConfigWarehouseModel config, ConfigWareshousesDto sapData)
+        {
+            if (string.IsNullOrEmpty(config.Products))
+            {
+                return true;
+            }
+
+            return sapData.Products.Contains(config.Products);
+        }
+
+        private bool IsExceptionsValid(ConfigWarehouseModel config, ConfigWareshousesDto sapData)
+        {
+            if (string.IsNullOrEmpty(config.Exceptions))
+            {
+                return true;
+            }
+
+            var exceptionProducts = this.SplitAndTrimString(config.Exceptions)
+                .Where(p => !string.IsNullOrEmpty(p));
+
+            return exceptionProducts.All(p => sapData.Products.Contains(p));
+        }
+
+        private bool HasRequiredFields(ConfigWarehouseModel config)
+        {
+            var hasManufacturer = !string.IsNullOrEmpty(config.Manufacturers);
+            var hasProduct = !string.IsNullOrEmpty(config.Products);
+
+            return hasManufacturer || hasProduct;
+        }
+
+        private async Task ProcessValidConfigurations(List<ConfigWarehouseModel> validConfigs, HashSet<string> existingManufacturers)
+        {
+            var newConfigs = validConfigs.Where(x => !existingManufacturers.Contains(x.Manufacturers)).ToList();
+            var updateConfigs = validConfigs.Where(x => existingManufacturers.Contains(x.Manufacturers)).ToList();
+
+            if (newConfigs.Any())
+            {
+                await this.catalogDao.InsertConfigWarehouses(newConfigs);
+            }
+
+            if (updateConfigs.Any())
+            {
+                await this.catalogDao.UpdateConfigWarehouses(updateConfigs);
+            }
+        }
+
+        private async Task CacheValidConfigurations(List<ConfigWarehouseModel> validConfigs)
+        {
+            await this.redisService.WriteToRedis(
+                ServiceConstants.ConfigWareshouses,
+                JsonConvert.SerializeObject(validConfigs),
+                TimeSpan.FromHours(12));
+        }
+
+        private ResultModel CreateFinalResult(List<string> invalidWarehouses)
+        {
+            string comments = null;
+            if (invalidWarehouses.Count > 0)
+            {
+                comments = string.Format(ServiceConstants.NoMatching, JsonConvert.SerializeObject(invalidWarehouses.Distinct().ToList()));
+            }
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, comments);
         }
 
         private async Task<List<ColorsDto>> ClassificationColors()
