@@ -544,7 +544,7 @@ namespace Omicron.Catalogos.Services.Catalogs
             {
                 Products = this.GetAllProducts(configWarehouses),
                 Manufacturers = configWarehouses.Select(x => x.Manufacturers).Distinct().ToList(),
-                Wareshouses = this.GetAllWarehouses(configWarehouses),
+                Warehouses = this.GetAllWarehouses(configWarehouses),
             };
         }
 
@@ -625,7 +625,7 @@ namespace Omicron.Catalogos.Services.Catalogs
 
         private bool IsMainWarehouseValid(ConfigWarehouseModel config, ConfigWareshousesDto sapData)
         {
-            return sapData.Wareshouses.Contains(config.Mainwarehouse);
+            return sapData.Warehouses.Contains(config.Mainwarehouse);
         }
 
         private bool IsAlternativeWarehousesValid(ConfigWarehouseModel config, ConfigWareshousesDto sapData)
@@ -638,7 +638,7 @@ namespace Omicron.Catalogos.Services.Catalogs
             var alternativeWarehouses = this.SplitAndTrimString(config.Alternativewarehouses)
                 .Where(w => !string.IsNullOrEmpty(w));
 
-            return alternativeWarehouses.All(w => sapData.Wareshouses.Contains(w));
+            return alternativeWarehouses.All(w => sapData.Warehouses.Contains(w));
         }
 
         private bool IsManufacturerValid(ConfigWarehouseModel config, ConfigWareshousesDto sapData)
@@ -701,7 +701,7 @@ namespace Omicron.Catalogos.Services.Catalogs
         private async Task CacheValidConfigurations(List<ConfigWarehouseModel> validConfigs)
         {
             await this.redisService.WriteToRedis(
-                ServiceConstants.ConfigWareshouses,
+                ServiceConstants.ConfigWarehouses,
                 JsonConvert.SerializeObject(validConfigs),
                 TimeSpan.FromHours(12));
         }

@@ -443,7 +443,7 @@ namespace Omicron.Catalogos.Test.Services
                     Success = true,
                     Response = JsonConvert.SerializeObject(new ConfigWareshousesDto
                     {
-                        Wareshouses = new List<string> { "AMP", "BE", "CUA", "FARMACIA", "GENOMICS", "INCI", "MER", "DZ 17", "DZ 49" },
+                        Warehouses = new List<string> { "AMP", "BE", "CUA", "FARMACIA", "GENOMICS", "INCI", "MER", "DZ 17", "DZ 49" },
                         Manufacturers = new List<string> { "MAGISTRAL DERMOCOS", "MAGISTRAL MEDICAMENT", "REVES", "DERMAZONES" },
                         Products = new List<string> { "DZ 11", "DZ 12", "DZ 13", "DZ 49" },
                     }),

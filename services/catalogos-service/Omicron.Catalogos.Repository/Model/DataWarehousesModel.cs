@@ -9,8 +9,6 @@
 namespace Omicron.Catalogos.Entities.Model
 {
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
 
     /// <summary>
     /// Table for params.
