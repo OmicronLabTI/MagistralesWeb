@@ -62,7 +62,7 @@ class ComponentO: Mappable, Codable {
     var pendingQuantity: Decimal?
     var stock: Decimal?
     var warehouseQuantity: Decimal?
-    var isLabel: Bool?
+    var isLabel, managedByBatches: Bool?
     required init?(map: Map) {}
     init() { }
     func mapping(map: Map) {
@@ -79,6 +79,7 @@ class ComponentO: Mappable, Codable {
         self.stock <- (map["stock"], DecimalTransform())
         self.warehouseQuantity <- (map["warehouseQuantity"], DecimalTransform())
         self.isLabel <- map["isLabel"]
+        self.managedByBatches <- map["managedByBatches"]
     }
 }
 class Supplie: Codable {

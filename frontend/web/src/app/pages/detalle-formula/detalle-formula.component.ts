@@ -417,7 +417,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
         requiredQuantity: parseFloat((element.baseQuantity * Number(this.plannedQuantityControl.value)).toFixed(CONST_NUMBER.ten)),
         consumed: 0,
         available: 0,
-        unit: 'GR',
+        unit: element.unit,
         warehouse: 'MG',
         pendingQuantity: 0,
         stock: 0,

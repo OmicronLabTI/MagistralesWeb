@@ -65,6 +65,12 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
+        public int UnitCode { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
         public string Warehouse { get; set; }
 
         /// <summary>
