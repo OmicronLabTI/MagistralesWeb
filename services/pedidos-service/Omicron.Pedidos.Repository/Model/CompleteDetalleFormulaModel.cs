@@ -67,6 +67,12 @@ namespace Omicron.Pedidos.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
+        public int UnitCode { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
         public string Warehouse { get; set; }
 
         /// <summary>

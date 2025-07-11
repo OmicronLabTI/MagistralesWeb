@@ -307,6 +307,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<ResultDto> GetUnitProducts(List<string> itemCodes)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetUnitProducts(itemCodes));
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultDto> GetConfigWarehouses(ConfigWareshousesDto configWareshousesDto)
         {
             return this.mapper.Map<ResultDto>(await this.sapService.GetConfigWarehouses(this.mapper.Map<ConfigWareshousesModel>(configWareshousesDto)));
