@@ -665,6 +665,27 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<WarehouseModel>> GetWarehouses(List<string> warehouses);
 
         /// <summary>
+        /// Gets the matching GetWarehousesConfig.
+        /// </summary>
+        /// <param name="warehouses"> warehouse collection to search. </param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<IEnumerable<WarehouseModel>> GetWarehousesConfig(List<string> configwarehouses);
+
+        /// <summary>
+        /// Gets the matching manufacturees.
+        /// </summary>
+        /// <param name="manufacturees"> manufacturees collection to search. </param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<IEnumerable<ProductFirmModel>> GetManufacturers(List<string> manufacturees);
+
+        /// <summary>
+        /// Gets the matching products.
+        /// </summary>
+        /// <param name="products"> manufacturees collection to search. </param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<IEnumerable<string>> GetProducts(List<string> products);
+
+        /// <summary>
         /// Asynchronously retrieves classification data based on the provided parameters.
         /// </summary>
         /// <param name="classifications"> classifications collection to search. </param>

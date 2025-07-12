@@ -417,6 +417,68 @@ namespace Omicron.Catalogos.Test.Services
             Assert.That(result.Code == 200, Is.True);
         }
 
+        /// <summary>
+        /// Get product and container catalog without parameters.
+        /// </summary>
+        /// <returns>representing the asynchronous unit test.</returns>
+        [Test]
+        public async Task PostConfigWarehouses()
+        {
+            // Arrange
+            var config = new Mock<IConfiguration>();
+            var azure = new Mock<IAzureService>();
+            var sapAdapter = new Mock<ISapAdapterService>();
+            var catalogsdxp = new Mock<ICatalogsDxpService>();
+            var redis = new Mock<IRedisService>();
+            var mapper = new Mock<IMapper>();
+            var catalogDao = new Mock<ICatalogDao>();
+
+            config.SetupGet(x => x["AzureAccountKey"]).Returns("AzureKey");
+            config.SetupGet(x => x["AzureAccountName"]).Returns("AzureName");
+            config.SetupGet(x => x["ConfigWarehousesFileUrl"]).Returns("ConfigWarehousesFileUrl");
+
+            sapAdapter.Setup(x => x.Post(It.IsAny<object>(), It.IsAny<string>()))
+                .ReturnsAsync(new ResultDto
+                {
+                    Success = true,
+                    Response = JsonConvert.SerializeObject(new ConfigWareshousesDto
+                    {
+                        Warehouses = new List<string> { "AMP", "BE", "CUA", "FARMACIA", "GENOMICS", "INCI", "MER", "DZ 17", "DZ 49" },
+                        Manufacturers = new List<string> { "MAGISTRAL DERMOCOS", "MAGISTRAL MEDICAMENT", "REVES", "DERMAZONES" },
+                        Products = new List<string> { "DZ 11", "DZ 12", "DZ 13", "DZ 49" },
+                    }),
+                });
+
+            var memoryStream = ExcelConfigwarehouses();
+            azure.Setup(x => x.GetElementsFromAzure(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Stream>()))
+                .Callback<string, string, string, Stream>((account, container, blob, stream) =>
+                {
+                    memoryStream.CopyTo(stream);
+                });
+
+            catalogDao.Setup(x => x.GetExistingManufacturers(It.IsAny<List<string>>()))
+                .ReturnsAsync(new List<string> { "REVES", "DERMAZONES" });
+
+            catalogDao.Setup(x => x.InsertConfigWarehouses(It.IsAny<List<ConfigWarehouseModel>>()))
+                .ReturnsAsync(true);
+
+            catalogDao.Setup(x => x.UpdateConfigWarehouses(It.IsAny<List<ConfigWarehouseModel>>()))
+                .ReturnsAsync(true);
+
+            redis.Setup(x => x.WriteToRedis(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>()))
+                .ReturnsAsync(true);
+
+            // Act
+            var service = new CatalogService(catalogDao.Object, config.Object, azure.Object, sapAdapter.Object, catalogsdxp.Object, redis.Object, mapper.Object);
+            var result = await service.PostConfigWarehouses();
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.UserError, Is.Null);
+            Assert.That(result.Code, Is.EqualTo(200));
+        }
+
         private static MemoryStream CreateExcelSortingRoute()
         {
             var dataTable = new DataTable();
@@ -513,6 +575,34 @@ namespace Omicron.Catalogos.Test.Services
             wb.SaveAs(mss);
             mss.Position = 0;
 
+            return mss;
+        }
+
+        private static MemoryStream ExcelConfigwarehouses()
+        {
+            var dataTable = new DataTable();
+            dataTable.TableName = "configwarehouses";
+            dataTable.Columns.Add("mainwarehouse");
+            dataTable.Columns.Add("manufacturers");
+            dataTable.Columns.Add("products");
+            dataTable.Columns.Add("exceptions");
+            dataTable.Columns.Add("alternativewarehouses");
+            dataTable.Columns.Add("isactive");
+
+            dataTable.Rows.Add("AMP", "MAGISTRAL DERMOCOS", "DZ 11", string.Empty, "GENOMICS,INCI,MER", "true");
+            dataTable.Rows.Add("BE", "MAGISTRAL MEDICAMENT", "DZ 12", "DZ 11", "DZ 17", "true");
+            dataTable.Rows.Add("CUA", "REVES", "DZ 13", "DZ 11", "DZ 49", "true");
+            dataTable.Rows.Add("FARMACIA", "DERMAZONES", "DZ 49", "DZ 49", "DZ 49", "true");
+
+            var mss = new MemoryStream();
+            using (var wb = new XLWorkbook())
+            {
+                wb.Worksheets.Add("Hoja1");
+                wb.Worksheets.Add(dataTable);
+                wb.SaveAs(mss);
+            }
+
+            mss.Position = 0;
             return mss;
         }
     }

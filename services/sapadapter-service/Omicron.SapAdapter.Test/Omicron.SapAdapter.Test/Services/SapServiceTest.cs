@@ -1579,5 +1579,24 @@ namespace Omicron.SapAdapter.Test.Services
             // assert
             Assert.That(response, Is.Not.Null);
         }
+
+        /// <summary>
+        /// Test to get classifications.
+        /// </summary>
+        /// <returns> The data. </returns>
+        [Test]
+        public async Task GetConfigWarehouses()
+        {
+            var model = new ConfigWareshousesModel
+            {
+                Warehouses = new List<string> { "BE", "AMP" },
+                Manufacturers = new List<string> { "Bioelite", "Dermazone" },
+                Products = new List<string> { "1037 60 ml", "DZ 49" },
+            };
+
+            var response = await this.sapService.GetConfigWarehouses(model);
+
+            Assert.That(response, Is.Not.Null);
+        }
     }
 }

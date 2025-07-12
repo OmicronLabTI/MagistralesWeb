@@ -1541,6 +1541,43 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<IEnumerable<WarehouseModel>> GetWarehousesConfig(List<string> configwarehouses)
+        {
+            var wareshouses = await this.databaseContext.WarehouseModel
+            .Where(x => configwarehouses.Contains(x.WarehouseCode))
+            .ToListAsync();
+
+            return wareshouses;
+        }
+
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<ProductFirmModel>> GetManufacturers(List<string> manufacturers)
+        {
+            var query = from p in this.databaseContext.ProductFirmModel.AsNoTracking()
+                        where manufacturers.Contains(p.ProductFirmName)
+                        select new ProductFirmModel
+                        {
+                            ProductFirmCode = (int)(object)p.ProductFirmCode,
+                            ProductFirmName = p.ProductFirmName
+                        };
+
+            var list = await query.ToListAsync();
+
+            return list;
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<string>> GetProducts(List<string> products)
+        {
+           var list = await this.databaseContext.ProductoModel
+           .Where(x => products.Contains(x.ProductoId))
+           .Select(x => x.ProductoId)
+           .ToListAsync();
+           return list;
+        }
+
+        /// <inheritdoc/>
         public async Task<IEnumerable<LblContainerModel>> GetClassifications(List<string> classifications)
         {
             var query = this.databaseContext.LblContainerModel
