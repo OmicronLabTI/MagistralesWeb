@@ -22,6 +22,7 @@ namespace Omicron.Catalogos.Services.Catalogs
     using Omicron.Catalogos.Entities.Model;
     using Omicron.Catalogos.Services.Redis;
     using Omicron.Catalogos.Services.Utils;
+    using Serilog.Formatting.Json;
 
     /// <summary>
     /// The class for the catalog service.
@@ -291,6 +292,46 @@ namespace Omicron.Catalogos.Services.Catalogs
             await this.CacheValidConfigurations(validationResult.ValidConfigs);
 
             return this.CreateFinalResult(validationResult.InvalidWarehouses);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetWarehouses(string itemCode)
+        {
+            var sapResponse = await this.sapAdapter.Post(itemCode, ServiceConstants.PostProductInfo);
+            var productInfo = JsonConvert.DeserializeObject<ProductDataDto>(sapResponse.Response.ToString());
+
+            var configs = await ServiceUtils.DeserializeRedisValue(
+                new List<ConfigWarehouseModel>(),
+                ServiceConstants.ConfigWarehouses,
+                this.redisService);
+
+            if (!configs.Any())
+            {
+                configs = (await this.catalogDao.GetActiveConfigWarehouses()).ToList();
+                await this.CacheValidConfigurations(configs.ToList());
+            }
+
+            configs = configs.Where(x => x.IsActive).ToList();
+            var validWarehouses = configs.Where(x =>
+                ValidateItemcode(x.Products, itemCode.ToUpper()) ||
+                ValidateFirmNames(x.Manufacturers, productInfo.ProductFirmName.ToUpper(), x.Exceptions, itemCode.ToUpper()))
+                .OrderByDescending(x => x.Products).ToList();
+
+            var selectedConfig = validWarehouses.FirstOrDefault() ?? new ConfigWarehouseModel() { Mainwarehouse = string.Empty, Alternativewarehouses = string.Empty };
+            var warehouses = new List<string>();
+            warehouses.Add(selectedConfig.Mainwarehouse);
+            warehouses.AddRange(GetValidStringList(selectedConfig.Alternativewarehouses).Order());
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, warehouses, null);
+        }
+
+        private static bool ValidateFirmNames(string manufactures, string productFirmName, string itemCodeExceptions, string itemCode)
+        {
+            return GetValidStringList(manufactures).Contains(productFirmName) && !GetValidStringList(itemCodeExceptions).Contains(itemCode);
+        }
+
+        private static bool ValidateItemcode(string products, string itemCode)
+        {
+            return GetValidStringList(products).Contains(itemCode);
         }
 
         private static List<string> GetValidStringList(string value)

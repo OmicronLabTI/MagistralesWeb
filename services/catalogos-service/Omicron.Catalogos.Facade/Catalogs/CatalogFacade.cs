@@ -117,5 +117,11 @@ namespace Omicron.Catalogos.Facade.Catalogs
         {
             return this.mapper.Map<ResultDto>(await this.catalogService.PostConfigWarehouses());
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetWarehouses(string itemCode)
+        {
+            return this.mapper.Map<ResultDto>(await this.catalogService.GetWarehouses(itemCode));
+        }
     }
 }
