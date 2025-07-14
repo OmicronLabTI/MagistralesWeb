@@ -962,6 +962,13 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, products, null, null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetProductFirmName(string itemCode)
+        {
+            var product = await this.sapDao.GetFullProductInfo(itemCode);
+            return ServiceUtils.CreateResult(true, 200, null, product, null, null);
+        }
+
         private static string NormalizeAndToUpper(string input)
         {
             return new string(input.Normalize(NormalizationForm.FormD)
