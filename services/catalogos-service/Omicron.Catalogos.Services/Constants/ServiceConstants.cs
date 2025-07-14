@@ -126,7 +126,7 @@ namespace Omicron.Catalogos.Services.Constants
         /// <summary>
         /// the container file.
         /// </summary>
-        public const string ConfigWareshouses = "ConfigWareshouses";
+        public const string ConfigWarehouses = "ConfigWarehouses";
 
         /// <summary>
         /// Gets the order.
