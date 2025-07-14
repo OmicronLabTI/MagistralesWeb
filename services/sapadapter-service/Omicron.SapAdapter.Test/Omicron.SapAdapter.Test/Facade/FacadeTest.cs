@@ -529,6 +529,20 @@ namespace Omicron.SapAdapter.Test.Facade
         }
 
         /// <summary>
+        /// Gets the possible active orders for the dxp project.
+        /// </summary>
+        /// <returns> The detail of the available warehouses. </returns>
+        [Test]
+        public async Task GetUnitProducts()
+        {
+            // act
+            var response = await this.sapFacade.GetUnitProducts(new List<string>());
+
+            // assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
         /// Assert response.
         /// </summary>
         /// <param name="response">Response to validate.</param>

@@ -150,5 +150,12 @@ namespace Omicron.Pedidos.Dtos.Models
         /// Datetime InvoiceLineNum.
         /// </value>
         public short InvoiceLineNum { get; set; }
+
+        /// <summary>
+        /// Gets or sets close user id.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        public int CloseSampleOrderId { get; set; }
     }
 }

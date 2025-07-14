@@ -77,6 +77,14 @@ namespace Omicron.Catalogos.Entities.Context
         /// </value>
         public DbSet<ProductTypeColorsModel> ProductTypeColorsModel { get; set; }
 
+        /// <summary>
+        /// Gets or sets ConfigWarehouses model.
+        /// </summary>
+        /// <value>
+        /// Object ConfigWarehousesModel model.
+        /// </value>
+        public DbSet<ConfigWarehouseModel> ConfigWarehousesModel { get; set; }
+
         /// <inheritdoc/>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

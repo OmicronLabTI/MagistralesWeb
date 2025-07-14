@@ -16,9 +16,11 @@ namespace Omicron.SapAdapter.Services.Sap
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
+    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
@@ -890,6 +892,23 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, response, null, null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetConfigWarehouses(ConfigWareshousesModel configWareshousesModel)
+        {
+            var warehouses = await this.sapDao.GetWarehousesConfig(configWareshousesModel.Warehouses);
+            var manufacturers = await this.sapDao.GetManufacturers(configWareshousesModel.Manufacturers);
+            var products = await this.sapDao.GetProducts(configWareshousesModel.Products);
+
+            var response = new
+            {
+                Warehouses = warehouses.Select(x => NormalizeAndToUpper(x.WarehouseCode)).ToList(),
+                Manufacturers = manufacturers.Select(x => NormalizeAndToUpper(x.ProductFirmName)).ToList(),
+                Products = products.Select(x => NormalizeAndToUpper(x)).ToList(),
+            };
+
+            return ServiceUtils.CreateResult(true, 200, null, response, null, null);
+        }
+
         /// <summary>
         /// Get client dxp.
         /// </summary>
@@ -934,6 +953,13 @@ namespace Omicron.SapAdapter.Services.Sap
             var response = items.Where(x => classifications.Contains(x.Description)).DistinctBy(x => x.Description).ToList();
 
             return ServiceUtils.CreateResult(true, 200, null, response, null, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetUnitProducts(List<string> itemCodes)
+        {
+            var products = await this.sapDao.GetProductsUnits(itemCodes);
+            return ServiceUtils.CreateResult(true, 200, null, products, null, null);
         }
 
         private static string NormalizeAndToUpper(string input)

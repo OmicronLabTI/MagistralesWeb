@@ -19,6 +19,7 @@ export class Components {
     productId: string;
     description: string;
     baseQuantity: number;
+    unit: string;
 }
 
 export class BaseComponent {
@@ -28,6 +29,7 @@ export class BaseComponent {
     components: Components[];
     creationUserId?: string;
     creatinDate?: Date;
+    unit: string;
 }
 
 export class ICustomListDelete {

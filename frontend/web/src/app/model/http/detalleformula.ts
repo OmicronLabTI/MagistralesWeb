@@ -75,6 +75,7 @@ export class IFormulaDetalleReq {
     isLabel?: boolean;
     assignedBatches?: ISaveAssignedBatches[];
     availableWarehouses?: string[];
+    managedByBatches?: boolean;
 }
 
 export class ISaveAssignedBatches {

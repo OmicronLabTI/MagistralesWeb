@@ -114,5 +114,26 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
         /// <param name="temaIds"> new producttypecolors to be inserted. </param>
         /// <returns> boolean indicating whether the insert was successful. </returns>
         Task<List<string>> GetExistingTemaIds(List<string> temaIds);
+
+        /// <summary>
+        /// Method to insert new get.
+        /// </summary>
+        /// <param name="configWarehouses"> new configWarehouses to be inserted. </param>
+        /// <returns> boolean indicating whether the insert was successful. </returns>
+        Task<bool> InsertConfigWarehouses(List<ConfigWarehouseModel> configWarehouses);
+
+        /// <summary>
+        /// Method to get new manufacturers.
+        /// </summary>
+        /// <param name="manufacturers"> new manufacturers to be inserted. </param>
+        /// <returns> boolean indicating whether the insert was successful. </returns>
+        Task<List<string>> GetExistingManufacturers(List<string> manufacturers);
+
+        /// <summary>
+        /// Method to update new configWarehouses.
+        /// </summary>
+        /// <param name="configWarehouses"> new configWarehouses to be inserted. </param>
+        /// <returns> boolean indicating whether the insert was successful. </returns>
+        Task<bool> UpdateConfigWarehouses(List<ConfigWarehouseModel> configWarehouses);
     }
 }

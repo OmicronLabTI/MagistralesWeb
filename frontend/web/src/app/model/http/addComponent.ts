@@ -19,6 +19,7 @@ export class IAddComponentsAndLotesTable {
     action?: string;
     isChecked?: boolean;
     availableWarehouses?: string[];
+    managedByBatches?: boolean;
 
     lotes: ILotesReq[]; // Lotes disponibles para asignar
     lotesAsignados: ILotesAsignadosReq[]; // Lotes ya guardados (provienen del back)
