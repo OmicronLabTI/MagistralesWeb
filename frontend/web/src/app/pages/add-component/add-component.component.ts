@@ -181,7 +181,8 @@ export class AddComponentComponent implements OnInit {
       totalSeleccionado: 0,
       action: CONST_DETAIL_FORMULA.insert,
       lotes: dataLotesTable,
-      lotesAsignados: []
+      lotesAsignados: [],
+      availableWarehouses: resultNewFormulaComponent.availableWarehouses
     };
     this.componentsData.push(resultNewFormulaComponent);
     this.dataSourceComponents.data.push(dataComponentRow);
