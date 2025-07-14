@@ -1170,6 +1170,34 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<ProductoModel> GetFullProductInfo(string itemCode)
+        {
+            return await (from p in this.databaseContext.ProductoModel
+                        .Where(x => x.ProductoId == itemCode)
+                          join firm in this.databaseContext.ProductFirmModel on p.ProductFirmCode equals firm.ProductFirmCode
+                            into productFirm
+                          from fm in productFirm.DefaultIfEmpty()
+                          select new ProductoModel
+                          {
+                              BarCode = p.BarCode,
+                              IsLine = p.IsLine,
+                              IsMagistral = p.IsMagistral,
+                              LargeDescription = p.LargeDescription,
+                              ManagedBatches = p.ManagedBatches,
+                              NeedsCooling = p.NeedsCooling,
+                              OnHand = p.OnHand,
+                              ProductGroupId = p.ProductGroupId,
+                              ProductoId = p.ProductoId,
+                              ProductoName = p.ProductoName,
+                              Unit = p.Unit,
+                              IsWorkableProduct = p.IsWorkableProduct,
+                              IsPackage = p.IsPackage,
+                              ThemeId = p.ThemeId,
+                              ProductFirmName = fm == default ? string.Empty : fm.ProductFirmName,
+                          }).FirstOrDefaultAsync();
+        }
+
+        /// <inheritdoc/>
         public async Task<IEnumerable<Repartidores>> GetDeliveryCompanies()
         {
             return await this.RetryQuery(this.databaseContext.Repartidores.Where(x => !string.IsNullOrEmpty(x.TrnspName)).AsNoTracking());
@@ -1570,11 +1598,11 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<string>> GetProducts(List<string> products)
         {
-           var list = await this.databaseContext.ProductoModel
-           .Where(x => products.Contains(x.ProductoId))
-           .Select(x => x.ProductoId)
-           .ToListAsync();
-           return list;
+            var list = await this.databaseContext.ProductoModel
+            .Where(x => products.Contains(x.ProductoId))
+            .Select(x => x.ProductoId)
+            .ToListAsync();
+            return list;
         }
 
         /// <inheritdoc/>
