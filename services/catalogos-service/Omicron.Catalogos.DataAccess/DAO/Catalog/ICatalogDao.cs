@@ -61,7 +61,7 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
         /// </summary>
         /// <param name="warehouses"> warehouses to search. </param>
         /// <returns> boolean indicating whether the insert was successful. </returns>
-         Task<List<WarehouseModel>> GetActiveWarehouses();
+        Task<List<WarehouseModel>> GetActiveWarehouses();
 
         /// <summary>
         /// Method to insert new sortingroute.
@@ -135,5 +135,11 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
         /// <param name="configWarehouses"> new configWarehouses to be inserted. </param>
         /// <returns> boolean indicating whether the insert was successful. </returns>
         Task<bool> UpdateConfigWarehouses(List<ConfigWarehouseModel> configWarehouses);
+        
+        /// <summary>
+        /// Method to update new configWarehouses.
+        /// </summary>
+        /// <returns> boolean indicating whether the insert was successful. </returns>
+        Task<IEnumerable<ConfigWarehouseModel>> GetActiveConfigWarehouses();
     }
 }

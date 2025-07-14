@@ -143,6 +143,19 @@ namespace Omicron.Catalogos.Test
         }
 
         /// <summary>
+        /// GetConfigRoutesModel.
+        /// </summary>
+        /// <returns>All ConfigRoutesModel.</returns>
+        public List<ConfigWarehouseModel> GetConfigWarehouseModel()
+        {
+            return new List<ConfigWarehouseModel>
+            {
+                new ConfigWarehouseModel() { Id = 1, Mainwarehouse = "MG", Manufacturers = "REVE,DERMAZONE,MAGISTRAL MEDICAMENT", Products = "DZ 1", Exceptions = "REVE 1", Alternativewarehouses = "PROD,WEB", IsActive = true },
+                new ConfigWarehouseModel() { Id = 2, Mainwarehouse = "MG-2", Manufacturers = string.Empty, Products = "REVE 1", Exceptions = string.Empty, Alternativewarehouses = "PROD,WEB", IsActive = true },
+            };
+        }
+
+        /// <summary>
         /// GetConfigRoutesModel from redis.
         /// </summary>
         /// <returns>All ConfigRoutesModel.</returns>

@@ -92,5 +92,12 @@ namespace Omicron.Catalogos.Facade.Catalogs
         /// </summary>
         /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
         Task<ResultDto> PostConfigWarehouses();
+
+        /// <summary>
+        /// GetProductsColors.
+        /// </summary>
+        /// <param name="itemCode">the dictionary.</param>
+        /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
+        Task<ResultDto> GetWarehouses(string itemCode);
     }
 }

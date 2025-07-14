@@ -156,6 +156,7 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
             return true;
         }
 
+        /// <inheritdoc/>
         public async Task<List<string>> GetExistingManufacturers(List<string> manufacturers)
         {
             return await this.databaseContext.ConfigWarehousesModel
@@ -165,6 +166,7 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
                 .ToListAsync();
         }
 
+        /// <inheritdoc/>
         public async Task<bool> UpdateConfigWarehouses(List<ConfigWarehouseModel> configWarehouses)
         {
             foreach (var item in configWarehouses)
@@ -175,12 +177,12 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
                 if (existing != null)
                 {
 
-                    existing.Mainwarehouse = item.Mainwarehouse; 
+                    existing.Mainwarehouse = item.Mainwarehouse;
                     existing.Products = item.Products;
                     existing.Exceptions = item.Exceptions;
                     existing.Alternativewarehouses = item.Alternativewarehouses;
                     existing.IsActive = item.IsActive;
-                    
+
                 }
             }
 
@@ -188,5 +190,10 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
             return true;
         }
 
+        /// <inheritdoc/>
+        public async Task<IEnumerable<ConfigWarehouseModel>> GetActiveConfigWarehouses()
+        {
+            return await this.databaseContext.ConfigWarehousesModel.Where(x => x.IsActive).ToListAsync();
+        }
     }
 }

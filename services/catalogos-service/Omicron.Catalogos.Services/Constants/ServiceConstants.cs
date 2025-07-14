@@ -59,6 +59,11 @@ namespace Omicron.Catalogos.Services.Constants
         public const string Warehouses = "warehouses";
 
         /// <summary>
+        /// Constant for Limit.
+        /// </summary>
+        public const string PostProductInfo = "product/firmname";
+
+        /// <summary>
         /// NoMatching.
         /// </summary>
         public const string NoMatching = "Los siguientes almacenes {0} tienen una configuración incorrecta: no están registrados en SAP, presentan duplicidad en su registro o tienen fabricantes, productos o catálogos asociados inexistentes.\r\n ";
