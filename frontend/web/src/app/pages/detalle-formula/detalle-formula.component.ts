@@ -28,6 +28,7 @@ import { DateService } from '../../services/date.service';
 import { MessagesService } from 'src/app/services/messages.service';
 import { FiltersService } from '../../services/filters.service';
 import { FormControl } from '@angular/forms';
+import { UsersService } from 'src/app/services/users.service';
 
 @Component({
   selector: 'app-detalle-formula',
@@ -84,7 +85,8 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     public localStorageService: LocalStorageService,
     private dateService: DateService,
     private messagesService: MessagesService,
-    private filtersService: FiltersService
+    private filtersService: FiltersService,
+    private userService: UsersService
   ) {
   }
 
@@ -139,6 +141,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
       detail.stock = stockSplit.length === 1 ? stockSplit[0] :
         `${new Intl.NumberFormat().format(Number(stockSplit[0]))}.${stockSplit[1]}`;
       detail.isContainer = this.validateIsContainer(detail.productId);
+      detail.availableWarehouses = [detail.warehouse];
     });
     this.isReadyToSave = false;
     this.componentsToDelete = [];
@@ -253,7 +256,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
           const detailComponentsToDelete = this.createDetailTOSave();
           const componentsToDeleteOnSave = [...this.dataSource.data.filter(component => component.isChecked &&
             this.dataService.calculateOrValueList([component.action === CONST_DETAIL_FORMULA.update,
-              !component.action, component.action === CONST_DETAIL_FORMULA.delete]))];
+            !component.action, component.action === CONST_DETAIL_FORMULA.delete]))];
           componentsToDeleteOnSave.forEach(component => {
             component.stock = component.stock || CONST_NUMBER.zero;
             component.action = CONST_DETAIL_FORMULA.delete;
@@ -329,6 +332,15 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     this.dataSource.data[index].warehouse = value;
     this.getAction(index);
     this.getIsReadyTOSave();
+  }
+
+  onOpenSelect(value: boolean, index: number): void {
+    const componentItemcode = this.dataSource.data[index].productId;
+    if (value && this.dataSource.data[index].availableWarehouses.length <= 1) {
+      this.pedidosService.getProductWarehouses(componentItemcode).subscribe(response =>
+        this.dataSource.data[index].availableWarehouses = response.response
+      );
+    }
   }
 
   ngOnDestroy() {

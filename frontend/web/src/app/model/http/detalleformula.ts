@@ -7,6 +7,10 @@ export class IComponentsRes extends BaseResponseHttp {
     response: IFormulaDetalleReq[];
 }
 
+export class IProductWarehouses extends BaseResponseHttp {
+    response: string[];
+}
+
 export class IComponentsSaveReq {
     fabOrderId: number;
     plannedQuantity: number;
@@ -70,6 +74,7 @@ export class IFormulaDetalleReq {
     isContainer?: boolean;
     isLabel?: boolean;
     assignedBatches?: ISaveAssignedBatches[];
+    availableWarehouses?: string[];
 }
 
 export class ISaveAssignedBatches {
