@@ -142,6 +142,13 @@ class UtilsManager {
             return ""
         }
     }
+
+    func doubleToDecimal(value: Double) -> Decimal {
+        var value = Decimal(value)
+        var roundedValue = Decimal()
+        NSDecimalRound(&roundedValue, &value, 6, .plain)
+        return roundedValue
+    }
 }
 open class DecimalTransform: TransformType {
     public typealias Object = Decimal

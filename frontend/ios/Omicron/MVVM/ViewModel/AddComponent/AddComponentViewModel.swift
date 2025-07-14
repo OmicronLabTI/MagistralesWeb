@@ -47,7 +47,7 @@ class AddComponentViewModel {
                                       requiredQuantity: component.requiredQuantity,
                                       selectedQuantity: 0,
                                       baseQuantity: component.baseQuantity,
-                                      totalNecesary: Decimal(component.requiredQuantity),
+                                      totalNecesary: UtilsManager.shared.doubleToDecimal(value: component.requiredQuantity),
                                       selectedTotal: 0,
                                       componentInfo: component.selectedComponent,
                                       unit: component.selectedComponent.unit ?? String(),
@@ -118,7 +118,7 @@ class AddComponentViewModel {
     func calculateSelectedQuanties(product: AddComponent) {
         // despues hacer los calculos del total necesario, total seleccionado
         let selectedsQuantityTotal = product.selectedLots.compactMap({ $0.cantidadSeleccionada }).reduce(0, +)
-        product.totalNecesary = Decimal(product.requiredQuantity) - selectedsQuantityTotal
+        product.totalNecesary = UtilsManager.shared.doubleToDecimal(value: product.requiredQuantity) - selectedsQuantityTotal
         product.selectedTotal = selectedsQuantityTotal
 
         product.availableLots.forEach({ lot in
