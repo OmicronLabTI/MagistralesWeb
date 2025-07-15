@@ -21,7 +21,10 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.ProductionOrders;
     using Omicron.Pedidos.Services.Redis;
+    using Omicron.Pedidos.Services.SapAdapter;
+    using Omicron.Pedidos.Services.SapFile;
     using Omicron.Pedidos.Services.SapServiceLayerAdapter;
+    using Omicron.Pedidos.Services.User;
     using Omicron.Pedidos.Services.Utils;
     using Serilog;
 
@@ -40,6 +43,12 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
 
         private readonly ILogger logger;
 
+        private readonly ISapAdapter sapAdapter;
+
+        private readonly ISapFileService sapFileService;
+
+        private readonly IUsersService userService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductionOrdersService"/> class.
         /// </summary>
@@ -47,19 +56,28 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
         /// <param name="serviceLayerAdapterService">Interface for Service Layer Adapter Service.</param>
         /// <param name="redisService">Interface for Redis Service.</param>
         /// <param name="kafkaConnector">Interface for Kafka Connector.</param>
+        /// <param name="sapAdapter">Interface for SAP adapter.</param>
         /// <param name="logger">Logger.</param>
+        /// <param name="userService">The user service.</param>
+        /// <param name="sapFileService">The sap file service.</param>
         public ProductionOrdersService(
             IPedidosDao pedidosDao,
             ISapServiceLayerAdapterService serviceLayerAdapterService,
             IRedisService redisService,
             IKafkaConnector kafkaConnector,
+            ISapAdapter sapAdapter,
+            IUsersService userService,
+            ISapFileService sapFileService,
             ILogger logger)
         {
             this.pedidosDao = pedidosDao.ThrowIfNull(nameof(pedidosDao));
             this.serviceLayerAdapterService = serviceLayerAdapterService.ThrowIfNull(nameof(serviceLayerAdapterService));
             this.redisService = redisService.ThrowIfNull(nameof(redisService));
             this.kafkaConnector = kafkaConnector.ThrowIfNull(nameof(kafkaConnector));
+            this.sapAdapter = sapAdapter.ThrowIfNull(nameof(sapAdapter));
             this.logger = logger.ThrowIfNull(nameof(logger));
+            this.userService = userService.ThrowIfNull(nameof(userService));
+            this.sapFileService = sapFileService.ThrowIfNull(nameof(sapFileService));
         }
 
         /// <inheritdoc/>
@@ -154,14 +172,42 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
         /// <inheritdoc/>
         public async Task<ResultModel> FinalizeProductionOrdersOnPostgresqlAsync(ProductionOrderProcessingStatusModel productionOrderProcessingPayload)
         {
-            // _ = this.kafkaConnector.PushMessage([], ServiceConstants.KafkaProductionOrderPdfGenerationConfigName);
-            throw new NotImplementedException();
+            this.logger.Information(LogsConstants.StartFinalizeProductionOrderInPostgres, JsonConvert.SerializeObject(productionOrderProcessingPayload));
+            var logBase = string.Format(LogsConstants.UpdateProductionOrdersOnPostgresAsync, productionOrderProcessingPayload.Id);
+
+            var (productionOrderUpdated, isProcessSuccesfully) = await this.UpdateProductionOrdersOnPostgresProcess(productionOrderProcessingPayload, logBase);
+            this.logger.Information(LogsConstants.UpdateProductionOrderProcessingStatus, logBase, JsonConvert.SerializeObject(productionOrderUpdated));
+            _ = this.pedidosDao.UpdatesProductionOrderProcessingStatus([productionOrderUpdated]);
+
+            if (!isProcessSuccesfully)
+            {
+                var redisKey = string.Format(ServiceConstants.ProductionOrderFinalizingKey, productionOrderUpdated.ProductionOrderId);
+                await this.redisService.DeleteKey(redisKey);
+                return ServiceUtils.CreateResult(false, (int)HttpStatusCode.InternalServerError, null, null, null);
+            }
+
+            _ = this.kafkaConnector.PushMessage(productionOrderUpdated, ServiceConstants.KafkaProductionOrderPdfGenerationConfigName);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
         }
 
         /// <inheritdoc/>
         public async Task<ResultModel> ProductionOrderPdfGenerationAsync(ProductionOrderProcessingStatusModel productionOrderProcessingPayload)
         {
-            throw new NotImplementedException();
+            this.logger.Information(LogsConstants.StartFinalizeProductionOrderInPostgres, JsonConvert.SerializeObject(productionOrderProcessingPayload));
+            var logBase = string.Format(LogsConstants.UpdateProductionOrdersOnPostgresAsync, productionOrderProcessingPayload.Id);
+
+            var (productionOrderUpdated, isProcessSuccesfully) = await this.CreateProductionOrderPdf(productionOrderProcessingPayload, logBase);
+            this.logger.Information(LogsConstants.UpdateProductionOrderProcessingStatus, logBase, JsonConvert.SerializeObject(productionOrderUpdated));
+            _ = this.pedidosDao.UpdatesProductionOrderProcessingStatus([productionOrderUpdated]);
+
+            if (!isProcessSuccesfully)
+            {
+                var redisKey = string.Format(ServiceConstants.ProductionOrderFinalizingKey, productionOrderUpdated.ProductionOrderId);
+                await this.redisService.DeleteKey(redisKey);
+                return ServiceUtils.CreateResult(false, (int)HttpStatusCode.InternalServerError, null, null, null);
+            }
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
         }
 
         private static ProductionOrderFailedResultModel CreateFinalizedFailedResponse(FinalizeProductionOrderModel orderToFinish, string reason)
@@ -322,6 +368,146 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             }
 
             return true;
+        }
+
+        private async Task<(ProductionOrderProcessingStatusModel, bool)> UpdateProductionOrdersOnPostgresProcess(ProductionOrderProcessingStatusModel productionOrderProcessingPayload, string logBase)
+        {
+            var productionOrderProcessingStatusInBD = await this.pedidosDao.GetFirstProductionOrderProcessingStatusByProductionOrderId(productionOrderProcessingPayload.ProductionOrderId);
+            try
+            {
+                var productionOrderId = productionOrderProcessingPayload.ProductionOrderId.ToString();
+                var (salesOrders, productionOrder) = await this.GetRelatedOrdersToProducionOrder(new List<string> { productionOrderId });
+                var salesOrder = salesOrders != null ? salesOrders.FirstOrDefault(x => x.IsSalesOrder) : null;
+                salesOrders?.Remove(salesOrder);
+                var preProductionOrders = await ServiceUtils.GetPreProductionOrdersFromSap(salesOrder, this.sapAdapter);
+                var payloadJson = JsonConvert.DeserializeObject<FinalizeProductionOrderPayload>(productionOrderProcessingPayload.Payload);
+                var payload = payloadJson.FinalizeProductionOrder;
+                var userOrdersToUpdate = new List<UserOrderModel>();
+                var ordersToProcess = payload.SourceProcess == ServiceConstants.SalesOrders ? salesOrders : new List<UserOrderModel> { productionOrder };
+
+                foreach (var userOrder in ordersToProcess)
+                {
+                    if (userOrder.Status.Equals(ServiceConstants.Finalizado))
+                    {
+                        continue;
+                    }
+
+                    userOrder.CloseUserId = payload.UserId;
+                    userOrder.CloseDate = DateTime.Now;
+                    userOrder.Status = ServiceShared.CalculateTernary(userOrder.Status != ServiceConstants.Almacenado, ServiceConstants.Finalizado, userOrder.Status);
+                    userOrder.FinalizedDate = DateTime.Now;
+
+                    var batch = payload.Batches != null && payload.Batches.Any() ? payload.Batches.FirstOrDefault() : new BatchesConfigurationModel { BatchCode = string.Empty };
+                    userOrder.BatchFinalized = batch.BatchCode;
+
+                    userOrdersToUpdate.Add(userOrder);
+                }
+
+                var hasNoPreProductionOrders = !preProductionOrders.Any();
+                var productionOrdersCount = salesOrders.Count(x => x.IsProductionOrder);
+                var otherProductionOrdersFinalized = salesOrders
+                    .Where(x => x.IsProductionOrder && x.Productionorderid != productionOrderId)
+                    .All(x => ServiceConstants.ValidStatusFinalizar.Contains(x.Status));
+
+                var shouldUpdateSalesOrder = payload.SourceProcess == ServiceConstants.SalesOrders
+                    ? true
+                    : salesOrder != null && hasNoPreProductionOrders && (productionOrdersCount == 1 || otherProductionOrdersFinalized);
+
+                if (shouldUpdateSalesOrder)
+                {
+                    salesOrder.CloseUserId = payload.UserId;
+                    salesOrder.CloseDate = DateTime.Now;
+                    salesOrder.Status = ServiceConstants.Finalizado;
+                    salesOrder.FinalizedDate = DateTime.Now;
+
+                    userOrdersToUpdate.Add(salesOrder);
+                }
+
+                _ = this.pedidosDao.UpdateUserOrders(userOrdersToUpdate);
+
+                productionOrderProcessingStatusInBD = UpdateProcessingStatusAsync(
+                    productionOrderProcessingStatusInBD,
+                    ServiceConstants.FinalizeProcessInProgressStatus,
+                    string.Empty,
+                    ServiceConstants.StepUpdatePostgres);
+
+                return (productionOrderProcessingStatusInBD, true);
+            }
+            catch (Exception ex)
+            {
+                var error = string.Format(LogsConstants.EndFinalizeProductionOrderOnSapWithError, ex.Message, ex.InnerException);
+                this.logger.Error(ex, error);
+
+                productionOrderProcessingStatusInBD = UpdateProcessingStatusAsync(
+                    productionOrderProcessingStatusInBD,
+                    ServiceConstants.FinalizeProcessFailedStatus,
+                    string.Format(LogsConstants.GenericErrorLog, ex.Message, ex.InnerException),
+                    productionOrderProcessingStatusInBD.LastStep);
+
+                return (productionOrderProcessingStatusInBD, false);
+            }
+        }
+
+        private async Task<(ProductionOrderProcessingStatusModel, bool)> CreateProductionOrderPdf(ProductionOrderProcessingStatusModel productionOrderProcessingPayload, string logBase)
+        {
+            var productionOrderProcessingStatusInBD = await this.pedidosDao.GetFirstProductionOrderProcessingStatusByProductionOrderId(productionOrderProcessingPayload.ProductionOrderId);
+            var payloadJson = JsonConvert.DeserializeObject<FinalizeProductionOrderPayload>(productionOrderProcessingPayload.Payload);
+            var payload = payloadJson.FinalizeProductionOrder;
+            try
+            {
+                var productionOrderId = productionOrderProcessingPayload.ProductionOrderId.ToString();
+                var (salesOrders, productionOrder) = await this.GetRelatedOrdersToProducionOrder(new List<string> { productionOrderId });
+
+                var listSalesOrder = new List<int>();
+                var listIsolated = new List<int>();
+
+                if (salesOrders != null)
+                {
+                    listSalesOrder.Add(int.Parse(salesOrders.First().Salesorderid));
+                }
+                else
+                {
+                    listIsolated.Add(int.Parse(productionOrder.Productionorderid));
+                }
+
+                await SendToGeneratePdfUtils.CreateModelGeneratePdf(listSalesOrder, listIsolated, this.sapAdapter, this.pedidosDao, this.sapFileService, this.userService, true);
+
+                productionOrderProcessingStatusInBD = UpdateProcessingStatusAsync(
+                    productionOrderProcessingStatusInBD,
+                    ServiceConstants.FinalizeProcessInSuccessStatus,
+                    string.Empty,
+                    ServiceConstants.StepCreatePdf);
+
+                return (productionOrderProcessingStatusInBD, true);
+            }
+            catch (Exception ex)
+            {
+                var error = string.Format(LogsConstants.EndFinalizeProductionOrderOnSapWithError, ex.Message, ex.InnerException);
+                this.logger.Error(ex, error);
+                Console.WriteLine(ex);
+                productionOrderProcessingStatusInBD = UpdateProcessingStatusAsync(
+                    productionOrderProcessingStatusInBD,
+                    ServiceConstants.FinalizeProcessFailedStatus,
+                    string.Format(LogsConstants.GenericErrorLog, ex.Message, ex.InnerException),
+                    productionOrderProcessingStatusInBD.LastStep);
+
+                return (productionOrderProcessingStatusInBD, false);
+            }
+        }
+
+        private async Task<(List<UserOrderModel> salesOrder, UserOrderModel productionOrders)> GetRelatedOrdersToProducionOrder(List<string> productionOrderIds)
+        {
+            var productionOrder = (await this.pedidosDao.GetUserOrderByProducionOrder(productionOrderIds)).FirstOrDefault(x => x.IsProductionOrder);
+            var salesOrdersId = !string.IsNullOrEmpty(productionOrder.Salesorderid) ? productionOrder.Salesorderid : null;
+
+            if (salesOrdersId == null)
+            {
+                return (null, productionOrder);
+            }
+
+            var salesOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { salesOrdersId })).ToList();
+
+            return (salesOrders, productionOrder);
         }
     }
 }

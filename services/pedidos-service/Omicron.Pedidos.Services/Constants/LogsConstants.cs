@@ -134,6 +134,14 @@ namespace Omicron.Pedidos.Services.Constants
         public static string FinalizeProductionOrdersOnSapAsync => "{0} - Pedidos Service - Finalize Production Orders Async On SAP";
 
         /// <summary>
+        /// Gets FinalizeProductionOrdersOnSapAsync.
+        /// </summary>
+        /// <value>
+        /// FinalizeProductionOrdersOnSapAsync.
+        /// </value>
+        public static string UpdateProductionOrdersOnPostgresAsync => "{0} - Pedidos Service - Update Production Orders Async On Postgres";
+
+        /// <summary>
         /// Gets PostSapFinalizeProductionOrderProcess.
         /// </summary>
         /// <value>
@@ -156,6 +164,14 @@ namespace Omicron.Pedidos.Services.Constants
         /// StartFinalizeProductionOrderInSap.
         /// </value>
         public static string StartFinalizeProductionOrderInSap => "Pedidos Service - Start Finalize Production Order On SAP - {ProductionOrdersToFinalize}";
+
+        /// <summary>
+        /// Gets StartFinalizeProductionOrderInSap.
+        /// </summary>
+        /// <value>
+        /// StartFinalizeProductionOrderInSap.
+        /// </value>
+        public static string StartFinalizeProductionOrderInPostgres => "Pedidos Service - Start Finalize Production Order On Postgres - {ProductionOrdersToFinalize}";
 
         /// <summary>
         /// Gets EndFinalizeProductionOrderInSap.

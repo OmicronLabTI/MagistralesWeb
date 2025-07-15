@@ -862,6 +862,45 @@ namespace Omicron.Pedidos.Test
                     CreatedAt = DateTime.Now.AddDays(-1),
                     LastUpdated = DateTime.Now,
                 },
+                new ProductionOrderProcessingStatusModel
+                {
+                    Id = "778e6a6a-fa1d-4767-95fa-47f3c0cb2377",
+                    ProductionOrderId = 223580,
+                    LastStep = "Update UsersOrders in postgres",
+                    Status = "In Progress",
+                    Payload = "{\"FinalizeProductionOrder\":{\"UserId\":\"7ac2db83-3c31-4042-9d1b-5531753694b4\",\"ProductionOrderId\":223580,\"SourceProcess\":null,\"Batches\":null}}",
+                    CreatedAt = DateTime.Now.AddDays(-1),
+                    LastUpdated = DateTime.Now,
+                },
+                new ProductionOrderProcessingStatusModel
+                {
+                    Id = "741baf58-b87a-4235-b724-35f966229fd8",
+                    ProductionOrderId = 224896,
+                    LastStep = "Update UsersOrders in postgres",
+                    Status = "In Progress",
+                    Payload = "{\"FinalizeProductionOrder\":{\"UserId\":\"7ac2db83-3c31-4042-9d1b-5531753694b4\",\"ProductionOrderId\":224896,\"SourceProcess\":null,\"Batches\":null}}",
+                    CreatedAt = DateTime.Now.AddDays(-1),
+                    LastUpdated = DateTime.Now,
+                },
+            };
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
+        public List<UserOrderModel> GetUserModelsForFinalizeProductionOrdersOnPostgresqlAsync()
+        {
+            return new List<UserOrderModel>
+            {
+                // UPDATE POSTGRES
+                new UserOrderModel { Id = 50, Productionorderid = null, Salesorderid = "165062", Status = "Terminado", Userid = "abc", FinishDate = new DateTime(2025, 4, 22), Quantity = 0 },
+                new UserOrderModel { Id = 51, Productionorderid = "223580", Salesorderid = "165062", Status = "Terminado", Userid = "abc", FinishDate = new DateTime(2025, 4, 22), Quantity = 1 },
+                new UserOrderModel { Id = 52, Productionorderid = "223581", Salesorderid = "165062", Status = "Terminado", Userid = "abc", FinishDate = new DateTime(2025, 4, 22), Quantity = 1 },
+                new UserOrderModel { Id = 53, Productionorderid = "223582", Salesorderid = "165062", Status = "Terminado", Userid = "abc", FinishDate = new DateTime(2025, 4, 22), Quantity = 1 },
+
+                // CREATE PDF
+                new UserOrderModel { Id = 55, Productionorderid = "224896", Salesorderid = null, Status = "Finalizado", Userid = "abc", FinishDate = new DateTime(2025, 4, 22), Quantity = 1 },
             };
         }
 
