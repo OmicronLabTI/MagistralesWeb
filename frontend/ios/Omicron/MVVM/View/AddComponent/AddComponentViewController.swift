@@ -345,8 +345,11 @@ class AddComponentViewController: LotsBaseViewController, ComponentsDelegate, Ch
     
     @IBAction func addButtonDidPressed(_ sender: UIButton) {
         if let cell = lotsAvailablesTable.cellForRow(at: IndexPath(row: addComponentViewModel.selectedAvailable, section: 0)) as? LotsAvailableTableViewCell {
-            let quantity = Decimal(string: cell.quantitySelected.text ?? "0") ?? 0
-            addComponentViewModel.addNewLot(quantity: quantity)
+            let quantityString = cell.quantitySelected.text ?? "0"
+            var quantity = Decimal(string: quantityString) ?? 0
+            var roundedQuantity = Decimal()
+            NSDecimalRound(&roundedQuantity, &quantity, 6, .plain)
+            addComponentViewModel.addNewLot(quantity: roundedQuantity)
         }
     }
     

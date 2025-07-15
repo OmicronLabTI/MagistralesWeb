@@ -1,59 +1,47 @@
-﻿// <summary>
-// <copyright file="CompleteDetalleFormulaDto.cs" company="Axity">
+// <summary>
+// <copyright file="ProductDataDto.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
 
-namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
+namespace Omicron.Catalogos.Dtos.Models
 {
     /// <summary>
-    /// class to join wor1 with oitm and oitw.
+    /// Class ProductDataDto.
     /// </summary>
-    public class CompleteDetalleFormulaDto
+    public class ProductDataDto
     {
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public int OrderFabId { get; set; }
+        public string ProductoId { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public string ProductId { get; set; }
+        public string ProductoName { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public string Description { get; set; }
+        public string IsMagistral { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public decimal BaseQuantity { get; set; }
+        public string IsLine { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public decimal RequiredQuantity { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        public decimal Consumed { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        public decimal Available { get; set; }
+        public decimal OnHand { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
@@ -65,42 +53,78 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public int UnitCode { get; set; }
+        public string ManagedBatches { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public string Warehouse { get; set; }
+        public string LargeDescription { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public decimal PendingQuantity { get; set; }
+        public string NeedsCooling { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public decimal Stock { get; set; }
+        public string BarCode { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public decimal WarehouseQuantity { get; set; }
+        public short ProductGroupId { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public string Action { get; set; }
+        public int UnitId { get; set; }
 
         /// <summary>
-        /// Gets or sets AssignedBatches.
+        /// Gets or sets Code.
         /// </summary>
-        /// <value>The AssignedBatches.</value>
-        public List<AssignBatchDto> AssignedBatches { get; set; }
+        /// <value>The code.</value>
+        public string IsWorkableProduct { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string IsPackage { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public short ProductFirmCode { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string IsLabel { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string ThemeId { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string Groupname { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string ProductFirmName { get; set; }
     }
 }

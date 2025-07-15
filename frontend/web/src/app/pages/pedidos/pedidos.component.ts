@@ -3,6 +3,7 @@ import { MatTableDataSource } from '@angular/material';
 import { PedidosService } from '../../services/pedidos.service';
 import { DataService } from '../../services/data.service';
 import {
+  ClasificationMUConstant,
   ClassCssOrderType,
   ClassNames,
   CONST_NUMBER,
@@ -96,7 +97,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.titleService.setTitle('OmicronLab - Pedidos');
     this.dataSource.paginator = this.paginator;
     this.userClasification = this.localStorageService.getUserClasification();
-    this.clasificationList = [...this.localStorageService.getClasificationList()];
+    this.clasificationList = [...this.localStorageService.getClasificationColors()];
     if (this.localStorageService.getFiltersActives()) {
       this.onSuccessSearchOrderModal(this.localStorageService.getFiltersActivesAsModel());
     } else {
@@ -196,7 +197,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   getClasificationColor(clasification: string): string {
     const color = this.clasificationList.find(clas => clas.value === clasification) !== undefined
       ? this.clasificationList.find(clas => clas.value === clasification).color : defaultClasificationColor;
-    return color;
+    return clasification !== ClasificationMUConstant.value ? color : ClasificationMUConstant.color;
   }
 
   updateAllComplete() {
