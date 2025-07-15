@@ -31,11 +31,11 @@ spec:
             - containerPort: 8090
           resources:
             limits:
-              cpu: 2124m
+              cpu: 1225m
               memory: 1563Mi
             requests:
-              cpu: 707m
-              memory: 323Mi
+              cpu: 613m # -50% limit (50% del limite)
+              memory: 1094Mi # -30% limit (70% del limite)
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -53,6 +53,31 @@ spec:
   selector:
     app: oauthserver
   type: ClusterIP
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: oauthserver-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: oauthserver-deployment
+  minReplicas: 2
+  maxReplicas: 3
+  metrics:
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -105,6 +130,11 @@ spec:
                 secretKeyRef:
                   name: omicron-prod
                   key: storage_account_key
+            - name: REDIS_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: redis
           ports:
             - containerPort: 80
           resources:
@@ -112,8 +142,8 @@ spec:
               cpu: 38m
               memory: 247Mi
             requests:
-              cpu: 3m
-              memory: 174Mi
+              cpu: 19m # -50% limit (50% del limite)
+              memory: 173Mi # -30% limit (70% del limite)
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -131,6 +161,31 @@ spec:
   selector:
     app: catalogos
   type: ClusterIP
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: catalogos-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: catalogos-deployment
+  minReplicas: 2
+  maxReplicas: 3
+  metrics:
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -180,8 +235,8 @@ spec:
               cpu: 279m
               memory: 688Mi
             requests:
-              cpu: 3m
-              memory: 206Mi
+              cpu: 140m # -50% limit (50% del limite)
+              memory: 482Mi # -30% limit (70% del limite)
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -199,6 +254,31 @@ spec:
   selector:
     app: usuarios
   type: ClusterIP
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: usuarios-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: usuarios-deployment
+  minReplicas: 2
+  maxReplicas: 3
+  metrics:
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -258,8 +338,8 @@ spec:
               cpu: 1245m
               memory: 1879Mi
             requests:
-              cpu: 8m
-              memory: 272Mi
+              cpu: 623m # -50% limit (50% del limite)
+              memory: 1315Mi # -30% limit (70% del limite)
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -277,6 +357,31 @@ spec:
   selector:
     app: sapadapter
   type: ClusterIP
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: sapadapter-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: sapadapter-deployment
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -358,11 +463,11 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: 670m
-              memory: 1875Mi
+              cpu: 875m
+              memory: 2288Mi
             requests:
-              cpu: 62m
-              memory: 155Mi
+              cpu: 438m # -50% limit (50% del limite)
+              memory: 1602Mi # -30% limit (70% del limite)
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -380,6 +485,31 @@ spec:
   selector:
     app: pedidos
   type: ClusterIP
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: pedidos-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: pedidos-deployment
+  minReplicas: 2
+  maxReplicas: 4
+  metrics:
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -434,8 +564,8 @@ spec:
               cpu: 128m
               memory: 209Mi
             requests:
-              cpu: 2m
-              memory: 143Mi
+              cpu: 64m # -50% limit (50% del limite)
+              memory: 146Mi # -30% limit (70% del limite)
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -453,6 +583,31 @@ spec:
   selector:
     app: warehouses
   type: ClusterIP
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: warehouses-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: warehouses-deployment
+  minReplicas: 2
+  maxReplicas: 3
+  metrics:
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -512,8 +667,8 @@ spec:
               cpu: 140m
               memory: 208Mi
             requests:
-              cpu: 2m
-              memory: 152Mi
+              cpu: 70m # -50% limit (50% del limite)
+              memory: 146Mi # -30% limit (70% del limite)
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -531,6 +686,31 @@ spec:
   selector:
     app: reporting
   type: ClusterIP
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: reporting-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: reporting-deployment
+  minReplicas: 2
+  maxReplicas: 3
+  metrics:
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -592,11 +772,11 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: 60m
-              memory: 235Mi
+              cpu: 185m
+              memory: 368Mi
             requests:
-              cpu: 1m
-              memory: 40Mi
+              cpu: 93m # -50% limit (50% del limite)
+              memory: 258Mi # -30% limit (70% del limite)
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -614,5 +794,30 @@ spec:
   selector:
     app: sapservicelayeradapter
   type: ClusterIP
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: sapservicelayeradapter-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: sapservicelayeradapter-deployment
+  minReplicas: 2
+  maxReplicas: 3
+  metrics:
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80
 ---
 

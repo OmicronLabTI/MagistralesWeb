@@ -2957,7 +2957,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.23;
+				MARKETING_VERSION = 1.1.26;
 				PRODUCT_BUNDLE_IDENTIFIER = com.omicronlab.Formulas;
 				PRODUCT_NAME = Magistrales;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2999,7 +2999,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 4574497W4X;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -3076,7 +3076,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 13;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 4574497W4X;
 				INFOPLIST_FILE = "Omicron/Omicron-UAT.plist";
@@ -3102,7 +3102,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 13;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 4574497W4X;
 				INFOPLIST_FILE = "Omicron/Omicron-UAT.plist";
@@ -3128,7 +3128,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 13;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 4574497W4X;
 				INFOPLIST_FILE = "Omicron/Omicron-UAT.plist";
@@ -3154,7 +3154,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 13;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 4574497W4X;
 				INFOPLIST_FILE = "Omicron/Omicron-UAT.plist";
@@ -3228,7 +3228,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 4574497W4X;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -3255,7 +3255,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 4574497W4X;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -3350,7 +3350,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.23;
+				MARKETING_VERSION = 1.1.26;
 				PRODUCT_BUNDLE_IDENTIFIER = com.omicronlab.Formulas;
 				PRODUCT_NAME = Magistrales;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3442,7 +3442,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 4574497W4X;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -3591,7 +3591,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.23;
+				MARKETING_VERSION = 1.1.26;
 				PRODUCT_BUNDLE_IDENTIFIER = com.omicronlab.Formulas;
 				PRODUCT_NAME = Magistrales;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3615,7 +3615,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.23;
+				MARKETING_VERSION = 1.1.26;
 				PRODUCT_BUNDLE_IDENTIFIER = com.omicronlab.Formulas;
 				PRODUCT_NAME = Magistrales;
 				PROVISIONING_PROFILE_SPECIFIER = "";

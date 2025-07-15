@@ -278,21 +278,24 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<ProductoModel>
             {
-                new ProductoModel { IsMagistral = "Y", ProductoId = "Abc Aspirina", ProductoName = "Aspirina", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Aspirina con 2%", ProductGroupId = 1, IsWorkableProduct = "Y" },
-                new ProductoModel { IsMagistral = "N", ProductoId = "Ung?ento 1", ProductoName = "Ung?ento 10 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Ung?ento 10 GR", ProductGroupId = 1, IsWorkableProduct = "Y" },
-                new ProductoModel { IsMagistral = "N", ProductoId = "C?psula 12ML", ProductoName = "C?psula 12 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "C?psula 12 GR", ProductGroupId = 1, IsWorkableProduct = "Y" },
+                new ProductoModel { IsMagistral = "Y", ProductoId = "Abc Aspirina", ProductoName = "Aspirina", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Aspirina con 2%", ProductGroupId = 1, IsWorkableProduct = "Y", ThemeId = "linea" },
+                new ProductoModel { IsMagistral = "N", ProductoId = "Ung?ento 1", ProductoName = "Ung?ento 10 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Ung?ento 10 GR", ProductGroupId = 1, IsWorkableProduct = "Y", ThemeId = "magistral" },
+                new ProductoModel { IsMagistral = "N", ProductoId = "C?psula 12ML", ProductoName = "C?psula 12 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "C?psula 12 GR", ProductGroupId = 1, IsWorkableProduct = "Y", ThemeId = "magistral" },
                 new ProductoModel { IsMagistral = "N", ProductoId = "Buscapina", ProductoName = "Buscapina 12 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "C?psula 12 GR", ProductGroupId = 1, IsWorkableProduct = "Y" },
                 new ProductoModel { IsMagistral = "N", ProductoId = "Magistral4", ProductoName = "Magistral 4 12 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "C?psula 12 GR", ProductGroupId = 1, IsWorkableProduct = "Y" },
 
                 // For almacen
                 new ProductoModel { IsMagistral = "Y", ProductoId = "Magistral1", ProductoName = "MagistralSolo1",  Unit = "PZ", LargeDescription = "MAAAAgistral1", NeedsCooling = "Y", ProductGroupId = 1, IsWorkableProduct = "Y" },
                 new ProductoModel { IsMagistral = "Y", ProductoId = "Magistral2", ProductoName = "MagistralSolo2",  Unit = "PZ", LargeDescription = "MAAAAgistral2", NeedsCooling = "N", ProductGroupId = 1, IsWorkableProduct = "Y" },
-                new ProductoModel { IsMagistral = "N", ProductoId = "Linea1", ProductoName = "MagistralLinea", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "Y", ProductGroupId = 1, IsWorkableProduct = "Y" },
+                new ProductoModel { IsMagistral = "N", ProductoId = "Linea1", ProductoName = "MagistralLinea", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "Y", ProductGroupId = 1, IsWorkableProduct = "Y", ThemeId = "magistral" },
 
-                new ProductoModel { IsMagistral = "N", ProductoId = "Linea50", ProductoName = "MagistralLinea", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea50", IsLine = "Y", ProductGroupId = 1, IsWorkableProduct = "Y" },
+                new ProductoModel { IsMagistral = "N", ProductoId = "Linea50", ProductoName = "MagistralLinea", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea50", IsLine = "Y", ProductGroupId = 1, IsWorkableProduct = "Y", ThemeId = "magistral" },
 
                 // For omigenomics
                 new ProductoModel { IsMagistral = "N", ProductoId = "Omigenomics", ProductoName = "Omigenomics", Unit = "PZ", LargeDescription = "Omigenomics", NeedsCooling = "Y", BarCode = "Omicenomics", IsLine = "Y", ProductGroupId = 2, IsWorkableProduct = "N" },
+
+                // For omigenomics
+                new ProductoModel { IsMagistral = "N", ProductoId = "TEST 1", ProductoName = "Omigenomics", Unit = "PZ", LargeDescription = "Omigenomics", NeedsCooling = "Y", BarCode = "Omicenomics", IsLine = "Y", ProductGroupId = 2, IsWorkableProduct = "N", UnitId = 1 },
             };
         }
 
@@ -1097,6 +1100,19 @@ namespace Omicron.SapAdapter.Test
                 new ActiveConfigRoutesModel { Id = 4, ClassificationCode = "BQ", Exceptions = "BQ 41", ItemCode = null, IsActive = true, Route = "ALM" },
                 new ActiveConfigRoutesModel { Id = 5, ClassificationCode = "DZ", Exceptions = "DZ 51", ItemCode = "REVE 53", IsActive = true, Route = "MAG" },
                 new ActiveConfigRoutesModel { Id = 6, ClassificationCode = "REVE", Exceptions = "REVE 1", ItemCode = null, IsActive = true, Route = "ALM" },
+            };
+        }
+
+        /// <summary>
+        /// GetBaseUnitProducts.
+        /// </summary>
+        /// <returns>ActiveConfigRoutesModel.</returns>
+        public List<UnitCatalogModel> GetBaseUnitProducts()
+        {
+            return new List<UnitCatalogModel>
+            {
+                new UnitCatalogModel { Id = 1, Code = "KG", Description = "Kilogramos" },
+                new UnitCatalogModel { Id = 2, Code = "GR", Description = "Gramos" },
             };
         }
     }

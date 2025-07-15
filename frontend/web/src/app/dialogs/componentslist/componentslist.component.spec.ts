@@ -129,7 +129,8 @@ describe('ComponentslistComponent', () => {
       id: 19887,
       name: '',
       productId: '19887',
-      components: components[0]
+      components: components[0],
+      unit: ''
     }];
     ordersServiceSpy.getCustomList('?productId=19887');
     component.getCustomList();

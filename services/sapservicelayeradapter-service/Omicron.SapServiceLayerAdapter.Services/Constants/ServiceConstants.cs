@@ -369,6 +369,16 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string DeleteComponent = "delete";
 
         /// <summary>
+        /// the value to delete the conmponent.
+        /// </summary>
+        public const string InsertComponent = "insert";
+
+        /// <summary>
+        /// the value to delete the conmponent.
+        /// </summary>
+        public const string UpdateComponent = "update";
+
+        /// <summary>
         /// error while inserting.
         /// </summary>
         public const string ErrorCreateFabOrd = "ErrorCreateFabOrd";
@@ -410,6 +420,21 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// String DictionaryValueFormat.
         /// </value>
         public static string DictionaryValueFormat => "{0}, {1}";
+
+        /// <summary>
+        /// Gets maxSapTrackingLength.
+        /// </summary>
+        public static int MaxSapTrackingLength => 30;
+
+        /// <summary>
+        /// Gets CommaChar.
+        /// </summary>
+        public static char CommaChar => ',';
+
+        /// <summary>
+        /// Gets HypenChar.
+        /// </summary>
+        public static char HypenChar => '-';
 
         /// <summary>
         /// Gets the status of the order.

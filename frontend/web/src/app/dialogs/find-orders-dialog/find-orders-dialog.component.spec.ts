@@ -11,7 +11,7 @@ import { ConstOrders, MODAL_FIND_ORDERS } from '../../constants/const';
 import { UsersService } from '../../services/users.service';
 import { PedidosService } from '../../services/pedidos.service';
 import { of, throwError } from 'rxjs';
-import { UserListMock } from '../../../mocks/userListMock';
+import { ClasificationColorList, UserListMock } from '../../../mocks/userListMock';
 import { RolesMock } from '../../../mocks/rolesMock';
 import { QfbWithNumberMock } from '../../../mocks/qfbWithNumberMock';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -59,7 +59,7 @@ describe('FindOrdersDialogComponent', () => {
   ];
   beforeEach(async(() => {
     userServiceSpy = jasmine.createSpyObj<UsersService>('UsersService', [
-      'getUsers', 'getRoles', 'getClasifications'
+      'getUsers', 'getRoles'
     ]);
     dataServiceSpy = jasmine.createSpyObj<DataService>('UsersService', [
       'calculateTernary',
@@ -68,7 +68,8 @@ describe('FindOrdersDialogComponent', () => {
 
     localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
       'getUserClasification',
-      'getUserRole'
+      'getUserRole',
+      'getClasificationList'
     ]);
 
     dataServiceSpy.calculateAndValueList.and.callFake((list: boolean[]) => {
@@ -85,14 +86,6 @@ describe('FindOrdersDialogComponent', () => {
     userServiceSpy.getUsers.and.callFake(() => {
       return of(UserListMock);
     });
-    userServiceSpy.getClasifications.and.returnValue(of({
-      response: [
-        { value: 'MN', description: 'Bioelite (MN)', classificationQfb: true },
-        { value: 'BE', description: 'Bioequal (BE)', classificationQfb: true },
-        { value: 'MG', description: 'Magistral (MG)', classificationQfb: true },
-        { value: 'DZ', description: 'Dermazon (DZ)', classificationQfb: true }
-      ]
-    }));
     ordersServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
       'getQfbs'
     ]);
@@ -107,6 +100,7 @@ describe('FindOrdersDialogComponent', () => {
     });
     localStorageServiceSpy.getUserClasification.and.returnValue('MN,MG');
     localStorageServiceSpy.getUserRole.and.returnValue('3');
+    localStorageServiceSpy.getClasificationList.and.returnValue(ClasificationColorList);
     TestBed.configureTestingModule({
       imports: [
         BrowserAnimationsModule,

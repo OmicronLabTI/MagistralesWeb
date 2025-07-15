@@ -99,6 +99,13 @@ namespace Omicron.SapAdapter.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
+        [Column("UgpEntry")]
+        public int UnitId { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
         [Column("U_Trabajable")]
         public string IsWorkableProduct { get; set; }
 
@@ -122,6 +129,13 @@ namespace Omicron.SapAdapter.Entities.Model
         /// <value>The code.</value>
         [Column("U_Etiqueta")]
         public string IsLabel { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("U_TipoProducto")]
+        public string ThemeId { get; set; }
 
         /// <summary>
         /// Gets or sets Code.

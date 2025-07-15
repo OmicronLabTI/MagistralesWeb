@@ -145,5 +145,25 @@ namespace Omicron.Catalogos.Services.Utils
         {
             return validation ? firstValue : defaultValue;
         }
+
+        /// <summary>
+        /// Normalizes input string by removing accents, converting to uppercase.
+        /// </summary>
+        /// <param name="input">Input string to normalize.</param>
+        /// <returns>Normalized string with only letters, numbers and hyphens in uppercase format.</returns>
+        public static string NormalizeComplete(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return input;
+            }
+
+            string normalized = new string(input.Normalize(NormalizationForm.FormD)
+                .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                .ToArray())
+                .ToUpper();
+
+            return Regex.Replace(normalized, @"[^A-Z0-9\-]+", string.Empty).Trim('-');
+        }
     }
 }

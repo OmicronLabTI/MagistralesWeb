@@ -44,6 +44,11 @@ namespace Omicron.Catalogos.Services.Constants
         public const string IsActive = "activo";
 
         /// <summary>
+        /// Is active excel.
+        /// </summary>
+        public const string IsActiveProduct = "1";
+
+        /// <summary>
         /// Is magistrales.
         /// </summary>
         public const string Magistrales = "MAG";
@@ -52,6 +57,11 @@ namespace Omicron.Catalogos.Services.Constants
         /// Constant for Limit.
         /// </summary>
         public const string Warehouses = "warehouses";
+
+        /// <summary>
+        /// Constant for Limit.
+        /// </summary>
+        public const string PostProductInfo = "product/firmname";
 
         /// <summary>
         /// NoMatching.
@@ -67,6 +77,11 @@ namespace Omicron.Catalogos.Services.Constants
         /// AzureAdEnvDataKey.
         /// </summary>
         public const string Manufacturers = "manufacturers/all";
+
+        /// <summary>
+        /// AzureAdEnvDataKey.
+        /// </summary>
+        public const string WarehousesData = "get/configwarehouses";
 
         /// <summary>
         /// AzureAdEnvDataKey.
@@ -102,6 +117,21 @@ namespace Omicron.Catalogos.Services.Constants
         /// NoMatching.
         /// </summary>
         public const string DefaultColor = "#FBC115";
+
+        /// <summary>
+        /// the container file.
+        /// </summary>
+        public const string ProductTypeColorsFileUrl = "ProductTypeColorsFileUrl";
+
+        /// <summary>
+        /// the container file.
+        /// </summary>
+        public const string ProductTypeColors = "ProductTypeColors";
+
+        /// <summary>
+        /// the container file.
+        /// </summary>
+        public const string ConfigWarehouses = "ConfigWarehouses";
 
         /// <summary>
         /// Gets the order.

@@ -13,7 +13,7 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
     /// <summary>
     /// class for the product.
     /// </summary>
-    public class InvoiceProductModel
+    public class InvoiceProductModel : BaseProductColorModel
     {
         /// <summary>
         /// Gets or sets Code.

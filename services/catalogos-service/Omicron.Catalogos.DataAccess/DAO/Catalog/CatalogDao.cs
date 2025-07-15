@@ -41,6 +41,18 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
             return await this.databaseContext.RoleModel.ToListAsync();
         }
 
+        /// <inheritdoc/>
+        public async Task<IEnumerable<ClassificationQfbModel>> GetActiveClassificationQfb()
+        {
+            return await this.databaseContext.ClassificationQfbModel.Where(c => c.Active).ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<ProductTypeColorsModel>> GetProductsColors()
+        {
+            return await this.databaseContext.ProductTypeColorsModel.Where(c => c.IsActive).ToListAsync();
+        }
+
         /// <summary>
         /// Looks the values by field.
         /// </summary>
@@ -81,6 +93,29 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
             return true;
         }
 
+        public async Task<bool> UpdateProductTypecolors(List<ProductTypeColorsModel> producttypecolors)
+        {
+            this.databaseContext.ProductTypeColorsModel.UpdateRange(producttypecolors);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<bool> InsertProductTypecolors(List<ProductTypeColorsModel> producttypecolors)
+        {
+            await this.databaseContext.ProductTypeColorsModel.AddRangeAsync(producttypecolors);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<List<string>> GetExistingTemaIds(List<string> temaIds)
+        {
+            return await this.databaseContext.ProductTypeColorsModel
+                .Where(x => temaIds.Contains(x.TemaId))
+                .Select(x => x.TemaId)
+                .ToListAsync();
+        }
+
         public async Task<List<WarehouseModel>> GetActiveWarehouses()
         {
             return await this.databaseContext.WarehousesModel.Where(x => x.IsActive).AsNoTracking().ToListAsync();
@@ -110,6 +145,55 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
                 .Where(x => x.IsActive && routes.Contains(x.Route))
                 .AsNoTracking()
                 .ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> InsertConfigWarehouses(List<ConfigWarehouseModel> configWarehouses)
+        {
+            this.databaseContext.ConfigWarehousesModel.UpdateRange(configWarehouses);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<string>> GetExistingManufacturers(List<string> manufacturers)
+        {
+            return await this.databaseContext.ConfigWarehousesModel
+                .Where(x => manufacturers.Contains(x.Manufacturers))
+                .Select(x => x.Manufacturers)
+                .Distinct()
+                .ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> UpdateConfigWarehouses(List<ConfigWarehouseModel> configWarehouses)
+        {
+            foreach (var item in configWarehouses)
+            {
+                var existing = await this.databaseContext.ConfigWarehousesModel
+                    .FirstOrDefaultAsync(x => x.Manufacturers == item.Manufacturers);
+
+                if (existing != null)
+                {
+
+                    existing.Mainwarehouse = item.Mainwarehouse;
+                    existing.Products = item.Products;
+                    existing.Exceptions = item.Exceptions;
+                    existing.Alternativewarehouses = item.Alternativewarehouses;
+                    existing.IsActive = item.IsActive;
+
+                }
+            }
+
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<ConfigWarehouseModel>> GetActiveConfigWarehouses()
+        {
+            return await this.databaseContext.ConfigWarehousesModel.Where(x => x.IsActive).ToListAsync();
         }
     }
 }

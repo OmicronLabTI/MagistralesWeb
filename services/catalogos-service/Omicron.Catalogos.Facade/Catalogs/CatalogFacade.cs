@@ -65,6 +65,12 @@ namespace Omicron.Catalogos.Facade.Catalogs
         }
 
         /// <inheritdoc/>
+        public async Task<ResultDto> GetActiveAllClassificationQfb()
+        {
+            return this.mapper.Map<ResultDto>(await this.catalogService.GetActiveAllClassificationQfb());
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultDto> UploadWarehouseFromExcel()
         {
             return this.mapper.Map<ResultDto>(await this.catalogService.UploadWarehouseFromExcel());
@@ -92,6 +98,30 @@ namespace Omicron.Catalogos.Facade.Catalogs
         public async Task<ResultDto> GetActiveRouteConfigurationsForProducts()
         {
             return this.mapper.Map<ResultDto>(await this.catalogService.GetActiveRouteConfigurationsForProducts());
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> UploadProductTypeColorsFromExcel()
+        {
+            return this.mapper.Map<ResultDto>(await this.catalogService.UploadProductTypeColorsFromExcel());
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetProductsColors(List<string> themesIds)
+        {
+            return this.mapper.Map<ResultDto>(await this.catalogService.GetProductsColors(themesIds));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> PostConfigWarehouses()
+        {
+            return this.mapper.Map<ResultDto>(await this.catalogService.PostConfigWarehouses());
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetWarehouses(string itemCode)
+        {
+            return this.mapper.Map<ResultDto>(await this.catalogService.GetWarehouses(itemCode));
         }
     }
 }

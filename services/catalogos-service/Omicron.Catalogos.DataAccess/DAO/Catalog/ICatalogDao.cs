@@ -31,6 +31,18 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
         Task<IEnumerable<ParametersModel>> GetParamsByField(List<string> fields);
 
         /// <summary>
+        /// Get classification qfb.
+        /// </summary>
+        /// <returns>Classification qfb.</returns>
+        Task<IEnumerable<ClassificationQfbModel>> GetActiveClassificationQfb();
+
+        /// <summary>
+        /// Get products colors.
+        /// </summary>
+        /// <returns>colors.</returns>
+        Task<IEnumerable<ProductTypeColorsModel>> GetProductsColors();
+
+        /// <summary>
         /// Method to obtain warehouses.
         /// </summary>
         /// <param name="warehouses"> warehouses to search. </param>
@@ -49,7 +61,7 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
         /// </summary>
         /// <param name="warehouses"> warehouses to search. </param>
         /// <returns> boolean indicating whether the insert was successful. </returns>
-         Task<List<WarehouseModel>> GetActiveWarehouses();
+        Task<List<WarehouseModel>> GetActiveWarehouses();
 
         /// <summary>
         /// Method to insert new sortingroute.
@@ -82,5 +94,52 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
         /// </summary>
         /// <returns>Active classification colors by routes.</returns>
         Task<List<ConfigRoutesModel>> GetActiveClassificationColorsByRoutes(List<string> routes);
+
+        /// Method to insert new producttypecolors.
+        /// </summary>
+        /// <param name="producttypecolors"> new producttypecolors to be inserted. </param>
+        /// <returns> boolean indicating whether the insert was successful. </returns>
+        Task<bool> InsertProductTypecolors(List<ProductTypeColorsModel> producttypecolors);
+
+        /// <summary>
+        /// Method to update new producttypecolors.
+        /// </summary>
+        /// <param name="producttypecolors"> new producttypecolors to be inserted. </param>
+        /// <returns> boolean indicating whether the insert was successful. </returns>
+        Task<bool> UpdateProductTypecolors(List<ProductTypeColorsModel> producttypecolors);
+
+        /// <summary>
+        /// Method to get new temaIds.
+        /// </summary>
+        /// <param name="temaIds"> new producttypecolors to be inserted. </param>
+        /// <returns> boolean indicating whether the insert was successful. </returns>
+        Task<List<string>> GetExistingTemaIds(List<string> temaIds);
+
+        /// <summary>
+        /// Method to insert new get.
+        /// </summary>
+        /// <param name="configWarehouses"> new configWarehouses to be inserted. </param>
+        /// <returns> boolean indicating whether the insert was successful. </returns>
+        Task<bool> InsertConfigWarehouses(List<ConfigWarehouseModel> configWarehouses);
+
+        /// <summary>
+        /// Method to get new manufacturers.
+        /// </summary>
+        /// <param name="manufacturers"> new manufacturers to be inserted. </param>
+        /// <returns> boolean indicating whether the insert was successful. </returns>
+        Task<List<string>> GetExistingManufacturers(List<string> manufacturers);
+
+        /// <summary>
+        /// Method to update new configWarehouses.
+        /// </summary>
+        /// <param name="configWarehouses"> new configWarehouses to be inserted. </param>
+        /// <returns> boolean indicating whether the insert was successful. </returns>
+        Task<bool> UpdateConfigWarehouses(List<ConfigWarehouseModel> configWarehouses);
+        
+        /// <summary>
+        /// Method to update new configWarehouses.
+        /// </summary>
+        /// <returns> boolean indicating whether the insert was successful. </returns>
+        Task<IEnumerable<ConfigWarehouseModel>> GetActiveConfigWarehouses();
     }
 }

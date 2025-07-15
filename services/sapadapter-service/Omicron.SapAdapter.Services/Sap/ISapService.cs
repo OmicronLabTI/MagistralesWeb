@@ -10,6 +10,7 @@ namespace Omicron.SapAdapter.Services.Sap
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
 
@@ -213,5 +214,26 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="classifications"> classifications collection to search. </param>
         /// <returns>A <see cref="Task{ResultModel}"/> containing the classification data.</returns>
         Task<ResultModel> GetClassificationsByDescription(List<string> classifications);
+
+        /// <summary>
+        /// Gets the matching configwarehouses.
+        /// </summary>
+        /// <param name="configWareshousesModel"> configwarehouses collection to search. </param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultModel> GetConfigWarehouses(ConfigWareshousesModel configWareshousesModel);
+
+        /// <summary>
+        /// Gets the matching warehouse.
+        /// </summary>
+        /// <param name="itemCodes"> warehouse collection to search. </param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultModel> GetUnitProducts(List<string> itemCodes);
+
+        /// <summary>
+        /// Gets the matching warehouse.
+        /// </summary>
+        /// <param name="itemCode"> warehouse collection to search. </param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultModel> GetProductFirmName(string itemCode);
     }
 }

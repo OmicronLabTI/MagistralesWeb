@@ -71,6 +71,15 @@ namespace Omicron.SapAdapter.Test.Services
             this.catalogService
                 .Setup(m => m.GetParams(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultDto(parameters)));
+            var colorsResponse = new List<ProductColorsDto>
+            {
+                new ProductColorsDto() { BackgroundColor = "#f3f3f3", TemaId = string.Empty, LabelText = "tema 1", TextColor = "#ffffff" },
+                new ProductColorsDto() { BackgroundColor = "#f3f3f3", TemaId = "tema1", LabelText = "tema 1", TextColor = "#ffffff" },
+            };
+
+            this.catalogService
+                .Setup(m => m.PostCatalogs(It.IsAny<object>(), ServiceConstants.GetThemes))
+                .Returns(Task.FromResult(this.GetResultDto(colorsResponse)));
 
             this.mockRedis = new Mock<IRedisService>();
 
@@ -319,6 +328,16 @@ namespace Omicron.SapAdapter.Test.Services
 
             var mockProccessPayments = new Mock<IProccessPayments>();
             var mockDoctors = new Mock<IDoctorService>();
+            var colorsResponse = new List<ProductColorsDto>
+            {
+                new ProductColorsDto() { BackgroundColor = "#f3f3f3", TemaId = string.Empty, LabelText = "tema 1", TextColor = "#ffffff" },
+                new ProductColorsDto() { BackgroundColor = "#f3f3f3", TemaId = "tema1", LabelText = "tema 1", TextColor = "#ffffff" },
+            };
+
+            this.catalogService
+                .Setup(m => m.PostCatalogs(It.IsAny<object>(), ServiceConstants.GetThemes))
+                .Returns(Task.FromResult(this.GetResultDto(colorsResponse)));
+
             var service = new SapInvoiceService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object, mockDoctors.Object);
 
             // act
