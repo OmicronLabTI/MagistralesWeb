@@ -1055,6 +1055,22 @@ namespace Omicron.Pedidos.Services.Constants
         public static string SapFinalizeProductionOrdersEndpoint => "finalize/productionorders";
 
         /// <summary>
+        /// Gets StepPrimaryValidations.
+        /// </summary>
+        /// <value>
+        /// StepPrimaryValidations.
+        /// </value>
+        public static string StepUpdatePostgres => "Update UsersOrders in postgres";
+
+        /// <summary>
+        /// Gets StepPrimaryValidations.
+        /// </summary>
+        /// <value>
+        /// StepPrimaryValidations.
+        /// </value>
+        public static string StepCreatePdf => "Create PDF";
+
+        /// <summary>
         /// Gets FinalizeProcessInProgressStatus.
         /// </summary>
         /// <value>
@@ -1069,6 +1085,14 @@ namespace Omicron.Pedidos.Services.Constants
         /// FinalizeProcessFailedStatus.
         /// </value>
         public static string FinalizeProcessFailedStatus => "Failed";
+
+        /// <summary>
+        /// Gets FinalizeProcessInSuccessStatus.
+        /// </summary>
+        /// <value>
+        /// FinalizeProcessInSuccessStatus.
+        /// </value>
+        public static string FinalizeProcessInSuccessStatus => "Success";
 
         /// <summary>
         /// Gets ProductionOrderFinalizingKey.

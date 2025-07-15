@@ -274,7 +274,8 @@ namespace Omicron.Pedidos.Test.Services
 
             var mockSapFile = new Mock<ISapFileService>();
             var mockSaDiApi = new Mock<ISapDiApi>();
-            var pedidosServiceLocal = new PedidosService(mockSapAdapter.Object, this.pedidosDao, this.usersService.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object, serviceLayer.Object, mockSaDiApi.Object,  this.productionOrdersService.Object, this.logger.Object);
+
+            var pedidosServiceLocal = new PedidosService(mockSapAdapter.Object, this.pedidosDao, this.usersService.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object, serviceLayer.Object, mockSaDiApi.Object, this.productionOrdersService.Object, this.logger.Object);
 
             // act
             var response = await pedidosServiceLocal.UpdateComponents(asignar);

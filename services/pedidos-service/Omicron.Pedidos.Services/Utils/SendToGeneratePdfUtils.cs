@@ -37,7 +37,7 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="usersService">the user service.</param>
         /// <param name="onlyFinalized">if only applies to finalized.</param>
         /// <returns>the data.</returns>
-        public static async Task<Task<ResultModel>> CreateModelGeneratePdf(
+        public static async Task<ResultModel> CreateModelGeneratePdf(
             List<int> ordersId,
             List<int> fabOrdersId,
             ISapAdapter sapAdapter,
@@ -85,7 +85,7 @@ namespace Omicron.Pedidos.Services.Utils
             listToSend.AddRange(GetModelsBySaleOrders(listOrdersWithDetail, recipes, users, orderSignature, listUserOrders));
             listToSend.AddRange(GetModelByOrder(listFabOrders, users, orderSignature, listUserOrders));
 
-            return sapFileService.PostSimple(listToSend, ServiceConstants.CreatePdf);
+            return await sapFileService.PostSimple(listToSend, ServiceConstants.CreatePdf);
         }
 
         /// <summary>

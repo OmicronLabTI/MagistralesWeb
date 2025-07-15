@@ -9,6 +9,8 @@
 namespace Omicron.Pedidos.Test.Services.ProductionOrders
 {
     using Omicron.Pedidos.Services.ProductionOrders.Impl;
+    using StackExchange.Redis;
+    using ZXing;
 
     /// <summary>
     /// class for the test.
@@ -21,6 +23,12 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
         private Mock<ILogger> logger;
 
         private Mock<IKafkaConnector> mockKafkaConnector;
+
+        private Mock<ISapAdapter> sapAdapter;
+
+        private Mock<IUsersService> userService;
+
+        private Mock<ISapFileService> sapFileService;
 
         private DatabaseContext context;
 
@@ -41,9 +49,13 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
 
             this.context = new DatabaseContext(options);
             this.context.ProductionOrderProcessingStatusModel.AddRange(this.GetProductionOrderProcessingStatusModel());
+            this.context.UserOrderModel.AddRange(this.GetUserModelsForFinalizeProductionOrdersOnPostgresqlAsync());
             this.context.SaveChanges();
             this.pedidosDao = new PedidosDao(this.context);
             this.logger = new Mock<ILogger>();
+            this.sapAdapter = new Mock<ISapAdapter>();
+            this.userService = new Mock<IUsersService>();
+            this.sapFileService = new Mock<ISapFileService>();
             this.mockKafkaConnector = new Mock<IKafkaConnector>();
             this.mockKafkaConnector
                 .Setup(m => m.PushMessage(It.IsAny<object>(), It.IsAny<string>()))
@@ -64,12 +76,12 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
         {
             var productionOrdersToFinalize = new List<FinalizeProductionOrderModel>
             {
-                new FinalizeProductionOrderModel { ProductionOrderId = 100001, UserId = "2b8211b7-30a0-4841-ad79-d01c5d3ff71e", SourceProcess = "SaleOrder" }, // No existe en redis, pero si en la base
-                new FinalizeProductionOrderModel { ProductionOrderId = 100002, UserId = "2b8211b7-30a0-4841-ad79-d01c5d3ff71e", SourceProcess = "SaleOrder" }, // Ya existe en redis
-                new FinalizeProductionOrderModel { ProductionOrderId = 100003, UserId = "2b8211b7-30a0-4841-ad79-d01c5d3ff71e", SourceProcess = "SaleOrder" }, // No existe la orden de fabricación en SAP
-                new FinalizeProductionOrderModel { ProductionOrderId = 100004, UserId = "2b8211b7-30a0-4841-ad79-d01c5d3ff71e", SourceProcess = "SaleOrder" }, // Orden no liberada
-                new FinalizeProductionOrderModel { ProductionOrderId = 100005, UserId = "2b8211b7-30a0-4841-ad79-d01c5d3ff71e", SourceProcess = "SaleOrder" }, // Orden cerrada
-                new FinalizeProductionOrderModel { ProductionOrderId = 100006, UserId = "2b8211b7-30a0-4841-ad79-d01c5d3ff71e", SourceProcess = "SaleOrder" }, // OK
+                new FinalizeProductionOrderModel { ProductionOrderId = 100001, UserId = "2b8211b7-30a0-4841-ad79-d01c5d3ff71e", SourceProcess = "SalesOrders" }, // No existe en redis, pero si en la base
+                new FinalizeProductionOrderModel { ProductionOrderId = 100002, UserId = "2b8211b7-30a0-4841-ad79-d01c5d3ff71e", SourceProcess = "SalesOrders" }, // Ya existe en redis
+                new FinalizeProductionOrderModel { ProductionOrderId = 100003, UserId = "2b8211b7-30a0-4841-ad79-d01c5d3ff71e", SourceProcess = "SalesOrders" }, // No existe la orden de fabricación en SAP
+                new FinalizeProductionOrderModel { ProductionOrderId = 100004, UserId = "2b8211b7-30a0-4841-ad79-d01c5d3ff71e", SourceProcess = "SalesOrders" }, // Orden no liberada
+                new FinalizeProductionOrderModel { ProductionOrderId = 100005, UserId = "2b8211b7-30a0-4841-ad79-d01c5d3ff71e", SourceProcess = "SalesOrders" }, // Orden cerrada
+                new FinalizeProductionOrderModel { ProductionOrderId = 100006, UserId = "2b8211b7-30a0-4841-ad79-d01c5d3ff71e", SourceProcess = "SalesOrders" }, // OK
             };
 
             var mockRedisService = new Mock<IRedisService>();
@@ -100,6 +112,9 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 mockServiceLayerAdapterService.Object,
                 mockRedisService.Object,
                 this.mockKafkaConnector.Object,
+                this.sapAdapter.Object,
+                this.userService.Object,
+                this.sapFileService.Object,
                 this.logger.Object,
                 this.mapper);
 
@@ -125,7 +140,7 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
         {
             var productionOrdersToFinalize = new List<FinalizeProductionOrderModel>
             {
-                new FinalizeProductionOrderModel { ProductionOrderId = 100007, UserId = "2b8211b7-30a0-4841-ad79-d01c5d3ff71e", SourceProcess = "SaleOrder" }, // OK
+                new FinalizeProductionOrderModel { ProductionOrderId = 100007, UserId = "2b8211b7-30a0-4841-ad79-d01c5d3ff71e", SourceProcess = "SalesOrders" }, // OK
             };
 
             var mockRedisService = new Mock<IRedisService>();
@@ -141,6 +156,9 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 mockServiceLayerAdapterService.Object,
                 mockRedisService.Object,
                 this.mockKafkaConnector.Object,
+                this.sapAdapter.Object,
+                this.userService.Object,
+                this.sapFileService.Object,
                 this.logger.Object,
                 this.mapper);
 
@@ -173,7 +191,7 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 {
                     ProductionOrderId = 100001,
                     UserId = "2b8211b7-30a0-4841-ad79-d01c5d3ff71e",
-                    SourceProcess = "SaleOrder",
+                    SourceProcess = "SalesOrders",
                     Batches = new List<BatchesConfigurationModel>(),
                 },
             };
@@ -212,6 +230,9 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 mockServiceLayerAdapterService.Object,
                 mockRedisService.Object,
                 this.mockKafkaConnector.Object,
+                this.sapAdapter.Object,
+                this.userService.Object,
+                this.sapFileService.Object,
                 this.logger.Object,
                 this.mapper);
 
@@ -248,7 +269,7 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 {
                     ProductionOrderId = 100001,
                     UserId = "2b8211b7-30a0-4841-ad79-d01c5d3ff71e",
-                    SourceProcess = "SaleOrder",
+                    SourceProcess = "SalesOrders",
                     Batches = new List<BatchesConfigurationModel>(),
                 },
             };
@@ -278,6 +299,9 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 mockServiceLayerAdapterService.Object,
                 mockRedisService.Object,
                 this.mockKafkaConnector.Object,
+                this.sapAdapter.Object,
+                this.userService.Object,
+                this.sapFileService.Object,
                 this.logger.Object,
                 this.mapper);
 
@@ -290,6 +314,193 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
             Assert.That(response.UserError, Is.Null);
             Assert.That(response.Success, Is.False);
             Assert.That(response.Code.Equals((int)HttpStatusCode.InternalServerError));
+        }
+
+        /// <summary>
+        /// FinalizeProductionOrdersOnPostgresqlAsyncTest.
+        /// </summary>
+        /// <returns>Test.</returns>
+        [Test]
+        public async Task FinalizeProductionOrdersOnPostgresqlAsyncTest()
+        {
+            var payload = new FinalizeProductionOrderPayload
+            {
+                FinalizeProductionOrder = new FinalizeProductionOrderModel
+                {
+                    ProductionOrderId = 223580,
+                    UserId = "7ac2db83-3c31-4042-9d1b-5531753694b4",
+                    SourceProcess = "SalesOrders",
+                    Batches = new List<BatchesConfigurationModel>(),
+                },
+            };
+
+            var productionOrdersToFinalize = new ProductionOrderProcessingStatusModel
+            {
+                Id = "778e6a6a-fa1d-4767-95fa-47f3c0cb2377",
+                ProductionOrderId = 223580,
+                LastStep = "Update UsersOrders in postgres",
+                CreatedAt = DateTime.Now.AddMinutes(-10),
+                ErrorMessage = null,
+                LastUpdated = DateTime.Now,
+                Payload = JsonConvert.SerializeObject(payload),
+                Status = "In Progress",
+            };
+
+            var mockRedisService = new Mock<IRedisService>();
+            mockRedisService.Setup(m => m.DeleteKey(It.IsAny<string>()));
+
+            var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
+            var mockSapAdapter = new Mock<ISapAdapter>();
+
+            mockSapAdapter
+                .SetupSequence(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()));
+
+            var mockProductionOrdersService = new ProductionOrdersService(
+                this.pedidosDao,
+                mockServiceLayerAdapterService.Object,
+                mockRedisService.Object,
+                this.mockKafkaConnector.Object,
+                mockSapAdapter.Object,
+                this.userService.Object,
+                this.sapFileService.Object,
+                this.logger.Object);
+
+            var response = await mockProductionOrdersService.FinalizeProductionOrdersOnPostgresqlAsync(productionOrdersToFinalize);
+
+            // Assert
+            Assert.That(response.Success, Is.True);
+            Assert.That(response.Code.Equals((int)HttpStatusCode.OK));
+        }
+
+        /// <summary>
+        /// FinalizeProductionOrdersOnPostgresqlAsyncWithError.
+        /// </summary>
+        /// <returns>Test.</returns>
+        [Test]
+        public async Task FinalizeProductionOrdersOnPostgresqlAsyncWithError()
+        {
+            var payload = new FinalizeProductionOrderPayload
+            {
+                FinalizeProductionOrder = new FinalizeProductionOrderModel
+                {
+                    ProductionOrderId = 223580,
+                    UserId = "7ac2db83-3c31-4042-9d1b-5531753694b4",
+                    SourceProcess = "SalesOrders",
+                    Batches = new List<BatchesConfigurationModel>(),
+                },
+            };
+
+            var productionOrdersToFinalize = new ProductionOrderProcessingStatusModel
+            {
+                Id = "778e6a6a-fa1d-4767-95fa-47f3c0cb2377",
+                ProductionOrderId = 223580,
+                LastStep = "Update UsersOrders in postgres",
+                CreatedAt = DateTime.Now.AddMinutes(-10),
+                ErrorMessage = null,
+                LastUpdated = DateTime.Now,
+                Payload = JsonConvert.SerializeObject(payload),
+                Status = "In Progress",
+            };
+
+            var mockRedisService = new Mock<IRedisService>();
+            mockRedisService.Setup(m => m.DeleteKey(It.IsAny<string>()));
+
+            var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
+            var mockSapAdapter = new Mock<ISapAdapter>();
+
+            mockSapAdapter
+                .SetupSequence(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()));
+
+            // The error is in the sapAdapter response.
+            var mockProductionOrdersService = new ProductionOrdersService(
+                this.pedidosDao,
+                mockServiceLayerAdapterService.Object,
+                mockRedisService.Object,
+                this.mockKafkaConnector.Object,
+                this.sapAdapter.Object,
+                this.userService.Object,
+                this.sapFileService.Object,
+                this.logger.Object);
+
+            var response = await mockProductionOrdersService.FinalizeProductionOrdersOnPostgresqlAsync(productionOrdersToFinalize);
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Response, Is.Null);
+            Assert.That(response.ExceptionMessage, Is.Null);
+            Assert.That(response.UserError, Is.Null);
+            Assert.That(response.Success, Is.False);
+            Assert.That(response.Code.Equals((int)HttpStatusCode.InternalServerError));
+        }
+
+        /// <summary>
+        /// FinalizeProductionOrdersOnPostgresqlAsyncTest.
+        /// </summary>
+        /// <returns>Test.</returns>
+        [Test]
+        public async Task ProductionOrderPdfGenerationAsync()
+        {
+            var payload = new FinalizeProductionOrderPayload
+            {
+                FinalizeProductionOrder = new FinalizeProductionOrderModel
+                {
+                    ProductionOrderId = 224896,
+                    UserId = "7ac2db83-3c31-4042-9d1b-5531753694b4",
+                    SourceProcess = "SalesOrders",
+                    Batches = new List<BatchesConfigurationModel>(),
+                },
+            };
+
+            var productionOrdersToFinalize = new ProductionOrderProcessingStatusModel
+            {
+                Id = "741baf58-b87a-4235-b724-35f966229fd8",
+                ProductionOrderId = 224896,
+                LastStep = "Update UsersOrders in postgres",
+                CreatedAt = DateTime.Now.AddMinutes(-10),
+                ErrorMessage = null,
+                LastUpdated = DateTime.Now,
+                Payload = JsonConvert.SerializeObject(payload),
+                Status = "In Progress",
+            };
+
+            var mockRedisService = new Mock<IRedisService>();
+            mockRedisService.Setup(m => m.DeleteKey(It.IsAny<string>()));
+
+            var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
+
+            var mockSapAdapter = new Mock<ISapAdapter>();
+            mockSapAdapter
+                .SetupSequence(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetFabricacionOrderModel()))
+                .Returns(Task.FromResult(this.GetRecipes()));
+
+            var mockSapFile = new Mock<ISapFileService>();
+            mockSapFile
+                .Setup(m => m.PostSimple(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultCreateOrder()));
+
+            var mockUsers = new Mock<IUsersService>();
+            mockUsers
+                .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultUserModel()));
+
+            var mockProductionOrdersService = new ProductionOrdersService(
+                this.pedidosDao,
+                mockServiceLayerAdapterService.Object,
+                mockRedisService.Object,
+                this.mockKafkaConnector.Object,
+                mockSapAdapter.Object,
+                mockUsers.Object,
+                mockSapFile.Object,
+                this.logger.Object);
+
+            var response = await mockProductionOrdersService.ProductionOrderPdfGenerationAsync(productionOrdersToFinalize);
+
+            // Assert
+            Assert.That(response.Success, Is.True);
+            Assert.That(response.Code.Equals((int)HttpStatusCode.OK));
         }
     }
 }
