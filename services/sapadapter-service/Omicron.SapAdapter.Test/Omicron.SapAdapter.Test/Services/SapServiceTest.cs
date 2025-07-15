@@ -50,6 +50,7 @@ namespace Omicron.SapAdapter.Test.Services
             this.context.RawMaterialRequestDetailModel.AddRange(this.GetRawMaterialRequestDetailModel());
             this.context.WarehouseModel.AddRange(this.GetWarehouse());
             this.context.LblContainerModel.AddRange(this.GetLblContainer());
+            this.context.UnitCatalogModel.AddRange(this.GetBaseUnitProducts());
 
             this.context.SaveChanges();
             var mockPedidoService = new Mock<IPedidosService>();
@@ -1577,6 +1578,55 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await this.sapService.GetClassificationsByDescription(dict);
 
             // assert
+            Assert.That(response, Is.Not.Null);
+        }
+
+        /// <summary>
+        /// Test to get classifications.
+        /// </summary>
+        /// <returns> The data. </returns>
+        [Test]
+        public async Task GetUnitProducts()
+        {
+            // arrange
+            var dict = new List<string>()
+            {
+                "TEST 1",
+                "REVE 1",
+            };
+
+            // act
+            var response = await this.sapService.GetUnitProducts(dict);
+
+            // assert
+            Assert.That(response, Is.Not.Null);
+        }
+
+        /// <summary>
+        /// Test to get classifications.
+        /// </summary>
+        /// <returns> The data. </returns>
+        [Test]
+        public async Task GetProductFirmName()
+        {
+            // act
+            var response = await this.sapService.GetProductFirmName("TEST 1");
+
+            // assert
+            Assert.That(response, Is.Not.Null);
+        }
+
+        public async Task GetConfigWarehouses()
+        {
+            var model = new ConfigWareshousesModel
+            {
+                Warehouses = new List<string> { "BE", "AMP" },
+                Manufacturers = new List<string> { "Bioelite", "Dermazone" },
+                Products = new List<string> { "1037 60 ml", "DZ 49" },
+            };
+
+            var response = await this.sapService.GetConfigWarehouses(model);
+
             Assert.That(response, Is.Not.Null);
         }
     }

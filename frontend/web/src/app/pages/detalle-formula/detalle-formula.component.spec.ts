@@ -63,7 +63,8 @@ describe('DetalleFormulaComponent', () => {
       [
         'getFormulaDetail',
         'getFormulaCarousel',
-        'updateFormula'
+        'updateFormula',
+        'getProductWarehouses'
       ]);
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
       'getItemOnDataOnlyIds',
@@ -93,6 +94,9 @@ describe('DetalleFormulaComponent', () => {
     });
     pedidosServiceSpy.updateFormula.and.callFake(() => {
       return of();
+    });
+    pedidosServiceSpy.getProductWarehouses.and.callFake(() => {
+      return of(['MN', 'BE']);
     });
     messagesServiceSpy.presentToastCustom.and.callFake(() => Promise.resolve([]));
 
@@ -601,5 +605,27 @@ describe('DetalleFormulaComponent', () => {
 
   it('should openCustomList', () => {
     component.openCustomList();
+  });
+  it('should onOpenSelect', () => {
+    component.dataSource.data = [{
+      isChecked: false,
+      orderFabId: 89098,
+      productId: 'EN-075',
+      description: 'Pomadera 8 Oz c/ Tapa  R-89 Bonita',
+      baseQuantity: 210.000000,
+      requiredQuantity: 210.000000,
+      consumed: 0.000000,
+      available: 0.000000,
+      unit: 'Pieza',
+      warehouse: 'PROD',
+      pendingQuantity: 210.000000,
+      stock: 1606.000000,
+      warehouseQuantity: 0.000000,
+      hasBatches: false,
+      productoId: '1',
+      availableWarehouses: ['PROD']
+    }];
+    component.onOpenSelect(true, 0);
+    expect(pedidosServiceSpy.getProductWarehouses).toHaveBeenCalled();
   });
 });

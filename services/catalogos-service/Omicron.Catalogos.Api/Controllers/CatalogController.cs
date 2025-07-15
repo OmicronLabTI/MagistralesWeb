@@ -75,6 +75,18 @@ namespace Omicron.Catalogos.Api.Controllers
         /// Get classification qfb.
         /// </summary>
         /// <returns>Classification qfb.</returns>
+        [Route("/getallclassificationqfb")]
+        [HttpGet]
+        public async Task<IActionResult> GetActiveAllClassificationQfb()
+        {
+            var response = await this.catalogFacade.GetActiveAllClassificationQfb();
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Get classification qfb.
+        /// </summary>
+        /// <returns>Classification qfb.</returns>
         [Route("/upload/warehouses")]
         [HttpPost]
         public async Task<IActionResult> UploadWarehouseFromExcel()
@@ -154,6 +166,31 @@ namespace Omicron.Catalogos.Api.Controllers
         public async Task<IActionResult> GetProductsColors([FromBody] List<string> themesIds)
         {
             var response = await this.catalogFacade.GetProductsColors(themesIds);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Asynchronously retrieves classification data based on the provided parameters.
+        /// </summary>
+        /// <returns>A <see cref="Task{ResultDto}"/> contains configurations the warehouses magistral. </returns>
+        [Route("/config/warehouses")]
+        [HttpPost]
+        public async Task<IActionResult> PostConfigWarehouses()
+        {
+            var response = await this.catalogFacade.PostConfigWarehouses();
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Asynchronously retrieves classification data based on the provided parameters.
+        /// </summary>
+        /// <param name="itemCode">The code scanned.</param>
+        /// <returns>A <see cref="Task{ResultDto}"/> contains configurations the warehouses magistral. </returns>
+        [Route("/product/warehouses/{itemCode}")]
+        [HttpGet]
+        public async Task<IActionResult> GetWarehouses(string itemCode)
+        {
+            var response = await this.catalogFacade.GetWarehouses(itemCode);
             return this.Ok(response);
         }
     }

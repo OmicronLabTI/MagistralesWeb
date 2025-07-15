@@ -65,6 +65,10 @@ namespace Omicron.Catalogos.Test.Facade
                .Returns(Task.FromResult(response));
 
             mockServicesCat
+              .Setup(m => m.GetActiveAllClassificationQfb())
+              .Returns(Task.FromResult(response));
+
+            mockServicesCat
                .Setup(m => m.UploadWarehouseFromExcel())
                .Returns(Task.FromResult(response));
 
@@ -82,6 +86,10 @@ namespace Omicron.Catalogos.Test.Facade
 
             mockServicesCat
                .Setup(m => m.GetProductsColors(It.IsAny<List<string>>()))
+               .Returns(Task.FromResult(response));
+
+            mockServicesCat
+               .Setup(m => m.GetWarehouses(It.IsAny<string>()))
                .Returns(Task.FromResult(response));
 
             this.catalogFacade = new CatalogFacade(mockServicesCat.Object, this.mapper);
@@ -195,6 +203,21 @@ namespace Omicron.Catalogos.Test.Facade
         /// </summary>
         /// <returns>the roles.</returns>
         [Test]
+        public async Task GetActiveAllClassificationQfb()
+        {
+            // Act
+            var response = await this.catalogFacade.GetActiveAllClassificationQfb();
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success, Is.True);
+        }
+
+        /// <summary>
+        /// Test getting the roles.
+        /// </summary>
+        /// <returns>the roles.</returns>
+        [Test]
         public async Task UploadWarehouseFromExcel()
         {
             // Act
@@ -229,6 +252,20 @@ namespace Omicron.Catalogos.Test.Facade
         {
             // Act
             var response = await this.catalogFacade.GetProductsColors(new List<string>());
+
+            // Assert
+            Assert.That(response.Success, Is.True);
+        }
+
+        /// <summary>
+        /// Test to verify upload product type colors from excel.
+        /// </summary>
+        /// <returns>Upload product type colors from excel result.</returns>
+        [Test]
+        public async Task GetWarehouses()
+        {
+            // Act
+            var response = await this.catalogFacade.GetWarehouses(string.Empty);
 
             // Assert
             Assert.That(response.Success, Is.True);

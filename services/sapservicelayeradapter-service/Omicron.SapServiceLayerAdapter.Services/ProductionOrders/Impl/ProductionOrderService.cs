@@ -108,9 +108,10 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
 
                 var deleteItems = updateFormula.Components.Where(x => x.Action.Equals(ServiceConstants.DeleteComponent)).ToList();
 
-                productionOrder.ProductionOrderLines = AddComponents(productionOrder.ProductionOrderLines, updateFormula.Components, updateFormula.FabOrderId);
+                var lastLineNumber = productionOrder.ProductionOrderLines.Max(x => x.LineNumber ?? 0);
                 productionOrder.ProductionOrderLines = UpdateComponents(productionOrder.ProductionOrderLines, updateFormula.Components);
                 productionOrder.ProductionOrderLines = DeleteComponents(productionOrder.ProductionOrderLines, deleteItems);
+                productionOrder.ProductionOrderLines = AddComponents(productionOrder.ProductionOrderLines, updateFormula.Components, updateFormula.FabOrderId, lastLineNumber);
 
                 var request = this.mapper.Map<UpdateProductionOrderDto>(productionOrder);
                 await this.SaveChanges(request, updateFormula.FabOrderId);
@@ -471,7 +472,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
         {
             completeList.ForEach(itemToUpdate =>
             {
-                var updatedData = componentsToUpdate.FirstOrDefault(x => x.ProductId.Equals(itemToUpdate.ItemNo));
+                var updatedData = componentsToUpdate.FirstOrDefault(x => x.ProductId.Equals(itemToUpdate.ItemNo) && x.Action == ServiceConstants.UpdateComponent);
                 if (updatedData != null)
                 {
                     itemToUpdate.BaseQuantity = (double)updatedData.BaseQuantity;
@@ -483,27 +484,35 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             return completeList;
         }
 
-        private static List<ProductionOrderLineDto> AddComponents(List<ProductionOrderLineDto> completeList, List<CompleteDetalleFormulaDto> components, int orderId)
+        private static List<ProductionOrderLineDto> AddComponents(List<ProductionOrderLineDto> completeList, List<CompleteDetalleFormulaDto> components, int orderId, int lastLinenumber)
         {
             var existingItemCodes = new HashSet<string>(completeList.Select(c => c.ItemNo));
-
-            completeList.AddRange(
-                components
-                    .Where(x => !existingItemCodes.Contains(x.ProductId))
-                    .Select(component => new ProductionOrderLineDto
+            var newComponents = new List<ProductionOrderLineDto>();
+            components
+                    .Where(x => !existingItemCodes.Contains(x.ProductId) && x.Action == ServiceConstants.InsertComponent)
+                    .ToList()
+                    .ForEach(component =>
                     {
-                        ItemNo = component.ProductId,
-                        Warehouse = component.Warehouse,
-                        BaseQuantity = (double)component.BaseQuantity,
-                        PlannedQuantity = (double)component.RequiredQuantity,
-                        DocumentAbsoluteEntry = orderId,
-                        BatchNumbers = AssignedBatchesOnNewComponent(component),
-                    }));
+                        lastLinenumber++;
+                        var newComponent = new ProductionOrderLineDto();
+                        newComponent.ItemNo = component.ProductId;
+                        newComponent.Warehouse = component.Warehouse;
+                        newComponent.BaseQuantity = (double)component.BaseQuantity;
+                        newComponent.PlannedQuantity = (double)component.RequiredQuantity;
+                        newComponent.DocumentAbsoluteEntry = orderId;
+                        newComponent.BatchNumbers = AssignedBatchesOnNewComponent(component, lastLinenumber);
+                        newComponent.UoMEntry = component.UnitCode;
+                        newComponent.UoMCode = component.UnitCode;
+                        newComponent.LineNumber = lastLinenumber;
+
+                        newComponents.Add(newComponent);
+                    });
+            completeList.AddRange(newComponents);
 
             return completeList;
         }
 
-        private static List<ProductionOrderItemBatchDto> AssignedBatchesOnNewComponent(CompleteDetalleFormulaDto component)
+        private static List<ProductionOrderItemBatchDto> AssignedBatchesOnNewComponent(CompleteDetalleFormulaDto component, int baseLinenumber)
         {
             if (component.AssignedBatches.ListIsNullOrEmpty())
             {
@@ -515,7 +524,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                 BatchNumber = ab.BatchNumber,
                 Quantity = ab.AssignedQty,
                 ItemCode = component.ProductId,
-                BaseLineNumber = 0,
+                BaseLineNumber = baseLinenumber,
                 SystemSerialNumber = ab.SysNumber,
             }).ToList();
         }

@@ -5,11 +5,13 @@
             <div class="breadcrumb" *ngIf="isFromDetail"><a *ngIf="document !== 0" class="breadcrumblink"
                     (click)="goToOrders(['pedidos'])">Pedidos / </a> <a *ngIf="document !== 0" class="breadcrumblink"
                     (click)="goToDetailOrder(['/pdetalle', document])">Detalle / </a> <a class="breadcrumblink"
-                    (click)="goToOrdenFab(['/ordenfabricacion', ordenFabricacionId, detailOrders, isFromDetail ? '1' : '0'])"> Fórmula</a>
+                    (click)="goToOrdenFab(['/ordenfabricacion', ordenFabricacionId, detailOrders, isFromDetail ? '1' : '0'])">
+                    Fórmula</a>
                 / Agregar componentes y asignar lotes </div>
             <div class="breadcrumb" *ngIf="!isFromDetail"><a class="breadcrumblink"
                     (click)="goToOrders(['ordenes'])">Órdenes de fabricación /</a> <a class="breadcrumblink"
-                    (click)="goToOrdenFab(['/ordenfabricacion', ordenFabricacionId, detailOrders, isFromDetail ? '1' : '0'])"> Fórmula</a>
+                    (click)="goToOrdenFab(['/ordenfabricacion', ordenFabricacionId, detailOrders, isFromDetail ? '1' : '0'])">
+                    Fórmula</a>
                 / Agregar componentes y asignar lotes </div>
         </div>
         <div class="filter-select">
@@ -44,7 +46,8 @@
     </div>
 
     <div class="list-users-container">
-        <table mat-table [dataSource]="dataSourceComponents" class="mat-elevation-z8" aria-describedby style="border-collapse: collapse;">
+        <table mat-table [dataSource]="dataSourceComponents" class="mat-elevation-z8" aria-describedby
+            style="border-collapse: collapse;">
 
             <ng-container matColumnDef="select">&nbsp;
                 <th scope="row" mat-header-cell *matHeaderCellDef>
@@ -125,44 +128,7 @@
                     <mat-form-field appearance="outline" style="width: 100px;">
                         <mat-select [(ngModel)]="element.warehouse" (ngModelChange)="onSelectWareHouseChange($event, i)"
                             [disabled]="false">
-                            <mat-option value="AMP">
-                                AMP
-                            </mat-option>
-                            <mat-option value="BE">
-                                BE
-                            </mat-option>
-                            <mat-option value="GENERAL">
-                                GENERAL
-                            </mat-option>
-                            <mat-option value="INCI">
-                                INCI
-                            </mat-option>
-                            <mat-option value="MER">
-                                MER
-                            </mat-option>
-                            <mat-option value="MG">
-                                MG
-                            </mat-option>
-                            <mat-option value="MN">
-                                MN
-                            </mat-option>
-                            <mat-option value="MP">
-                                MP
-                            </mat-option>
-                            <mat-option value="PROD">
-                                PROD
-                            </mat-option>
-                            <mat-option value="PRONATUR">
-                                PRONATUR
-                            </mat-option>
-                            <mat-option value="PT">
-                                PT
-                            </mat-option>
-                            <mat-option value="TALLERES">
-                                TALLERES
-                            </mat-option>
-                            <mat-option value="WEB">
-                                WEB
+                            <mat-option *ngFor="let item of element.availableWarehouses" value="{{item}}">{{item}}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>

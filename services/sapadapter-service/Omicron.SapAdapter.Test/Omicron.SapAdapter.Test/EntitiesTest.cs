@@ -110,6 +110,9 @@ namespace Omicron.SapAdapter.Test
             new OrderFiltersByConfigType(),
             new DetailOrderJoinModelWrap(),
             new ProductColorsDto(),
+            new UnitCatalogModel(),
+            new ConfigWareshousesDto(),
+            new ConfigWareshousesModel(),
         };
 
         /// <summary>

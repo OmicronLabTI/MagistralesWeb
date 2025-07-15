@@ -1170,6 +1170,34 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<ProductoModel> GetFullProductInfo(string itemCode)
+        {
+            return await (from p in this.databaseContext.ProductoModel
+                        .Where(x => x.ProductoId == itemCode)
+                          join firm in this.databaseContext.ProductFirmModel on p.ProductFirmCode equals firm.ProductFirmCode
+                            into productFirm
+                          from fm in productFirm.DefaultIfEmpty()
+                          select new ProductoModel
+                          {
+                              BarCode = p.BarCode,
+                              IsLine = p.IsLine,
+                              IsMagistral = p.IsMagistral,
+                              LargeDescription = p.LargeDescription,
+                              ManagedBatches = p.ManagedBatches,
+                              NeedsCooling = p.NeedsCooling,
+                              OnHand = p.OnHand,
+                              ProductGroupId = p.ProductGroupId,
+                              ProductoId = p.ProductoId,
+                              ProductoName = p.ProductoName,
+                              Unit = p.Unit,
+                              IsWorkableProduct = p.IsWorkableProduct,
+                              IsPackage = p.IsPackage,
+                              ThemeId = p.ThemeId,
+                              ProductFirmName = fm == default ? string.Empty : fm.ProductFirmName,
+                          }).FirstOrDefaultAsync();
+        }
+
+        /// <inheritdoc/>
         public async Task<IEnumerable<Repartidores>> GetDeliveryCompanies()
         {
             return await this.RetryQuery(this.databaseContext.Repartidores.Where(x => !string.IsNullOrEmpty(x.TrnspName)).AsNoTracking());
@@ -1541,6 +1569,43 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<IEnumerable<WarehouseModel>> GetWarehousesConfig(List<string> configwarehouses)
+        {
+            var wareshouses = await this.databaseContext.WarehouseModel
+            .Where(x => configwarehouses.Contains(x.WarehouseCode))
+            .ToListAsync();
+
+            return wareshouses;
+        }
+
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<ProductFirmModel>> GetManufacturers(List<string> manufacturers)
+        {
+            var query = from p in this.databaseContext.ProductFirmModel.AsNoTracking()
+                        where manufacturers.Contains(p.ProductFirmName)
+                        select new ProductFirmModel
+                        {
+                            ProductFirmCode = (int)(object)p.ProductFirmCode,
+                            ProductFirmName = p.ProductFirmName
+                        };
+
+            var list = await query.ToListAsync();
+
+            return list;
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<string>> GetProducts(List<string> products)
+        {
+            var list = await this.databaseContext.ProductoModel
+            .Where(x => products.Contains(x.ProductoId))
+            .Select(x => x.ProductoId)
+            .ToListAsync();
+            return list;
+        }
+
+        /// <inheritdoc/>
         public async Task<IEnumerable<LblContainerModel>> GetClassifications(List<string> classifications)
         {
             var query = this.databaseContext.LblContainerModel
@@ -1600,6 +1665,25 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return await query.ToListAsync();
         }
 
+        /// <inheritdoc/>
+        public async Task<IEnumerable<UnitCatalogModel>> GetProductsUnits(List<string> itemCodes)
+        {
+            var query = from product in this.databaseContext.ProductoModel
+                        where itemCodes.Contains(product.ProductoId)
+                        join unitCatalog in this.databaseContext.UnitCatalogModel
+                            on product.UnitId equals unitCatalog.Id into unitGroup
+                        from unit in unitGroup.DefaultIfEmpty()
+                        select new UnitCatalogModel
+                        {
+                            ProductoId = product.ProductoId,
+                            Id = unit != null ? unit.Id : 0,
+                            Code = unit != null ? unit.Code : string.Empty,
+                            Description = unit != null ? unit.Description : string.Empty,
+                            UnitDescription = unit != null ? unit.Code : string.Empty,
+                        };
+
+            return await RetryQuery(query);
+        }
 
         private IQueryable<InvoiceHeaderModel> GetInvoiceHeaderJoinDoctorBaseQuery()
         {
@@ -1679,6 +1763,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                     Stock = p.OnHand,
                     WarehouseQuantity = datoToAssign.OnHand,
                     IsLabel = !string.IsNullOrEmpty(p.IsLabel) && p.IsLabel.ToUpper() == "Y",
+                    ManagedByBatches = !string.IsNullOrEmpty(p.ManagedBatches) && p.ManagedBatches?.ToUpper() == "Y"
                 });
             });
 

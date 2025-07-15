@@ -59,6 +59,11 @@ namespace Omicron.Catalogos.Services.Constants
         public const string Warehouses = "warehouses";
 
         /// <summary>
+        /// Constant for Limit.
+        /// </summary>
+        public const string PostProductInfo = "product/firmname";
+
+        /// <summary>
         /// NoMatching.
         /// </summary>
         public const string NoMatching = "Los siguientes almacenes {0} tienen una configuración incorrecta: no están registrados en SAP, presentan duplicidad en su registro o tienen fabricantes, productos o catálogos asociados inexistentes.\r\n ";
@@ -72,6 +77,11 @@ namespace Omicron.Catalogos.Services.Constants
         /// AzureAdEnvDataKey.
         /// </summary>
         public const string Manufacturers = "manufacturers/all";
+
+        /// <summary>
+        /// AzureAdEnvDataKey.
+        /// </summary>
+        public const string WarehousesData = "get/configwarehouses";
 
         /// <summary>
         /// AzureAdEnvDataKey.
@@ -117,6 +127,11 @@ namespace Omicron.Catalogos.Services.Constants
         /// the container file.
         /// </summary>
         public const string ProductTypeColors = "ProductTypeColors";
+
+        /// <summary>
+        /// the container file.
+        /// </summary>
+        public const string ConfigWarehouses = "ConfigWarehouses";
 
         /// <summary>
         /// Gets the order.

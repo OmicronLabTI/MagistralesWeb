@@ -146,5 +146,54 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
                 .AsNoTracking()
                 .ToListAsync();
         }
+
+        /// <inheritdoc/>
+        public async Task<bool> InsertConfigWarehouses(List<ConfigWarehouseModel> configWarehouses)
+        {
+            this.databaseContext.ConfigWarehousesModel.UpdateRange(configWarehouses);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<string>> GetExistingManufacturers(List<string> manufacturers)
+        {
+            return await this.databaseContext.ConfigWarehousesModel
+                .Where(x => manufacturers.Contains(x.Manufacturers))
+                .Select(x => x.Manufacturers)
+                .Distinct()
+                .ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> UpdateConfigWarehouses(List<ConfigWarehouseModel> configWarehouses)
+        {
+            foreach (var item in configWarehouses)
+            {
+                var existing = await this.databaseContext.ConfigWarehousesModel
+                    .FirstOrDefaultAsync(x => x.Manufacturers == item.Manufacturers);
+
+                if (existing != null)
+                {
+
+                    existing.Mainwarehouse = item.Mainwarehouse;
+                    existing.Products = item.Products;
+                    existing.Exceptions = item.Exceptions;
+                    existing.Alternativewarehouses = item.Alternativewarehouses;
+                    existing.IsActive = item.IsActive;
+
+                }
+            }
+
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<ConfigWarehouseModel>> GetActiveConfigWarehouses()
+        {
+            return await this.databaseContext.ConfigWarehousesModel.Where(x => x.IsActive).ToListAsync();
+        }
     }
 }

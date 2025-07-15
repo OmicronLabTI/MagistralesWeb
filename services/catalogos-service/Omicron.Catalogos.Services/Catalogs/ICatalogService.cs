@@ -38,6 +38,12 @@ namespace Omicron.Catalogos.Services.Catalogs
         Task<ResultModel> GetActiveClassificationQfb();
 
         /// <summary>
+        /// Get classification qfb.
+        /// </summary>
+        /// <returns>Classification qfb.</returns>
+        Task<ResultModel> GetActiveAllClassificationQfb();
+
+        /// <summary>
         /// Import of valid warehouses through the Excel file.
         /// </summary>
         /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
@@ -80,5 +86,18 @@ namespace Omicron.Catalogos.Services.Catalogs
         /// <param name="themesIds">the dictionary.</param>
         /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
         Task<ResultModel> GetProductsColors(List<string> themesIds);
+
+        /// <summary>
+        /// PostConfigWarehouses.
+        /// </summary>
+        /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
+        Task<ResultModel> PostConfigWarehouses();
+
+        /// <summary>
+        /// GetProductsColors.
+        /// </summary>
+        /// <param name="itemCode">the dictionary.</param>
+        /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
+        Task<ResultModel> GetWarehouses(string itemCode);
     }
 }

@@ -119,6 +119,13 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
         public string EndDate { get; set; }
 
         /// <summary>
+        /// Gets or sets the LineNumber.
+        /// </summary>
+        /// <value>LineNumber.</value>
+        [JsonProperty("LineNumber")]
+        public int? LineNumber { get; set; }
+
+        /// <summary>
         /// Gets or sets the BatchNumbers.
         /// </summary>
         /// <value>BatchNumbers.</value>

@@ -26,4 +26,30 @@
 			</column>
 		</createTable>
 	</changeSet>
+	
+	<changeSet author="lreyes" id="changelog-1.2">
+		<createTable tableName="configwarehouses">
+			<column name="id" type="INT" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="mainwarehouse" type="VARCHAR(25)">
+				<constraints nullable="false" />
+			</column>
+			<column name="manufacturers" type="VARCHAR(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="products" type="TEXT">
+				<constraints nullable="false" />
+			</column>
+			<column name="exceptions" type="TEXT">
+				<constraints nullable="true" />
+			</column>
+			<column name="alternativewarehouses" type="TEXT">
+				<constraints nullable="true" />
+			</column>
+			<column name="isactive" type="BOOLEAN" defaultValue="false">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
 </databaseChangeLog>

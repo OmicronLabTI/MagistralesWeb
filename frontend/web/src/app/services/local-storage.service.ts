@@ -146,5 +146,13 @@ export class LocalStorageService {
     return JSON.parse(localStorage.getItem(ConstToken.clasificationList));
   }
 
+  setClasificationColors(clasificationList: Clasification[]) {
+    localStorage.setItem(ConstToken.clasificationColors, JSON.stringify(clasificationList));
+  }
+
+  getClasificationColors(): Clasification[] {
+    return JSON.parse(localStorage.getItem(ConstToken.clasificationColors));
+  }
+
 }
 
