@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material';
 import { Title } from '@angular/platform-browser';
@@ -21,7 +21,7 @@ import { PedidosService } from 'src/app/services/pedidos.service';
   templateUrl: './add-component.component.html',
   styleUrls: ['./add-component.component.scss']
 })
-export class AddComponentComponent implements OnInit {
+export class AddComponentComponent implements OnInit, OnDestroy {
   // MARK: ROUTES PARAMS
   document: number;
   ordenFabricacionId: string;
@@ -99,6 +99,10 @@ export class AddComponentComponent implements OnInit {
     private dateService: DateService,
   ) { }
 
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.document = Number(params.get('document'));
@@ -145,7 +149,14 @@ export class AddComponentComponent implements OnInit {
   }
 
   getLotesForComponent(resultNewFormulaComponent: IFormulaDetalleReq) {
-    const queryParams = `?itemcode=${resultNewFormulaComponent.productId}&warehouse=${resultNewFormulaComponent.warehouse}`;
+    if (resultNewFormulaComponent.availableWarehouses.length == 0) {
+      this.observableService.setGeneralNotificationMessage(Messages.invalidWarehouses + resultNewFormulaComponent.productId);
+      return;
+    }
+
+    const primary = resultNewFormulaComponent.availableWarehouses[0];
+    resultNewFormulaComponent.warehouse = primary;
+    const queryParams = `?itemcode=${resultNewFormulaComponent.productId}&warehouse=${primary}`;
     this.pedidosService.getComponentsLotes(queryParams).subscribe(resLotes => {
       this.generateObjectsForTables(resultNewFormulaComponent, resLotes.response);
     });
@@ -193,7 +204,7 @@ export class AddComponentComponent implements OnInit {
   }
 
   validateIsReadyToSave(): void {
-    this.isReadyToSave = this.dataSourceComponents.data.every( element => !element.managedByBatches);
+    this.isReadyToSave = this.dataSourceComponents.data.every(element => !element.managedByBatches);
   }
 
   setSelectedTr(elements?: IAddComponentsAndLotesTable): void {
@@ -252,12 +263,12 @@ export class AddComponentComponent implements OnInit {
   }
 
   onSelectWareHouseChange(value: string, index: number) {
-    const componente = this.dataSourceComponents.data[index].codigoProducto;
-    const query = `?offset=${0}&limit=${1}&chips=${componente}&catalogGroup=${value}`;
-    this.pedidosService.getComponents(query, true).subscribe( response => {
-      this.dataSourceComponents.data[index].isChecked = true;
-      this.deleteComponents();
-      this.getLotesForComponent(response.response[0]);
+    const componente = this.dataSourceComponents.data[index];
+    const queryParams = `?itemcode=${componente.codigoProducto}&warehouse=${componente.warehouse}`;
+    this.pedidosService.getComponentsLotes(queryParams).subscribe(resLotes => {
+      // eliminar lotes asignados del producto que cambio
+      // mostrar en la tabla los lote disponibles
+      // regresar las cantidades seleccionada y requerida
     });
   }
 
