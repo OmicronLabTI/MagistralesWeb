@@ -49,6 +49,7 @@ namespace Omicron.Catalogos.Test.Services
             this.context.WarehousesModel.AddRange(this.GetWarehouses());
             this.context.ConfigRoutesModel.AddRange(this.GetConfigRoutesModel());
             this.context.ProductTypeColorsModel.AddRange(this.GetProductsColors());
+            this.context.ConfigWarehousesModel.AddRange(this.GetConfigWarehouseModel());
             this.context.SaveChanges();
 
             this.catalogDao = new CatalogDao(this.context);
@@ -411,6 +412,49 @@ namespace Omicron.Catalogos.Test.Services
 
             // Act
             var result = await catalogServiceMock.GetProductsColors(new List<string> { "linea", "magistral" });
+
+            // Assets
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Code == 200, Is.True);
+        }
+
+        /// <summary>
+        /// Get product and container catalog without parameters.
+        /// </summary>
+        /// <param name="isRedisConnected">If redis is conected.</param>
+        /// <param name="productId">The productId.</param>
+        /// <param name="productFirmName">The productFirmName.</param>
+        /// <returns>representing the asynchronous unit test.</returns>
+        [Test]
+        [TestCase(true, "REVE 1", "REVE")]
+        [TestCase(false, "DZ 1", "BIOELITE")]
+        public async Task GetWarehouses(bool isRedisConnected, string productId, string productFirmName)
+        {
+            // Arrange
+            var config = new Mock<IConfiguration>();
+            var azure = new Mock<IAzureService>();
+            var sapadapter = new Mock<ISapAdapterService>();
+            var catalogsdxp = new Mock<ICatalogsDxpService>();
+            var redis = new Mock<IRedisService>();
+
+            var product = new ProductDataDto() { ProductoId = productId, ProductFirmName = productFirmName };
+
+            sapadapter.Setup(x => x.Post(It.IsAny<object>(), ServiceConstants.PostProductInfo))
+                .Returns(Task.FromResult(this.GetResultDto(product)));
+
+            var redisValues = JsonConvert.SerializeObject(this.GetConfigWarehouseModel());
+            redis
+                .Setup(m => m.GetRedisKey(It.IsAny<string>()))
+                .Returns(Task.FromResult(redisValues));
+
+            redis.Setup(m => m.WriteToRedis(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>()));
+            redis.Setup(m => m.IsConnectedRedis()).Returns(isRedisConnected);
+
+            var mapper = new Mock<IMapper>();
+            var catalogServiceMock = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object, redis.Object, mapper.Object);
+
+            // Act
+            var result = await catalogServiceMock.GetWarehouses(productId);
 
             // Assets
             Assert.That(result.Success, Is.True);

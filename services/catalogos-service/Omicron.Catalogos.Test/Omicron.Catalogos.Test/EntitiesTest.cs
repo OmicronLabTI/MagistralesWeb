@@ -33,6 +33,7 @@ namespace Omicron.Catalogos.Test
             new ProductColorsDto(),
             new ConfigWarehouseModel(),
             new ConfigWareshousesDto(),
+            new ProductDataDto(),
         };
 
         /// <summary>

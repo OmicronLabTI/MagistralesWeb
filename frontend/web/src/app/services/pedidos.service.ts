@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {ConsumeService} from './consume.service';
 import {Endpoints} from '../../environments/endpoints';
 import {IPlaceOrdersReq, IQfbWithNumberRes, IUserListRes} from '../model/http/users';
-import {IComponentsRes, IComponentsSaveReq, IFormulaRes} from '../model/http/detalleformula';
+import {IComponentsRes, IComponentsSaveReq, IFormulaRes, IProductWarehouses} from '../model/http/detalleformula';
 import {
   CancelOrderReq,
   CreateIsolatedOrderReq,
@@ -131,5 +131,9 @@ export class PedidosService {
   }
   putRefuseOrders(refuseOrdersReq: IOrdersRefuseReq) {
     return this.consumeService.httpPut<IPedidoRefuseRes>(Endpoints.pedidos.refuseOrdersService, refuseOrdersReq);
+  }
+
+  getProductWarehouses(productId: string) {
+    return this.consumeService.httpGet<IProductWarehouses>(`${Endpoints.pedidos.productWarehouses}/${productId}`);
   }
 }
