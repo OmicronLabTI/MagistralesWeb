@@ -352,7 +352,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                     validationsResult.Add(
                             GenerateValidationResult(
                                 productionOrderInfo.ProductionOrderId,
-                                ServiceConstants.FailReasonUnexpectedError,
+                                string.Format(LogsConstants.ProcessLogTwoParts, ex.Message, ex.StackTrace),
                                 string.Empty));
                 }
             }
@@ -396,7 +396,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                     processResultResult.Add(
                             GenerateValidationResult(
                                 productionOrder.ProductionOrderId,
-                                ServiceConstants.FailReasonUnexpectedError,
+                                string.Format(LogsConstants.ProcessLogTwoParts, ex.Message, ex.StackTrace),
                                 productionOrder.LastStep));
                 }
             }

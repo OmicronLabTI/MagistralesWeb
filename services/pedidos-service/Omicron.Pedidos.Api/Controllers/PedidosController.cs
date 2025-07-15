@@ -209,6 +209,31 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// GetFailedProductionOrders.
+        /// </summary>
+        /// <returns>Failed Production Orders.</returns>
+        [Route("/failedproductionorders")]
+        [HttpGet]
+        public async Task<IActionResult> GetFailedProductionOrders()
+        {
+            var response = await this.pedidoFacade.GetFailedProductionOrders();
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// RetryFailedProductionOrderFinalization.
+        /// </summary>
+        /// <param name="payloadRetry">payloadRetry.</param>
+        /// <returns>Process Result.</returns>
+        [Route("/retry/finalize/failed/productionorders")]
+        [HttpPost]
+        public async Task<IActionResult> RetryFailedProductionOrderFinalization(RetryFailedProductionOrderFinalizationDto payloadRetry)
+        {
+            var response = await this.pedidoFacade.RetryFailedProductionOrderFinalization(payloadRetry);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Cancel fabrication orders.
         /// </summary>
         /// <param name="cancelOrders">Orders to cancel.</param>

@@ -37,7 +37,7 @@ namespace Omicron.Pedidos.Dtos.Models
         /// <value>
         /// String Step.
         /// </value>
-        public string Step { get; set; }
+        public string LastStep { get; set; } // Last Succesfully Step.
 
         /// <summary>
         /// Gets or sets Status.
@@ -45,7 +45,7 @@ namespace Omicron.Pedidos.Dtos.Models
         /// <value>
         /// String Status.
         /// </value>
-        public string Status { get; set; }
+        public string Status { get; set; } // "In Progress", "Success", "Failed"
 
         /// <summary>
         /// Gets or sets ErrorMessage.

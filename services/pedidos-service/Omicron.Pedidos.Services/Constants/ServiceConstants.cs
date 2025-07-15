@@ -1006,6 +1006,26 @@ namespace Omicron.Pedidos.Services.Constants
         public const string OrdersToExcludeKey = "OrdersToExclude";
 
         /// <summary>
+        /// StepPrimaryValidations.
+        /// </summary>
+        public const string StepPrimaryValidations = "Primary Validations";
+
+        /// <summary>
+        /// StepCreateInventoryStep.
+        /// </summary>
+        public const string StepCreateInventoryStep = "Create Inventory";
+
+        /// <summary>
+        /// StepCreateReceiptStep.
+        /// </summary>
+        public const string StepCreateReceiptStep = "Create Receipt";
+
+        /// <summary>
+        /// StepSuccessfullyClosedInSapStep.
+        /// </summary>
+        public const string StepSuccessfullyClosedInSapStep = "Successfully Closed In SAP";
+
+        /// <summary>
         /// Gets ProductionOrderIsAlreadyBeignProcessed.
         /// </summary>
         /// <value>
@@ -1022,12 +1042,12 @@ namespace Omicron.Pedidos.Services.Constants
         public static string SapValidationFinalizationEndpoint => "validation/productionorders/finalization";
 
         /// <summary>
-        /// Gets StepPrimaryValidations.
+        /// Gets SapFinalizeProductionOrdersEndpoint.
         /// </summary>
         /// <value>
-        /// StepPrimaryValidations.
+        /// SapFinalizeProductionOrdersEndpoint.
         /// </value>
-        public static string StepPrimaryValidations => "Primary Validations";
+        public static string SapFinalizeProductionOrdersEndpoint => "finalize/productionorders";
 
         /// <summary>
         /// Gets FinalizeProcessInProgressStatus.
@@ -1052,6 +1072,14 @@ namespace Omicron.Pedidos.Services.Constants
         /// ProductionOrderFinalizingKey.
         /// </value>
         public static string ProductionOrderFinalizingKey => "production-order-finalizing:{0}";
+
+        /// <summary>
+        /// Gets ProductionOrderFinalizingToProcessKey.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderFinalizingToProcessKey.
+        /// </value>
+        public static string ProductionOrderFinalizingToProcessKey => "production-order-finalizing-to-process";
 
         /// <summary>
         /// Gets KafkaInsertLogsConfigName.

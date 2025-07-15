@@ -14,6 +14,30 @@ namespace Omicron.Pedidos.Services.Constants
     public static class LogsConstants
     {
         /// <summary>
+        /// Gets CloseInSapNextStep.
+        /// </summary>
+        /// <value>
+        /// CloseInSapNextStep.
+        /// </value>
+        public static string CloseInSapNextStep => "Close In Sap";
+
+        /// <summary>
+        /// Gets CloseInPostgresqlNextStep.
+        /// </summary>
+        /// <value>
+        /// CloseInPostgresqlNextStep.
+        /// </value>
+        public static string CloseInPostgresqlNextStep => "Close In Postgresql";
+
+        /// <summary>
+        /// Gets GeneratePdfNextStep.
+        /// </summary>
+        /// <value>
+        /// GeneratePdfNextStep.
+        /// </value>
+        public static string GeneratePdfNextStep => "Generate PDF";
+
+        /// <summary>
         /// Gets StartFinalizeAllProductionOrders.
         /// </summary>
         /// <value>
@@ -188,5 +212,37 @@ namespace Omicron.Pedidos.Services.Constants
         /// GenericErrorLog.
         /// </value>
         public static string GenericErrorLog => "Internal Error: {0} - {1}";
+
+        /// <summary>
+        /// Gets RetryFinalizingProductionOrder.
+        /// </summary>
+        /// <value>
+        /// RetryFinalizingProductionOrder.
+        /// </value>
+        public static string RetryFinalizingProductionOrder => "{LogBase} - Retry Finalizing Production Order - Id: {Id} - Production Order: {ProductionOrderId} - Next Step: {NextStep}";
+
+        /// <summary>
+        /// Gets RetryFinalizingProductionOrderEndWithError.
+        /// </summary>
+        /// <value>
+        /// RetryFinalizingProductionOrderEndWithError.
+        /// </value>
+        public static string RetryFinalizingProductionOrderEndWithError => "{LogBase} - Retry Finalizing Production Order End Process With Error - Id: {Id} - Production Order: {ProductionOrderId} - Message {Message} - Inner Exception - {InnerException}";
+
+        /// <summary>
+        /// Gets StepNotRecognized.
+        /// </summary>
+        /// <value>
+        /// StepNotRecognized.
+        /// </value>
+        public static string StepNotRecognized => "{LogBase} - Id: {Id} - Production Order: {ProductionOrderId} - Step: '{LastStep}' is not recognized. Skipping.";
+
+        /// <summary>
+        /// Gets RetryFailedProductionOrderFinalization.
+        /// </summary>
+        /// <value>
+        /// RetryFailedProductionOrderFinalization.
+        /// </value>
+        public static string RetryFailedProductionOrderFinalization => "{0} - Retry Failed Production Order Finalization";
     }
 }

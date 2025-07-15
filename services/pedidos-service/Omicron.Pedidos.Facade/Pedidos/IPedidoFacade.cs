@@ -322,5 +322,18 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="productionOrderProcessingPayload">Payload With info.</param>
         /// <returns>Process Result.</returns>urns>
         Task<ResultDto> ProductionOrderPdfGenerationAsync(ProductionOrderProcessingStatusDto productionOrderProcessingPayload);
+
+        /// <summary>
+        /// Get Failed Production Orders.
+        /// </summary>
+        /// <returns>Failed Production Orders.</returns>urns>
+        Task<ResultDto> GetFailedProductionOrders();
+
+        /// <summary>
+        /// Retry Failed Production Order Finalization.
+        /// </summary>
+        /// <param name="payloadRetry">payloadRetry.</param>
+        /// <returns>Process Result.</returns>urns>
+        Task<ResultDto> RetryFailedProductionOrderFinalization(RetryFailedProductionOrderFinalizationDto payloadRetry);
     }
 }

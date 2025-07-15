@@ -9,7 +9,10 @@
 namespace Omicron.Pedidos.Services.Redis
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
+    using Newtonsoft.Json;
     using StackExchange.Redis;
 
     /// <summary>
@@ -59,6 +62,40 @@ namespace Omicron.Pedidos.Services.Redis
         {
             await this.database.KeyDeleteAsync(key);
             return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> StoreListAsync<T>(string key, IEnumerable<T> items, TimeSpan timeToLive)
+        {
+            if (items == null || !items.Any())
+            {
+                return false;
+            }
+
+            // Convertir los objetos a RedisValue[]
+            RedisValue[] redisValues = items
+                .Select(item => (RedisValue)JsonConvert.SerializeObject(item))
+                .ToArray();
+
+            // Insertar todos los elementos en una sola operación
+            await this.database.ListRightPushAsync(key, redisValues);
+
+            // Establecer el tiempo de vida de la clave
+            await this.database.KeyExpireAsync(key, timeToLive);
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<T>> ReadListAsync<T>(string redisKey, int skip, int take)
+        {
+            // Obtener los elementos de Redis con paginación
+            RedisValue[] redisValues = await this.database.ListRangeAsync(redisKey, skip, skip + take - 1);
+
+            // Convertir los elementos de Redis a objetos de tipo T
+            return redisValues
+                .Where(value => !value.IsNullOrEmpty)
+                .Select(value => JsonConvert.DeserializeObject<T>(value.ToString()))
+                .ToList();
         }
     }
 }

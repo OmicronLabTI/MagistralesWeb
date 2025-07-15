@@ -8,9 +8,7 @@
 
 namespace Omicron.Pedidos.Test.Services.ProductionOrders
 {
-    using Omicron.Pedidos.Services.ProductionOrders;
     using Omicron.Pedidos.Services.ProductionOrders.Impl;
-    using StackExchange.Redis;
 
     /// <summary>
     /// class for the test.
@@ -26,12 +24,17 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
 
         private DatabaseContext context;
 
+        private IMapper mapper;
+
         /// <summary>
         /// The set up.
         /// </summary>
         [OneTimeSetUp]
         public void Init()
         {
+            var mapperConfiguration = new MapperConfiguration(cfg => cfg.AddProfile<AutoMapperProfile>());
+            this.mapper = mapperConfiguration.CreateMapper();
+
             var options = new DbContextOptionsBuilder<DatabaseContext>()
                 .UseInMemoryDatabase(databaseName: "Temporal")
                 .Options;
@@ -97,7 +100,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 mockServiceLayerAdapterService.Object,
                 mockRedisService.Object,
                 this.mockKafkaConnector.Object,
-                this.logger.Object);
+                this.logger.Object,
+                this.mapper);
 
             var response = await mockProductionOrdersService.FinalizeProductionOrdersAsync(productionOrdersToFinalize);
 
@@ -137,7 +141,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 mockServiceLayerAdapterService.Object,
                 mockRedisService.Object,
                 this.mockKafkaConnector.Object,
-                this.logger.Object);
+                this.logger.Object,
+                this.mapper);
 
             var response = await mockProductionOrdersService.FinalizeProductionOrdersAsync(productionOrdersToFinalize);
 
@@ -207,7 +212,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 mockServiceLayerAdapterService.Object,
                 mockRedisService.Object,
                 this.mockKafkaConnector.Object,
-                this.logger.Object);
+                this.logger.Object,
+                this.mapper);
 
             var response = await mockProductionOrdersService.FinalizeProductionOrdersOnSapAsync(productionOrdersToFinalize);
 
@@ -272,7 +278,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 mockServiceLayerAdapterService.Object,
                 mockRedisService.Object,
                 this.mockKafkaConnector.Object,
-                this.logger.Object);
+                this.logger.Object,
+                this.mapper);
 
             var response = await mockProductionOrdersService.FinalizeProductionOrdersOnSapAsync(productionOrdersToFinalize);
 

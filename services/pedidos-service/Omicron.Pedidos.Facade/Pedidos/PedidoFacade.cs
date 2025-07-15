@@ -360,5 +360,17 @@ namespace Omicron.Pedidos.Facade.Pedidos
                 await this.productionOrdersService.ProductionOrderPdfGenerationAsync(
                     this.mapper.Map<ProductionOrderProcessingStatusModel>(productionOrderProcessingPayload)));
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetFailedProductionOrders()
+        {
+            return this.mapper.Map<ResultDto>(await this.productionOrdersService.GetFailedProductionOrders());
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> RetryFailedProductionOrderFinalization(RetryFailedProductionOrderFinalizationDto payloadRetry)
+        {
+            return this.mapper.Map<ResultDto>(await this.productionOrdersService.RetryFailedProductionOrderFinalization(payloadRetry));
+        }
     }
 }

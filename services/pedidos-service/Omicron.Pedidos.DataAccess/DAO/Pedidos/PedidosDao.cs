@@ -648,6 +648,15 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
                 .FirstAsync();
         }
 
+        /// <inheritdoc/>
+        public async Task<IEnumerable<ProductionOrderProcessingStatusModel>> GetAllProductionOrderProcessingStatusByStatus(List<string> status)
+        {
+            return await this.databaseContext.ProductionOrderProcessingStatusModel
+                .Where(po => status.Contains(po.Status))
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
         private async Task<List<UserOrderModel>> GetSaleOrderForAlmacenCommon(
             IQueryable<UserOrderModel> ordersQuery,
             List<string> statusPending,
