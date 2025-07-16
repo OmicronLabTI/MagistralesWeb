@@ -24,6 +24,7 @@ class ComponentFormViewController: FormViewController {
     var delegate: ComponentsDelegate?
     var disposeBag = DisposeBag()
     var selectedComponent = ComponentO()
+    var warehouses: [String] = []
     weak var baseQuantity: TextRow?
     weak var requiredQuantity: TextRow?
     weak var warehouse: PickerInlineRow<String>?
@@ -234,7 +235,8 @@ class ComponentFormViewController: FormViewController {
             let values = ComponentFormValues(baseQuantity: baseQuantityValue,
                                              requiredQuantity: requiredQuantityValue,
                                              warehouse: warehouseValue,
-                                             selectedComponent: self.selectedComponent)
+                                             selectedComponent: self.selectedComponent,
+                                             warehouses: self.warehouses)
             
             if (self.delegate != nil)
             {
