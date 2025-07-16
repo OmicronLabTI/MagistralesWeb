@@ -206,8 +206,8 @@ export class AddComponentComponent implements OnInit, OnDestroy {
       availableWarehouses: resultNewFormulaComponent.availableWarehouses,
       managedByBatches: resultNewFormulaComponent.managedByBatches
     };
-    this.componentsData[this.indexSelected] = resultNewFormulaComponent;
-    this.dataSourceComponents.data[this.indexSelected] = dataComponentRow;
+    this.componentsData.push(resultNewFormulaComponent);
+    this.dataSourceComponents.data.push(dataComponentRow);
     this.dataSourceComponents._updateChangeSubscription();
     this.validateIsReadyToSave();
     this.setSelectedTr(dataComponentRow);
@@ -275,7 +275,9 @@ export class AddComponentComponent implements OnInit, OnDestroy {
   onSelectWareHouseChange(value: string, index: number) {
     const componente = this.dataSourceComponents.data[index].codigoProducto;
     const query = `?offset=${0}&limit=${1}&chips=${componente}&catalogGroup=${value}`;
-    this.getComponentInfo(query, [...this.dataSourceComponents.data[index].availableWarehouses], value);
+    const availableWarehouses = [...this.dataSourceComponents.data[index].availableWarehouses];
+    this.deleteComponent(index);
+    this.getComponentInfo(query, availableWarehouses, value);
   }
 
   getComponentInfo(query: string, wareHousesList: string[], warehouseSelected?: string) {
@@ -414,6 +416,17 @@ export class AddComponentComponent implements OnInit, OnDestroy {
       this.validateIsReadyToSave();
       this.dataSourceComponents._updateChangeSubscription();
     }
+  }
+
+  deleteComponent(index: number) {
+    const componentToDelete = this.dataSourceComponents.data[index];
+    const componentDataElement = this.componentsData.filter(data => data.productId === componentToDelete.codigoProducto);
+    const indexelementComponentData = this.componentsData.indexOf(componentDataElement[0]);
+
+    this.dataSourceComponents.data.splice(index, 1);
+    this.componentsData.splice(indexelementComponentData, 1);
+    this.validateIsReadyToSave();
+    this.dataSourceComponents._updateChangeSubscription();
   }
 
   deleteDetails(element?: ILotesAsignadosReq) {
