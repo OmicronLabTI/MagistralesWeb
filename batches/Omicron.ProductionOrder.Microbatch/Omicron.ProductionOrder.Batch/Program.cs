@@ -1,0 +1,49 @@
+﻿var builder = Host.CreateDefaultBuilder(args);
+
+builder.UseSerilog((context, services, configuration) =>
+{
+    var settings = context.Configuration.GetSection("Settings").Get<Settings>();
+
+    configuration
+        .WriteTo.Console(LogEventLevel.Information)
+        .WriteTo.Seq(settings.SeqUrl);
+
+    if (context.HostingEnvironment.IsProduction())
+    {
+        configuration.MinimumLevel.Override("Microsoft", LogEventLevel.Warning);
+        configuration.MinimumLevel.Override("System", LogEventLevel.Warning);
+    }
+});
+
+builder.ConfigureServices((hostContext, services) =>
+{
+    IConfiguration configuration = hostContext.Configuration;
+    IHostEnvironment environment = hostContext.HostingEnvironment;
+
+    // Configuración
+    services.Configure<Settings>(configuration.GetSection(nameof(Settings)));
+
+    // Redis
+    services.AddSingleton<IConnectionMultiplexer>(sp =>
+    {
+        var settings = sp.GetRequiredService<IOptions<Settings>>().Value;
+        return ConnectionMultiplexer.Connect(settings.RedisUrl);
+    });
+
+    // HttpClient
+    services.AddHttpClient<IPedidosService, PedidosService>((serviceProvider, client) =>
+    {
+        var settings = serviceProvider.GetRequiredService<IOptions<Settings>>().Value;
+        client.BaseAddress = new Uri(settings.PedidosUrl);
+        client.Timeout = TimeSpan.FromMinutes(3);
+    });
+
+    // Otros servicios
+    services.AddTransient<IFinalizeProductionOrderHandler, FinalizeProductionOrderHandler>();
+    services.AddTransient<IRedisService, RedisService>();
+});
+
+var host = builder.Build();
+using var scope = host.Services.CreateScope();
+var handler = scope.ServiceProvider.GetRequiredService<IFinalizeProductionOrderHandler>();
+await handler.Handle();

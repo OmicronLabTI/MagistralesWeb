@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36221.1 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Omicron.ProductionOrder.Batch", "Omicron.ProductionOrder.Batch\Omicron.ProductionOrder.Batch.csproj", "{6A318FA1-A54B-402A-BCEE-6C57C5694CB7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Omicron.ProductionOrder.Entities", "Omicron.ProductionOrder.Model\Omicron.ProductionOrder.Entities.csproj", "{CCCCCD46-7CE0-4698-8324-4AD92C070818}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Omicron.ProductionOrder.Test", "Omicron.ProductionOrder.Test\Omicron.ProductionOrder.Test.csproj", "{D70DB703-5B6E-4D3D-85EF-98C4E0297F94}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Stylecop", "Stylecop", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		StyleCop\stylecop.json = StyleCop\stylecop.json
+		StyleCop\StyleCopeRules.ruleset = StyleCop\StyleCopeRules.ruleset
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6A318FA1-A54B-402A-BCEE-6C57C5694CB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A318FA1-A54B-402A-BCEE-6C57C5694CB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A318FA1-A54B-402A-BCEE-6C57C5694CB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A318FA1-A54B-402A-BCEE-6C57C5694CB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCCCCD46-7CE0-4698-8324-4AD92C070818}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCCCCD46-7CE0-4698-8324-4AD92C070818}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCCCCD46-7CE0-4698-8324-4AD92C070818}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCCCCD46-7CE0-4698-8324-4AD92C070818}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D70DB703-5B6E-4D3D-85EF-98C4E0297F94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D70DB703-5B6E-4D3D-85EF-98C4E0297F94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D70DB703-5B6E-4D3D-85EF-98C4E0297F94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D70DB703-5B6E-4D3D-85EF-98C4E0297F94}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {29790BAF-2DAB-4656-A89B-6B2C24616250}
+	EndGlobalSection
+EndGlobal
