@@ -1,5 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MatTableDataSource } from '@angular/material';
+import { Component, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { MatSelect, MatTableDataSource } from '@angular/material';
 import { PedidosService } from '../../services/pedidos.service';
 import { IComponentsSaveReq, IFormulaDetalleReq, IFormulaReq } from '../../model/http/detalleformula';
 import { ActivatedRoute } from '@angular/router';
@@ -37,6 +37,7 @@ import { UsersService } from 'src/app/services/users.service';
 })
 
 export class DetalleFormulaComponent implements OnInit, OnDestroy {
+  @ViewChildren('selectRef') selectRefs!: QueryList<MatSelect>;
   allComplete = false;
   oldDataFormulaDetail = new IFormulaReq();
   ordenFabricacionId: string;
@@ -315,7 +316,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     this.getIsReadyTOSave();
   }
   getIsReadyTOSave() {
-    this.isReadyToSave = true;
+    this.isReadyToSave = this.dataSource.data.every(detail => this.dataService.validateValidString(detail.warehouse));
     this.dataService.setIsToSaveAnything(true);
   }
   createMessageOkHttp() {
@@ -340,6 +341,17 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
       this.pedidosService.getProductWarehouses(componentItemcode).subscribe(response =>
         this.dataSource.data[index].availableWarehouses = response.response
       );
+    }
+    if (!value) {
+      const select = this.selectRefs.toArray()[index];
+      const valueSelect = select.value;
+      const noUndefined = this.dataService.calculateTernary(
+        this.dataService.validateValidString(valueSelect),
+        valueSelect,
+        ''
+      );
+      this.dataSource.data[index].warehouse = noUndefined;
+      this.getIsReadyTOSave();
     }
   }
 

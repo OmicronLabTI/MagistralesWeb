@@ -116,7 +116,10 @@ export class AddComponentComponent implements OnInit, OnDestroy {
     });
     this.subscription.add(this.observableService.getNewFormulaComponent().subscribe(resultNewFormulaComponent => {
       if (resultNewFormulaComponent) {
-        this.getLotesForComponent(resultNewFormulaComponent);
+        const componentId = resultNewFormulaComponent.productId;
+        const principalWarehouse = resultNewFormulaComponent.availableWarehouses[0];
+        const query = `?offset=${0}&limit=${1}&chips=${componentId}&catalogGroup=${principalWarehouse}`;
+        this.getComponentInfo(query, resultNewFormulaComponent.availableWarehouses);
       }
     }));
     this.reloadData();
@@ -148,21 +151,28 @@ export class AddComponentComponent implements OnInit, OnDestroy {
     this.catalogGroupName = response.catalogGroupName || '';
   }
 
-  getLotesForComponent(resultNewFormulaComponent: IFormulaDetalleReq) {
-    if (resultNewFormulaComponent.availableWarehouses.length == 0) {
+  getLotesForComponent(resultNewFormulaComponent: IFormulaDetalleReq, warehouseSelected?: string) {
+    const warehouse = this.dataService.calculateTernary(
+      this.dataService.validateValidString(warehouseSelected),
+      warehouseSelected,
+      resultNewFormulaComponent.availableWarehouses[0]
+    );
+    const queryParams = `?itemcode=${resultNewFormulaComponent.productId}&warehouse=${warehouse}`;
+    if (!resultNewFormulaComponent.availableWarehouses || resultNewFormulaComponent.availableWarehouses.length === 0) {
       this.observableService.setGeneralNotificationMessage(Messages.invalidWarehouses + resultNewFormulaComponent.productId);
       return;
     }
-
-    const primary = resultNewFormulaComponent.availableWarehouses[0];
-    resultNewFormulaComponent.warehouse = primary;
-    const queryParams = `?itemcode=${resultNewFormulaComponent.productId}&warehouse=${primary}`;
     this.pedidosService.getComponentsLotes(queryParams).subscribe(resLotes => {
-      this.generateObjectsForTables(resultNewFormulaComponent, resLotes.response);
+      this.generateObjectsForTables(resultNewFormulaComponent, resLotes.response, warehouseSelected);
     });
   }
 
-  generateObjectsForTables(resultNewFormulaComponent: IFormulaDetalleReq, lotes: IComponentLotes) {
+  generateObjectsForTables(resultNewFormulaComponent: IFormulaDetalleReq, lotes: IComponentLotes, warehouseSelected?: string) {
+    const warehousePicked = this.dataService.calculateTernary(
+      this.dataService.validateValidString(warehouseSelected),
+      warehouseSelected,
+      resultNewFormulaComponent.availableWarehouses[0]
+    );
     const dataLotesTable: ILotesReq[] = [];
 
     lotes.lotes.forEach(lote => {
@@ -184,7 +194,7 @@ export class AddComponentComponent implements OnInit, OnDestroy {
       consumed: resultNewFormulaComponent.consumed,
       available: resultNewFormulaComponent.available,
       unit: resultNewFormulaComponent.unit,
-      warehouse: resultNewFormulaComponent.warehouse,
+      warehouse: warehousePicked,
       pendingQuantity: resultNewFormulaComponent.pendingQuantity,
       stock: resultNewFormulaComponent.stock,
       warehouseQuantity: resultNewFormulaComponent.warehouseQuantity,
@@ -196,8 +206,8 @@ export class AddComponentComponent implements OnInit, OnDestroy {
       availableWarehouses: resultNewFormulaComponent.availableWarehouses,
       managedByBatches: resultNewFormulaComponent.managedByBatches
     };
-    this.componentsData.push(resultNewFormulaComponent);
-    this.dataSourceComponents.data.push(dataComponentRow);
+    this.componentsData[this.indexSelected] = resultNewFormulaComponent;
+    this.dataSourceComponents.data[this.indexSelected] = dataComponentRow;
     this.dataSourceComponents._updateChangeSubscription();
     this.validateIsReadyToSave();
     this.setSelectedTr(dataComponentRow);
@@ -263,12 +273,15 @@ export class AddComponentComponent implements OnInit, OnDestroy {
   }
 
   onSelectWareHouseChange(value: string, index: number) {
-    const componente = this.dataSourceComponents.data[index];
-    const queryParams = `?itemcode=${componente.codigoProducto}&warehouse=${componente.warehouse}`;
-    this.pedidosService.getComponentsLotes(queryParams).subscribe(resLotes => {
-      // eliminar lotes asignados del producto que cambio
-      // mostrar en la tabla los lote disponibles
-      // regresar las cantidades seleccionada y requerida
+    const componente = this.dataSourceComponents.data[index].codigoProducto;
+    const query = `?offset=${0}&limit=${1}&chips=${componente}&catalogGroup=${value}`;
+    this.getComponentInfo(query, [...this.dataSourceComponents.data[index].availableWarehouses], value);
+  }
+
+  getComponentInfo(query: string, wareHousesList: string[], warehouseSelected?: string) {
+    this.pedidosService.getComponents(query, true).subscribe(response => {
+      response.response[0].availableWarehouses = wareHousesList;
+      this.getLotesForComponent(response.response[0], warehouseSelected);
     });
   }
 
@@ -345,7 +358,6 @@ export class AddComponentComponent implements OnInit, OnDestroy {
       this.setTotales(-element.cantidadSeleccionada);
       this.isReadyToSave = true;
     }
-    return false;
   }
 
   buildObjectToSap(): void {
