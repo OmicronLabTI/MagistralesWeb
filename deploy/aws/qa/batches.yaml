@@ -1,0 +1,45 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: finalize-productionorders-cronjob
+  namespace: default
+spec:
+  schedule: "*/30 * * * *"
+  timeZone: America/Mexico_City
+  suspend: false # suspende el cron
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      # automountServiceAccountToken: false
+      template:
+        spec:
+          # automountServiceAccountToken: false
+          containers:
+            - name: finalize-productionorders-container
+              image: 891376991292.dkr.ecr.us-east-2.amazonaws.com/finalizeproductionordersmagistrales-repository:latest
+              imagePullPolicy: Always
+              resources:
+                limits:
+                  memory: "100Mi"  
+                  cpu: "10m"      
+                requests:
+                  memory: "100Mi"
+                  cpu: "2m"
+              env:
+                - name: DOTNET_ENVIRONMENT
+                  value: Staging
+                - name: REDIS_CONNECTION_STRING
+                  valueFrom:
+                    secretKeyRef:
+                      name: omicron-qa
+                      key: redis_connection_string
+                - name: SEQLOG_SVC_SERVICE_HOST_NAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: omicron-qa
+                      key: seqlog_svc_service_host_name
+          restartPolicy: OnFailure
+          imagePullSecrets:
+            - name: pullsecret
