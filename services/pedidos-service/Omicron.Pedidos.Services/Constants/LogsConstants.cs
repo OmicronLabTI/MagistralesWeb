@@ -78,6 +78,22 @@ namespace Omicron.Pedidos.Services.Constants
         public static string EndFinalizeProductionOrderOnSapWithError => "Pedidos Service - End Finalize Production Order On Sap With Error - Message Exception: {0} - Inner Exception: {1}";
 
         /// <summary>
+        /// Gets EndFinalizeProductionOrderOnPostgresWithError.
+        /// </summary>
+        /// <value>
+        /// EndFinalizeProductionOrderOnPostgresWithError.
+        /// </value>
+        public static string EndFinalizeProductionOrderOnPostgresWithError => "Pedidos Service - End Update Order On Postgres With Error - Message Exception: {0} - Inner Exception: {1}";
+
+        /// <summary>
+        /// Gets EndFinalizeProductionOrderOnPostgresWithError.
+        /// </summary>
+        /// <value>
+        /// EndFinalizeProductionOrderOnPostgresWithError.
+        /// </value>
+        public static string EndCreatePdfWithError => "Pedidos Service - End Generate Pdf of Production Orders  With Error - Message Exception: {0} - Inner Exception: {1}";
+
+        /// <summary>
         /// Gets AnUnexpectedErrorOccurred.
         /// </summary>
         /// <value>
@@ -142,12 +158,60 @@ namespace Omicron.Pedidos.Services.Constants
         public static string UpdateProductionOrdersOnPostgresAsync => "{0} - Pedidos Service - Update Production Orders Async On Postgres";
 
         /// <summary>
+        /// Gets FinalizeProductionOrdersOnSapAsync.
+        /// </summary>
+        /// <value>
+        /// FinalizeProductionOrdersOnSapAsync.
+        /// </value>
+        public static string GeneratePdfOfProductionOrdersAsync => "{0} - Pedidos Service - Generate PDF of Production Orders Async";
+
+        /// <summary>
         /// Gets PostSapFinalizeProductionOrderProcess.
         /// </summary>
         /// <value>
         /// PostSapFinalizeProductionOrderProcess.
         /// </value>
         public static string PostSapFinalizeProductionOrderProcess => "{LogBase} - Post Sap Finalize Production Order Process - {OrderToFinish}";
+
+        /// <summary>
+        /// Gets UpdateProductionOrdersOnPostgres.
+        /// </summary>
+        /// <value>
+        /// UpdateProductionOrdersOnPostgres.
+        /// </value>
+        public static string UpdateProductionOrdersOnPostgres => "{LogBase} - Updating Production and Sales Orders in Postgres - Orders to finalize: {OrderToFinish}";
+
+        /// <summary>
+        /// Gets StartGeneratePdfProcess.
+        /// </summary>
+        /// <value>
+        /// StartGeneratePdfProcess.
+        /// </value>
+        public static string StartGeneratePdfProcess => "{LogBase} - Starting PDF generation process for ProductionOrderId: {OrderToFinish}";
+
+        /// <summary>
+        /// Gets UpdateProductionOrdersOnPostgres.
+        /// </summary>
+        /// <value>
+        /// UpdateProductionOrdersOnPostgres.
+        /// </value>
+        public static string FinalizingFabOrder => "{LogBase} - Finalizing Fab Order: {Productionorderid}";
+
+        /// <summary>
+        /// Gets UpdateProductionOrdersOnPostgres.
+        /// </summary>
+        /// <value>
+        /// UpdateProductionOrdersOnPostgres.
+        /// </value>
+        public static string FinalizingSalesOrder => "{LogBase} - Finalizing Sale Order: {Salesorderid}";
+
+        /// <summary>
+        /// Gets GeneratingPdf.
+        /// </summary>
+        /// <value>
+        /// GeneratingPdf.
+        /// </value>
+        public static string GeneratingPdf => "{LogBase} - Generating PDF for SalesOrderId: {SalesOrderId}, IsolatedProductionOrderId: {IsolatedProductionOrderId}";
 
         /// <summary>
         /// Gets ErrorInSAPWhileFinalizingTheOrder.
@@ -172,6 +236,14 @@ namespace Omicron.Pedidos.Services.Constants
         /// StartFinalizeProductionOrderInSap.
         /// </value>
         public static string StartFinalizeProductionOrderInPostgres => "Pedidos Service - Start Finalize Production Order On Postgres - {ProductionOrdersToFinalize}";
+
+        /// <summary>
+        /// Gets StartFinalizeProductionOrderInSap.
+        /// </summary>
+        /// <value>
+        /// StartFinalizeProductionOrderInSap.
+        /// </value>
+        public static string StartCreationPdf => "Pedidos Service - Start Create PDF - {ProductionOrdersToFinalize}";
 
         /// <summary>
         /// Gets EndFinalizeProductionOrderInSap.

@@ -193,8 +193,8 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
         /// <inheritdoc/>
         public async Task<ResultModel> ProductionOrderPdfGenerationAsync(ProductionOrderProcessingStatusModel productionOrderProcessingPayload)
         {
-            this.logger.Information(LogsConstants.StartFinalizeProductionOrderInPostgres, JsonConvert.SerializeObject(productionOrderProcessingPayload));
-            var logBase = string.Format(LogsConstants.UpdateProductionOrdersOnPostgresAsync, productionOrderProcessingPayload.Id);
+            this.logger.Information(LogsConstants.StartCreationPdf, JsonConvert.SerializeObject(productionOrderProcessingPayload));
+            var logBase = string.Format(LogsConstants.GeneratePdfOfProductionOrdersAsync, productionOrderProcessingPayload.Id);
 
             var (productionOrderUpdated, isProcessSuccesfully) = await this.CreateProductionOrderPdf(productionOrderProcessingPayload, logBase);
             this.logger.Information(LogsConstants.UpdateProductionOrderProcessingStatus, logBase, JsonConvert.SerializeObject(productionOrderUpdated));
@@ -373,20 +373,24 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
         private async Task<(ProductionOrderProcessingStatusModel, bool)> UpdateProductionOrdersOnPostgresProcess(ProductionOrderProcessingStatusModel productionOrderProcessingPayload, string logBase)
         {
             var productionOrderProcessingStatusInBD = await this.pedidosDao.GetFirstProductionOrderProcessingStatusByProductionOrderId(productionOrderProcessingPayload.ProductionOrderId);
+            var payloadJson = JsonConvert.DeserializeObject<FinalizeProductionOrderPayload>(productionOrderProcessingPayload.Payload);
             try
             {
+                this.logger.Information(
+                    LogsConstants.UpdateProductionOrdersOnPostgres, logBase, JsonConvert.SerializeObject(payloadJson.FinalizeProductionOrder));
                 var productionOrderId = productionOrderProcessingPayload.ProductionOrderId.ToString();
                 var (salesOrders, productionOrder) = await this.GetRelatedOrdersToProducionOrder(new List<string> { productionOrderId });
                 var salesOrder = salesOrders != null ? salesOrders.FirstOrDefault(x => x.IsSalesOrder) : null;
                 salesOrders?.Remove(salesOrder);
                 var preProductionOrders = await ServiceUtils.GetPreProductionOrdersFromSap(salesOrder, this.sapAdapter);
-                var payloadJson = JsonConvert.DeserializeObject<FinalizeProductionOrderPayload>(productionOrderProcessingPayload.Payload);
                 var payload = payloadJson.FinalizeProductionOrder;
                 var userOrdersToUpdate = new List<UserOrderModel>();
                 var ordersToProcess = payload.SourceProcess == ServiceConstants.SalesOrders ? salesOrders : new List<UserOrderModel> { productionOrder };
 
                 foreach (var userOrder in ordersToProcess)
                 {
+                    this.logger.Information(LogsConstants.FinalizingFabOrder, logBase, userOrder.Productionorderid);
+
                     if (userOrder.Status.Equals(ServiceConstants.Finalizado))
                     {
                         continue;
@@ -415,6 +419,8 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
 
                 if (shouldUpdateSalesOrder)
                 {
+                    this.logger.Information(LogsConstants.FinalizingSalesOrder, logBase, salesOrder.Salesorderid);
+
                     salesOrder.CloseUserId = payload.UserId;
                     salesOrder.CloseDate = DateTime.Now;
                     salesOrder.Status = ServiceConstants.Finalizado;
@@ -435,7 +441,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             }
             catch (Exception ex)
             {
-                var error = string.Format(LogsConstants.EndFinalizeProductionOrderOnSapWithError, ex.Message, ex.InnerException);
+                var error = string.Format(LogsConstants.EndFinalizeProductionOrderOnPostgresWithError, ex.Message, ex.InnerException);
                 this.logger.Error(ex, error);
 
                 productionOrderProcessingStatusInBD = UpdateProcessingStatusAsync(
@@ -452,9 +458,10 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
         {
             var productionOrderProcessingStatusInBD = await this.pedidosDao.GetFirstProductionOrderProcessingStatusByProductionOrderId(productionOrderProcessingPayload.ProductionOrderId);
             var payloadJson = JsonConvert.DeserializeObject<FinalizeProductionOrderPayload>(productionOrderProcessingPayload.Payload);
-            var payload = payloadJson.FinalizeProductionOrder;
             try
             {
+                this.logger.Information(
+                    LogsConstants.StartGeneratePdfProcess, logBase, JsonConvert.SerializeObject(payloadJson.FinalizeProductionOrder));
                 var productionOrderId = productionOrderProcessingPayload.ProductionOrderId.ToString();
                 var (salesOrders, productionOrder) = await this.GetRelatedOrdersToProducionOrder(new List<string> { productionOrderId });
 
@@ -470,6 +477,8 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                     listIsolated.Add(int.Parse(productionOrder.Productionorderid));
                 }
 
+                this.logger.Information(LogsConstants.GeneratingPdf, logBase, listSalesOrder.FirstOrDefault(), listIsolated.FirstOrDefault());
+
                 await SendToGeneratePdfUtils.CreateModelGeneratePdf(listSalesOrder, listIsolated, this.sapAdapter, this.pedidosDao, this.sapFileService, this.userService, true);
 
                 productionOrderProcessingStatusInBD = UpdateProcessingStatusAsync(
@@ -482,9 +491,9 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             }
             catch (Exception ex)
             {
-                var error = string.Format(LogsConstants.EndFinalizeProductionOrderOnSapWithError, ex.Message, ex.InnerException);
+                var error = string.Format(LogsConstants.EndCreatePdfWithError, ex.Message, ex.InnerException);
                 this.logger.Error(ex, error);
-                Console.WriteLine(ex);
+
                 productionOrderProcessingStatusInBD = UpdateProcessingStatusAsync(
                     productionOrderProcessingStatusInBD,
                     ServiceConstants.FinalizeProcessFailedStatus,
