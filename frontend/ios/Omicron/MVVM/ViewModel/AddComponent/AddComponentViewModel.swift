@@ -51,7 +51,8 @@ class AddComponentViewModel {
                                       selectedTotal: 0,
                                       componentInfo: component.selectedComponent,
                                       unit: component.selectedComponent.unit ?? String(),
-                                      managedByBatches: component.selectedComponent.managedByBatches ?? false)
+                                      managedByBatches: component.selectedComponent.managedByBatches ?? false,
+                                      warehouses: component.warehouses)
         
         loadLotsByProductAndWarehouse(productId: productId, warehouseCode: component.warehouse, product: newProduct, callback: addNewComponent)
     }
