@@ -58,7 +58,8 @@ class ComponentsTestExtension: XCTestCase {
         let values = ComponentFormValues(baseQuantity: 2,
                                          requiredQuantity: 1,
                                          warehouse: "MG",
-                                         selectedComponent: ComponentO())
+                                         selectedComponent: ComponentO(),
+                                         warehouses: [])
         componentsViewModel?.saveSuccess.subscribe(onNext: { _ in
             XCTAssertTrue(true)
         }).disposed(by: disposeBag!)
