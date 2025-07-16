@@ -27,21 +27,7 @@ class LotsTableViewCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewData
 
     private let textField = UITextField()
     private let pickerView = UIPickerView()
-    private let options: [String] = [
-        "AMP",
-        "BE",
-        "GENERAL",
-        "INCI",
-        "MER",
-        "MG",
-        "MN",
-        "MP",
-        "PROD",
-        "PRONATUR",
-        "PT",
-        "TALLERES",
-        "WEB"
-    ]
+    var options: [String] = []
     var productId = String()
     var delegate: SelectedDropDownOptionsDelegate?
     var selectedOption: String = "" {

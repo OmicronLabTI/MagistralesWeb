@@ -158,6 +158,14 @@ class NetworkManager: SessionProtocol {
         let res: Observable<ComponentResponse> = makeRequest(request: req)
         return res
     }
+    
+    func getWarehouses(_ itemcode: String) -> Observable<WarehouseResponse> {
+        let data = WarehouseByProductRequest(itemCode: itemcode)
+        let req: ApiService = ApiService.getWarehousesByItemcode(data: data)
+        let res: Observable<WarehouseResponse> = makeRequest(request: req)
+        return res
+    }
+
     // Obtiene la carga de trabajo
     func getWordLoad(_ data: WorkloadRequest) -> Observable<WorkloadResponse> {
         let req: ApiService = ApiService.getWorkload(data: data)
