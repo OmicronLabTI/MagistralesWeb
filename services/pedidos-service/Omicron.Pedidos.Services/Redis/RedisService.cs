@@ -72,6 +72,9 @@ namespace Omicron.Pedidos.Services.Redis
                 return false;
             }
 
+            // Eliminar la clave existente si ya hay datos
+            await this.database.KeyDeleteAsync(key);
+
             // Convertir los objetos a RedisValue[]
             RedisValue[] redisValues = items
                 .Select(item => (RedisValue)JsonConvert.SerializeObject(item))

@@ -8,6 +8,7 @@
 
 namespace Omicron.Pedidos.Services.Constants
 {
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -1031,6 +1032,30 @@ namespace Omicron.Pedidos.Services.Constants
         public const string StepSuccessfullyClosedInSapStep = "Successfully Closed In SAP";
 
         /// <summary>
+        /// Gets StepPrimaryValidations.
+        /// </summary>
+        /// <value>
+        /// StepPrimaryValidations.
+        /// </value>
+        public const string StepUpdatePostgres = "Successfully Closed In Postgresql";
+
+        /// <summary>
+        /// Gets StepPrimaryValidations.
+        /// </summary>
+        /// <value>
+        /// StepPrimaryValidations.
+        /// </value>
+        public const string StepCreatePdf = "PDF Created";
+
+        /// <summary>
+        /// Gets DefaultRedisValueTimeToLive.
+        /// </summary>
+        /// <value>
+        /// DefaultRedisValueTimeToLive.
+        /// </value>
+        public static TimeSpan DefaultRedisValueTimeToLive => new TimeSpan(8, 0, 0);
+
+        /// <summary>
         /// Gets ProductionOrderIsAlreadyBeignProcessed.
         /// </summary>
         /// <value>
@@ -1053,22 +1078,6 @@ namespace Omicron.Pedidos.Services.Constants
         /// SapFinalizeProductionOrdersEndpoint.
         /// </value>
         public static string SapFinalizeProductionOrdersEndpoint => "finalize/productionorders";
-
-        /// <summary>
-        /// Gets StepPrimaryValidations.
-        /// </summary>
-        /// <value>
-        /// StepPrimaryValidations.
-        /// </value>
-        public static string StepUpdatePostgres => "Update UsersOrders in postgres";
-
-        /// <summary>
-        /// Gets StepPrimaryValidations.
-        /// </summary>
-        /// <value>
-        /// StepPrimaryValidations.
-        /// </value>
-        public static string StepCreatePdf => "Create PDF";
 
         /// <summary>
         /// Gets FinalizeProcessInProgressStatus.
@@ -1109,6 +1118,14 @@ namespace Omicron.Pedidos.Services.Constants
         /// ProductionOrderFinalizingToProcessKey.
         /// </value>
         public static string ProductionOrderFinalizingToProcessKey => "production-order-finalizing-to-process";
+
+        /// <summary>
+        /// Gets ProductionOrderFinalizingRetryCronjob.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderFinalizingRetryCronjob.
+        /// </value>
+        public static string ProductionOrderFinalizingRetryCronjob => "production-order-finalizing-retry-cronjob";
 
         /// <summary>
         /// Gets KafkaInsertLogsConfigName.

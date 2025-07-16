@@ -649,6 +649,14 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         }
 
         /// <inheritdoc/>
+        public async Task<ProductionOrderProcessingStatusModel> GetFirstProductionOrderProcessingStatusById(string id)
+        {
+            return await this.databaseContext.ProductionOrderProcessingStatusModel
+                .Where(po => id == po.Id)
+                .FirstAsync();
+        }
+
+        /// <inheritdoc/>
         public async Task<IEnumerable<ProductionOrderProcessingStatusModel>> GetAllProductionOrderProcessingStatusByStatus(List<string> status)
         {
             return await this.databaseContext.ProductionOrderProcessingStatusModel

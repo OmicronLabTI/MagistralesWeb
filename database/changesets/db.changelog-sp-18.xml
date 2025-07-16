@@ -51,4 +51,10 @@
 			</column>
 		</createTable>
 	</changeSet>
+	<changeSet author="jespinosap" id="changelog-1.3">
+		<sql>
+			ALTER TABLE productionorderprocessingstatus
+			ALTER COLUMN errormessage TYPE TEXT;
+		</sql>
+	</changeSet>
 </databaseChangeLog>

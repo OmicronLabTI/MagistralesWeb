@@ -397,7 +397,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                     processResultResult.Add(
                             GenerateValidationResult(
                                 productionOrder.ProductionOrderId,
-                                string.Format(LogsConstants.ProcessLogTwoParts, ex.Message, ex.StackTrace),
+                                ex.Message,
                                 productionOrder.LastStep));
                 }
             }

@@ -927,7 +927,7 @@ namespace Omicron.Pedidos.Test
         /// <param name="isOk">flag to define if the service returns an error.</param>
         /// <param name="comments">the comments.</param>
         /// <returns>the data.</returns>
-        public ResultModel GetResultModel(object response, bool isOk = true, string comments = "")
+        public ResultModel GetResultModelCompl(object response, bool isOk = true, string comments = "")
         {
             return new ResultModel
             {
@@ -938,6 +938,7 @@ namespace Omicron.Pedidos.Test
             };
         }
 
+        /// <summary>
         /// Gets the resultDto.
         /// </summary>
         /// <param name="dataToSend">the data to send.</param>

@@ -105,7 +105,7 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
             var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
             mockServiceLayerAdapterService
                 .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultModel(resultMessages, isServiceLayerSuccess)));
+                .Returns(Task.FromResult(this.GetResultModelCompl(resultMessages, isServiceLayerSuccess)));
 
             var mockProductionOrdersService = new ProductionOrdersService(
                 this.pedidosDao,
@@ -223,7 +223,7 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
             var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
             mockServiceLayerAdapterService
                 .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultModel(resultMessages, isServiceLayerSuccess)));
+                .Returns(Task.FromResult(this.GetResultModelCompl(resultMessages, isServiceLayerSuccess)));
 
             var mockProductionOrdersService = new ProductionOrdersService(
                 this.pedidosDao,
@@ -364,7 +364,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 mockSapAdapter.Object,
                 this.userService.Object,
                 this.sapFileService.Object,
-                this.logger.Object);
+                this.logger.Object,
+                this.mapper);
 
             var response = await mockProductionOrdersService.FinalizeProductionOrdersOnPostgresqlAsync(productionOrdersToFinalize);
 
@@ -422,7 +423,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 this.sapAdapter.Object,
                 this.userService.Object,
                 this.sapFileService.Object,
-                this.logger.Object);
+                this.logger.Object,
+                this.mapper);
 
             var response = await mockProductionOrdersService.FinalizeProductionOrdersOnPostgresqlAsync(productionOrdersToFinalize);
 
@@ -494,7 +496,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 mockSapAdapter.Object,
                 mockUsers.Object,
                 mockSapFile.Object,
-                this.logger.Object);
+                this.logger.Object,
+                this.mapper);
 
             var response = await mockProductionOrdersService.ProductionOrderPdfGenerationAsync(productionOrdersToFinalize);
 
