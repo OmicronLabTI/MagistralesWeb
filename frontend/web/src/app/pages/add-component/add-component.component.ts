@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material';
 import { Title } from '@angular/platform-browser';
@@ -21,7 +21,7 @@ import { PedidosService } from 'src/app/services/pedidos.service';
   templateUrl: './add-component.component.html',
   styleUrls: ['./add-component.component.scss']
 })
-export class AddComponentComponent implements OnInit {
+export class AddComponentComponent implements OnInit, OnDestroy {
   // MARK: ROUTES PARAMS
   document: number;
   ordenFabricacionId: string;
@@ -99,6 +99,10 @@ export class AddComponentComponent implements OnInit {
     private dateService: DateService,
   ) { }
 
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.document = Number(params.get('document'));
@@ -112,7 +116,10 @@ export class AddComponentComponent implements OnInit {
     });
     this.subscription.add(this.observableService.getNewFormulaComponent().subscribe(resultNewFormulaComponent => {
       if (resultNewFormulaComponent) {
-        this.getLotesForComponent(resultNewFormulaComponent);
+        const componentId = resultNewFormulaComponent.productId;
+        const principalWarehouse = resultNewFormulaComponent.availableWarehouses[0];
+        const query = `?offset=${0}&limit=${1}&chips=${componentId}&catalogGroup=${principalWarehouse}`;
+        this.getComponentInfo(query, resultNewFormulaComponent.availableWarehouses);
       }
     }));
     this.reloadData();
@@ -144,14 +151,28 @@ export class AddComponentComponent implements OnInit {
     this.catalogGroupName = response.catalogGroupName || '';
   }
 
-  getLotesForComponent(resultNewFormulaComponent: IFormulaDetalleReq) {
-    const queryParams = `?itemcode=${resultNewFormulaComponent.productId}&warehouse=${resultNewFormulaComponent.warehouse}`;
+  getLotesForComponent(resultNewFormulaComponent: IFormulaDetalleReq, warehouseSelected?: string) {
+    const warehouse = this.dataService.calculateTernary(
+      this.dataService.validateValidString(warehouseSelected),
+      warehouseSelected,
+      resultNewFormulaComponent.availableWarehouses[0]
+    );
+    const queryParams = `?itemcode=${resultNewFormulaComponent.productId}&warehouse=${warehouse}`;
+    if (!resultNewFormulaComponent.availableWarehouses || resultNewFormulaComponent.availableWarehouses.length === 0) {
+      this.observableService.setGeneralNotificationMessage(Messages.invalidWarehouses + resultNewFormulaComponent.productId);
+      return;
+    }
     this.pedidosService.getComponentsLotes(queryParams).subscribe(resLotes => {
-      this.generateObjectsForTables(resultNewFormulaComponent, resLotes.response);
+      this.generateObjectsForTables(resultNewFormulaComponent, resLotes.response, warehouseSelected);
     });
   }
 
-  generateObjectsForTables(resultNewFormulaComponent: IFormulaDetalleReq, lotes: IComponentLotes) {
+  generateObjectsForTables(resultNewFormulaComponent: IFormulaDetalleReq, lotes: IComponentLotes, warehouseSelected?: string) {
+    const warehousePicked = this.dataService.calculateTernary(
+      this.dataService.validateValidString(warehouseSelected),
+      warehouseSelected,
+      resultNewFormulaComponent.availableWarehouses[0]
+    );
     const dataLotesTable: ILotesReq[] = [];
 
     lotes.lotes.forEach(lote => {
@@ -173,7 +194,7 @@ export class AddComponentComponent implements OnInit {
       consumed: resultNewFormulaComponent.consumed,
       available: resultNewFormulaComponent.available,
       unit: resultNewFormulaComponent.unit,
-      warehouse: resultNewFormulaComponent.warehouse,
+      warehouse: warehousePicked,
       pendingQuantity: resultNewFormulaComponent.pendingQuantity,
       stock: resultNewFormulaComponent.stock,
       warehouseQuantity: resultNewFormulaComponent.warehouseQuantity,
@@ -185,15 +206,15 @@ export class AddComponentComponent implements OnInit {
       availableWarehouses: resultNewFormulaComponent.availableWarehouses,
       managedByBatches: resultNewFormulaComponent.managedByBatches
     };
-    this.componentsData.push(resultNewFormulaComponent);
-    this.dataSourceComponents.data.push(dataComponentRow);
+    this.componentsData[this.indexSelected] = resultNewFormulaComponent;
+    this.dataSourceComponents.data[this.indexSelected] = dataComponentRow;
     this.dataSourceComponents._updateChangeSubscription();
     this.validateIsReadyToSave();
     this.setSelectedTr(dataComponentRow);
   }
 
   validateIsReadyToSave(): void {
-    this.isReadyToSave = this.dataSourceComponents.data.every( element => !element.managedByBatches);
+    this.isReadyToSave = this.dataSourceComponents.data.every(element => !element.managedByBatches);
   }
 
   setSelectedTr(elements?: IAddComponentsAndLotesTable): void {
@@ -254,10 +275,13 @@ export class AddComponentComponent implements OnInit {
   onSelectWareHouseChange(value: string, index: number) {
     const componente = this.dataSourceComponents.data[index].codigoProducto;
     const query = `?offset=${0}&limit=${1}&chips=${componente}&catalogGroup=${value}`;
-    this.pedidosService.getComponents(query, true).subscribe( response => {
-      this.dataSourceComponents.data[index].isChecked = true;
-      this.deleteComponents();
-      this.getLotesForComponent(response.response[0]);
+    this.getComponentInfo(query, [...this.dataSourceComponents.data[index].availableWarehouses], value);
+  }
+
+  getComponentInfo(query: string, wareHousesList: string[], warehouseSelected?: string) {
+    this.pedidosService.getComponents(query, true).subscribe(response => {
+      response.response[0].availableWarehouses = wareHousesList;
+      this.getLotesForComponent(response.response[0], warehouseSelected);
     });
   }
 
@@ -334,7 +358,6 @@ export class AddComponentComponent implements OnInit {
       this.setTotales(-element.cantidadSeleccionada);
       this.isReadyToSave = true;
     }
-    return false;
   }
 
   buildObjectToSap(): void {

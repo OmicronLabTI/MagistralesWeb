@@ -323,11 +323,11 @@
                         <td mat-cell *matCellDef="let element;let i = index;"
                             class="color-text-intables tdcell color-black mobile-hide almacen">
                             <mat-form-field appearance="outline">
-                                <mat-select [disabled]="element.hasBatches" [(ngModel)]="element.warehouse"
+                                <mat-select #selectRef [disabled]="element.hasBatches" [(ngModel)]="element.warehouse"
                                     (openedChange)="onOpenSelect($event, i)"
                                     (ngModelChange)="onSelectWareHouseChange($event, i)" [disabled]="false">
                                     <mat-option *ngFor="let item of element.availableWarehouses"
-                                        value="{{item}}">{{item}}
+                                        [value]="item">{{item}}
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>
