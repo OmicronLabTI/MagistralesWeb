@@ -317,10 +317,19 @@ namespace Omicron.Catalogos.Services.Catalogs
                 ValidateFirmNames(x.Manufacturers, productInfo.ProductFirmName.ToUpper(), x.Exceptions, itemCode.ToUpper()))
                 .OrderByDescending(x => x.Products).ToList();
 
-            var selectedConfig = validWarehouses.FirstOrDefault() ?? new ConfigWarehouseModel() { Mainwarehouse = string.Empty, Alternativewarehouses = string.Empty };
+            var selectedConfig = validWarehouses.FirstOrDefault();
             var warehouses = new List<string>();
-            warehouses.Add(selectedConfig.Mainwarehouse);
-            warehouses.AddRange(GetValidStringList(selectedConfig.Alternativewarehouses).Order());
+
+            if (selectedConfig != null)
+            {
+                if (!string.IsNullOrEmpty(selectedConfig.Mainwarehouse))
+                {
+                    warehouses.Add(selectedConfig.Mainwarehouse);
+                }
+
+                warehouses.AddRange(GetValidStringList(selectedConfig.Alternativewarehouses).Order());
+            }
+
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, warehouses, null);
         }
 
