@@ -50,15 +50,15 @@ describe('DetalleFormulaComponent', () => {
         'httpError'
       ]);
     localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
-        'getUserId',
-        'getOrderIsolated',
-        'removeOrderIsolated',
-        'setFiltersActivesOrders',
-        'getFiltersActivesOrders',
-        'removeFiltersActiveOrders',
-        'getFiltersActivesAsModelOrders',
-        'getToken'
-      ]);
+      'getUserId',
+      'getOrderIsolated',
+      'removeOrderIsolated',
+      'setFiltersActivesOrders',
+      'getFiltersActivesOrders',
+      'removeFiltersActiveOrders',
+      'getFiltersActivesAsModelOrders',
+      'getToken'
+    ]);
     pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService',
       [
         'getFormulaDetail',
@@ -73,15 +73,16 @@ describe('DetalleFormulaComponent', () => {
       'setIsToSaveAnything',
       'getFullStringForCarousel',
       'getIsToSaveAnything',
-      'calculateOrValueList'
+      'calculateOrValueList',
+      'validateValidString'
     ]);
     dataServiceSpy.getIsToSaveAnything.and.callFake(() => {
       return true;
     });
-    // routerSpy = jasmine.createSpyObj<ActivatedRoute>('ActivateRoute', [
-    //   'paramMap'
-    // ]);
-    // routerSpy.paramMap.and.returnValue();
+    dataServiceSpy.validateValidString.and.callFake((text: string) => {
+      const res = [text !== '', text !== undefined, text !== null];
+      return res.every(item => item);
+    });
     localStorageServiceSpy.getToken.and.callFake(() => {
       return '';
     });
@@ -157,12 +158,12 @@ describe('DetalleFormulaComponent', () => {
         { provide: DataService, useValue: dataServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
         { provide: ObservableService, useValue: observableServiceSpy },
-        { provide: LocalStorageService, useValue: localStorageServiceSpy},
+        { provide: LocalStorageService, useValue: localStorageServiceSpy },
         { provide: DateService, useValue: dateServiceSpy },
         { provide: MessagesService, useValue: messagesServiceSpy },
         { provide: FiltersService, useValue: filtersServiceSpy },
         { provide: ActivatedRoute, useValue: { paramMap: new Subject() } },
-        {provide: APP_BASE_HREF, useValue : '/' }
+        { provide: APP_BASE_HREF, useValue: '/' }
       ]
     })
       .compileComponents();

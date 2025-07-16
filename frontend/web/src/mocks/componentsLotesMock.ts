@@ -1,6 +1,6 @@
 import { IAddComponentsAndLotesTable, IComponentLotes } from 'src/app/model/http/addComponent';
 import { IFormulaDetalleReq, IFormulaReq } from 'src/app/model/http/detalleformula';
-import { ILotesFormulaReq, ILotesReq } from 'src/app/model/http/lotesformula';
+import { ILotesAsignadosReq, ILotesFormulaReq, ILotesReq } from 'src/app/model/http/lotesformula';
 
 export const mockIFormulaReqResponse: IFormulaReq = {
     details: [{
@@ -98,7 +98,8 @@ export const mockIFormulaDetalleReq: IFormulaDetalleReq[] = [
                 areBatchesComplete: 0,
                 sysNumber: 102
             }
-        ]
+        ],
+        availableWarehouses: ['MG']
     }
 ];
 
@@ -214,7 +215,8 @@ export const dataSourceComponentsMock: IAddComponentsAndLotesTable[] = [
                 isValid: true
             }
         ],
-        selected: true
+        selected: true,
+        availableWarehouses: ['MG']
     },
     {
         codigoProducto: 'MP-002',
@@ -269,9 +271,17 @@ export const dataSourceComponentsMock: IAddComponentsAndLotesTable[] = [
                 cantidadSeleccionada: 0.666667,
                 sysNumber: 10,
             }
-        ]
+        ],
+        availableWarehouses: ['MG']
     }
 ];
+
+export const lotesAsignadosReqMock: ILotesAsignadosReq = {
+    numeroLote: 'PT-2-21145',
+    sysNumber: 9,
+    cantidadSeleccionada: 0.0002,
+    isValid: false
+};
 
 // export const dataSourceLotesMock: ILotesReq = {
 

@@ -134,6 +134,6 @@ export class PedidosService {
   }
 
   getProductWarehouses(productId: string) {
-    return this.consumeService.httpGet<IProductWarehouses>(`${Endpoints.pedidos.productWarehouses}/${productId}`);
+    return this.consumeService.httpGet<IProductWarehouses>(`${Endpoints.pedidos.productWarehouses}?itemCode=${productId}`);
   }
 }
