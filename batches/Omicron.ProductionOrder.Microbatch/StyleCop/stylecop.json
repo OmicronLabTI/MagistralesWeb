@@ -3,7 +3,7 @@
 	"settings": {
 		"documentationRules": {
 			"companyName": "Axity",
-			"copyrightText": "This source code is Copyright {companyName} and MAY NOT be copied, reproduced,\npublished, distributed or transmitted to or stored in any manner without prior\nwritten consent from {companyName} (www.axity.com)."
+			"copyrightText": "This source code is Copyright Axity and MAY NOT be copied, reproduced,\npublished, distributed or transmitted to or stored in any manner without prior\nwritten consent from Axity (www.axity.com)."
 		}
 	}
 }

@@ -1,12 +1,10 @@
 ﻿// <summary>
-// <copyright file="DoctorUtilitiesHandler.cs" company="Axity">
+// <copyright file="FinalizeProductionOrderHandler.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
-
-using System.Runtime.CompilerServices;
 
 namespace Omicron.ProductionOrder.Batch.Handlers.Impl
 {
@@ -25,7 +23,6 @@ namespace Omicron.ProductionOrder.Batch.Handlers.Impl
 
         private readonly IServiceScopeFactory serviceScopeFactory;
 
-
         /// <summary>
         /// Initializes a new instance of the <see cref="FinalizeProductionOrderHandler"/> class.
         /// </summary>
@@ -33,6 +30,7 @@ namespace Omicron.ProductionOrder.Batch.Handlers.Impl
         /// <param name="pedidosService">PedidosService</param>
         /// <param name="redisService">redisService</param>
         /// <param name="settings">Settings.</param>
+        /// <param name="serviceScopeFactory">IServiceScopeFactory.</param>
         public FinalizeProductionOrderHandler(
             ILogger logger,
             IPedidosService pedidosService,
@@ -56,7 +54,7 @@ namespace Omicron.ProductionOrder.Batch.Handlers.Impl
             try
             {
                 this.logger.Information(BatchConstants.StartCronJobProcess, logBase);
-                var deleteRedisKey = await RetryFinalizeProductionOrder(batchProcessId, logBase);
+                var deleteRedisKey = await this.RetryFinalizeProductionOrder(batchProcessId, logBase);
                 if (deleteRedisKey)
                 {
                     await this.redisService.DeleteKey(BatchConstants.ProductionOrderFinalizingRetryCronjob);
@@ -136,7 +134,7 @@ namespace Omicron.ProductionOrder.Batch.Handlers.Impl
                 ProductionOrderProcessingPayload = paginatedList,
             };
 
-            SendPedidosRequestInBackgroundAsync(requestPedidos, logBase);
+            this.SendPedidosRequestInBackgroundAsync(requestPedidos, logBase);
             this.logger.Information(BatchConstants.EndProductionOrdersAreSentForRetry, logBase);
         }
 
@@ -170,7 +168,7 @@ namespace Omicron.ProductionOrder.Batch.Handlers.Impl
 
             if (paginatedList.Count < limit)
             {
-                await redisService.DeleteKey(key);
+                await this.redisService.DeleteKey(key);
             }
 
             return paginatedList;

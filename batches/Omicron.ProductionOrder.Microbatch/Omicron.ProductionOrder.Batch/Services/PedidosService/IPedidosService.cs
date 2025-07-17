@@ -8,7 +8,7 @@
 
 namespace Omicron.ProductionOrder.Batch.Services.PedidosService
 {
-    // <summary>
+    /// <summary>
     /// IPedidosService.
     /// </summary>
     public interface IPedidosService

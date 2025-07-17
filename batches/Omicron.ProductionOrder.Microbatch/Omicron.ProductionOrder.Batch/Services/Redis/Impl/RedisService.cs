@@ -9,7 +9,7 @@
 namespace Omicron.ProductionOrder.Batch.Services.Redis.Impl
 {
     /// <summary>
-    /// RedisService
+    /// RedisService.
     /// </summary>
     public class RedisService : IRedisService
     {

@@ -8,7 +8,10 @@
 
 namespace Omicron.ProductionOrder.Batch.Utils
 {
-    internal class CommonFunctions
+    /// <summary>
+    /// CommonFunctions.
+    /// </summary>
+    public static class CommonFunctions
     {
         /// <summary>
         /// Gets the response from a http response.
@@ -55,6 +58,12 @@ namespace Omicron.ProductionOrder.Batch.Utils
             return listToReturn;
         }
 
+        /// <summary>
+        /// GenerateSkipTakeBatches.
+        /// </summary>
+        /// <param name="total">Total.</param>
+        /// <param name="batchSize">Batch Size.</param>
+        /// <returns>Batch Enumerable.</returns>
         public static IEnumerable<BatchRangeModel> GenerateSkipTakeBatches(int total, int batchSize)
         {
             return Enumerable
@@ -62,7 +71,7 @@ namespace Omicron.ProductionOrder.Batch.Utils
             .Select(i => new BatchRangeModel
             {
                 Offset = i * batchSize,
-                Limit = Math.Min(batchSize, total - i * batchSize)
+                Limit = Math.Min(batchSize, total - (i * batchSize)),
             });
         }
     }

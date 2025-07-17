@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="PedidosSettings.cs" company="Axity">
+// <copyright file="Settings.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -8,6 +8,9 @@
 
 namespace Omicron.ProductionOrder.Batch.Configuration
 {
+    /// <summary>
+    /// Settings.
+    /// </summary>
     public class Settings
     {
         /// <summary>

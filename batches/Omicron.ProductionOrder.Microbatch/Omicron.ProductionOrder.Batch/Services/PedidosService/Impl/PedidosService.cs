@@ -38,9 +38,9 @@ namespace Omicron.ProductionOrder.Batch.Services.PedidosService.Impl
         public async Task<ResultDto> GetAsync(string route, string logBase)
         {
             ResultDto result;
-            var url = httpClient.BaseAddress + route;
+            var url = this.httpClient.BaseAddress + route;
 
-            using (var response = await httpClient.GetAsync(url))
+            using (var response = await this.httpClient.GetAsync(url))
             {
                 result = await CommonFunctions.GetResponse(
                     response,
@@ -51,6 +51,7 @@ namespace Omicron.ProductionOrder.Batch.Services.PedidosService.Impl
             return result;
         }
 
+        /// <inheritdoc/>
         public async Task<ResultDto> PostAsync(string route, object dataToSend, string logBase)
         {
             ResultDto result;

@@ -59,7 +59,7 @@ namespace Omicron.ProductionOrder.Batch.Constants
         /// <value>
         /// DefaultRedisValueTimeToLive.
         /// </value>
-        public static TimeSpan DefaultRedisValueTimeToLive => new(8, 0, 0);
+        public static TimeSpan DefaultRedisValueTimeToLive => new TimeSpan(8, 0, 0);
 
         /// <summary>
         /// Gets FinalizeProductionOrdersCronJob.
@@ -85,7 +85,6 @@ namespace Omicron.ProductionOrder.Batch.Constants
         /// </value>
         public static string CronJobProcessAlreadyRunning => "{LogBase} - Cron Job Is Already Running";
 
-
         /// <summary>
         /// Gets ErrorRetrievingProductionOrders.
         /// </summary>
@@ -93,7 +92,6 @@ namespace Omicron.ProductionOrder.Batch.Constants
         /// ErrorRetrievingProductionOrders.
         /// </value>
         public static string ErrorRetrievingProductionOrders => "{LogBase} - Error Retrieving Production Orders";
-
 
         /// <summary>
         /// Gets ThereAreNoProductionOrdersToProcess.
