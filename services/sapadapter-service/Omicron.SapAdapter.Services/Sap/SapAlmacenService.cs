@@ -186,8 +186,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var listComponents = warehouses.Select(x => new CompleteDetalleFormulaModel { ProductId = product.ProductoId, Warehouse = x }).ToList();
             var validBatches = (await this.sapDao.GetValidBatches(
-                listComponents.Select(c => c.ProductId).Distinct().ToList(),
-                listComponents.Select(c => c.Warehouse).Distinct().ToList())).ToList();
+                listComponents.Select(c => (c.ProductId, c.Warehouse)).ToList())).ToList();
             var productType = ServiceShared.CalculateTernary(product.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
 
             var listBatchesModel = validBatches

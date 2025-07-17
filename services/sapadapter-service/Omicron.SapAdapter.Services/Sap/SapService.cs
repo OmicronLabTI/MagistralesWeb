@@ -581,8 +581,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var warehouse = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.WarehouseParam, string.Empty);
 
             var validBatches = await this.sapDao.GetValidBatches(
-                [itemCode],
-                [warehouse]);
+                [(itemCode, warehouse)]);
 
             var batches = this.CreateValidBatchesObject(validBatches);
             var componentDetail = new BaseBatchesComponentModel
@@ -1051,8 +1050,7 @@ namespace Omicron.SapAdapter.Services.Sap
         private async Task<IEnumerable<ValidBatches>> GetValidBatches(List<CompleteDetalleFormulaModel> components)
         {
             var batches = await this.sapDao.GetValidBatches(
-                components.Select(c => c.ProductId).Distinct().ToList(),
-                components.Select(c => c.Warehouse).Distinct().ToList());
+            components.Select(c => (c.ProductId, c.Warehouse)).Distinct().ToList());
             return this.CreateValidBatchesObject(batches);
         }
 
