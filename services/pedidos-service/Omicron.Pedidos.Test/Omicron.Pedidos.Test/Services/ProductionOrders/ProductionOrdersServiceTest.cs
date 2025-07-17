@@ -505,5 +505,178 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
             Assert.That(response.Success, Is.True);
             Assert.That(response.Code.Equals((int)HttpStatusCode.OK));
         }
+
+        /// <summary>
+        /// GetFailedProductionOrders.
+        /// </summary>
+        /// <returns>Test.</returns>
+        [Test]
+        public async Task GetFailedProductionOrders()
+        {
+            var mockRedisService = new Mock<IRedisService>();
+
+            var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
+
+            var mockSapAdapter = new Mock<ISapAdapter>();
+
+            var mockSapFile = new Mock<ISapFileService>();
+
+            var mockUsers = new Mock<IUsersService>();
+
+            var mockDao = new Mock<IPedidosDao>();
+            mockDao
+                .Setup(x => x.GetAllProductionOrderProcessingStatusByStatus(It.IsAny<List<string>>()))
+                .Returns(Task.FromResult(this.GetProductionOrderProcessingStatusModelForGetFailedProductionOrders()));
+
+            var mockProductionOrdersService = new ProductionOrdersService(
+                mockDao.Object,
+                mockServiceLayerAdapterService.Object,
+                mockRedisService.Object,
+                this.mockKafkaConnector.Object,
+                mockSapAdapter.Object,
+                mockUsers.Object,
+                mockSapFile.Object,
+                this.logger.Object,
+                this.mapper);
+
+            var response = await mockProductionOrdersService.GetFailedProductionOrders();
+
+            // Assert
+            Assert.That(response.Success, Is.True);
+            Assert.That(response.Code.Equals((int)HttpStatusCode.OK));
+            Assert.That(response.Response, Is.EqualTo(3));
+        }
+
+        /// <summary>
+        /// RetryFailedProductionOrderFinalization_Primary_Validations.
+        /// </summary>
+        /// <returns>Test.</returns>
+        [Test]
+        public async Task RetryFailedProductionOrderFinalization_Primary_Validations()
+        {
+            var payload = new ProductionOrderProcessingStatusDto
+            {
+                Id = "9b7b6752-8f91-4c1b-9eda-f41a3e30fdef",
+                ProductionOrderId = 100003,
+                LastStep = "Primary Validations",
+                Status = "Failded",
+                ErrorMessage = "error",
+                Payload = "{\"FinalizeProductionOrder\":{\"UserId\":\"76162c93-7c22-49b2-b3aa-dc3a355f48e1\",\"ProductionOrderId\":100003,\"SourceProcess\":null,\"Batches\":null}}",
+                CreatedAt = DateTime.UtcNow,
+                LastUpdated = DateTime.UtcNow,
+            };
+
+            var request = new RetryFailedProductionOrderFinalizationDto
+            {
+                BatchProcessId = "0436570b-2437-47f7-82ea-e699db8e45a3",
+                ProductionOrderProcessingPayload = new List<ProductionOrderProcessingStatusDto> { payload },
+            };
+
+            var mockRedisService = new Mock<IRedisService>();
+            mockRedisService
+                .Setup(mr => mr.GetRedisKey(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetRedisFinalizeProductionOrderString(true)));
+            mockRedisService.Setup(m => m.WriteToRedis(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>()));
+
+            var resultMessages = new List<ValidationsToFinalizeProductionOrdersResultModel>
+                {
+                    new ValidationsToFinalizeProductionOrdersResultModel { ProductionOrderId = 100003, ErrorMessage = "La orden de produción 100003 no existe." },
+                    new ValidationsToFinalizeProductionOrdersResultModel { ProductionOrderId = 100004, ErrorMessage = "La orden de producción 100004 no esta liberada." },
+                    new ValidationsToFinalizeProductionOrdersResultModel { ProductionOrderId = 100005, ErrorMessage = "La orden de producción 100005 está cerrada." },
+                    new ValidationsToFinalizeProductionOrdersResultModel { ProductionOrderId = 100006, ErrorMessage = string.Empty },
+                };
+
+            var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
+            mockServiceLayerAdapterService
+                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultModelCompl(resultMessages, true)));
+
+            var mockSapAdapter = new Mock<ISapAdapter>();
+
+            var mockSapFile = new Mock<ISapFileService>();
+
+            var mockUsers = new Mock<IUsersService>();
+
+            var mockProductionOrdersService = new ProductionOrdersService(
+                this.pedidosDao,
+                mockServiceLayerAdapterService.Object,
+                mockRedisService.Object,
+                this.mockKafkaConnector.Object,
+                mockSapAdapter.Object,
+                mockUsers.Object,
+                mockSapFile.Object,
+                this.logger.Object,
+                this.mapper);
+
+            var response = await mockProductionOrdersService.RetryFailedProductionOrderFinalization(request);
+
+            // Assert
+            Assert.That(response.Success, Is.True);
+            Assert.That(response.Code.Equals((int)HttpStatusCode.OK));
+        }
+
+        /// <summary>
+        /// RetryFailedProductionOrderFinalization_Primary_Validations.
+        /// </summary>
+        /// <returns>Test.</returns>
+        [Test]
+        public async Task RetryFailedProductionOrderFinalization_PdfGeneration()
+        {
+            var payload = new ProductionOrderProcessingStatusDto
+            {
+                Id = "9b7b6752-8f91-4c1b-9eda-f41a3e30fdef",
+                ProductionOrderId = 100003,
+                LastStep = "Successfully Closed In Postgresql",
+                Status = "Failded",
+                ErrorMessage = "error",
+                Payload = "{\"FinalizeProductionOrder\":{\"UserId\":\"76162c93-7c22-49b2-b3aa-dc3a355f48e1\",\"ProductionOrderId\":100003,\"SourceProcess\":null,\"Batches\":null}}",
+                CreatedAt = DateTime.UtcNow,
+                LastUpdated = DateTime.UtcNow,
+            };
+
+            var request = new RetryFailedProductionOrderFinalizationDto
+            {
+                BatchProcessId = "0436570b-2437-47f7-82ea-e699db8e45a3",
+                ProductionOrderProcessingPayload = new List<ProductionOrderProcessingStatusDto> { payload },
+            };
+
+            var mockRedisService = new Mock<IRedisService>();
+            mockRedisService.Setup(m => m.DeleteKey(It.IsAny<string>()));
+
+            var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
+
+            var mockSapAdapter = new Mock<ISapAdapter>();
+            mockSapAdapter
+                .SetupSequence(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetFabricacionOrderModel()))
+                .Returns(Task.FromResult(this.GetRecipes()));
+
+            var mockSapFile = new Mock<ISapFileService>();
+            mockSapFile
+                .Setup(m => m.PostSimple(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultCreateOrder()));
+
+            var mockUsers = new Mock<IUsersService>();
+            mockUsers
+                .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultUserModel()));
+
+            var mockProductionOrdersService = new ProductionOrdersService(
+                this.pedidosDao,
+                mockServiceLayerAdapterService.Object,
+                mockRedisService.Object,
+                this.mockKafkaConnector.Object,
+                mockSapAdapter.Object,
+                mockUsers.Object,
+                mockSapFile.Object,
+                this.logger.Object,
+                this.mapper);
+
+            var response = await mockProductionOrdersService.RetryFailedProductionOrderFinalization(request);
+
+            // Assert
+            Assert.That(response.Success, Is.True);
+            Assert.That(response.Code.Equals((int)HttpStatusCode.OK));
+        }
     }
 }

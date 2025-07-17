@@ -854,7 +854,7 @@ namespace Omicron.Pedidos.Test
             {
                 new ProductionOrderProcessingStatusModel
                 {
-                    Id = "2d982b6a-e3d9-463d-9c36-e80f8e466a17",
+                    Id = "9e7ea1ba-5950-4a94-a34e-5b7a5db112a4",
                     ProductionOrderId = 100001,
                     LastStep = "Primary Validations",
                     Status = "In Progress",
@@ -879,6 +879,48 @@ namespace Omicron.Pedidos.Test
                     LastStep = "Update UsersOrders in postgres",
                     Status = "In Progress",
                     Payload = "{\"FinalizeProductionOrder\":{\"UserId\":\"7ac2db83-3c31-4042-9d1b-5531753694b4\",\"ProductionOrderId\":224896,\"SourceProcess\":null,\"Batches\":null}}",
+                    CreatedAt = DateTime.Now.AddDays(-1),
+                    LastUpdated = DateTime.Now,
+                },
+            };
+        }
+
+        /// <summary>
+        /// GetProductionOrderProcessingStatusModel.
+        /// </summary>
+        /// <returns>List ProductionOrderProcessingStatusModel.</returns>
+        public IEnumerable<ProductionOrderProcessingStatusModel> GetProductionOrderProcessingStatusModelForGetFailedProductionOrders()
+        {
+            return new List<ProductionOrderProcessingStatusModel>
+            {
+                // GetFailedProductionOrders test
+                new ProductionOrderProcessingStatusModel
+                {
+                    Id = "fe6e0eea-c279-4a07-b0fb-923dce1b5e31",
+                    ProductionOrderId = 123,
+                    LastStep = "Primary Validations",
+                    Status = "Failed",
+                    Payload = "{\"FinalizeProductionOrder\":{\"UserId\":\"5c9700ba-92e1-40ae-91ab-d6d833eb03de\",\"ProductionOrderId\":123,\"SourceProcess\":null,\"Batches\":null}}",
+                    CreatedAt = DateTime.Now.AddDays(-1),
+                    LastUpdated = DateTime.Now,
+                },
+                new ProductionOrderProcessingStatusModel
+                {
+                    Id = "b02abfd6-7c31-420d-bcf5-db99aef35a65",
+                    ProductionOrderId = 456,
+                    LastStep = "Update UsersOrders in postgres",
+                    Status = "Failed",
+                    Payload = "{\"FinalizeProductionOrder\":{\"UserId\":\"5c9700ba-92e1-40ae-91ab-d6d833eb03de\",\"ProductionOrderId\":456,\"SourceProcess\":null,\"Batches\":null}}",
+                    CreatedAt = DateTime.Now.AddDays(-1),
+                    LastUpdated = DateTime.Now,
+                },
+                new ProductionOrderProcessingStatusModel
+                {
+                    Id = "7773b512-9eb2-495d-abcf-16de3ac616db",
+                    ProductionOrderId = 789,
+                    LastStep = "PDF Creation",
+                    Status = "Failed",
+                    Payload = "{\"FinalizeProductionOrder\":{\"UserId\":\"5c9700ba-92e1-40ae-91ab-d6d833eb03de\",\"ProductionOrderId\":789,\"SourceProcess\":null,\"Batches\":null}}",
                     CreatedAt = DateTime.Now.AddDays(-1),
                     LastUpdated = DateTime.Now,
                 },

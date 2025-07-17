@@ -315,7 +315,7 @@ namespace Omicron.Pedidos.Services.Constants
         /// <value>
         /// RetryFinalizingProductionOrderEndWithError.
         /// </value>
-        public static string RetryFinalizingProductionOrderEndWithError => "{LogBase} - Retry Finalizing Production Order End Process With Error - Id: {Id} - Production Order: {ProductionOrderId} - Message {Message} - Inner Exception - {InnerException}";
+        public static string RetryFinalizingProductionOrderEndWithError => "{0} - Retry Finalizing Production Order End Process With Error - Id: {1} - Production Order: {2} - Message {3} - Inner Exception - {4}";
 
         /// <summary>
         /// Gets StepNotRecognized.
