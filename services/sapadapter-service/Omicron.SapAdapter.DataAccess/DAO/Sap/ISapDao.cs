@@ -229,7 +229,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <summary>
         /// gets the valid batches by itemcodes and warehouses.
         /// </summary>
-        /// <param name="productIds">the productIds.</param>
+        /// <param name="productWarehouseCombinations">the productIds.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<CompleteBatchesJoinModel>> GetValidBatches(List<(string ItemCode, string WhsCode)> productWarehouseCombinations);
 
