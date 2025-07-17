@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Omicron.ProductionOrder.Bat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Omicron.ProductionOrder.Entities", "Omicron.ProductionOrder.Model\Omicron.ProductionOrder.Entities.csproj", "{CCCCCD46-7CE0-4698-8324-4AD92C070818}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Omicron.ProductionOrder.Test", "Omicron.ProductionOrder.Test\Omicron.ProductionOrder.Test.csproj", "{D70DB703-5B6E-4D3D-85EF-98C4E0297F94}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Stylecop", "Stylecop", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
 	ProjectSection(SolutionItems) = preProject
 		StyleCop\stylecop.json = StyleCop\stylecop.json
@@ -19,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Omicron.ProductionOrder.Test", "Omicron.ProductionOrder.Test\Omicron.ProductionOrder.Test.csproj", "{61AEE7CF-39A6-7EA9-B919-0580EAAD3850}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,10 +34,10 @@ Global
 		{CCCCCD46-7CE0-4698-8324-4AD92C070818}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCCCCD46-7CE0-4698-8324-4AD92C070818}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CCCCCD46-7CE0-4698-8324-4AD92C070818}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D70DB703-5B6E-4D3D-85EF-98C4E0297F94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D70DB703-5B6E-4D3D-85EF-98C4E0297F94}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D70DB703-5B6E-4D3D-85EF-98C4E0297F94}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D70DB703-5B6E-4D3D-85EF-98C4E0297F94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61AEE7CF-39A6-7EA9-B919-0580EAAD3850}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61AEE7CF-39A6-7EA9-B919-0580EAAD3850}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61AEE7CF-39A6-7EA9-B919-0580EAAD3850}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61AEE7CF-39A6-7EA9-B919-0580EAAD3850}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
