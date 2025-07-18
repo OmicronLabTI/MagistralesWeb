@@ -5,9 +5,29 @@ builder.UseSerilog((context, services, configuration) =>
 {
     var settings = context.Configuration.GetSection("Settings").Get<Settings>();
 
-    configuration
-        .WriteTo.Console(LogEventLevel.Information)
-        .WriteTo.Seq(settings.SeqUrl);
+    configuration.WriteTo.Console(LogEventLevel.Information);
+
+    // Validar variables de entorno antes de construir la URL
+    var seqHost = Environment.GetEnvironmentVariable("SEQLOG_SVC_SERVICE_HOST");
+    var seqPort = Environment.GetEnvironmentVariable("SEQLOG_SVC_SERVICE_PORT_ALT");
+
+    Console.WriteLine($"SEQLOG_SVC_SERVICE_HOST: '{seqHost}'");
+    Console.WriteLine($"SEQLOG_SVC_SERVICE_PORT_ALT: '{seqPort}'");
+    Console.WriteLine($"SeqUrl configurada: '{settings.SeqUrl}'");
+
+    if (string.IsNullOrEmpty(seqHost) || string.IsNullOrEmpty(seqPort))
+    {
+        Console.WriteLine("Variables de entorno de Seq no están definidas. Omitiendo configuración de Seq.");
+    }
+    else if (Uri.IsWellFormedUriString(settings.SeqUrl, UriKind.Absolute))
+    {
+        configuration.WriteTo.Seq(settings.SeqUrl);
+        Console.WriteLine("Seq configurado correctamente.");
+    }
+    else
+    {
+        Console.WriteLine($"SeqUrl malformada: '{settings.SeqUrl}'");
+    }
 
     if (context.HostingEnvironment.IsProduction())
     {
