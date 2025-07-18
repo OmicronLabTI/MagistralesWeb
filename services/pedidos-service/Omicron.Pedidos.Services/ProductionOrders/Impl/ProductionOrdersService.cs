@@ -523,10 +523,11 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
 
                 foreach (var userOrder in ordersToProcess)
                 {
-                    this.logger.Information(LogsConstants.FinalizingFabOrder, logBase, userOrder.Productionorderid);
+                    this.logger.Information(LogsConstants.FinalizingFabOrder, logBase, JsonConvert.SerializeObject(userOrder));
 
                     if (userOrder.Status.Equals(ServiceConstants.Finalizado))
                     {
+                        this.logger.Information(LogsConstants.IfFinalizingFabOrder, userOrder.Status);
                         continue;
                     }
 
@@ -563,7 +564,8 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                     userOrdersToUpdate.Add(salesOrder);
                 }
 
-                _ = this.pedidosDao.UpdateUserOrders(userOrdersToUpdate);
+                this.logger.Information(LogsConstants.ListToUpdate, JsonConvert.SerializeObject(userOrdersToUpdate));
+                await this.pedidosDao.UpdateUserOrders(userOrdersToUpdate);
 
                 productionOrderProcessingStatusInBD = UpdateProcessingStatusAsync(
                     productionOrderProcessingStatusInBD,

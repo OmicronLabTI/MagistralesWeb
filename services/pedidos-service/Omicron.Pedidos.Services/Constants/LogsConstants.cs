@@ -227,6 +227,22 @@ namespace Omicron.Pedidos.Services.Constants
         /// <value>
         /// UpdateProductionOrdersOnPostgres.
         /// </value>
+        public static string IfFinalizingFabOrder => "La orden de fabricacion ya esta finalizada, tiene status: {ProductionorderStatus}";
+
+        /// <summary>
+        /// Gets UpdateProductionOrdersOnPostgres.
+        /// </summary>
+        /// <value>
+        /// UpdateProductionOrdersOnPostgres.
+        /// </value>
+        public static string ListToUpdate => "Lista de UserOrderModel por actualizar: {UserOrderModel}";
+
+        /// <summary>
+        /// Gets UpdateProductionOrdersOnPostgres.
+        /// </summary>
+        /// <value>
+        /// UpdateProductionOrdersOnPostgres.
+        /// </value>
         public static string FinalizingSalesOrder => "{LogBase} - Finalizing Sale Order: {Salesorderid}";
 
         /// <summary>
