@@ -167,6 +167,11 @@ extension OrderDetailViewController {
                 cell.werehouseLabel.text = data.warehouse
                 let hasStock = data.stock ?? 0.0 > 0.0
                 cell.setEmptyStock(hasStock)
+                cell.options = ["MP","RM","CD"]
+                cell.delegate = self
+//                if let strongSelf = self {
+//                    cell.configurePicker(dataSource: strongSelf, delegate: strongSelf)
+//                }
         }.disposed(by: disposeBag)
         orderDetailViewModel.tableData.subscribe(onNext: { [weak self] details in
             guard let self = self else { return }
@@ -185,4 +190,16 @@ extension OrderDetailViewController {
         }
         .disposed(by: self.disposeBag)
     }
+    
+//    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+//            return 1
+//        }
+//
+//        func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+//            return pickerOptions.count
+//        }
+//
+//        func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+//            return pickerOptions[row]
+//        }
 }

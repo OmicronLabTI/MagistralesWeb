@@ -11,7 +11,7 @@ import RxSwift
 import RxCocoa
 import Resolver
 // swiftlint:disable type_body_length
-class OrderDetailViewController: UIViewController {
+class OrderDetailViewController: UIViewController, SelectedPickerInput {
     // Outlets
     @IBOutlet weak var deleteManyButton: UIButton!
     @IBOutlet weak var processButton: UIButton!
@@ -341,6 +341,10 @@ class OrderDetailViewController: UIViewController {
         alert.addAction(cancelAction)
         alert.addAction(okAction)
         self.present(alert, animated: true, completion: nil)
+    }
+    
+    func okAction(selectedOption: String, productId: String) {
+        print(selectedOption)
     }
     
     func cleanLabels() {
