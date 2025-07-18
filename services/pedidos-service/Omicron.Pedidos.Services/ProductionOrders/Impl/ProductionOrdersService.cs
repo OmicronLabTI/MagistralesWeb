@@ -206,10 +206,11 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             this.logger.Information(LogsConstants.UpdateProductionOrderProcessingStatus, logBase, JsonConvert.SerializeObject(productionOrderUpdated));
             _ = this.pedidosDao.UpdatesProductionOrderProcessingStatus([productionOrderUpdated]);
 
+            var redisKey = string.Format(ServiceConstants.ProductionOrderFinalizingKey, productionOrderUpdated.ProductionOrderId);
+            await this.redisService.DeleteKey(redisKey);
+
             if (!isProcessSuccesfully)
             {
-                var redisKey = string.Format(ServiceConstants.ProductionOrderFinalizingKey, productionOrderUpdated.ProductionOrderId);
-                await this.redisService.DeleteKey(redisKey);
                 return ServiceUtils.CreateResult(false, (int)HttpStatusCode.InternalServerError, null, null, null);
             }
 
