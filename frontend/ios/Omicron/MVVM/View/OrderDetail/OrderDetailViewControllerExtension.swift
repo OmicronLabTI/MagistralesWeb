@@ -169,6 +169,7 @@ extension OrderDetailViewController {
                 cell.setEmptyStock(hasStock)
                 cell.options = ["MP","RM","CD"]
                 cell.delegate = self
+                cell.selectedOption = data.warehouse ?? String()
 //                if let strongSelf = self {
 //                    cell.configurePicker(dataSource: strongSelf, delegate: strongSelf)
 //                }

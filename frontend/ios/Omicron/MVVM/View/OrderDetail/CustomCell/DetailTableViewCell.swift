@@ -12,7 +12,7 @@ protocol SelectedPickerInput: AnyObject {
     func okAction(selectedOption: String, productId: String)
 }
 
-class DetailTableViewCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDataSource {
+class DetailTableViewCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate {
     // MARK: Outlets
     @IBOutlet weak var codeLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
@@ -86,6 +86,7 @@ class DetailTableViewCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDa
         textField.placeholder = "Selecciona un lote"
         textField.inputView = pickerView
         textField.textAlignment = .center
+        textField.delegate = self
         
         pickerContainerView.addSubview(textField)
         
@@ -147,22 +148,10 @@ class DetailTableViewCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDa
      func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
      }
     
-//    func configurePicker(dataSource: UIPickerViewDataSource, delegate: UIPickerViewDelegate) {
-//        let picker = UIPickerView()
-//        picker.dataSource = dataSource
-//        picker.delegate = delegate
-//        picker.translatesAutoresizingMaskIntoConstraints = false
-//
-//        // Evita duplicados si se reutiliza la celda
-//        pickerContainerView.subviews.forEach { $0.removeFromSuperview() }
-//
-//        pickerContainerView.addSubview(picker)
-//        NSLayoutConstraint.activate([
-//            picker.topAnchor.constraint(equalTo: pickerContainerView.topAnchor),
-//            picker.bottomAnchor.constraint(equalTo: pickerContainerView.bottomAnchor),
-//            picker.leadingAnchor.constraint(equalTo: pickerContainerView.leadingAnchor),
-//            picker.trailingAnchor.constraint(equalTo: pickerContainerView.trailingAnchor)
-//        ])
-//    }
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        print("El textField tiene el foco")
+    }
 
+    func textFieldDidEndEditing(_ textField: UITextField) {
+    }
 }
