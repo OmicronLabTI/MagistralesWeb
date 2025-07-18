@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build-env
 
 WORKDIR /app
 COPY . ./
@@ -6,7 +6,7 @@ COPY . ./
 RUN dotnet restore "/app/Omicron.ProductionOrder.Batch/Omicron.ProductionOrder.Batch.csproj"
 RUN dotnet publish "/app/Omicron.ProductionOrder.Batch/Omicron.ProductionOrder.Batch.csproj" -c Release -o out
 
-FROM mcr.microsoft.com/dotnet/aspnet:6.0-alpine3.20
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
 WORKDIR /app
 COPY --from=build-env /app/out .
 
