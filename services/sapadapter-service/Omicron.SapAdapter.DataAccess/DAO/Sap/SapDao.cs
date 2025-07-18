@@ -422,26 +422,37 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="itemCode">the item code.</param>
         /// <param name="warehouse">the warehouse.</param>
         /// <returns>the data.</returns>
-        public async Task<IEnumerable<CompleteBatchesJoinModel>> GetValidBatches(List<string> productIds, List<string> warehouseIds)
+        public async Task<IEnumerable<CompleteBatchesJoinModel>> GetValidBatches(List<(string ItemCode, string WhsCode)> productWarehouseCombinations)
         {
+            var predicate = PredicateBuilder.False<BatchesQuantity>();
+
+            foreach (var combo in productWarehouseCombinations)
+            {
+                var tempItemCode = combo.ItemCode;
+                var tempWhsCode = combo.WhsCode;
+
+                predicate = predicate.Or(x => x.ItemCode == tempItemCode && x.WhsCode == tempWhsCode);
+            }
+
             return await (
-                from bq in databaseContext.BatchesQuantity
-                join b in databaseContext.Batches
-                    on new { bq.ItemCode, bq.SysNumber } equals new { b.ItemCode, b.SysNumber }
-                where productIds.Contains(bq.ItemCode)
-                    && warehouseIds.Contains(bq.WhsCode)
-                    && bq.Quantity > 0
-                select new CompleteBatchesJoinModel
-                {
-                    CommitQty = bq.CommitQty ?? 0,
-                    Quantity = bq.Quantity ?? 0,
-                    DistNumber = b.DistNumber ?? string.Empty,
-                    SysNumber = bq.SysNumber,
-                    FechaExp = b.ExpDate.HasValue ? b.ExpDate.Value.ToString("dd/MM/yyyy") : null,
-                    FechaExpDateTime = b.ExpDate,
-                    ItemCode = bq.ItemCode,
-                    WarehouseCode = bq.WhsCode
-                }
+                databaseContext.BatchesQuantity
+                    .Where(predicate)
+                    .Join(databaseContext.Batches,
+                        bq => new { bq.ItemCode, bq.SysNumber },
+                        b => new { b.ItemCode, b.SysNumber },
+                        (bq, b) => new { bq, b })
+                    .Where(x => x.bq.Quantity > 0)
+                    .Select(x => new CompleteBatchesJoinModel
+                    {
+                        CommitQty = x.bq.CommitQty ?? 0,
+                        Quantity = x.bq.Quantity ?? 0,
+                        DistNumber = x.b.DistNumber ?? string.Empty,
+                        SysNumber = x.bq.SysNumber,
+                        FechaExp = x.b.ExpDate.HasValue ? x.b.ExpDate.Value.ToString("dd/MM/yyyy") : null,
+                        FechaExpDateTime = x.b.ExpDate,
+                        ItemCode = x.bq.ItemCode,
+                        WarehouseCode = x.bq.WhsCode
+                    })
             ).AsNoTracking().ToListAsync();
         }
 

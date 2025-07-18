@@ -14,6 +14,7 @@ on:
       - frontend/**
       - services/**
       - database/**
+      - batches/**
 
 concurrency:
   group: ${{ github.ref }}
@@ -253,7 +254,7 @@ jobs:
         with:
           working_directory: ./batches/Omicron.ProductionOrder.Microbatch
           registry: ${{ env.AWS_ECR_REGISTRY }}
-          repository: finalizeproductionordersmagistrales-repository
+          repository: finalizeproductionordersmagistrales
           tag: ${{ github.sha }}
           axity_aws_user: ${{ vars.AXITY_AWS_USER }}
           axity_aws_access_key_id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}

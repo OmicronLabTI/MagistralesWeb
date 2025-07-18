@@ -18,7 +18,7 @@ spec:
           # automountServiceAccountToken: false
           containers:
             - name: finalize-productionorders-container
-              image: omicron.azurecr.io/omicronprod/finalizeproductionordersmagistrales-repository:latest
+              image: omicron.azurecr.io/omicronprod/finalizeproductionordersmagistrales:latest
               imagePullPolicy: Always
               resources:
                 limits:
