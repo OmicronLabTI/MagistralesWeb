@@ -134,7 +134,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                 }
 
                 this.logger.Information(LogsConstants.InsertAllProductionOrderProcessingStatus, JsonConvert.SerializeObject(productionOrderProcessingStatus));
-                _ = this.pedidosDao.InsertProductionOrderProcessingStatus(productionOrderProcessingStatus);
+                await this.pedidosDao.InsertProductionOrderProcessingStatus(productionOrderProcessingStatus);
 
                 var validationsResult = new FinalizeProductionOrdersResult
                 {
