@@ -28,6 +28,7 @@ builder.ConfigureServices((hostContext, services) =>
     services.AddSingleton<IConnectionMultiplexer>(sp =>
     {
         var settings = sp.GetRequiredService<IOptions<Settings>>().Value;
+        Console.WriteLine($"Redis URL: {settings.RedisUrl}");
         return ConnectionMultiplexer.Connect(settings.RedisUrl);
     });
 
@@ -35,6 +36,7 @@ builder.ConfigureServices((hostContext, services) =>
     services.AddHttpClient<IPedidosService, PedidosService>((serviceProvider, client) =>
     {
         var settings = serviceProvider.GetRequiredService<IOptions<Settings>>().Value;
+        Console.WriteLine($"Pedidos URL: {settings.PedidosUrl}");
         client.BaseAddress = new Uri(settings.PedidosUrl);
         client.Timeout = TimeSpan.FromMinutes(3);
     });
