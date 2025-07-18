@@ -18,6 +18,7 @@ global using Omicron.ProductionOrder.Entities.Response;
 global using Serilog;
 global using Serilog.Events;
 global using StackExchange.Redis;
+global using Steeltoe.Extensions.Configuration.Placeholder;
 global using System;
 global using System.Collections.Generic;
 global using System.Linq;
