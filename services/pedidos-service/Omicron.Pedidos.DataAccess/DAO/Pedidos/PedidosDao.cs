@@ -653,7 +653,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         {
             return await this.databaseContext.ProductionOrderProcessingStatusModel
                 .Where(po => id == po.Id)
-                .FirstAsync();
+                .FirstOrDefaultAsync();
         }
 
         /// <inheritdoc/>
