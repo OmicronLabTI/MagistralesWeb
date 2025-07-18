@@ -18,12 +18,12 @@ spec:
           # automountServiceAccountToken: false
           containers:
             - name: finalize-productionorders-container
-              image: omicron.azurecr.io/omicronuat/finalizeproductionordersmagistrales-repository:latest
+              image: omicron.azurecr.io/omicronuat/finalizeproductionordersmagistrales:latest
               imagePullPolicy: Always
               resources:
                 limits:
-                  memory: "100Mi"  
-                  cpu: "10m"      
+                  memory: "100Mi"
+                  cpu: "10m"
                 requests:
                   memory: "100Mi"
                   cpu: "2m"
