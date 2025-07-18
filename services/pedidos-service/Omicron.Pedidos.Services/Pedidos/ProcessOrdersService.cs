@@ -93,7 +93,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 await this.pedidosDao.InsertUserOrder(listToInsert);
                 await this.pedidosDao.UpdateUserOrders(listToUpdate);
-                _ = this.kafkaConnector.PushMessage(listOrderLogToInsert);
+                _ = this.kafkaConnector.PushMessage(listOrderLogToInsert, ServiceConstants.KafkaInsertLogsConfigName);
 
                 var userError = dictResult[ServiceConstants.ErrorCreateFabOrd].Any() ? ServiceConstants.ErrorAlInsertar : null;
                 await this.UnBlockSaleOrderWhilePlanning(pedidosId.ListIds);
@@ -178,7 +178,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 }
 
                 await this.pedidosDao.InsertUserOrder(dataToInsert);
-                this.kafkaConnector.PushMessage(listOrderLogToInsert);
+                this.kafkaConnector.PushMessage(listOrderLogToInsert, ServiceConstants.KafkaInsertLogsConfigName);
 
                 var userError = dictResult[ServiceConstants.ErrorCreateFabOrd].Any() ? ServiceConstants.ErrorAlInsertar : null;
                 await this.UnBlockSaleOrderWhilePlanning(new List<int> { processByOrder.PedidoId });

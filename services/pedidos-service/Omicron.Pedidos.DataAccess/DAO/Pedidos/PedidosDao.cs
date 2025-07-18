@@ -99,6 +99,13 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
             return await this.databaseContext.UserOrderModel.Where(x => listIds.Contains(x.Userid) && !status.Contains(x.Status)).ToListAsync();
         }
 
+        /// <inheritdoc/>
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderBySalesOrderIdAndNotInStatus(List<string> listIDs, List<string> status)
+        {
+            return await this.databaseContext.UserOrderModel
+                .Where(x => listIDs.Contains(x.Salesorderid) && !status.Contains(x.Status) && !string.IsNullOrEmpty(x.Productionorderid)).ToListAsync();
+        }
+
         /// <summary>
         /// Returns the user order by user id.
         /// </summary>
@@ -605,6 +612,57 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
             this.databaseContext.ProductionFacturaQrModel.UpdateRange(modelsToSave);
             await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
             return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> InsertProductionOrderProcessingStatus(List<ProductionOrderProcessingStatusModel> productionOrderProcessingStatus)
+        {
+            this.databaseContext.ProductionOrderProcessingStatusModel.AddRange(productionOrderProcessingStatus);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> UpdatesProductionOrderProcessingStatus(List<ProductionOrderProcessingStatusModel> productionOrderProcessingStatus)
+        {
+            this.databaseContext.ProductionOrderProcessingStatusModel.UpdateRange(productionOrderProcessingStatus);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<ProductionOrderProcessingStatusModel>> GetProductionOrderProcessingStatusByProductionOrderIds(IEnumerable<int> productionOrderIds)
+        {
+            return await this.databaseContext.ProductionOrderProcessingStatusModel
+                .Where(po => productionOrderIds.Contains(po.ProductionOrderId))
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<ProductionOrderProcessingStatusModel> GetFirstProductionOrderProcessingStatusByProductionOrderId(int productionOrderId)
+        {
+            return await this.databaseContext.ProductionOrderProcessingStatusModel
+                .Where(po => productionOrderId == po.ProductionOrderId)
+                .AsNoTracking()
+                .FirstAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<ProductionOrderProcessingStatusModel> GetFirstProductionOrderProcessingStatusById(string id)
+        {
+            return await this.databaseContext.ProductionOrderProcessingStatusModel
+                .Where(po => id == po.Id)
+                .FirstAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<ProductionOrderProcessingStatusModel>> GetAllProductionOrderProcessingStatusByStatus(List<string> status)
+        {
+            return await this.databaseContext.ProductionOrderProcessingStatusModel
+                .Where(po => status.Contains(po.Status))
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         private async Task<List<UserOrderModel>> GetSaleOrderForAlmacenCommon(

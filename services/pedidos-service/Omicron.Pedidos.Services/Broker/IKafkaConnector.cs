@@ -19,7 +19,8 @@ namespace Omicron.Pedidos.Services.Broker
         /// push message to kafka.
         /// </summary>
         /// <param name="messaje">the message.</param>
+        /// <param name="queueType">queueType.</param>
         /// <returns>the data.</returns>
-        Task<bool> PushMessage(object messaje);
+        Task<bool> PushMessage(object messaje, string queueType);
     }
 }

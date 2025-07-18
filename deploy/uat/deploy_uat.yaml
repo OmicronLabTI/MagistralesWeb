@@ -289,6 +289,21 @@ spec:
                 secretKeyRef:
                   name: omicron-uat
                   key: eventhub_net_connection
+            - name: EVENTHUB_NET_CONNECTION_FINALIZEPRODUCTIONORDERSAP
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-uat
+                  key: eventhub_net_connection_finalizeproductionordersap
+            - name: EVENTHUB_NET_CONNECTION_FINALIZEPRODUCTIONORDERPOSTGRESQL
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-uat
+                  key: eventhub_net_connection_finalizeproductionorderpostgresql
+            - name: EVENTHUB_NET_CONNECTION_PRODUCTIONORDERPDFGENERATION
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-uat
+                  key: eventhub_net_connection_productionorderpdfgeneration
           ports:
             - containerPort: 80
           resources:

@@ -21,6 +21,8 @@ namespace Omicron.Pedidos.DependencyInjection
     using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Mapping;
     using Omicron.Pedidos.Services.Pedidos;
+    using Omicron.Pedidos.Services.ProductionOrders;
+    using Omicron.Pedidos.Services.ProductionOrders.Impl;
     using Omicron.Pedidos.Services.Redis;
     using Omicron.Pedidos.Services.Reporting;
     using Omicron.Pedidos.Services.SapAdapter;
@@ -71,6 +73,7 @@ namespace Omicron.Pedidos.DependencyInjection
             Services.AddTransient<IPedidosDxpService, PedidosDxpService>();
             Services.AddTransient<IAzureService, AzureServices>();
             Services.AddTransient<ISapServiceLayerAdapterService, SapServiceLayerAdapterService>();
+            Services.AddTransient<IProductionOrdersService, ProductionOrdersService>();
             return Services;
         }
 

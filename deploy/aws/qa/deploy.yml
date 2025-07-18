@@ -306,6 +306,36 @@ spec:
                 secretKeyRef:
                   name: omicron-qa
                   key: seqlog_svc_service_host_name
+            - name: KAFKA_FINALIZEPRODUCTIONORDERSAP_EH_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: kafka_finalizeproductionordersap_eh_name
+            - name: KAFKA_FINALIZEPRODUCTIONORDERSAP_CONSUMER_GROUP
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: kafka_finalizeproductionordersap_consumer_group
+            - name: KAFKA_FINALIZEPRODUCTIONORDERPOSTGRESQL_EH_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: kafka_finalizeproductionorderpostgresql_eh_name
+            - name: KAFKA_FINALIZEPRODUCTIONORDERPOSTGRESQL_CONSUMER_GROUP
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: kafka_finalizeproductionorderpostgresql_consumer_group
+            - name: KAFKA_PRODUCTIONORDERPDFGENERATION_EH_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: kafka_productionorderpdfgeneration_eh_name
+            - name: KAFKA_PRODUCTIONORDERPDFGENERATION_CONSUMER_GROUP
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: kafka_productionorderpdfgeneration_consumer_group
           ports:
             - containerPort: 5103
           resources:

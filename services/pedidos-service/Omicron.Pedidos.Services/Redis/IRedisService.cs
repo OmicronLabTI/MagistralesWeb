@@ -9,6 +9,7 @@
 namespace Omicron.Pedidos.Services.Redis
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -46,5 +47,25 @@ namespace Omicron.Pedidos.Services.Redis
         /// <param name="key">the key.</param>
         /// <returns>the data.</returns>
         Task<bool> DeleteKey(string key);
+
+        /// <summary>
+        /// Store List Async.
+        /// </summary>
+        /// <typeparam name="T">Type of list.</typeparam>
+        /// <param name="key">Redis Key.</param>
+        /// <param name="items">Items to save.</param>
+        /// <param name="timeToLive">time to live.</param>
+        /// <returns>true if save ok, otherwise false.</returns>
+        Task<bool> StoreListAsync<T>(string key, IEnumerable<T> items, TimeSpan timeToLive);
+
+        /// <summary>
+        /// Read Redis List by skip and take.
+        /// </summary>
+        /// <typeparam name="T">Type of list.</typeparam>
+        /// <param name="redisKey">Redis key.</param>
+        /// <param name="skip">Skip tolist.</param>
+        /// <param name="take">Take list.</param>
+        /// <returns>List.</returns>
+        Task<List<T>> ReadListAsync<T>(string redisKey, int skip, int take);
     }
 }

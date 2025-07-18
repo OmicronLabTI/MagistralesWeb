@@ -388,7 +388,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             // Update in local data base
             await this.pedidosDao.UpdateUserOrders(ordersToCancel);
-            this.kafkaConnector.PushMessage(listOrderLogToInsert);
+            this.kafkaConnector.PushMessage(listOrderLogToInsert, ServiceConstants.KafkaInsertLogsConfigName);
             return (ordersToCancel, results);
         }
 
@@ -440,7 +440,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             await this.pedidosDao.UpdateUserOrders(salesOrdersToUpdate);
-            this.kafkaConnector.PushMessage(listOrderLogToInsert);
+            this.kafkaConnector.PushMessage(listOrderLogToInsert, ServiceConstants.KafkaInsertLogsConfigName);
 
             if (saleOrdersFinalized.Any())
             {
@@ -504,7 +504,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 results.AddSuccesResult(missingOrder);
                 await this.pedidosDao.InsertUserOrder(newUserOrders);
-                _ = this.kafkaConnector.PushMessage(listOrderLogToInsert);
+                _ = this.kafkaConnector.PushMessage(listOrderLogToInsert, ServiceConstants.KafkaInsertLogsConfigName);
             }
 
             return results;
@@ -544,7 +544,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 results.AddSuccesResult(missingOrder);
                 await this.pedidosDao.InsertUserOrder(newUserOrders);
-                this.kafkaConnector.PushMessage(listOrderLogToInsert);
+                this.kafkaConnector.PushMessage(listOrderLogToInsert, ServiceConstants.KafkaInsertLogsConfigName);
                 return results;
             }
 
@@ -627,7 +627,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             await this.pedidosDao.UpdateUserOrders(updatedOrders);
-            this.kafkaConnector.PushMessage(listOrderLogToInsert);
+            this.kafkaConnector.PushMessage(listOrderLogToInsert, ServiceConstants.KafkaInsertLogsConfigName);
 
             return (updatedOrders, results);
         }
