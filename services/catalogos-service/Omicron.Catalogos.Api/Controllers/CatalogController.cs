@@ -186,11 +186,12 @@ namespace Omicron.Catalogos.Api.Controllers
         /// </summary>
         /// <param name="itemCode">The code scanned.</param>
         /// <returns>A <see cref="Task{ResultDto}"/> contains configurations the warehouses magistral. </returns>
-        [Route("/product/warehouses/{itemCode}")]
+        [Route("/product/warehouses")]
         [HttpGet]
-        public async Task<IActionResult> GetWarehouses(string itemCode)
+        public async Task<IActionResult> GetWarehouses([FromQuery] string itemCode)
         {
             var response = await this.catalogFacade.GetWarehouses(itemCode);
+
             return this.Ok(response);
         }
     }
