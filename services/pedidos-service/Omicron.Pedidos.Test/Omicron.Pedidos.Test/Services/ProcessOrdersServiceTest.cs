@@ -32,6 +32,10 @@ namespace Omicron.Pedidos.Test.Services
 
         private Mock<ISapServiceLayerAdapterService> sapServiceLayer;
 
+        private Mock<IProductionOrdersService> productionOrdersService;
+
+        private Mock<ILogger> logger;
+
         /// <summary>
         /// The set up.
         /// </summary>
@@ -69,10 +73,14 @@ namespace Omicron.Pedidos.Test.Services
 
             this.kafkaConnector = new Mock<IKafkaConnector>();
             this.kafkaConnector
-                .Setup(m => m.PushMessage(It.IsAny<object>()))
+                .Setup(m => m.PushMessage(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(true));
 
             this.sapServiceLayer = new Mock<ISapServiceLayerAdapterService>();
+
+            this.productionOrdersService = new Mock<IProductionOrdersService>();
+
+            this.logger = new Mock<ILogger>();
 
             var mockSaDiApi = new Mock<ISapDiApi>();
             mockSaDiApi
@@ -84,7 +92,7 @@ namespace Omicron.Pedidos.Test.Services
                 .Returns(Task.FromResult(new ResultModel()));
 
             this.pedidosDao = new PedidosDao(this.context);
-            this.pedidosService = new PedidosService(this.sapAdapter.Object, this.pedidosDao, this.usersService.Object, sapfileMock.Object, configMock.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object, this.sapServiceLayer.Object, mockSaDiApi.Object);
+            this.pedidosService = new PedidosService(this.sapAdapter.Object, this.pedidosDao, this.usersService.Object, sapfileMock.Object, configMock.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object, this.sapServiceLayer.Object, mockSaDiApi.Object, this.productionOrdersService.Object, this.logger.Object);
         }
 
         /// <summary>

@@ -8,6 +8,8 @@
 
 namespace Omicron.Pedidos.Api
 {
+    using Omicron.Pedidos.Api.Consumers;
+
     /// <summary>
     /// Class Startup.
     /// </summary>
@@ -97,7 +99,9 @@ namespace Omicron.Pedidos.Api
 
             webApplication.AddRedis();
             webApplication.AddCorsSvc();
-
+            webApplication.Services.AddHostedService<KafkaConsumerFinalizeProductionOrderSap>();
+            webApplication.Services.AddHostedService<KafkaConsumerFinalizeProductionOrderPostgresql>();
+            webApplication.Services.AddHostedService<KafkaConsumerProductionOrderPdfGeneration>();
             webApplication.Services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Fastest);
             webApplication.Services.AddResponseCompression();
 
