@@ -15,13 +15,15 @@ class HideButtons {
     var addComp: Bool
     var save: Bool
     var seeBatches: Bool
+    var saveChanges: Bool
     init(process: Bool, finished: Bool, pending: Bool,
-         addComp: Bool, save: Bool, seeBatches: Bool) {
+         addComp: Bool, save: Bool, seeBatches: Bool, saveChanges: Bool) {
         self.process = process
         self.finished = finished
         self.pending = pending
         self.addComp = addComp
         self.save = save
         self.seeBatches = seeBatches
+        self.saveChanges = saveChanges
     }
 }
