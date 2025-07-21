@@ -32,7 +32,7 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
     @IBOutlet weak var productDescritionLabel: UILabel!
     @IBOutlet weak var infoView: UIView!
     @IBOutlet weak var hashtagLabel: UILabel!
-    @IBOutlet weak var saveWarehousesChanges: UIButton!
+    @IBOutlet weak var saveWarehousesChangesButton: UIButton!
     // MARK: Outlets from table header
     @IBOutlet weak var htCode: UILabel!
     @IBOutlet weak var htDescription: UILabel!
@@ -69,7 +69,7 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
         self.quantityTextField.delegate = self
         self.title = CommonStrings.formulaDetail
         self.showButtonsByStatusType(statusType: statusType)
-        saveWarehousesChanges.isEnabled = false
+        saveWarehousesChangesButton.isEnabled = false
         self.tableView.allowsMultipleSelectionDuringEditing = false
         tableView.setEditing(false, animated: true)
         self.orderDetailViewModel.orderId = self.orderId
@@ -89,7 +89,7 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
         disposeBag = DisposeBag()
         cleanLabels()
         orderDetailViewModel.tableData.onNext([])
-        saveWarehousesChanges.isEnabled = false
+        saveWarehousesChangesButton.isEnabled = false
     }
     // MARK: - Functions
     @objc func goToCommentsViewController() {
@@ -231,7 +231,7 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
                                                  color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
         UtilsManager.shared.setStyleButtonStatus(button: self.seeLotsButton, title: StatusNameConstants.seeLots,
                                                  color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
-        UtilsManager.shared.setStyleButtonStatus(button: self.saveWarehousesChanges, title: StatusNameConstants.save,
+        UtilsManager.shared.setStyleButtonStatus(button: self.saveWarehousesChangesButton, title: StatusNameConstants.save,
                                                  color: OmicronColors.blue,
                                                  titleColor: OmicronColors.blue)
         UtilsManager.shared.labelsStyle(label: self.titleLabel, text: CommonStrings.components, fontSize: 22)
@@ -314,7 +314,7 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
         self.addComponentButton.isHidden = hideBtns.addComp
         self.saveButton.isHidden = hideBtns.save
         self.seeLotsButton.isHidden = hideBtns.seeBatches
-        self.saveWarehousesChanges.isHidden = hideBtns.saveChanges
+        self.saveWarehousesChangesButton.isHidden = hideBtns.saveChanges
     }
     func sendIndexToDelete(index: Int) {
         orderDetailViewModel.deleteItemFromTable(indexs: [index])
