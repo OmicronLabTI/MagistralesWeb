@@ -61,6 +61,9 @@ extension OrderDetailViewController {
                 self.changeTextColorLabel(color: .black)
                 self.orderDetail = res
                 let detail = res.first!
+                buildObjectToUpdateData(detail)
+                componentsToUpdate = []
+                saveWarehousesChangesButton.isEnabled = false
                 self.productDescritionLabel.textColor = .black
                 self.productDescritionLabel.attributedText = self.getRichText(detail: detail)
                 self.destinyLabel.attributedText = UtilsManager.shared.boldSubstring(
@@ -88,6 +91,16 @@ extension OrderDetailViewController {
             }
         }).disposed(by: self.disposeBag)
     }
+    
+    func buildObjectToUpdateData(_ data: OrderDetail) {
+        orderDetailViewModel.updateObjectToSend.fabOrderID = data.productionOrderID ?? 0
+        orderDetailViewModel.updateObjectToSend.plannedQuantity = data.plannedQuantity ?? 0
+        orderDetailViewModel.updateObjectToSend.fechaFin = UtilsManager.shared.formattedDateFromString(
+            dateString: data.dueDate ?? String(), withFormat: DateFormat.yyyymmdd) ?? ""
+        orderDetailViewModel.updateObjectToSend.comments = data.comments ?? ""
+        orderDetailViewModel.updateObjectToSend.warehouse = data.warehouse ?? ""
+    }
+    
     func getRichText(detail: OrderDetail) -> NSMutableAttributedString {
         let titleFontSize = CGFloat(22.0)
         let code = UtilsManager.shared.boldSubstring(text: "\(detail.code ?? CommonStrings.empty)",
@@ -164,9 +177,16 @@ extension OrderDetailViewController {
                     self?.formatter.string(from: NSNumber(value: data.requiredQuantity ?? 0.0))
     
                 cell.unitLabel.text = data.unit ?? String()
-                cell.werehouseLabel.text = data.warehouse
                 let hasStock = data.stock ?? 0.0 > 0.0
                 cell.setEmptyStock(hasStock)
+                let options = data.warehouse ?? ""
+                cell.options = [options]
+                cell.selectedOption = data.warehouse ?? String()
+                cell.delegate = self
+                cell.delegateWarehouse = self
+                cell.productId = data.productID ?? String()
+                cell.pickerContainerView.isUserInteractionEnabled = self?.enablePicketContainer(hasBatches: data.hasBatches) ?? true
+                cell.hidewWerehouseLabel = !cell.pickerContainerView.isUserInteractionEnabled
         }.disposed(by: disposeBag)
         orderDetailViewModel.tableData.subscribe(onNext: { [weak self] details in
             guard let self = self else { return }
@@ -175,6 +195,12 @@ extension OrderDetailViewController {
                 return ""
             }
         }).disposed(by: disposeBag)
+    }
+    
+    func enablePicketContainer(hasBatches: Bool?) -> Bool{
+        let validStatus = statusType == StatusNameConstants.inProcessStatus || statusType == StatusNameConstants.reassignedStatus
+        let dataBatches = !(hasBatches ?? false)
+        return validStatus && dataBatches
     }
 
     func quantityButtonBindind() {
