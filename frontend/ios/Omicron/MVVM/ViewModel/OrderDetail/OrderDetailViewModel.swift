@@ -161,6 +161,7 @@ class OrderDetailViewModel {
             guard let response = res.response else { return }
             self.loading.onNext(false)
             if (res.code == 200) {
+                self.showAlert.onNext(CommonStrings.processSuccess)
                 disableSaveButton.onNext(())
                 updateObjectToSend.components = []
                 return
