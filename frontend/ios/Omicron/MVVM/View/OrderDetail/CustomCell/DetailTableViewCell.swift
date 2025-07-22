@@ -12,6 +12,10 @@ protocol SelectedPickerInput: AnyObject {
     func okAction(selectedOption: String, productId: String)
 }
 
+protocol GetWarehousePicker: AnyObject {
+    func getWarehouseList(productId: String)
+}
+
 class DetailTableViewCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate {
     // MARK: Outlets
     @IBOutlet weak var codeLabel: UILabel!
@@ -19,7 +23,6 @@ class DetailTableViewCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDa
     @IBOutlet weak var baseQuantityLabel: UILabel!
     @IBOutlet weak var requiredQuantityLabel: UILabel!
     @IBOutlet weak var unitLabel: UILabel!
-    @IBOutlet weak var werehouseLabel: UILabel!
     @IBOutlet weak var hashTagLabel: UILabel!
     @IBOutlet weak var pickerContainerView: UIView!
     var textColor: UIColor = .black
@@ -29,6 +32,8 @@ class DetailTableViewCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDa
     var options: [String] = []
     var productId = String()
     var delegate: SelectedPickerInput?
+    var delegateWarehouse: GetWarehousePicker?
+    var hidewWerehouseLabel: Bool = true
     var selectedOption: String = "" {
             didSet {
                 validateShowDropDown()
@@ -41,7 +46,6 @@ class DetailTableViewCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDa
         UtilsManager.shared.labelsStyle(label: self.baseQuantityLabel, text: "", fontSize: fontSize)
         UtilsManager.shared.labelsStyle(label: self.requiredQuantityLabel, text: "", fontSize: fontSize)
         UtilsManager.shared.labelsStyle(label: self.unitLabel, text: "", fontSize: fontSize)
-        UtilsManager.shared.labelsStyle(label: self.werehouseLabel, text: "", fontSize: fontSize)
         UtilsManager.shared.labelsStyle(label: self.descriptionLabel, text: "", fontSize: fontSize)
         UtilsManager.shared.labelsStyle(label: self.hashTagLabel, text: "", fontSize: fontSize)
         validateShowDropDown()
@@ -63,21 +67,13 @@ class DetailTableViewCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDa
         baseQuantityLabel.textColor = color
         requiredQuantityLabel.textColor = color
         unitLabel.textColor = color
-        werehouseLabel.textColor = color
         hashTagLabel.textColor = color
     }
     
     func validateShowDropDown() {
-        if (selectedOption.isEmpty) {
-            werehouseLabel.isHidden = false
-        } else {
-            UtilsManager.shared.labelsStyle(label: self.baseQuantityLabel, text: "", fontSize: 14)
-            UtilsManager.shared.labelsStyle(label: self.unitLabel, text: "", fontSize: 14)
-            pickerContainerView.isHidden = false
-            werehouseLabel.isHidden = true
-            setupPicker()
-            setupTextField()
-        }
+        pickerContainerView.isHidden = false
+        setupPicker()
+        setupTextField()
     }
     
     private func setupTextField() {
@@ -100,7 +96,7 @@ class DetailTableViewCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDa
         
         textField.font = .fontDefaultMedium(14)
         addDoneButtonToPicker()
-        
+        print(selectedOption)
         if let index = options.firstIndex(of: selectedOption) {
              textField.text = selectedOption
              pickerView.selectRow(index, inComponent: 0, animated: false)
@@ -125,6 +121,7 @@ class DetailTableViewCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDa
         let selectedValue = options[selectedRow]
         textField.text = selectedValue
         delegate?.okAction(selectedOption: selectedValue, productId: self.productId)
+        
         textField.resignFirstResponder()
     }
     
@@ -149,7 +146,11 @@ class DetailTableViewCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDa
      }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        print("El textField tiene el foco")
+        delegateWarehouse?.getWarehouseList(productId: self.productId)
+    }
+    
+    func reloadPickerView() {
+        pickerView.reloadAllComponents()
     }
 
     func textFieldDidEndEditing(_ textField: UITextField) {

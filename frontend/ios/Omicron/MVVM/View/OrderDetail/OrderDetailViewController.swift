@@ -11,7 +11,7 @@ import RxSwift
 import RxCocoa
 import Resolver
 // swiftlint:disable type_body_length
-class OrderDetailViewController: UIViewController, SelectedPickerInput {
+class OrderDetailViewController: UIViewController, SelectedPickerInput, GetWarehousePicker {
     // Outlets
     @IBOutlet weak var deleteManyButton: UIButton!
     @IBOutlet weak var processButton: UIButton!
@@ -62,6 +62,8 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
     var destiny = String()
     var isolatedOrder = false
     var emptyStockProductId: [String] = []
+    var componentsToUpdate: [Component] = []
+    
     // MARK: Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -113,6 +115,12 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
         self.orderDetailViewModel.getOrdenDetail(isRefresh: true)
     }
     func viewModelBinding() {
+        self.orderDetailViewModel.updateWarehouses.subscribe(onNext: { [weak self] (itemcode, warehouses) in
+            self?.updateComponentWarehouse(warehouse: warehouses, itemcode: itemcode)
+        }).disposed(by: disposeBag)
+        self.orderDetailViewModel.disableSaveButton.subscribe(onNext: { [weak self] _ in
+            self?.saveWarehousesChangesButton.isEnabled = false
+        }).disposed(by: disposeBag)
         self.viewModelBinding1()
         self.viewModelBinding2()
         self.viewModelBinding3()
@@ -351,7 +359,39 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
     }
     
     func okAction(selectedOption: String, productId: String) {
-        print(selectedOption)
+        saveWarehousesChangesButton.isEnabled = true
+        let index = orderDetail[0].details?.firstIndex(where: ({$0.productID == productId})) ?? 0
+        orderDetail[0].details?[index].warehouse = selectedOption
+        
+        let orderFabId = orderDetail[0].productionOrderID ?? 0
+        let component = orderDetail[0].details?[index]
+        
+        let componentToUpdate: Component = Component(
+            orderFabID: orderFabId, productId: productId, componentDescription: component?.detailDescription ?? "",
+            baseQuantity: component?.baseQuantity ?? 0, requiredQuantity: component?.requiredQuantity ?? 0, consumed: component?.consumed ?? 0,
+            available: component?.available ?? 0, unit: component?.unit ?? "", warehouse: component?.warehouse ?? "",
+            pendingQuantity: component?.pendingQuantity ?? 0, stock: component?.stock ?? 0, warehouseQuantity: component?.warehouseQuantity ?? 0,
+            action: Actions.update.rawValue, assignedBatches: [])
+        
+        componentsToUpdate.append(componentToUpdate)
+    }
+    
+    func getWarehouseList(productId: String) {
+        self.orderDetailViewModel.getComponentWarehouses(itemcode: productId)
+    }
+    
+    func updateComponentWarehouse(warehouse: [String], itemcode: String) {
+        let index = orderDetail[0].details?.firstIndex(where: ({$0.productID == itemcode})) ?? 0
+        let indexTable = IndexPath(row: index, section: 0)
+        if let cell = tableView.cellForRow(at: indexTable) as? DetailTableViewCell {
+            cell.options = warehouse
+            cell.reloadPickerView()
+        }
+    }
+    
+    @IBAction func saveChangesComponents(_ sender: Any) {
+        orderDetailViewModel.updateObjectToSend.components = componentsToUpdate
+        orderDetailViewModel.updateComponents()
     }
     
     func cleanLabels() {
