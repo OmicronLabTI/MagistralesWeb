@@ -11,7 +11,7 @@ import RxSwift
 import RxCocoa
 import Resolver
 // swiftlint:disable type_body_length
-class OrderDetailViewController: UIViewController {
+class OrderDetailViewController: UIViewController, SelectedPickerInput, GetWarehousePicker {
     // Outlets
     @IBOutlet weak var deleteManyButton: UIButton!
     @IBOutlet weak var processButton: UIButton!
@@ -32,6 +32,7 @@ class OrderDetailViewController: UIViewController {
     @IBOutlet weak var productDescritionLabel: UILabel!
     @IBOutlet weak var infoView: UIView!
     @IBOutlet weak var hashtagLabel: UILabel!
+    @IBOutlet weak var saveWarehousesChangesButton: UIButton!
     // MARK: Outlets from table header
     @IBOutlet weak var htCode: UILabel!
     @IBOutlet weak var htDescription: UILabel!
@@ -61,6 +62,8 @@ class OrderDetailViewController: UIViewController {
     var destiny = String()
     var isolatedOrder = false
     var emptyStockProductId: [String] = []
+    var componentsToUpdate: [Component] = []
+    
     // MARK: Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -68,6 +71,7 @@ class OrderDetailViewController: UIViewController {
         self.quantityTextField.delegate = self
         self.title = CommonStrings.formulaDetail
         self.showButtonsByStatusType(statusType: statusType)
+        saveWarehousesChangesButton.isEnabled = false
         self.tableView.allowsMultipleSelectionDuringEditing = false
         tableView.setEditing(false, animated: true)
         self.orderDetailViewModel.orderId = self.orderId
@@ -87,6 +91,7 @@ class OrderDetailViewController: UIViewController {
         disposeBag = DisposeBag()
         cleanLabels()
         orderDetailViewModel.tableData.onNext([])
+        saveWarehousesChangesButton.isEnabled = false
     }
     // MARK: - Functions
     @objc func goToCommentsViewController() {
@@ -110,6 +115,12 @@ class OrderDetailViewController: UIViewController {
         self.orderDetailViewModel.getOrdenDetail(isRefresh: true)
     }
     func viewModelBinding() {
+        self.orderDetailViewModel.updateWarehouses.subscribe(onNext: { [weak self] (itemcode, warehouses) in
+            self?.updateComponentWarehouse(warehouse: warehouses, itemcode: itemcode)
+        }).disposed(by: disposeBag)
+        self.orderDetailViewModel.disableSaveButton.subscribe(onNext: { [weak self] _ in
+            self?.saveWarehousesChangesButton.isEnabled = false
+        }).disposed(by: disposeBag)
         self.viewModelBinding1()
         self.viewModelBinding2()
         self.viewModelBinding3()
@@ -228,6 +239,9 @@ class OrderDetailViewController: UIViewController {
                                                  color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
         UtilsManager.shared.setStyleButtonStatus(button: self.seeLotsButton, title: StatusNameConstants.seeLots,
                                                  color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
+        UtilsManager.shared.setStyleButtonStatus(button: self.saveWarehousesChangesButton, title: StatusNameConstants.save,
+                                                 color: OmicronColors.blue,
+                                                 titleColor: OmicronColors.blue)
         UtilsManager.shared.labelsStyle(label: self.titleLabel, text: CommonStrings.components, fontSize: 22)
         UtilsManager.shared.labelsStyle(label: self.htCode, text: CommonStrings.code, fontSize: 19,
                                         typeFont: CommonStrings.bold)
@@ -279,23 +293,23 @@ class OrderDetailViewController: UIViewController {
     }
     func showButtonsByStatusType(statusType: String) {
         var hideBtn = HideButtons(
-            process: true, finished: true, pending: true, addComp: true, save: true, seeBatches: true)
+            process: true, finished: true, pending: true, addComp: true, save: true, seeBatches: true, saveChanges: true)
         switch statusType {
         case StatusNameConstants.assignedStatus:
             hideBtn = HideButtons(process: false, finished: true, pending: false,
-                                  addComp: true, save: true, seeBatches: true)
+                                  addComp: true, save: true, seeBatches: true, saveChanges: true)
         case StatusNameConstants.inProcessStatus:
             hideBtn = HideButtons(process: true, finished: false, pending: false,
-                                  addComp: false, save: true, seeBatches: false)
+                                  addComp: false, save: true, seeBatches: false, saveChanges: false)
         case StatusNameConstants.penddingStatus:
             hideBtn = HideButtons(process: false, finished: true, pending: true,
-                                  addComp: true, save: true, seeBatches: false)
+                                  addComp: true, save: true, seeBatches: false, saveChanges: true)
         case StatusNameConstants.finishedStatus:
             hideBtn = HideButtons(process: true, finished: true, pending: true,
-                                  addComp: false, save: true, seeBatches: false)
+                                  addComp: false, save: true, seeBatches: false, saveChanges: true)
         case StatusNameConstants.reassignedStatus:
             hideBtn = HideButtons(process: true, finished: false, pending: false,
-                                  addComp: false, save: true, seeBatches: false)
+                                  addComp: false, save: true, seeBatches: false, saveChanges: false)
         default: break
         }
         self.changeHidePropertyOfButtons(hideBtn)
@@ -308,6 +322,7 @@ class OrderDetailViewController: UIViewController {
         self.addComponentButton.isHidden = hideBtns.addComp
         self.saveButton.isHidden = hideBtns.save
         self.seeLotsButton.isHidden = hideBtns.seeBatches
+        self.saveWarehousesChangesButton.isHidden = hideBtns.saveChanges
     }
     func sendIndexToDelete(index: Int) {
         orderDetailViewModel.deleteItemFromTable(indexs: [index])
@@ -341,6 +356,42 @@ class OrderDetailViewController: UIViewController {
         alert.addAction(cancelAction)
         alert.addAction(okAction)
         self.present(alert, animated: true, completion: nil)
+    }
+    
+    func okAction(selectedOption: String, productId: String) {
+        saveWarehousesChangesButton.isEnabled = true
+        let index = orderDetail[0].details?.firstIndex(where: ({$0.productID == productId})) ?? 0
+        orderDetail[0].details?[index].warehouse = selectedOption
+        
+        let orderFabId = orderDetail[0].productionOrderID ?? 0
+        let component = orderDetail[0].details?[index]
+        
+        let componentToUpdate: Component = Component(
+            orderFabID: orderFabId, productId: productId, componentDescription: component?.detailDescription ?? "",
+            baseQuantity: component?.baseQuantity ?? 0, requiredQuantity: component?.requiredQuantity ?? 0, consumed: component?.consumed ?? 0,
+            available: component?.available ?? 0, unit: component?.unit ?? "", warehouse: component?.warehouse ?? "",
+            pendingQuantity: component?.pendingQuantity ?? 0, stock: component?.stock ?? 0, warehouseQuantity: component?.warehouseQuantity ?? 0,
+            action: Actions.update.rawValue, assignedBatches: [])
+        
+        componentsToUpdate.append(componentToUpdate)
+    }
+    
+    func getWarehouseList(productId: String) {
+        self.orderDetailViewModel.getComponentWarehouses(itemcode: productId)
+    }
+    
+    func updateComponentWarehouse(warehouse: [String], itemcode: String) {
+        let index = orderDetail[0].details?.firstIndex(where: ({$0.productID == itemcode})) ?? 0
+        let indexTable = IndexPath(row: index, section: 0)
+        if let cell = tableView.cellForRow(at: indexTable) as? DetailTableViewCell {
+            cell.options = warehouse
+            cell.reloadPickerView()
+        }
+    }
+    
+    @IBAction func saveChangesComponents(_ sender: Any) {
+        orderDetailViewModel.updateObjectToSend.components = componentsToUpdate
+        orderDetailViewModel.updateComponents()
     }
     
     func cleanLabels() {
