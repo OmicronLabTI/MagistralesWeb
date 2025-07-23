@@ -391,7 +391,18 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, GetWareh
     
     @IBAction func saveChangesComponents(_ sender: Any) {
         orderDetailViewModel.updateObjectToSend.components = componentsToUpdate
-        orderDetailViewModel.updateComponents()
+        let alert = UIAlertController(
+            title: "Se actualizará el almacén en la orden de fabricación ¿quieres continuar?",
+            message: nil,
+            preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive, handler: nil)
+        let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: { [weak self] _ in
+            guard let self = self else { return }
+            orderDetailViewModel.updateComponents()
+        })
+        alert.addAction(cancelAction)
+        alert.addAction(okAction)
+        self.present(alert, animated: true, completion: nil)
     }
     
     func cleanLabels() {

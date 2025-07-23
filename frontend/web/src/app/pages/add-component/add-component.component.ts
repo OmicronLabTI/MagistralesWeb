@@ -35,6 +35,7 @@ export class AddComponentComponent implements OnInit, OnDestroy {
   subscription = new Subscription();
   isReadyToSave = false;
   today = new Date();
+  productWarehouses: string[] = [];
 
   // MARK: VARIABLES DETALLE FORMULA
   warehouse = CONST_STRING.empty;
@@ -117,9 +118,9 @@ export class AddComponentComponent implements OnInit, OnDestroy {
     this.subscription.add(this.observableService.getNewFormulaComponent().subscribe(resultNewFormulaComponent => {
       if (resultNewFormulaComponent) {
         const componentId = resultNewFormulaComponent.productId;
-        const principalWarehouse = resultNewFormulaComponent.availableWarehouses[0];
+        const principalWarehouse = this.productWarehouses[0];
         const query = `?offset=${0}&limit=${1}&chips=${componentId}&catalogGroup=${principalWarehouse}`;
-        this.getComponentInfo(query, resultNewFormulaComponent.availableWarehouses);
+        this.getComponentInfo(query, this.productWarehouses);
       }
     }));
     this.reloadData();
@@ -134,9 +135,17 @@ export class AddComponentComponent implements OnInit, OnDestroy {
 
   getDetalleFormula(): Promise<void> {
     return this.pedidosService.getFormulaDetail(this.ordenFabricacionId).toPromise().then(({ response }) => {
-      this.onSuccessDetailFormula(response);
+      this.getProductWarehouses(response);
     }).catch(error => {
       this.errorService.httpError(error);
+    });
+  }
+
+  getProductWarehouses(response: IFormulaReq) {
+    const itemCode = response.code;
+    this.pedidosService.getProductWarehouses(itemCode).subscribe(res => {
+      this.productWarehouses = res.response;
+      this.onSuccessDetailFormula(response);
     });
   }
 
