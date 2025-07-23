@@ -63,10 +63,9 @@
             <button mat-raised-button (click)="openMiListaDialog()" class="button-blue">
                 Crear lista de componentes
             </button>
-            <button mat-raised-button class="button-blue"
-                [routerLink]="['/addComponent', oldDataFormulaDetail.baseDocument,
+            <button mat-raised-button class="button-blue" (click)="goToAddComponent(['/addComponent', oldDataFormulaDetail.baseDocument,
                                                             oldDataFormulaDetail.productionOrderId, oldDataFormulaDetail.code , oldDataFormulaDetail.productDescription,
-                                                            oldDataFormulaDetail.hasMissingStock ? 1 : 0, isFromDetail ? 1 : 0, detailOrders.toString()]">
+                                                            oldDataFormulaDetail.hasMissingStock ? 1 : 0, isFromDetail ? 1 : 0, detailOrders.toString()])">
                 Agregar componente
             </button>
             <button mat-raised-button [ngClass]="isComponentsToDelete ? 'button-blue' : 'disable-button'"
@@ -325,7 +324,7 @@
                             <mat-form-field appearance="outline">
                                 <mat-select #selectRef [disabled]="element.hasBatches" [(ngModel)]="element.warehouse"
                                     (openedChange)="onOpenSelect($event, i)"
-                                    (ngModelChange)="onSelectWareHouseChange($event, i)" [disabled]="false">
+                                    (ngModelChange)="onSelectWareHouseChange($event, i)">
                                     <mat-option *ngFor="let item of element.availableWarehouses"
                                         [value]="item">{{item}}
                                     </mat-option>

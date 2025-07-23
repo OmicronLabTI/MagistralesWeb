@@ -58,7 +58,8 @@ describe('AddComponentComponent', () => {
       'setGeneralNotificationMessage',
       'setUrlActive',
       'setPathUrl',
-      'setIsLoading'
+      'setIsLoading',
+      'setMessageGeneralCallHttp'
     ]);
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
       'calculateTernary',
