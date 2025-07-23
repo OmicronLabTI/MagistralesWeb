@@ -146,3 +146,12 @@ export const PedidosListMock = {
         }
     ]
 };
+
+export const productWarehousesResponseMock = {
+    code: 200,
+    comments: 118,
+    exceptionMessage: null,
+    success: true,
+    userError: null,
+    response: ['MN']
+};

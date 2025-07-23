@@ -158,9 +158,7 @@ export class ComponentSearchComponent implements OnInit {
       this.dialogRef.close(row);
     } else {
       const index = this.dataSource.data.indexOf(row);
-      this.dataSource.data[index].availableWarehouses =
-        this.dataSource.data[index].availableWarehouses === undefined ? [] : this.dataSource.data[index].availableWarehouses;
-      this.getProductWarehouses(index, row.productId);
+      this.dataSource.data[index].availableWarehouses = [];
       this.rowPrevious = row;
     }
   }
