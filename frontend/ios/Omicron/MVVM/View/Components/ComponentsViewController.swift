@@ -27,6 +27,7 @@ class ComponentsViewController: UIViewController {
     var typeOpen = TypeComponentsOpenDialog.detailOrder
     var disposeBag = DisposeBag()
     var delegate: ComponentsDelegate?
+    var warehouses: [String] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -104,24 +105,21 @@ class ComponentsViewController: UIViewController {
             return data.count > 0
         }).asDriver(onErrorJustReturn: true).drive(labelNoResults.rx.isHidden).disposed(by: disposeBag)
         itemSelectedOfMostCommonComponentsTable()
-        self.componentsViewModel.displayWindows.subscribe(onNext: { [weak self] (data, warehouses) in
-            self?.createFormView(data: data, warehouses: warehouses)
-        }).disposed(by: disposeBag)
     }
 
     func continueItemSelected(_ data: ComponentO) {
         switch typeOpen {
-        case .detailOrder: self.componentsViewModel.getPrimaryWarehouse(data: data)
+        case .detailOrder: self.createFormView(data: data)
         case .supplies: closeSelection(data: data)
         default: break
         }
     }
-    func createFormView(data: ComponentO, warehouses: [String]) {
+    func createFormView(data: ComponentO) {
         self.componentsViewModel.selectedComponent.onNext(data)
         let compFormVC = ComponentFormViewController()
         compFormVC.selectedComponent = data
         compFormVC.delegate = self.delegate
-        compFormVC.warehouses = warehouses
+        compFormVC.warehouses = self.warehouses
         self.navigationController?.pushViewController(compFormVC, animated: true)
     }
     func closeSelection(data: ComponentO) {

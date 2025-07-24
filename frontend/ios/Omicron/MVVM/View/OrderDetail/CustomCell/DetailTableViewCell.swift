@@ -10,11 +10,10 @@ import UIKit
 
 protocol SelectedPickerInput: AnyObject {
     func okAction(selectedOption: String, productId: String)
+    func emptyOptions()
+    func hassBatches()
 }
 
-protocol GetWarehousePicker: AnyObject {
-    func getWarehouseList(productId: String)
-}
 
 class DetailTableViewCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate {
     // MARK: Outlets
@@ -32,13 +31,14 @@ class DetailTableViewCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDa
     var options: [String] = []
     var productId = String()
     var delegate: SelectedPickerInput?
-    var delegateWarehouse: GetWarehousePicker?
-    var hidewWerehouseLabel: Bool = true
+    var enableAction = true
+    var hasBatches = false
     var selectedOption: String = "" {
             didSet {
                 validateShowDropDown()
             }
     }
+
     override func awakeFromNib() {
         super.awakeFromNib()
         let fontSize = CGFloat(17)
@@ -48,6 +48,7 @@ class DetailTableViewCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDa
         UtilsManager.shared.labelsStyle(label: self.unitLabel, text: "", fontSize: fontSize)
         UtilsManager.shared.labelsStyle(label: self.descriptionLabel, text: "", fontSize: fontSize)
         UtilsManager.shared.labelsStyle(label: self.hashTagLabel, text: "", fontSize: fontSize)
+        configuraTextField()
         validateShowDropDown()
     }
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -77,15 +78,33 @@ class DetailTableViewCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDa
     }
     
     private func setupTextField() {
+        if (options.count != 0) {
+            textField.inputView = pickerView
+            
+            addDoneButtonToPicker()
+            if let index = options.firstIndex(of: selectedOption) {
+                 textField.text = selectedOption
+                 pickerView.selectRow(index, inComponent: 0, animated: false)
+             } else {
+                 // Por si el valor no está en las opciones (fallback opcional)
+                 textField.text = selectedOption
+                 pickerView.selectRow(0, inComponent: 0, animated: false)
+             }
+        } else {
+            textField.text = selectedOption
+        }
+    }
+    
+    private func configuraTextField()
+    {
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.borderStyle = .roundedRect
         textField.placeholder = "Selecciona un lote"
-        textField.inputView = pickerView
+
         textField.textAlignment = .center
         textField.delegate = self
-        
+        textField.font = .fontDefaultMedium(14)
         pickerContainerView.addSubview(textField)
-        
         // Ajustar textField al tamaño de dropdownView
         NSLayoutConstraint.activate([
             textField.topAnchor.constraint(equalTo: pickerContainerView.topAnchor),
@@ -93,18 +112,6 @@ class DetailTableViewCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDa
             textField.leadingAnchor.constraint(equalTo: pickerContainerView.leadingAnchor),
             textField.trailingAnchor.constraint(equalTo: pickerContainerView.trailingAnchor),
         ])
-        
-        textField.font = .fontDefaultMedium(14)
-        addDoneButtonToPicker()
-        print(selectedOption)
-        if let index = options.firstIndex(of: selectedOption) {
-             textField.text = selectedOption
-             pickerView.selectRow(index, inComponent: 0, animated: false)
-         } else {
-             // Por si el valor no está en las opciones (fallback opcional)
-             textField.text = options.first
-             pickerView.selectRow(0, inComponent: 0, animated: false)
-         }
     }
     
     private func addDoneButtonToPicker() {
@@ -117,12 +124,13 @@ class DetailTableViewCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDa
     }
 
     @objc private func donePicker() {
-        let selectedRow = pickerView.selectedRow(inComponent: 0)
-        let selectedValue = options[selectedRow]
-        textField.text = selectedValue
-        delegate?.okAction(selectedOption: selectedValue, productId: self.productId)
-        
-        textField.resignFirstResponder()
+        if (options.count > 0) {
+            let selectedRow = pickerView.selectedRow(inComponent: 0)
+            let selectedValue = options[selectedRow]
+            textField.text = selectedValue
+            delegate?.okAction(selectedOption: selectedValue, productId: self.productId)
+            textField.resignFirstResponder()
+        }
     }
     
     private func setupPicker() {
@@ -146,13 +154,26 @@ class DetailTableViewCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDa
      }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        delegateWarehouse?.getWarehouseList(productId: self.productId)
-    }
-    
-    func reloadPickerView() {
-        pickerView.reloadAllComponents()
     }
 
     func textFieldDidEndEditing(_ textField: UITextField) {
+    }
+    
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        if (!enableAction) {
+            return false
+        }
+        
+        if (hasBatches) {
+            delegate?.hassBatches()
+            return false
+        }
+
+        if (options.isEmpty) {
+            delegate?.emptyOptions()
+            return false
+        }
+
+        return true
     }
 }

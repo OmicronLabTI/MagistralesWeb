@@ -24,6 +24,7 @@ struct Constants {
         case assignedBatchesTryAgain = "Hubo un error al asignar los lotes, por favor intentar de nuevo"
         case loadOrdersDetail = "Hubo un error al cargar el detalle de la orden de fabricación, intentar de nuevo"
         case nowarehouses = "No se tienen almacenes configurados para"
+        case hasBatches = "Se debe desasignar los lotes para poder editar el almacén"
     }
     enum Tags: Int {
         case loading = 101
