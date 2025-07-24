@@ -87,6 +87,7 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
         quantityButtonBindind()
         self.orderDetailViewModel.getOrdenDetail()
         self.refreshViewControl()
+        self.componentsToUpdate = []
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
@@ -94,6 +95,7 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
         cleanLabels()
         orderDetailViewModel.tableData.onNext([])
         saveWarehousesChangesButton.isEnabled = false
+        self.componentsToUpdate = []
     }
     // MARK: - Functions
     @objc func goToCommentsViewController() {
@@ -119,6 +121,9 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
     func viewModelBinding() {
         self.orderDetailViewModel.disableSaveButton.subscribe(onNext: { [weak self] _ in
             self?.saveWarehousesChangesButton.isEnabled = false
+        }).disposed(by: disposeBag)
+        self.orderDetailViewModel.clearComponentsToUpdate.subscribe(onNext: { [weak self] _ in
+            self?.componentsToUpdate = []
         }).disposed(by: disposeBag)
         self.viewModelBinding1()
         self.viewModelBinding2()
@@ -380,6 +385,11 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
         
         let orderFabId = orderDetail[0].productionOrderID ?? 0
         let component = orderDetail[0].details?[index]
+        
+        let existsIndex = componentsToUpdate.firstIndex(where: ({$0.productId == productId})) ?? -1
+        if (existsIndex != -1) {
+            componentsToUpdate.remove(at: existsIndex)
+        }
         
         let componentToUpdate: Component = Component(
             orderFabID: orderFabId, productId: productId, componentDescription: component?.detailDescription ?? "",

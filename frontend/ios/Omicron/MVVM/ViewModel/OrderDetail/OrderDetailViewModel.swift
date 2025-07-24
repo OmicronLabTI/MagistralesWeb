@@ -46,6 +46,7 @@ class OrderDetailViewModel {
     var showTwoModals = false
     var dataError = PublishSubject<String>()
     var disableSaveButton = PublishSubject<Void>()
+    var clearComponentsToUpdate = PublishSubject<Void>()
     var updateObjectToSend: OrderDetailRequest = OrderDetailRequest(
         fabOrderID: 0, plannedQuantity: 0, fechaFin: "", comments: "", warehouse: "", components: []
     )
@@ -163,6 +164,7 @@ class OrderDetailViewModel {
             self.loading.onNext(false)
             if (res.code == 200) {
                 self.showAlert.onNext(CommonStrings.processSuccess)
+                clearComponentsToUpdate.onNext(())
                 disableSaveButton.onNext(())
                 updateObjectToSend.components = []
                 return
@@ -185,6 +187,7 @@ class OrderDetailViewModel {
             guard let self = self else { return }
             self.loading.onNext(false)
             self.warehousesOptions = res.response
+            self.clearComponentsToUpdate.onNext(())
             self.onSuccessOrderDetail(response: response, isRefresh)
         }, onError: { [weak self] _ in
             guard let self = self else { return }
