@@ -166,6 +166,8 @@ extension OrderDetailViewController {
             cellIdentifier: ViewControllerIdentifiers.detailTableViewCell,
             cellType: DetailTableViewCell.self)) { [weak self] row, data, cell in
                 cell.hashTagLabel.text = "\(row + 1)"
+                cell.enableAction = self?.enablePicketContainer() ?? true
+                cell.hasBatches = data.hasBatches ?? false
                 cell.codeLabel.text = "\(data.productID ?? String())"
                 cell.descriptionLabel.text = data.detailDescription?.uppercased()
                 cell.baseQuantityLabel.text =  data.unit == CommonStrings.piece ?
@@ -179,14 +181,10 @@ extension OrderDetailViewController {
                 cell.unitLabel.text = data.unit ?? String()
                 let hasStock = data.stock ?? 0.0 > 0.0
                 cell.setEmptyStock(hasStock)
-                let options = data.warehouse ?? ""
-                cell.options = [options]
+                cell.options = self?.orderDetailViewModel.warehousesOptions ?? []
                 cell.selectedOption = data.warehouse ?? String()
                 cell.delegate = self
-                cell.delegateWarehouse = self
                 cell.productId = data.productID ?? String()
-                cell.pickerContainerView.isUserInteractionEnabled = self?.enablePicketContainer(hasBatches: data.hasBatches) ?? true
-                cell.hidewWerehouseLabel = !cell.pickerContainerView.isUserInteractionEnabled
         }.disposed(by: disposeBag)
         orderDetailViewModel.tableData.subscribe(onNext: { [weak self] details in
             guard let self = self else { return }
@@ -197,10 +195,8 @@ extension OrderDetailViewController {
         }).disposed(by: disposeBag)
     }
     
-    func enablePicketContainer(hasBatches: Bool?) -> Bool{
-        let validStatus = statusType == StatusNameConstants.inProcessStatus || statusType == StatusNameConstants.reassignedStatus
-        let dataBatches = !(hasBatches ?? false)
-        return validStatus && dataBatches
+    func enablePicketContainer() -> Bool{
+        return statusType == StatusNameConstants.inProcessStatus || statusType == StatusNameConstants.reassignedStatus
     }
 
     func quantityButtonBindind() {

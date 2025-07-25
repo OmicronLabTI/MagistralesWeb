@@ -11,7 +11,8 @@ import RxSwift
 import RxCocoa
 import Resolver
 // swiftlint:disable type_body_length
-class OrderDetailViewController: UIViewController, SelectedPickerInput, GetWarehousePicker {
+class OrderDetailViewController: UIViewController, SelectedPickerInput {
+    
     // Outlets
     @IBOutlet weak var deleteManyButton: UIButton!
     @IBOutlet weak var processButton: UIButton!
@@ -51,6 +52,8 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, GetWareh
     @Injected var orderDetailViewModel: OrderDetailViewModel
     @Injected var rootViewModel: RootViewModel
     @Injected var lottieManager: LottieManager
+    @Injected var inboxViewModel: InboxViewModel
+    
 
     var disposeBag: DisposeBag = DisposeBag()
     var orderId: Int = -1
@@ -76,7 +79,10 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, GetWareh
         tableView.setEditing(false, animated: true)
         self.orderDetailViewModel.orderId = self.orderId
         infoView.layer.cornerRadius = 10
+        setupDismissPickerOnTap()
+        initNavigationBar()
     }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         cleanLabels()
@@ -85,6 +91,7 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, GetWareh
         quantityButtonBindind()
         self.orderDetailViewModel.getOrdenDetail()
         self.refreshViewControl()
+        self.componentsToUpdate = []
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
@@ -92,8 +99,51 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, GetWareh
         cleanLabels()
         orderDetailViewModel.tableData.onNext([])
         saveWarehousesChangesButton.isEnabled = false
+        self.componentsToUpdate = []
     }
+
     // MARK: - Functions
+    func initNavigationBar() {
+        let title = inboxViewModel.currentSection.statusName
+        let backButton = UIButton(type: .system)
+        backButton.setTitle("  \(title)", for: .normal)
+        backButton.setImage(UIImage(systemName: "chevron.left"), for: .normal)
+        backButton.tintColor = .systemBlue
+        backButton.titleLabel?.font = UIFont.systemFont(ofSize: 19, weight: .medium)
+
+        backButton.addTarget(self, action: #selector(backBtnAction(_:)), for: .touchUpInside)
+
+        let barButton = UIBarButtonItem(customView: backButton)
+        navigationItem.leftBarButtonItem = barButton
+    }
+
+    @objc func backBtnAction(_ sender: UIBarButtonItem) {
+        if componentsToUpdate.isEmpty {
+            returnBack()
+            return
+        }
+        self.presentConfirmDialog()
+    }
+
+    func presentConfirmDialog() {
+        let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: nil)
+        let okAction = UIAlertAction(title: CommonStrings.OKConst,
+                                     style: .default, handler: { [weak self] _ in self?.resetValues()})
+        AlertManager.shared.showAlert(title: CommonStrings.warehousesChangesConfirm,
+                                      message: String(),
+                                      actions: [cancelAction, okAction],
+                                      view: self)
+    }
+    
+    func resetValues() {
+        componentsToUpdate = []
+        returnBack()
+    }
+
+    func returnBack() {
+        self.navigationController?.popViewController(animated: true)
+    }
+    
     @objc func goToCommentsViewController() {
         let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
         let commentsVC = storyboard.instantiateViewController(
@@ -115,11 +165,11 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, GetWareh
         self.orderDetailViewModel.getOrdenDetail(isRefresh: true)
     }
     func viewModelBinding() {
-        self.orderDetailViewModel.updateWarehouses.subscribe(onNext: { [weak self] (itemcode, warehouses) in
-            self?.updateComponentWarehouse(warehouse: warehouses, itemcode: itemcode)
-        }).disposed(by: disposeBag)
         self.orderDetailViewModel.disableSaveButton.subscribe(onNext: { [weak self] _ in
             self?.saveWarehousesChangesButton.isEnabled = false
+        }).disposed(by: disposeBag)
+        self.orderDetailViewModel.clearComponentsToUpdate.subscribe(onNext: { [weak self] _ in
+            self?.componentsToUpdate = []
         }).disposed(by: disposeBag)
         self.viewModelBinding1()
         self.viewModelBinding2()
@@ -169,7 +219,7 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, GetWareh
             .subscribe(onNext: { [weak self] _ in
                 guard let self = self else { return }
                 
-                self.goToPage(identifier: ViewControllerIdentifiers.lotsViewController,
+                self.validateNavigation(identifier: ViewControllerIdentifiers.lotsViewController,
                                                   controllerType: LotsViewController.self)
             }).disposed(by: self.disposeBag)
         self.processButton.rx.tap.bind(to: orderDetailViewModel.processButtonDidTap).disposed(by: self.disposeBag)
@@ -182,15 +232,33 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, GetWareh
         }).disposed(by: self.disposeBag)
         self.addComponentButton.rx.tap.subscribe(onNext: { [weak self] _ in
             guard let self = self else { return }
-            self.goToPage(identifier: ViewControllerIdentifiers.addComponentViewController,
+            if (orderDetailViewModel.warehousesOptions.count == 0) {
+                AlertManager.shared.showAlert(message:"\(Constants.Errors.nowarehouses.rawValue) \(orderDetailViewModel.itemCode)",
+                                              view: self)
+                return
+            }
+            self.validateNavigation(identifier: ViewControllerIdentifiers.addComponentViewController,
                           controllerType: AddComponentViewController.self)
-            // self.goToComponentsViewController()
         }).disposed(by: disposeBag)
     }
     func getDecimalPartOfDouble(number: Double) -> Double {
         return number.truncatingRemainder(dividingBy: 1)
     }
-    
+    func validateNavigation<T: LotsBaseViewController>(identifier: String, controllerType: T.Type) {
+        if (!componentsToUpdate.isEmpty) {
+            let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: nil)
+            let okAction = UIAlertAction(title: CommonStrings.OKConst,
+                                         style: .default, handler: { [weak self] _ in self?.goToPage(identifier: identifier,controllerType: controllerType)})
+            AlertManager.shared.showAlert(title: CommonStrings.warehousesChangesConfirm,
+                                          message: String(),
+                                          actions: [cancelAction, okAction],
+                                          view: self)
+            return
+        }
+
+        self.goToPage(identifier: identifier,controllerType: controllerType)
+    }
+
     func goToPage<T: LotsBaseViewController>(identifier: String, controllerType: T.Type) {
         let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
         
@@ -213,6 +281,8 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, GetWareh
                     "\(order.code ?? String())  \(order.productDescription ?? String())"
                 }
             }
+            viewController.warehousesOptions = self.orderDetailViewModel.warehousesOptions
+            self.componentsToUpdate = []
             self.navigationController?.pushViewController(viewController, animated: true)
         }
     }
@@ -257,6 +327,16 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, GetWareh
                                         typeFont: CommonStrings.bold)
         UtilsManager.shared.labelsStyle(label: self.htDescription, text: CommonStrings.description, fontSize: 19,
                                         typeFont: CommonStrings.bold)
+    }
+    
+    func setupDismissPickerOnTap() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissPicker))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
+    }
+
+    @objc func dismissPicker() {
+        view.endEditing(true)
     }
 
     func initComponents2() {
@@ -366,6 +446,11 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, GetWareh
         let orderFabId = orderDetail[0].productionOrderID ?? 0
         let component = orderDetail[0].details?[index]
         
+        let existsIndex = componentsToUpdate.firstIndex(where: ({$0.productId == productId})) ?? -1
+        if (existsIndex != -1) {
+            componentsToUpdate.remove(at: existsIndex)
+        }
+        
         let componentToUpdate: Component = Component(
             orderFabID: orderFabId, productId: productId, componentDescription: component?.detailDescription ?? "",
             baseQuantity: component?.baseQuantity ?? 0, requiredQuantity: component?.requiredQuantity ?? 0, consumed: component?.consumed ?? 0,
@@ -374,19 +459,6 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, GetWareh
             action: Actions.update.rawValue, assignedBatches: [])
         
         componentsToUpdate.append(componentToUpdate)
-    }
-    
-    func getWarehouseList(productId: String) {
-        self.orderDetailViewModel.getComponentWarehouses(itemcode: productId)
-    }
-    
-    func updateComponentWarehouse(warehouse: [String], itemcode: String) {
-        let index = orderDetail[0].details?.firstIndex(where: ({$0.productID == itemcode})) ?? 0
-        let indexTable = IndexPath(row: index, section: 0)
-        if let cell = tableView.cellForRow(at: indexTable) as? DetailTableViewCell {
-            cell.options = warehouse
-            cell.reloadPickerView()
-        }
     }
     
     @IBAction func saveChangesComponents(_ sender: Any) {
@@ -425,6 +497,14 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, GetWareh
         htWerehouse.text = ""
         destinyLabel.text = ""
         labelSpaceQuantity.text = ""
-
+    }
+    
+    func emptyOptions() {
+        AlertManager.shared.showAlert(message:"\(Constants.Errors.nowarehouses.rawValue) \(orderDetailViewModel.itemCode)",
+                                                     view: self)
+    }
+    
+    func hassBatches() {
+        AlertManager.shared.showAlert(message:Constants.Errors.hasBatches.rawValue, view: self)
     }
 }

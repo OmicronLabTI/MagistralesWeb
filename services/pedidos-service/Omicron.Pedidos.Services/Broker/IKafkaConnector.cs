@@ -20,7 +20,8 @@ namespace Omicron.Pedidos.Services.Broker
         /// </summary>
         /// <param name="messaje">the message.</param>
         /// <param name="queueType">queueType.</param>
+        /// <param name="logbase">Log Base.</param>
         /// <returns>the data.</returns>
-        Task<bool> PushMessage(object messaje, string queueType);
+        Task<bool> PushMessage(object messaje, string queueType, string logbase = null);
     }
 }
