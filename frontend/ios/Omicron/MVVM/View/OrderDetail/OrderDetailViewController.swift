@@ -52,6 +52,8 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
     @Injected var orderDetailViewModel: OrderDetailViewModel
     @Injected var rootViewModel: RootViewModel
     @Injected var lottieManager: LottieManager
+    @Injected var inboxViewModel: InboxViewModel
+    
 
     var disposeBag: DisposeBag = DisposeBag()
     var orderId: Int = -1
@@ -78,7 +80,9 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
         self.orderDetailViewModel.orderId = self.orderId
         infoView.layer.cornerRadius = 10
         setupDismissPickerOnTap()
+        initNavigationBar()
     }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         cleanLabels()
@@ -97,7 +101,49 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
         saveWarehousesChangesButton.isEnabled = false
         self.componentsToUpdate = []
     }
+
     // MARK: - Functions
+    func initNavigationBar() {
+        let title = inboxViewModel.currentSection.statusName
+        let backButton = UIButton(type: .system)
+        backButton.setTitle("  \(title)", for: .normal)
+        backButton.setImage(UIImage(systemName: "chevron.left"), for: .normal)
+        backButton.tintColor = .systemBlue
+        backButton.titleLabel?.font = UIFont.systemFont(ofSize: 19, weight: .medium)
+
+        backButton.addTarget(self, action: #selector(backBtnAction(_:)), for: .touchUpInside)
+
+        let barButton = UIBarButtonItem(customView: backButton)
+        navigationItem.leftBarButtonItem = barButton
+    }
+
+    @objc func backBtnAction(_ sender: UIBarButtonItem) {
+        if componentsToUpdate.isEmpty {
+            returnBack()
+            return
+        }
+        self.presentConfirmDialog()
+    }
+
+    func presentConfirmDialog() {
+        let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: nil)
+        let okAction = UIAlertAction(title: CommonStrings.OKConst,
+                                     style: .default, handler: { [weak self] _ in self?.resetValues()})
+        AlertManager.shared.showAlert(title: CommonStrings.warehousesChangesConfirm,
+                                      message: String(),
+                                      actions: [cancelAction, okAction],
+                                      view: self)
+    }
+    
+    func resetValues() {
+        componentsToUpdate = []
+        returnBack()
+    }
+
+    func returnBack() {
+        self.navigationController?.popViewController(animated: true)
+    }
+    
     @objc func goToCommentsViewController() {
         let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
         let commentsVC = storyboard.instantiateViewController(
@@ -173,7 +219,7 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
             .subscribe(onNext: { [weak self] _ in
                 guard let self = self else { return }
                 
-                self.goToPage(identifier: ViewControllerIdentifiers.lotsViewController,
+                self.validateNavigation(identifier: ViewControllerIdentifiers.lotsViewController,
                                                   controllerType: LotsViewController.self)
             }).disposed(by: self.disposeBag)
         self.processButton.rx.tap.bind(to: orderDetailViewModel.processButtonDidTap).disposed(by: self.disposeBag)
@@ -191,15 +237,28 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
                                               view: self)
                 return
             }
-            self.goToPage(identifier: ViewControllerIdentifiers.addComponentViewController,
+            self.validateNavigation(identifier: ViewControllerIdentifiers.addComponentViewController,
                           controllerType: AddComponentViewController.self)
-            // self.goToComponentsViewController()
         }).disposed(by: disposeBag)
     }
     func getDecimalPartOfDouble(number: Double) -> Double {
         return number.truncatingRemainder(dividingBy: 1)
     }
-    
+    func validateNavigation<T: LotsBaseViewController>(identifier: String, controllerType: T.Type) {
+        if (!componentsToUpdate.isEmpty) {
+            let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: nil)
+            let okAction = UIAlertAction(title: CommonStrings.OKConst,
+                                         style: .default, handler: { [weak self] _ in self?.goToPage(identifier: identifier,controllerType: controllerType)})
+            AlertManager.shared.showAlert(title: CommonStrings.warehousesChangesConfirm,
+                                          message: String(),
+                                          actions: [cancelAction, okAction],
+                                          view: self)
+            return
+        }
+
+        self.goToPage(identifier: identifier,controllerType: controllerType)
+    }
+
     func goToPage<T: LotsBaseViewController>(identifier: String, controllerType: T.Type) {
         let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
         
@@ -223,6 +282,7 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
                 }
             }
             viewController.warehousesOptions = self.orderDetailViewModel.warehousesOptions
+            self.componentsToUpdate = []
             self.navigationController?.pushViewController(viewController, animated: true)
         }
     }

@@ -223,6 +223,7 @@ struct CommonStrings {
     static let selectFilter = "Selecciona un filtro"
     static let errorGetLotsByProduct = "Error al obtener los lotes"
     static let errorSaveLots = "Error al guardar los nuevos componentes"
+    static let warehousesChangesConfirm = "Existen cambios sin guardar, ¿Deseas cambiar de Fórmula sin guardar los cambios?"
 }
 struct FontsNames {
     static let SFProDisplayBold = "SFProDisplay-Bold"
