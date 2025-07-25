@@ -172,7 +172,13 @@ export class FinalizeOrdersComponent implements OnInit {
       } else {
         this.dialogRef.close();
         this.observableService.setCallHttpService(HttpServiceTOCall.ORDERS_ISOLATED);
-        this.observableService.setMessageGeneralCallHttp({ title: Messages.success, isButtonAccept: false, icon: 'success' });
+        this.observableService.setMessageGeneralCallHttp(
+          {
+            title: Messages.weAreFinalizingYourOrders.title,
+            isButtonAccept: false,
+            icon: 'success',
+            extraMessage: Messages.weAreFinalizingYourOrders.message
+          });
       }
     }, error => {
       this.errorService.httpError(error);
