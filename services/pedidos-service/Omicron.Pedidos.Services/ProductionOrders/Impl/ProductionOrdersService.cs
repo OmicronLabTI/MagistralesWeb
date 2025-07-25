@@ -130,7 +130,10 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                     successfuly.Add(productionOrder);
                     productionOrderProcessingStatus.Add(productionOrderProcessing);
                     this.logger.Information(LogsConstants.SendKafkaMessageFinalizeProductionOrderSap, logBase, JsonConvert.SerializeObject(productionOrderProcessing));
-                    _ = this.kafkaConnector.PushMessage(productionOrderProcessing, ServiceConstants.KafkaFinalizeProductionOrderSapConfigName);
+                    await this.kafkaConnector.PushMessage(
+                        productionOrderProcessing,
+                        ServiceConstants.KafkaFinalizeProductionOrderSapConfigName,
+                        logBase);
                 }
 
                 this.logger.Information(LogsConstants.InsertAllProductionOrderProcessingStatus, JsonConvert.SerializeObject(productionOrderProcessingStatus));
@@ -170,7 +173,11 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             }
 
             this.logger.Information(LogsConstants.SendKafkaMessageFinalizeProductionOrderPostgresql, logBase, JsonConvert.SerializeObject(productionOrderUpdated));
-            _ = this.kafkaConnector.PushMessage(productionOrderUpdated, ServiceConstants.KafkaFinalizeProductionOrderPostgresqlConfigName);
+            await this.kafkaConnector.PushMessage(
+                productionOrderUpdated,
+                ServiceConstants.KafkaFinalizeProductionOrderPostgresqlConfigName,
+                logBase);
+
             this.logger.Information(LogsConstants.EndFinalizeProductionOrderInSap, JsonConvert.SerializeObject(productionOrderProcessingPayload));
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
         }
@@ -192,7 +199,10 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                 return ServiceUtils.CreateResult(false, (int)HttpStatusCode.InternalServerError, null, null, null);
             }
 
-            _ = this.kafkaConnector.PushMessage(productionOrderUpdated, ServiceConstants.KafkaProductionOrderPdfGenerationConfigName);
+            await this.kafkaConnector.PushMessage(
+                productionOrderUpdated,
+                ServiceConstants.KafkaProductionOrderPdfGenerationConfigName,
+                logBase);
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
         }
 
