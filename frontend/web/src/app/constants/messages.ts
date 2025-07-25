@@ -63,5 +63,9 @@ export const Messages = {
   noComponentsToCreateList: 'No existen componentes para crear una lista',
   removeListComponents: '¿Deseas borrar la lista de componentes llamada ',
   cantBeDeletedDueToAssignedBatches: 'No se puede eliminar componente debido a que tiene lote(s) asignado(s)',
-  invalidWarehouses: 'No se tienen almacenes configurados para'
+  invalidWarehouses: 'No se tienen almacenes configurados para',
+  weAreFinalizingYourOrders: {
+    title: 'Estamos finalizando tus órdenes.',
+    message: 'Este proceso puede tardar unos minutos. Puedes seguir trabajando con normalidad.'
+  },
 };
