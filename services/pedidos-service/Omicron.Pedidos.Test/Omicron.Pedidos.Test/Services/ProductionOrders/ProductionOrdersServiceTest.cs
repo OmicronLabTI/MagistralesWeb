@@ -58,7 +58,7 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
             this.sapFileService = new Mock<ISapFileService>();
             this.mockKafkaConnector = new Mock<IKafkaConnector>();
             this.mockKafkaConnector
-                .Setup(m => m.PushMessage(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(m => m.PushMessage(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(true));
         }
 
