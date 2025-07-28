@@ -129,7 +129,6 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
 
                     successfuly.Add(productionOrder);
                     productionOrderProcessingStatus.Add(productionOrderProcessing);
-                    this.logger.Information(LogsConstants.SendKafkaMessageFinalizeProductionOrderSap, logBase, JsonConvert.SerializeObject(productionOrderProcessing));
                 }
 
                 this.logger.Information(LogsConstants.InsertAllProductionOrderProcessingStatus, JsonConvert.SerializeObject(productionOrderProcessingStatus));
@@ -343,7 +342,8 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
         {
             foreach (var productionOrderProcessing in productionOrderProcessingStatusList)
             {
-                await this.kafkaConnector.PushMessage(productionOrderProcessing, ServiceConstants.KafkaFinalizeProductionOrderSapConfigName);
+                var logBase = string.Format(LogsConstants.FinalizeProductionOrdersAsync, productionOrderProcessing.Id);
+                await this.kafkaConnector.PushMessage(productionOrderProcessing, ServiceConstants.KafkaFinalizeProductionOrderSapConfigName, logBase);
             }
         }
 
