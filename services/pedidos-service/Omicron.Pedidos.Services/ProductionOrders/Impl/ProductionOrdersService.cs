@@ -130,11 +130,12 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                     successfuly.Add(productionOrder);
                     productionOrderProcessingStatus.Add(productionOrderProcessing);
                     this.logger.Information(LogsConstants.SendKafkaMessageFinalizeProductionOrderSap, logBase, JsonConvert.SerializeObject(productionOrderProcessing));
-                    _ = this.kafkaConnector.PushMessage(productionOrderProcessing, ServiceConstants.KafkaFinalizeProductionOrderSapConfigName);
                 }
 
                 this.logger.Information(LogsConstants.InsertAllProductionOrderProcessingStatus, JsonConvert.SerializeObject(productionOrderProcessingStatus));
                 await this.pedidosDao.InsertProductionOrderProcessingStatus(productionOrderProcessingStatus);
+
+                _ = Task.Run(() => this.SendKafkaMessagesAsync(productionOrderProcessingStatus));
 
                 var validationsResult = new FinalizeProductionOrdersResult
                 {
@@ -329,6 +330,14 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             modelToUpdate.LastUpdated = DateTime.Now;
             await this.pedidosDao.UpdatesProductionOrderProcessingStatus([modelToUpdate]);
             return modelToUpdate;
+        }
+
+        private void SendKafkaMessagesAsync(List<ProductionOrderProcessingStatusModel> productionOrderProcessingStatusList)
+        {
+            foreach (var productionOrderProcessing in productionOrderProcessingStatusList)
+            {
+                _ = this.kafkaConnector.PushMessage(productionOrderProcessing, ServiceConstants.KafkaFinalizeProductionOrderSapConfigName);
+            }
         }
 
         private async Task RetryFailedProductionOrderFinalizationProcess(ProductionOrderProcessingStatusModel payload, string logBase)
