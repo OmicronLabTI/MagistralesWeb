@@ -534,7 +534,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                 var (salesOrders, productionOrder) = await this.GetRelatedOrdersToProducionOrder(new List<string> { productionOrderId });
                 var salesOrder = salesOrders != null ? salesOrders.FirstOrDefault(x => x.IsSalesOrder) : null;
                 salesOrders?.Remove(salesOrder);
-                var preProductionOrders = await ServiceUtils.GetPreProductionOrdersFromSap(salesOrder, this.sapAdapter);
+                var preProductionOrders = salesOrder != null ? await ServiceUtils.GetPreProductionOrdersFromSap(salesOrder, this.sapAdapter) : new List<CompleteDetailOrderModel>();
                 var payload = payloadJson.FinalizeProductionOrder;
                 var userOrdersToUpdate = new List<UserOrderModel>();
                 var ordersToProcess = payload.SourceProcess == ServiceConstants.SalesOrders ? salesOrders : new List<UserOrderModel> { productionOrder };
