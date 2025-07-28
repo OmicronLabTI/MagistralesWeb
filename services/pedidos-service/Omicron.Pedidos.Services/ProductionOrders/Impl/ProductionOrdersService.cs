@@ -343,6 +343,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             foreach (var productionOrderProcessing in productionOrderProcessingStatusList)
             {
                 var logBase = string.Format(LogsConstants.FinalizeProductionOrdersAsync, productionOrderProcessing.Id);
+                this.logger.Information(LogsConstants.SendKafkaMessageFinalizeProductionOrderSap, logBase, JsonConvert.SerializeObject(productionOrderProcessing));
                 await this.kafkaConnector.PushMessage(productionOrderProcessing, ServiceConstants.KafkaFinalizeProductionOrderSapConfigName, logBase);
             }
         }
