@@ -339,11 +339,11 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             return modelToUpdate;
         }
 
-        private void SendKafkaMessagesAsync(List<ProductionOrderProcessingStatusModel> productionOrderProcessingStatusList)
+        private async Task SendKafkaMessagesAsync(List<ProductionOrderProcessingStatusModel> productionOrderProcessingStatusList)
         {
             foreach (var productionOrderProcessing in productionOrderProcessingStatusList)
             {
-                _ = this.kafkaConnector.PushMessage(productionOrderProcessing, ServiceConstants.KafkaFinalizeProductionOrderSapConfigName);
+                await this.kafkaConnector.PushMessage(productionOrderProcessing, ServiceConstants.KafkaFinalizeProductionOrderSapConfigName);
             }
         }
 
