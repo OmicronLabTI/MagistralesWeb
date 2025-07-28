@@ -129,15 +129,12 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
 
                     successfuly.Add(productionOrder);
                     productionOrderProcessingStatus.Add(productionOrderProcessing);
-                    this.logger.Information(LogsConstants.SendKafkaMessageFinalizeProductionOrderSap, logBase, JsonConvert.SerializeObject(productionOrderProcessing));
-                    await this.kafkaConnector.PushMessage(
-                        productionOrderProcessing,
-                        ServiceConstants.KafkaFinalizeProductionOrderSapConfigName,
-                        logBase);
                 }
 
                 this.logger.Information(LogsConstants.InsertAllProductionOrderProcessingStatus, JsonConvert.SerializeObject(productionOrderProcessingStatus));
                 await this.pedidosDao.InsertProductionOrderProcessingStatus(productionOrderProcessingStatus);
+
+                _ = Task.Run(() => this.SendKafkaMessagesAsync(productionOrderProcessingStatus));
 
                 var validationsResult = new FinalizeProductionOrdersResult
                 {
@@ -339,6 +336,16 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             modelToUpdate.LastUpdated = DateTime.Now;
             await this.pedidosDao.UpdatesProductionOrderProcessingStatus([modelToUpdate]);
             return modelToUpdate;
+        }
+
+        private async Task SendKafkaMessagesAsync(List<ProductionOrderProcessingStatusModel> productionOrderProcessingStatusList)
+        {
+            foreach (var productionOrderProcessing in productionOrderProcessingStatusList)
+            {
+                var logBase = string.Format(LogsConstants.FinalizeProductionOrdersAsync, productionOrderProcessing.Id);
+                this.logger.Information(LogsConstants.SendKafkaMessageFinalizeProductionOrderSap, logBase, JsonConvert.SerializeObject(productionOrderProcessing));
+                await this.kafkaConnector.PushMessage(productionOrderProcessing, ServiceConstants.KafkaFinalizeProductionOrderSapConfigName, logBase);
+            }
         }
 
         private async Task RetryFailedProductionOrderFinalizationProcess(ProductionOrderProcessingStatusModel payload, string logBase)
