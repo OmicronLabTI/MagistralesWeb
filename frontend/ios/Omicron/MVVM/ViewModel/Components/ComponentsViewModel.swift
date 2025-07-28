@@ -23,7 +23,6 @@ class ComponentsViewModel {
     var saveDidTap = PublishSubject<ComponentFormValues>()
     var saveSuccess = PublishSubject<Void>()
     var bindingData = BehaviorSubject<[ComponentO]>(value: [])
-    var displayWindows = PublishSubject<(ComponentO, [String])>()
     var componentsList: [ComponentO] = []
     @Injected var inboxViewModel: InboxViewModel
     @Injected var orderDetailViewModel: OrderDetailViewModel
@@ -189,27 +188,6 @@ class ComponentsViewModel {
             if let components = res.response {
                 self.bindingData.onNext(components)
             }
-        }, onError: { [weak self] _ in
-            guard let self = self else { return }
-            self.loading.onNext(false)
-            self.dataError.onNext(Constants.Errors.errorData.rawValue)
-        }).disposed(by: disposeBag)
-    }
-    
-    func getPrimaryWarehouse(data: ComponentO) {
-        loading.onNext(true)
-        let itemcode = data.productId ?? String()
-        networkManager.getWarehouses(itemcode).subscribe(onNext: {
-            [weak self] res in
-            guard let self = self else { return }
-            self.loading.onNext(false)
-            if (res.response.isEmpty) {
-                self.dataError.onNext("\(Constants.Errors.nowarehouses.rawValue) \(itemcode)")
-                return
-            }
-
-            data.warehouse = res.response[0]
-            self.displayWindows.onNext((data, res.response))
         }, onError: { [weak self] _ in
             guard let self = self else { return }
             self.loading.onNext(false)

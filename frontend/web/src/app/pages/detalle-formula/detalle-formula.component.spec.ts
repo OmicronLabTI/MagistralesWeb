@@ -7,7 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { APP_BASE_HREF, DatePipe } from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { PedidosService } from 'src/app/services/pedidos.service';
-import { DetalleFormulaMock } from 'src/mocks/pedidosListMock';
+import { DetalleFormulaMock, productWarehousesResponseMock } from 'src/mocks/pedidosListMock';
 import { Observable, of, Subject, throwError } from 'rxjs';
 import { DataService } from '../../services/data.service';
 import { CarouselOption, CONST_DETAIL_FORMULA } from '../../constants/const';
@@ -74,7 +74,8 @@ describe('DetalleFormulaComponent', () => {
       'getFullStringForCarousel',
       'getIsToSaveAnything',
       'calculateOrValueList',
-      'validateValidString'
+      'validateValidString',
+      'calculateTernary'
     ]);
     dataServiceSpy.getIsToSaveAnything.and.callFake(() => {
       return true;
@@ -82,6 +83,9 @@ describe('DetalleFormulaComponent', () => {
     dataServiceSpy.validateValidString.and.callFake((text: string) => {
       const res = [text !== '', text !== undefined, text !== null];
       return res.every(item => item);
+    });
+    dataServiceSpy.calculateTernary.and.callFake(<T, U>(validation: boolean, firstValue: T, secondaValue: U): T | U => {
+      return validation ? firstValue : secondaValue;
     });
     localStorageServiceSpy.getToken.and.callFake(() => {
       return '';
@@ -97,7 +101,7 @@ describe('DetalleFormulaComponent', () => {
       return of();
     });
     pedidosServiceSpy.getProductWarehouses.and.callFake(() => {
-      return of(['MN', 'BE']);
+      return of(productWarehousesResponseMock);
     });
     messagesServiceSpy.presentToastCustom.and.callFake(() => Promise.resolve([]));
 
@@ -205,6 +209,7 @@ describe('DetalleFormulaComponent', () => {
       return throwError({ status: 500 });
     });
     component.getDetalleFormula();
+    component.productWarehouses = ['MN', 'BE'];
     expect(errorServiceSpy.httpError).toHaveBeenCalled();
   });
 

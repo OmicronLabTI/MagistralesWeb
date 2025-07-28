@@ -41,19 +41,26 @@ namespace Omicron.Pedidos.Services.Broker
         }
 
         /// <inheritdoc/>
-        public async Task<bool> PushMessage(object messaje, string queueType)
+        public async Task<bool> PushMessage(object messaje, string queueType, string logbase = null)
         {
+            logbase = string.IsNullOrEmpty(logbase) ? "Pedidos - Push Message" : logbase;
             try
             {
                 this.GetKafkaConfiguration(queueType);
                 using var localProducer = new ProducerBuilder<long, string>(this.producer).SetKeySerializer(Serializers.Int64).SetValueSerializer(Serializers.Utf8).Build();
                 await localProducer.ProduceAsync(this.topic, new Message<long, string> { Key = DateTime.UtcNow.Ticks, Value = JsonConvert.SerializeObject(messaje) });
-                this.logger.Information("Object sent to {Topic}: {Message}", this.topic, JsonConvert.SerializeObject(messaje));
+                this.logger.Information("{LogBase} - Object sent to {Topic}: {Message}", logbase, this.topic, JsonConvert.SerializeObject(messaje));
                 return true;
             }
             catch (Exception ex)
             {
-                this.logger.Error(ex, "Error sending to kafka, {Topic}: {Message} - {StackTrace}", this.topic, JsonConvert.SerializeObject(messaje), ex.StackTrace);
+                this.logger.Error(
+                    ex,
+                    "{LogBase} - Error sending to kafka, {Topic}: {Message} - {StackTrace}",
+                    logbase,
+                    this.topic,
+                    JsonConvert.SerializeObject(messaje),
+                    ex.StackTrace);
                 return false;
             }
         }

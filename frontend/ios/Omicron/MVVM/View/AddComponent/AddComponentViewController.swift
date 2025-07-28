@@ -341,6 +341,7 @@ class AddComponentViewController: LotsBaseViewController, ComponentsDelegate, Ch
         let navigationVC = UINavigationController(rootViewController: componentsVC ?? ComponentsViewController())
         navigationVC.modalPresentationStyle = .formSheet
         componentsVC?.delegate = self
+        componentsVC?.warehouses = warehousesOptions
         self.present(navigationVC, animated: true, completion: nil)
     }
     
