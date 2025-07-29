@@ -143,5 +143,15 @@ namespace Omicron.SapServiceLayerAdapter.Api.Controllers
             var result = await this.productionOrderFacade.CreateChildFabOrders(isolatedFabOrder);
             return this.Ok(result);
         }
+
+        /// <summary>
+        /// CancelProductionOrderForSeparationProcess.
+        /// </summary>
+        /// <param name="cancelProductionOrder">cancelProductionOrder.</param>
+        /// <returns>the reult.</returns>
+        [HttpPost]
+        [Route("/separationprocess/cancelproductionorder")]
+        public async Task<IActionResult> CancelProductionOrderForSeparationProcess([FromBody] CancelProductionOrderDto cancelProductionOrder)
+         => this.Ok(await this.productionOrderFacade.CancelProductionOrderForSeparationProcess(cancelProductionOrder));
     }
 }

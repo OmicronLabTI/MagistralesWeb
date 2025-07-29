@@ -66,5 +66,9 @@ namespace Omicron.SapServiceLayerAdapter.Facade.ProductionOrder.Impl
         /// <inheritdoc/>
         public async Task<ResultDto> CreateChildFabOrders(CreateChildProductionOrdersDto data)
             => this.mapper.Map<ResultDto>(await this.productionOrderService.CreateChildFabOrders(data));
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> CancelProductionOrderForSeparationProcess(CancelProductionOrderDto cancelProductionOrder)
+            => this.mapper.Map<ResultDto>(await this.productionOrderService.CancelProductionOrderForSeparationProcess(cancelProductionOrder));
     }
 }

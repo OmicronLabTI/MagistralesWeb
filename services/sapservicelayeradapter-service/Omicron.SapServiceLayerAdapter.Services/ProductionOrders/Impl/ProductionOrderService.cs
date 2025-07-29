@@ -142,7 +142,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                 productionOrder.ProductDescription = originalPO.ProductDescription;
                 productionOrder.PlannedQuantity = data.Pieces;
                 productionOrder.ProductionOrderOriginEntry = originalPO.ProductionOrderOriginEntry ?? 0;
-                productionOrder.Comments = string.Format(ServiceConstants.ChildFarOrderComments, originalPO.AbsoluteEntry);
+                productionOrder.Remarks = string.Format(ServiceConstants.ChildFarOrderComments, originalPO.AbsoluteEntry);
 
                 var newFabOrder = await this.SaveFabOrder(productionOrder);
                 newFabOrder.ProductionOrderLines = newFabOrder.ProductionOrderLines.Where(x => originalPO.ProductionOrderLines.Any(y => y.ItemNo == x.ItemNo)).ToList();
@@ -282,6 +282,78 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             }
 
             return ServiceUtils.CreateResult(true, 200, null, ServiceConstants.OkLabelResponse, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> CancelProductionOrderForSeparationProcess(CancelProductionOrderDto cancelProductionOrder)
+        {
+            var logBase = string.Format(LogsConstants.CancelProductionOrderLogBase, cancelProductionOrder.SeparationId, cancelProductionOrder.ProductionOrderId);
+
+            try
+            {
+                this.logger.Information(LogsConstants.CancelProductionOrderStart, logBase);
+
+                this.logger.Information(LogsConstants.GetProductionOrderToCancel, logBase);
+                var productionOrder = await this.GetFromServiceLayer<ProductionOrderDto>(
+                     string.Format(ServiceQuerysConstants.QryProductionOrderById, cancelProductionOrder.ProductionOrderId),
+                     LogsConstants.ProductionOrderNotFound);
+
+                if (productionOrder.ProductionOrderStatus == ServiceConstants.ProductionOrderCancelled)
+                {
+                    this.logger.Information(LogsConstants.ProductionOrderIsAlreadyCancelled, logBase);
+                    return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
+                }
+
+                productionOrder.Remarks = ServiceConstants.ProductionOrderSourceDivisionComment;
+
+                // productionOrder.IsParentRecord = ServiceConstants.YesValue;
+                var body = JsonConvert.SerializeObject(productionOrder);
+
+                this.logger.Information(LogsConstants.UpdateProductionOrderToCancel, logBase);
+                var resultUpdate = await this.serviceLayerClient.PutAsync(
+                    string.Format(ServiceQuerysConstants.QryProductionOrderById, cancelProductionOrder.ProductionOrderId),
+                    body);
+
+                if (!resultUpdate.Success)
+                {
+                    this.logger.Error(LogsConstants.ErrorToUpdateProductionOrder, logBase, resultUpdate.UserError, resultUpdate.ExceptionMessage);
+                    return ServiceUtils.CreateResult(
+                        false,
+                        (int)HttpStatusCode.InternalServerError,
+                        null,
+                        null,
+                        string.Format(LogsConstants.ProcessLogTwoParts, resultUpdate.UserError, resultUpdate.ExceptionMessage));
+                }
+
+                this.logger.Information(LogsConstants.CancelProductionOrderToCancel, logBase);
+                var resultCancel = await this.serviceLayerClient.PostAsync(
+                    string.Format(ServiceQuerysConstants.QryProductionOrderByIdCancel, cancelProductionOrder.ProductionOrderId),
+                    body);
+
+                if (!resultCancel.Success)
+                {
+                    this.logger.Error(LogsConstants.ErrorToCancelProductionOrder, logBase, resultCancel.UserError, resultCancel.ExceptionMessage);
+                    return ServiceUtils.CreateResult(
+                        false,
+                        (int)HttpStatusCode.InternalServerError,
+                        null,
+                        null,
+                        string.Format(LogsConstants.ProcessLogTwoParts, resultCancel.UserError, resultCancel.ExceptionMessage));
+                }
+
+                return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
+            }
+            catch (Exception ex)
+            {
+                var error = string.Format(LogsConstants.ProcessLogThreeParts, logBase, ex.Message, ex.StackTrace);
+                this.logger.Error(ex, error);
+                return ServiceUtils.CreateResult(
+                    false,
+                    (int)HttpStatusCode.InternalServerError,
+                    null,
+                    string.Format(LogsConstants.ProcessLogTwoParts, ex.Message, ex.StackTrace),
+                    null);
+            }
         }
 
         /// <inheritdoc/>
@@ -450,7 +522,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                 }
                 catch (Exception ex)
                 {
-                    error = string.Format(LogsConstants.ProcessLogThreeParts, logBase, ex.StackTrace, ex.Message);
+                    error = string.Format(LogsConstants.ProcessLogThreeParts, logBase, ex.InnerException, ex.Message);
                     this.logger.Error(ex, error);
                     processResultResult.Add(
                             GenerateValidationResult(

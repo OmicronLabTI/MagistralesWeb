@@ -49,10 +49,18 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
         public DateTime StartDate { get; set; }
 
         /// <summary>
-        /// Gets or sets the Comments.
+        /// Gets or sets the Remarks.
         /// </summary>
-        /// <value>Comments.</value>
-        [JsonProperty("Comments")]
-        public string Comments { get; set; }
+        /// <value>Remarks.</value>
+        [JsonProperty("Remarks")]
+        public string Remarks { get; set; }
+
+        /// <summary>
+        /// Gets or sets the IsParentRecord.
+        /// </summary>
+        /// <value>IsParentRecord.</value>
+        /// [JsonProperty("U_OPadre")]
+        [JsonIgnore]
+        public string IsParentRecord { get; set; }
     }
 }

@@ -495,6 +495,16 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public static string ProductionOrderClosedStatus => "boposClosed";
 
         /// <summary>
+        /// Gets ProductionOrderSourceDivisionComment.
+        /// </summary>
+        public static string ProductionOrderSourceDivisionComment => "Orden de fabricación padre, se cancela debido a la división de piezas.";
+
+        /// <summary>
+        /// Gets YesValue.
+        /// </summary>
+        public static string YesValue => "Y";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
