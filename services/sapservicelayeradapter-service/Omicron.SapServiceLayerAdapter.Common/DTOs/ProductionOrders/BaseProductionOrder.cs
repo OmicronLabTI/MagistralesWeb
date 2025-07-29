@@ -47,5 +47,12 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
         /// <value>StartDate.</value>
         [JsonProperty("StartDate")]
         public DateTime StartDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Comments.
+        /// </summary>
+        /// <value>Comments.</value>
+        [JsonProperty("Comments")]
+        public string Comments { get; set; }
     }
 }

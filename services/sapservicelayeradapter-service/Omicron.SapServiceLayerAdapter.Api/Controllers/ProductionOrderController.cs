@@ -130,5 +130,18 @@ namespace Omicron.SapServiceLayerAdapter.Api.Controllers
             var result = await this.productionOrderFacade.CreateIsolatedProductionOrder(isolatedFabOrder);
             return this.Ok(result);
         }
+
+        /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="isolatedFabOrder">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("/child/order")]
+        public async Task<IActionResult> CreateChildFabOrders([FromBody] CreateChildProductionOrdersDto isolatedFabOrder)
+        {
+            var result = await this.productionOrderFacade.CreateChildFabOrders(isolatedFabOrder);
+            return this.Ok(result);
+        }
     }
 }

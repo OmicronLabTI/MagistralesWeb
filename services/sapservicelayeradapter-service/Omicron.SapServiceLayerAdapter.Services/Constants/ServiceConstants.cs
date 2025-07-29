@@ -359,6 +359,16 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string ErrorUpdateFabOrd = "ErrorUpdateFabOrd";
 
         /// <summary>
+        /// error while updating.
+        /// </summary>
+        public const string FabOrderNotFound = "No se encontró la orden de fabricación {0}";
+
+        /// <summary>
+        /// error while updating.
+        /// </summary>
+        public const string ChildFarOrderComments = "División de piezas de la orden de fabricación {0}";
+
+        /// <summary>
         /// the order was not found.
         /// </summary>
         public const string OrderNotFound = "OrderNotFound";

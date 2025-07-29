@@ -127,6 +127,64 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
         }
 
         /// <inheritdoc/>
+        public async Task<ResultModel> CreateChildFabOrders(CreateChildProductionOrdersDto data)
+        {
+            try
+            {
+                var originalPO = await this.GetFromServiceLayer<ProductionOrderDto>(
+                    string.Format(ServiceQuerysConstants.QryProductionOrderById, data.OrderId),
+                    string.Format(ServiceConstants.FabOrderNotFound, data.OrderId));
+
+                var productionOrder = new CreateProductionOrderDto();
+                productionOrder.StartDate = originalPO.StartDate;
+                productionOrder.DueDate = originalPO.DueDate;
+                productionOrder.ItemNo = originalPO.ItemNo;
+                productionOrder.ProductDescription = originalPO.ProductDescription;
+                productionOrder.PlannedQuantity = data.Pieces;
+                productionOrder.ProductionOrderOriginEntry = originalPO.ProductionOrderOriginEntry ?? 0;
+                productionOrder.Comments = string.Format(ServiceConstants.ChildFarOrderComments, originalPO.AbsoluteEntry);
+
+                var newFabOrder = await this.SaveFabOrder(productionOrder);
+                newFabOrder.ProductionOrderLines = newFabOrder.ProductionOrderLines.Where(x => originalPO.ProductionOrderLines.Any(y => y.ItemNo == x.ItemNo)).ToList();
+                newFabOrder.ProductionOrderLines.ForEach(newPo =>
+                {
+                    var originalData = originalPO.ProductionOrderLines.Where(x => x.ItemNo == newPo.ItemNo).First();
+                    newPo.BaseQuantity = originalData.BaseQuantity;
+                    newPo.Warehouse = "PT";
+                });
+
+                var newComponentsAdded = originalPO.ProductionOrderLines.Where(x => !newFabOrder.ProductionOrderLines.Any(y => y.ItemNo == x.ItemNo)).ToList();
+                var lastIdLineNumber = newFabOrder.ProductionOrderLines.Max(x => x.LineNumber);
+                newComponentsAdded.ForEach(x =>
+                {
+                    lastIdLineNumber++;
+                    var newComponent = new ProductionOrderLineDto()
+                    {
+                        ItemNo = x.ItemNo,
+                        Warehouse = "PT",
+                        BaseQuantity = x.BaseQuantity,
+                        PlannedQuantity = x.PlannedQuantity,
+                        DocumentAbsoluteEntry = newFabOrder.AbsoluteEntry,
+                        BatchNumbers = new List<ProductionOrderItemBatchDto>(),
+                        UoMEntry = x.UoMEntry,
+                        UoMCode = x.UoMCode,
+                        LineNumber = lastIdLineNumber,
+                    };
+
+                    newFabOrder.ProductionOrderLines.Add(newComponent);
+                });
+
+                var request = this.mapper.Map<UpdateProductionOrderDto>(productionOrder);
+                await this.SaveChanges(request, newFabOrder.AbsoluteEntry);
+                return ServiceUtils.CreateResult(true, 200, null, newFabOrder.AbsoluteEntry, null);
+            }
+            catch (Exception ex)
+            {
+                return ServiceUtils.CreateResult(false, 400, null, ex.Message, null);
+            }
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultModel> CreateFabOrder(List<OrderWithDetailDto> orderWithDetail)
         {
             var dictResult = new Dictionary<string, string>();
@@ -678,6 +736,19 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                 this.logger.Error(LogsConstants.ErrorOcurredOnCreateInventoryGenExit, logBase, response.Code, response.UserError);
                 throw new CustomServiceException($"{string.Format(ServiceConstants.FailReasonNotGetExitCreated, productionOrderId)} - {response.UserError}");
             }
+        }
+
+        private async Task<ProductionOrderDto> SaveFabOrder(CreateProductionOrderDto fabOrder)
+        {
+            var body = JsonConvert.SerializeObject(fabOrder);
+            var result = await this.serviceLayerClient.PostAsync(ServiceQuerysConstants.QryProductionOrder, body);
+            if (!result.Success)
+            {
+                this.logger.Error("Error al crear la orden de fabricación");
+                throw new CustomServiceException("Error al crear la orden de fabricación");
+            }
+
+            return JsonConvert.DeserializeObject<ProductionOrderDto>(result.Response.ToString());
         }
 
         private async Task ValidateRequiredQuantityForRetroactiveIssues(ProductionOrderDto productionOrder)
