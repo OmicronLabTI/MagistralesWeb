@@ -1402,6 +1402,15 @@ namespace Omicron.Pedidos.Services.Constants
         /// </value>
         public static string DateTimeFormatddMMyyyy => "dd/MM/yyyy";
 
+
+        /// <summary>
+        /// Gets SeparationProcessCancelProductionOrderEndPoint.
+        /// </summary>
+        /// <value>
+        /// String SeparationProcessCancelProductionOrderEndPoint.
+        /// </value>
+        public static string SeparationProcessCancelProductionOrderEndPoint => "separationprocess/cancelproductionorder";
+
         /// <summary>
         /// Gets SeparationProcessCancelProductionOrderEndPoint.
         /// </summary>
