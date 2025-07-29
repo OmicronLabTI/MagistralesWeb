@@ -420,5 +420,45 @@ namespace Omicron.Pedidos.Services.Constants
         /// ProductionOrderNotFound.
         /// </value>
         public static string ProductionOrderNotFound => "Production Order Not Found";
+
+        /// <summary>
+        /// Gets ProductionOrderIsAlreadyCancelled.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderIsAlreadyCancelled.
+        /// </value>
+        public static string ProductionOrderIsAlreadyCancelled => "{LogBase} - Production Order Is Already Cancelled";
+
+        /// <summary>
+        /// Gets ProductionOrderCancelledSuccessfully.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderCancelledSuccessfully.
+        /// </value>
+        public static string ProductionOrderCancelledSuccessfully => "{LogBase} - Production Order Cancelled Successfully";
+
+        /// <summary>
+        /// Gets CancellingProductionOrderInSAP.
+        /// </summary>
+        /// <value>
+        /// CancellingProductionOrderInSAP.
+        /// </value>
+        public static string CancellingProductionOrderInSAP => "{LogBase} - Cancelling Production Order In SAP";
+
+        /// <summary>
+        /// Gets FailedToCancelProductionOrderInSAP.
+        /// </summary>
+        /// <value>
+        /// FailedToCancelProductionOrderInSAP.
+        /// </value>
+        public static string FailedToCancelProductionOrderInSAP => "{0} - Failed To Cancel Production Order In SAP";
+
+        /// <summary>
+        /// Gets CancellingProductionOrderInPostgreSQL.
+        /// </summary>
+        /// <value>
+        /// CancellingProductionOrderInPostgreSQL.
+        /// </value>
+        public static string CancellingProductionOrderInPostgreSQL => "{LogBase} - Cancelling Production Order In PostgreSQL";
     }
 }

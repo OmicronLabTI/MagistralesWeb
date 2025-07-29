@@ -94,30 +94,33 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
         {
             if (productionOrder.Status == ServiceConstants.Cancelled)
             {
-                this.logger.Information("Orden de producción ya se encuentra cancelada");
+                this.logger.Information(LogsConstants.ProductionOrderIsAlreadyCancelled, logBase);
                 return;
             }
 
-            await this.CancelProductionOrderOnSapAsync(productionOrderId);
-            await this.CancelProductionOrderOnPostgresqlAsync(productionOrder);
-            this.logger.Information("Actualización finalizada correctamente.");
+            await this.CancelProductionOrderOnSapAsync(productionOrderId, logBase);
+            await this.CancelProductionOrderOnPostgresqlAsync(productionOrder, logBase);
+            this.logger.Information(LogsConstants.ProductionOrderCancelledSuccessfully, logBase);
         }
 
-        private async Task CancelProductionOrderOnSapAsync(int productionOrderId)
+        private async Task CancelProductionOrderOnSapAsync(int productionOrderId, string logBase)
         {
+            this.logger.Information(LogsConstants.CancellingProductionOrderInSAP, logBase);
             var result = await this.serviceLayerAdapterService.PostAsync(
                 new List<int> { productionOrderId },
                 "endpointcancelar",
-                "Error al cxancelar en sap"); // ServiceConstants.SapFinalizeProductionOrdersEndpoint
+                string.Format(LogsConstants.FailedToCancelProductionOrderInSAP, logBase)); // ServiceConstants.SapFinalizeProductionOrdersEndpoint
 
             if (!result.Success)
             {
+                this.logger.Error(string.Format(LogsConstants.FailedToCancelProductionOrderInSAP, logBase));
                 throw new Exception(result.ExceptionMessage);
             }
         }
 
-        private async Task CancelProductionOrderOnPostgresqlAsync(UserOrderModel userOrderToCancel)
+        private async Task CancelProductionOrderOnPostgresqlAsync(UserOrderModel userOrderToCancel, string logBase)
         {
+            this.logger.Information(LogsConstants.CancellingProductionOrderInPostgreSQL, logBase);
             userOrderToCancel.Status = ServiceConstants.Cancelled;
             await this.pedidosDao.UpdateUserOrders([userOrderToCancel]);
         }
