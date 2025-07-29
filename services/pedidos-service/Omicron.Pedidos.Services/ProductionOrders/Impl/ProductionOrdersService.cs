@@ -560,15 +560,20 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                     userOrdersToUpdate.Add(userOrder);
                 }
 
-                var hasNoPreProductionOrders = !preProductionOrders.Any();
-                var productionOrdersCount = salesOrders.Count(x => x.IsProductionOrder);
-                var otherProductionOrdersFinalized = salesOrders
-                    .Where(x => x.IsProductionOrder && x.Productionorderid != productionOrderId)
-                    .All(x => ServiceConstants.ValidStatusFinalizar.Contains(x.Status));
+                var shouldUpdateSalesOrder = false;
 
-                var shouldUpdateSalesOrder = payload.SourceProcess == ServiceConstants.SalesOrders
-                    ? true
-                    : salesOrder != null && hasNoPreProductionOrders && (productionOrdersCount == 1 || otherProductionOrdersFinalized);
+                if (!productionOrder.IsIsolatedProductionOrder)
+                {
+                    var hasNoPreProductionOrders = !preProductionOrders.Any();
+                    var productionOrdersCount = salesOrders.Count(x => x.IsProductionOrder);
+                    var otherProductionOrdersFinalized = salesOrders
+                        .Where(x => x.IsProductionOrder && x.Productionorderid != productionOrderId)
+                        .All(x => ServiceConstants.ValidStatusFinalizar.Contains(x.Status));
+
+                    shouldUpdateSalesOrder = payload.SourceProcess == ServiceConstants.SalesOrders
+                        ? true
+                        : salesOrder != null && hasNoPreProductionOrders && (productionOrdersCount == 1 || otherProductionOrdersFinalized);
+                }
 
                 if (shouldUpdateSalesOrder)
                 {
