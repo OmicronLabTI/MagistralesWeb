@@ -8,15 +8,6 @@
 
 namespace Omicron.Pedidos.Test.MediatR
 {
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
-    using Moq;
-    using NUnit.Framework;
-    using Omicron.Pedidos.Services.MediatR.Commands;
-    using Omicron.Pedidos.Services.MediatR.Handlers;
-    using Omicron.Pedidos.Services.MediatR.Services;
-
     /// <summary>
     /// Tests for SeparateProductionOrderHandler.
     /// </summary>
@@ -100,7 +91,7 @@ namespace Omicron.Pedidos.Test.MediatR
         /// </summary>
         /// <returns>Test task.</returns>
         [Test]
-        public async Task HandleCancelProductionOrder_ErrorRebasedMaxAttempt()
+        public Task HandleCancelProductionOrderErrorRebasedMaxAttempt()
         {
             // Arrange
             var command = new SeparateProductionOrderCommand(220003, 5, "b54659e3-d334-42c4-b91a-f59f5a463125")
@@ -123,8 +114,8 @@ namespace Omicron.Pedidos.Test.MediatR
                 this.mockLogger.Object);
 
             // Act
-            // Opción 1: Usar await directamente con ThrowsAsync
             Assert.ThrowsAsync<Exception>(async () => await handler.Handle(command, CancellationToken.None));
+            return Task.CompletedTask;
         }
     }
 }

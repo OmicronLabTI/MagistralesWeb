@@ -69,7 +69,7 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
                     (await this.pedidosDao.GetUserOrderByProducionOrder([request.ProductionOrderId.ToString()]))
                     .FirstOrDefault() ?? throw new Exception(LogsConstants.ProductionOrderNotFound);
 
-                await this.CancelProductionOrderProcess(productionOrder, request.ProductionOrderId, logBase);
+                await this.CancelProductionOrderProcess(productionOrder, request, logBase);
                 await this.CreateChildOrdersProcess(productionOrder, request.ProductionOrderId, request.Pieces, request.SeparationId);
 
                 this.logger.Information(LogsConstants.SeparateProductionOrderEndSuccessfuly, logBase);
@@ -93,7 +93,7 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
             }
         }
 
-        private async Task CancelProductionOrderProcess(UserOrderModel productionOrder, int productionOrderId, string logBase)
+        private async Task CancelProductionOrderProcess(UserOrderModel productionOrder, SeparateProductionOrderCommand request, string logBase)
         {
             if (productionOrder.Status == ServiceConstants.Cancelled)
             {
@@ -101,18 +101,22 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
                 return;
             }
 
-            await this.CancelProductionOrderOnSapAsync(productionOrderId, logBase);
+            await this.CancelProductionOrderOnSapAsync(request, logBase);
             await this.CancelProductionOrderOnPostgresqlAsync(productionOrder, logBase);
             this.logger.Information(LogsConstants.ProductionOrderCancelledSuccessfully, logBase);
         }
 
-        private async Task CancelProductionOrderOnSapAsync(int productionOrderId, string logBase)
+        private async Task CancelProductionOrderOnSapAsync(SeparateProductionOrderCommand request, string logBase)
         {
             this.logger.Information(LogsConstants.CancellingProductionOrderInSAP, logBase);
             var result = await this.serviceLayerAdapterService.PostAsync(
-                new List<int> { productionOrderId },
-                "endpointcancelar",
-                string.Format(LogsConstants.FailedToCancelProductionOrderInSAP, logBase)); // ServiceConstants.SapFinalizeProductionOrdersEndpoint
+                new CancelProductionOrderDto
+                {
+                    ProductionOrderId = request.ProductionOrderId,
+                    SeparationId = request.SeparationId,
+                },
+                ServiceConstants.SeparationProcessCancelProductionOrderEndPoint,
+                string.Format(LogsConstants.FailedToCancelProductionOrderInSAP, logBase));
 
             if (!result.Success)
             {

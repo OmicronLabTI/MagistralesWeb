@@ -1403,6 +1403,14 @@ namespace Omicron.Pedidos.Services.Constants
         public static string DateTimeFormatddMMyyyy => "dd/MM/yyyy";
 
         /// <summary>
+        /// Gets SeparationProcessCancelProductionOrderEndPoint.
+        /// </summary>
+        /// <value>
+        /// String SeparationProcessCancelProductionOrderEndPoint.
+        /// </value>
+        public static string SeparationProcessCancelProductionOrderEndPoint => "separationprocess/cancelproductionorder";
+
+        /// <summary>
         /// Gets list of signatures to assign products DZ in lowercase.
         /// </summary>
         /// <value>
