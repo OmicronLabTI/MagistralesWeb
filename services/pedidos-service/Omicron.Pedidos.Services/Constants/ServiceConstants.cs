@@ -1168,6 +1168,14 @@ namespace Omicron.Pedidos.Services.Constants
         public static string ErrorOccurredWhileCommunicatingWithServiceLayerAdapter => "An error occurred while communicating with the Service Layer Adapter.";
 
         /// <summary>
+        /// Gets MinutesToRetrySeparationProductionOrder.
+        /// </summary>
+        /// <value>
+        /// MinutesToRetrySeparationProductionOrder.
+        /// </value>
+        public static int MinutesToRetrySeparationProductionOrder => 5;
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

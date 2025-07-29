@@ -59,34 +59,38 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
         /// <inheritdoc/>
         public async Task<bool> Handle(SeparateProductionOrderCommand request, CancellationToken cancellationToken)
         {
+            var logBase = string.Format(LogsConstants.SeparateProductionOrderLogBase, request.SeparationId, request.ProductionOrderId);
+            this.logger.Information(LogsConstants.SeparateProductionOrderStart, logBase, request.Pieces, request.RetryCount + 1);
             try
             {
                 var productionOrder =
                     (await this.pedidosDao.GetUserOrderByProducionOrder([request.ProductionOrderId.ToString()]))
-                    .FirstOrDefault() ?? throw new Exception("No existe la orden de producción.");
+                    .FirstOrDefault() ?? throw new Exception(LogsConstants.ProductionOrderNotFound);
 
-                await this.CancelProductionOrderProcess(productionOrder, request.ProductionOrderId);
+                await this.CancelProductionOrderProcess(productionOrder, request.ProductionOrderId, logBase);
 
+                this.logger.Information(LogsConstants.SeparateProductionOrderEndSuccessfuly, logBase);
                 return true;
             }
             catch (Exception ex)
             {
-                this.logger.Error(ex, $"Error en intento {request.RetryCount + 1} - Production Order Id: {request.ProductionOrderId}");
+                var error = string.Format(LogsConstants.SeparateProductionOrderEndWithError, logBase);
+                this.logger.Error(ex, error);
                 if (request.RetryCount < request.MaxRetries)
                 {
-                    // Programar reintento en 3 minutos
-                    this.ScheduleRetry(request);
-                    return false; // Indica que se programó un reintento
+                    this.ScheduleRetry(request, logBase);
+                    return false;
                 }
                 else
                 {
-                    this.logger.Error($"Máximo número de reintentos alcanzado - Production Order Id: {request.ProductionOrderId}");
+                    var finalError = string.Format(LogsConstants.MaximumNumberOfRetriesReached, logBase);
+                    this.logger.Error(ex, finalError);
                     throw;
                 }
             }
         }
 
-        private async Task CancelProductionOrderProcess(UserOrderModel productionOrder, int productionOrderId)
+        private async Task CancelProductionOrderProcess(UserOrderModel productionOrder, int productionOrderId, string logBase)
         {
             if (productionOrder.Status == ServiceConstants.Cancelled)
             {
@@ -118,7 +122,7 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
             await this.pedidosDao.UpdateUserOrders([userOrderToCancel]);
         }
 
-        private void ScheduleRetry(SeparateProductionOrderCommand request)
+        private void ScheduleRetry(SeparateProductionOrderCommand request, string logBase)
         {
             var retryCommand = new SeparateProductionOrderCommand(request.ProductionOrderId, request.Pieces, request.SeparationId)
             {
@@ -128,12 +132,12 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
 
             this.backgroundTaskQueue.QueueBackgroundWorkItem(async (services, token) =>
             {
-                await Task.Delay(TimeSpan.FromMinutes(3), token); // Esperar 3 minutos
+                await Task.Delay(TimeSpan.FromMinutes(ServiceConstants.MinutesToRetrySeparationProductionOrder), token);
                 var mediator = services.GetRequiredService<IMediator>();
                 await mediator.Send(retryCommand, token);
             });
 
-            this.logger.Information($"Reintento programado para 3 minutos - Production Order Id: {request.ProductionOrderId}, Intento: {request.RetryCount + 2}");
+            this.logger.Information(LogsConstants.RetryScheduledLog, logBase, ServiceConstants.MinutesToRetrySeparationProductionOrder, request.RetryCount + 2);
         }
     }
 }

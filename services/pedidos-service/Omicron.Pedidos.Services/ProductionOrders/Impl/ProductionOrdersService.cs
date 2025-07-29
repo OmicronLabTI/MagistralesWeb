@@ -321,7 +321,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             return model;
         }
 
-        private async Task CancelProductionOrderSource(int productionOrderId, int pieces)
+        private async Task SeparateProductionOrderProcessAsync(int productionOrderId, int pieces)
         {
             var separationId = Guid.NewGuid().ToString();
             var command = new StartProductionOrderSeparationCommand(productionOrderId, pieces, separationId);

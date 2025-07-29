@@ -12,6 +12,7 @@ namespace Omicron.Pedidos.Services.MediatR.Services
     using System.Collections.Concurrent;
     using System.Threading;
     using System.Threading.Tasks;
+    using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.Utils;
     using Serilog;
 
@@ -44,14 +45,10 @@ namespace Omicron.Pedidos.Services.MediatR.Services
         /// <inheritdoc/>
         public void QueueBackgroundWorkItem(Func<IServiceProvider, CancellationToken, Task> workItem)
         {
-            if (workItem == null)
-            {
-                throw new ArgumentNullException(nameof(workItem));
-            }
-
+            ArgumentNullException.ThrowIfNull(workItem);
             this.workItems.Enqueue(workItem);
             this.signal.Release();
-            this.logger.Debug("Tarea de actualización agregada a la cola");
+            this.logger.Debug(LogsConstants.UpdateTaskAddedToQueue);
         }
     }
 }

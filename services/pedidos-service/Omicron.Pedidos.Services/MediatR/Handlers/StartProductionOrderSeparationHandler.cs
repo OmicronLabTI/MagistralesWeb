@@ -12,6 +12,7 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
     using System.Threading.Tasks;
     using global::MediatR;
     using Microsoft.Extensions.DependencyInjection;
+    using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.MediatR.Commands;
     using Omicron.Pedidos.Services.MediatR.Services;
     using Omicron.Pedidos.Services.Utils;
@@ -41,9 +42,7 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
         /// <inheritdoc/>
         public Task Handle(StartProductionOrderSeparationCommand request, CancellationToken cancellationToken)
         {
-            this.logger.Information($"Iniciando actualización de estatus en background - ProductionOrderId: {request.ProductionOrderId}");
-
-            // Encolar la tarea para ejecución inmediata en background
+            this.logger.Information(LogsConstants.StartingBackgroundProductionOrderSplit, request.SeparationId, request.ProductionOrderId);
             this.backgroundTaskQueue.QueueBackgroundWorkItem(async (services, token) =>
             {
                 var mediator = services.GetRequiredService<IMediator>();
