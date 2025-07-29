@@ -332,6 +332,14 @@ namespace Omicron.Pedidos.Entities.Model
         public int CloseSampleOrderId { get; set; }
 
         /// <summary>
+        /// Gets or sets close user id.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        [Column("separationid")]
+        public string SeparationId { get; set; }
+
+        /// <summary>
         /// Gets a value indicating whether gets.
         /// </summary>
         /// <value>

@@ -1176,6 +1176,14 @@ namespace Omicron.Pedidos.Services.Constants
         public static int MinutesToRetrySeparationProductionOrder => 5;
 
         /// <summary>
+        /// Gets CreateChildOrderSapUrl.
+        /// </summary>
+        /// <value>
+        /// CreateChildOrderSapUrl.
+        /// </value>
+        public static string CreateChildOrderSapUrl => "child/order";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

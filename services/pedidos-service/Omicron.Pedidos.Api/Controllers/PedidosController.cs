@@ -625,6 +625,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Retrieves the user orders based on invoice ids and order types.
+        /// </summary>
+        /// <param name="request"> List of invoice ids. </param>
+        /// <returns> A result containing the matching user production orders. </returns>
+        [Route("/separate/order")]
+        [HttpPost]
+        public async Task<IActionResult> SeparateOrder([FromBody] SeparateOrderDto request)
+        {
+            var response = await this.pedidoFacade.SeparateOrder(request);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>

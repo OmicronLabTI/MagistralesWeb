@@ -278,6 +278,13 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> SeparateOrder(SeparateOrderDto request)
+        {
+            await this.SeparateProductionOrderProcessAsync(request.OrderId, request.Pieces);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
+        }
+
         private static ProductionOrderFailedResultModel CreateFinalizedFailedResponse(FinalizeProductionOrderModel orderToFinish, string reason)
         {
             return new ProductionOrderFailedResultModel
