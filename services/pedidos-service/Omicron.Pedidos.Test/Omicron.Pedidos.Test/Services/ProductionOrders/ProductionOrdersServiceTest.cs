@@ -8,11 +8,9 @@
 
 namespace Omicron.Pedidos.Test.Services.ProductionOrders
 {
-    using MediatR;
+    using global::MediatR;
     using Omicron.Pedidos.Services.MediatR.Commands;
     using Omicron.Pedidos.Services.ProductionOrders.Impl;
-    using StackExchange.Redis;
-    using ZXing;
 
     /// <summary>
     /// class for the test.
