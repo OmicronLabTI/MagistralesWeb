@@ -8,6 +8,8 @@
 
 namespace Omicron.Pedidos.Test.Services.ProductionOrders
 {
+    using MediatR;
+    using Omicron.Pedidos.Services.MediatR.Commands;
     using Omicron.Pedidos.Services.ProductionOrders.Impl;
     using StackExchange.Redis;
     using ZXing;
@@ -33,6 +35,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
         private DatabaseContext context;
 
         private IMapper mapper;
+
+        private Mock<IMediator> mockMediator;
 
         /// <summary>
         /// The set up.
@@ -60,6 +64,11 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
             this.mockKafkaConnector
                 .Setup(m => m.PushMessage(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(true));
+
+            this.mockMediator = new Mock<IMediator>();
+            this.mockMediator
+                .Setup(m => m.Send(It.IsAny<StartProductionOrderSeparationCommand>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(Unit.Value));
         }
 
         /// <summary>
@@ -104,7 +113,7 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
 
             var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
             mockServiceLayerAdapterService
-                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultModelCompl(resultMessages, isServiceLayerSuccess)));
 
             var mockProductionOrdersService = new ProductionOrdersService(
@@ -116,7 +125,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 this.userService.Object,
                 this.sapFileService.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                this.mockMediator.Object);
 
             var response = await mockProductionOrdersService.FinalizeProductionOrdersAsync(productionOrdersToFinalize);
 
@@ -148,7 +158,7 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
 
             var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
             mockServiceLayerAdapterService
-                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ThrowsAsync(new Exception("Connection Refused."));
 
             var mockProductionOrdersService = new ProductionOrdersService(
@@ -160,7 +170,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 this.userService.Object,
                 this.sapFileService.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                this.mockMediator.Object);
 
             var response = await mockProductionOrdersService.FinalizeProductionOrdersAsync(productionOrdersToFinalize);
 
@@ -222,7 +233,7 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
 
             var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
             mockServiceLayerAdapterService
-                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultModelCompl(resultMessages, isServiceLayerSuccess)));
 
             var mockProductionOrdersService = new ProductionOrdersService(
@@ -234,7 +245,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 this.userService.Object,
                 this.sapFileService.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                this.mockMediator.Object);
 
             var response = await mockProductionOrdersService.FinalizeProductionOrdersOnSapAsync(productionOrdersToFinalize);
 
@@ -291,7 +303,7 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
 
             var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
             mockServiceLayerAdapterService
-                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ThrowsAsync(new Exception("Connection Refused."));
 
             var mockProductionOrdersService = new ProductionOrdersService(
@@ -303,7 +315,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 this.userService.Object,
                 this.sapFileService.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                this.mockMediator.Object);
 
             var response = await mockProductionOrdersService.FinalizeProductionOrdersOnSapAsync(productionOrdersToFinalize);
 
@@ -365,7 +378,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 this.userService.Object,
                 this.sapFileService.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                this.mockMediator.Object);
 
             var response = await mockProductionOrdersService.FinalizeProductionOrdersOnPostgresqlAsync(productionOrdersToFinalize);
 
@@ -424,7 +438,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 this.userService.Object,
                 this.sapFileService.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                this.mockMediator.Object);
 
             var response = await mockProductionOrdersService.FinalizeProductionOrdersOnPostgresqlAsync(productionOrdersToFinalize);
 
@@ -497,7 +512,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 mockUsers.Object,
                 mockSapFile.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                this.mockMediator.Object);
 
             var response = await mockProductionOrdersService.ProductionOrderPdfGenerationAsync(productionOrdersToFinalize);
 
@@ -537,7 +553,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 mockUsers.Object,
                 mockSapFile.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                this.mockMediator.Object);
 
             var response = await mockProductionOrdersService.GetFailedProductionOrders();
 
@@ -588,7 +605,7 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
 
             var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
             mockServiceLayerAdapterService
-                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultModelCompl(resultMessages, true)));
 
             var mockSapAdapter = new Mock<ISapAdapter>();
@@ -606,7 +623,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 mockUsers.Object,
                 mockSapFile.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                this.mockMediator.Object);
 
             var response = await mockProductionOrdersService.RetryFailedProductionOrderFinalization(request);
 
@@ -670,7 +688,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 mockUsers.Object,
                 mockSapFile.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                this.mockMediator.Object);
 
             var response = await mockProductionOrdersService.RetryFailedProductionOrderFinalization(request);
 
