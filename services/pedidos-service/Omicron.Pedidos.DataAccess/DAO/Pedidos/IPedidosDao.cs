@@ -473,5 +473,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="status">status.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<IEnumerable<ProductionOrderProcessingStatusModel>> GetAllProductionOrderProcessingStatusByStatus(List<string> status);
+
+        /// <summary>
+        /// Returns the user orders by SalesOrder (Pedido)
+        /// </summary>
+        /// <param name="separationId">the list ids.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<UserOrderModel>> GetOrdersBySeparationId(string separationId);
     }
 }

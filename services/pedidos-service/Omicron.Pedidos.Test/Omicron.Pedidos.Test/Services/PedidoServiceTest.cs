@@ -81,7 +81,7 @@ namespace Omicron.Pedidos.Test.Services
 
             this.sapServiceLayerService = new Mock<ISapServiceLayerAdapterService>();
             this.sapServiceLayerService
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultCreateOrder()));
 
             this.productionOrdersService = new Mock<IProductionOrdersService>();
@@ -255,7 +255,7 @@ namespace Omicron.Pedidos.Test.Services
             var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
 
             serviceLayer
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             var listResult = new List<ProductUnitDto> { new ProductUnitDto() { ProductoId = "Aspirina", Id = 1 } };
@@ -695,7 +695,7 @@ namespace Omicron.Pedidos.Test.Services
             mockResult.Response = JsonConvert.SerializeObject(mockContent);
 
             mockServiceLayerLocal
-                .Setup(m => m.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(m => m.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(mockResult));
 
             var mockProductionOrders = new Mock<IProductionOrdersService>();
@@ -788,7 +788,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var mockServiceLayerLocal = new Mock<ISapServiceLayerAdapterService>();
             mockServiceLayerLocal
-                .Setup(m => m.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(m => m.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(mockResult));
 
             var result = this.GetResultModelCompleteDetailModel();
@@ -851,7 +851,7 @@ namespace Omicron.Pedidos.Test.Services
             mockResult.Response = JsonConvert.SerializeObject(mockContent);
 
             mockSapServiceLayer
-                .Setup(m => m.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(m => m.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(mockResult));
 
             var result = this.GetResultModelCompleteDetailModel();
@@ -922,7 +922,7 @@ namespace Omicron.Pedidos.Test.Services
             mockResultSapAdapter.Response = "12345";
 
             serviceLayerLocal
-                .Setup(m => m.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(m => m.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(mockResultDiApi));
 
             mockSapAdapter

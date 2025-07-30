@@ -70,6 +70,16 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         }
 
         /// <summary>
+        /// Returns the user orders by SalesOrder (Pedido)
+        /// </summary>
+        /// <param name="separationId">the list ids.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<UserOrderModel>> GetOrdersBySeparationId(string separationId)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => x.SeparationId.Equals(separationId)).ToListAsync();
+        }
+
+        /// <summary>
         /// Returns the user order by user id.
         /// </summary>
         /// <param name="listIds">the list of users.</param>

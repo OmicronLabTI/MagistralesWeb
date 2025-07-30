@@ -372,5 +372,11 @@ namespace Omicron.Pedidos.Facade.Pedidos
         {
             return this.mapper.Map<ResultDto>(await this.productionOrdersService.RetryFailedProductionOrderFinalization(payloadRetry));
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> SeparateOrder(SeparateProductionOrderDto request)
+        {
+            return this.mapper.Map<ResultDto>(await this.productionOrdersService.SeparateOrder(request));
+        }
     }
 }

@@ -348,5 +348,117 @@ namespace Omicron.Pedidos.Services.Constants
         /// RetryFailedProductionOrderFinalization.
         /// </value>
         public static string RetryFailedProductionOrderFinalization => "{0} - Retry Failed Production Order Finalization";
+
+        /// <summary>
+        /// Gets UpdateTaskAddedToQueue.
+        /// </summary>
+        /// <value>
+        /// UpdateTaskAddedToQueue.
+        /// </value>
+        public static string UpdateTaskAddedToQueue => "Pedidos - BackgroundTaskQueue - Update Task Added To Queue";
+
+        /// <summary>
+        /// Gets StartingBackgroundProductionOrderSplit.
+        /// </summary>
+        /// <value>
+        /// StartingBackgroundProductionOrderSplit.
+        /// </value>
+        public static string StartingBackgroundProductionOrderSplit => "{SeparationId} - Pedidos Service - Starting Background Production Order Separation - ProductionOrderId: {ProductionOrderId}";
+
+        /// <summary>
+        /// Gets SeparateProductionOrderLogBase.
+        /// </summary>
+        /// <value>
+        /// SeparateProductionOrderLogBase.
+        /// </value>
+        public static string SeparateProductionOrderLogBase => "{0} - Pedidos Service - ProductionOrder: {1} - Separate Production Order";
+
+        /// <summary>
+        /// Gets SeparateProductionOrderStart.
+        /// </summary>
+        /// <value>
+        /// SeparateProductionOrderStart.
+        /// </value>
+        public static string SeparateProductionOrderStart => "{LogBase} - Start Proccess - Pieces: {Pieces} - RetryAttempt: {RetryAttempt}";
+
+        /// <summary>
+        /// Gets SeparateProductionOrderEndSuccessfuly.
+        /// </summary>
+        /// <value>
+        /// SeparateProductionOrderEndSuccessfuly.
+        /// </value>
+        public static string SeparateProductionOrderEndSuccessfuly => "{LogBase} - End Proccess Successfuly";
+
+        /// <summary>
+        /// Gets SeparateProductionOrderEndSuccessfuly.
+        /// </summary>
+        /// <value>
+        /// SeparateProductionOrderEndSuccessfuly.
+        /// </value>
+        public static string SeparateProductionOrderEndWithError => "{0} - End Proccess With Error";
+
+        /// <summary>
+        /// Gets MaximumNumberOfRetriesReached.
+        /// </summary>
+        /// <value>
+        /// MaximumNumberOfRetriesReached.
+        /// </value>
+        public static string MaximumNumberOfRetriesReached => "{0} - End Proccess With Error - Maximum Number Of Retries Reached";
+
+        /// <summary>
+        /// Gets RetryScheduledLog.
+        /// </summary>
+        /// <value>
+        /// RetryScheduledLog.
+        /// </value>
+        public static string RetryScheduledLog => "{LogBase} - Retry scheduled in {Minutes} minutes - RetryAttempt: {RetryAttempt}";
+
+        /// <summary>
+        /// Gets ProductionOrderNotFound.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderNotFound.
+        /// </value>
+        public static string ProductionOrderNotFound => "Production Order Not Found";
+
+        /// <summary>
+        /// Gets ProductionOrderIsAlreadyCancelled.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderIsAlreadyCancelled.
+        /// </value>
+        public static string ProductionOrderIsAlreadyCancelled => "{LogBase} - Production Order Is Already Cancelled";
+
+        /// <summary>
+        /// Gets ProductionOrderCancelledSuccessfully.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderCancelledSuccessfully.
+        /// </value>
+        public static string ProductionOrderCancelledSuccessfully => "{LogBase} - Production Order Cancelled Successfully";
+
+        /// <summary>
+        /// Gets CancellingProductionOrderInSAP.
+        /// </summary>
+        /// <value>
+        /// CancellingProductionOrderInSAP.
+        /// </value>
+        public static string CancellingProductionOrderInSAP => "{LogBase} - Cancelling Production Order In SAP";
+
+        /// <summary>
+        /// Gets FailedToCancelProductionOrderInSAP.
+        /// </summary>
+        /// <value>
+        /// FailedToCancelProductionOrderInSAP.
+        /// </value>
+        public static string FailedToCancelProductionOrderInSAP => "{0} - Failed To Cancel Production Order In SAP";
+
+        /// <summary>
+        /// Gets CancellingProductionOrderInPostgreSQL.
+        /// </summary>
+        /// <value>
+        /// CancellingProductionOrderInPostgreSQL.
+        /// </value>
+        public static string CancellingProductionOrderInPostgreSQL => "{LogBase} - Cancelling Production Order In PostgreSQL";
     }
 }
