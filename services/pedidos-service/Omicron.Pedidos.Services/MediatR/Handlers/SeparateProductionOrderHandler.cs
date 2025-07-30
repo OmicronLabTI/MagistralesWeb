@@ -22,6 +22,7 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.MediatR.Commands;
     using Omicron.Pedidos.Services.MediatR.Services;
+    using Omicron.Pedidos.Services.Redis;
     using Omicron.Pedidos.Services.SapServiceLayerAdapter;
     using Omicron.Pedidos.Services.Utils;
     using Serilog;
@@ -39,6 +40,8 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
 
         private readonly IBackgroundTaskQueue backgroundTaskQueue;
 
+        private readonly IRedisService redisService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SeparateProductionOrderHandler"/> class.
         /// </summary>
@@ -46,16 +49,19 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
         /// <param name="serviceLayerAdapterService">Service Layer Service.</param>
         /// <param name="backgroundTaskQueue">backgroundTaskQueue.</param>
         /// <param name="logger">Logger.</param>
+        /// <param name="redisService">redisService.</param>
         public SeparateProductionOrderHandler(
             IPedidosDao pedidosDao,
             ISapServiceLayerAdapterService serviceLayerAdapterService,
             IBackgroundTaskQueue backgroundTaskQueue,
-            ILogger logger)
+            ILogger logger,
+            IRedisService redisService)
         {
             this.pedidosDao = pedidosDao.ThrowIfNull(nameof(pedidosDao));
             this.serviceLayerAdapterService = serviceLayerAdapterService.ThrowIfNull(nameof(serviceLayerAdapterService));
             this.logger = logger.ThrowIfNull(nameof(logger));
             this.backgroundTaskQueue = backgroundTaskQueue.ThrowIfNull(nameof(backgroundTaskQueue));
+            this.redisService = redisService.ThrowIfNull(nameof(redisService));
         }
 
         /// <inheritdoc/>
@@ -72,6 +78,8 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
                 await this.CancelProductionOrderProcess(productionOrder, request, logBase);
                 await this.CreateChildOrdersProcess(productionOrder, request.ProductionOrderId, request.Pieces, request.SeparationId);
 
+                var redisKey = string.Format(ServiceConstants.ProductionOrderSeparationProcessKey, request.ProductionOrderId);
+                await this.redisService.DeleteKey(redisKey);
                 this.logger.Information(LogsConstants.SeparateProductionOrderEndSuccessfuly, logBase);
                 return true;
             }

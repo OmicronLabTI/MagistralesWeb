@@ -710,5 +710,81 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
             Assert.That(response.Success, Is.True);
             Assert.That(response.Code.Equals((int)HttpStatusCode.OK));
         }
+
+        /// <summary>
+        /// SeparateOrder.
+        /// </summary>
+        /// <param name="existRedisValue">Exist redis value.</param>
+        /// <returns>Test.</returns>
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task SeparateOrder(bool existRedisValue)
+        {
+            var mockRedisService = new Mock<IRedisService>();
+            var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
+            var mockSapAdapter = new Mock<ISapAdapter>();
+            var mockSapFile = new Mock<ISapFileService>();
+            var mockUsers = new Mock<IUsersService>();
+            var mockDao = new Mock<IPedidosDao>();
+            var mockMediator = new Mock<IMediator>();
+
+            var request = new SeparateProductionOrderDto
+            {
+                ProductionOrderId = 12345,
+                Pieces = 5,
+            };
+
+            var redisValue = string.Empty;
+
+            if (existRedisValue)
+            {
+                redisValue = JsonConvert.SerializeObject(new SeparateProductionOrderDto
+                {
+                    ProductionOrderId = 12345,
+                    Pieces = 5,
+                });
+            }
+
+            mockRedisService
+                .Setup(mr => mr.GetRedisKey(It.IsAny<string>()))
+                .Returns(Task.FromResult(redisValue));
+            mockRedisService.Setup(m => m.WriteToRedis(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>()));
+
+            var mockProductionOrdersService = new ProductionOrdersService(
+                mockDao.Object,
+                mockServiceLayerAdapterService.Object,
+                mockRedisService.Object,
+                this.mockKafkaConnector.Object,
+                mockSapAdapter.Object,
+                mockUsers.Object,
+                mockSapFile.Object,
+                this.logger.Object,
+                this.mapper,
+                mockMediator.Object);
+
+            var response = await mockProductionOrdersService.SeparateOrder(request);
+
+            // Assert
+            if (!existRedisValue)
+            {
+                Assert.That(response.Success, Is.True);
+                Assert.That(response.Code.Equals((int)HttpStatusCode.OK));
+                Assert.That(response.Response, Is.Null);
+                Assert.That(response.Comments, Is.Null);
+                Assert.That(response.ExceptionMessage, Is.Null);
+                Assert.That(response.UserError, Is.Null);
+            }
+            else
+            {
+                Assert.That(response.Success, Is.False);
+                Assert.That(response.Code.Equals((int)HttpStatusCode.InternalServerError));
+                Assert.That(response.Response, Is.Null);
+                Assert.That(response.Comments, Is.Null);
+                Assert.That(response.ExceptionMessage, Is.Null);
+                Assert.That(response.UserError, Is.Not.Null);
+                Assert.That(response.UserError.Equals("La orden de fabricación seleccionada ya tiene un proceso de división en curso. Por favor espera a que finalice antes de intentar dividirla nuevamente."));
+            }
+        }
     }
 }

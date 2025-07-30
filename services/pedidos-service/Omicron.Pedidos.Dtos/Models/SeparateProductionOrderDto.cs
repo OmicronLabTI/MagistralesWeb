@@ -1,5 +1,5 @@
 // <summary>
-// <copyright file="SeparateOrderDto.cs" company="Axity">
+// <copyright file="SeparateProductionOrderDto.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -9,23 +9,23 @@
 namespace Omicron.Pedidos.Dtos.Models
 {
     /// <summary>
-    /// SeparateOrderDto.
+    /// SeparateProductionOrderDto.
     /// </summary>
-    public class SeparateOrderDto
+    public class SeparateProductionOrderDto
     {
         /// <summary>
-        /// Gets or sets BatchProcessId.
+        /// Gets or sets ProductionOrderId.
         /// </summary>
         /// <value>
-        /// List BatchProcessId.
+        /// List ProductionOrderId.
         /// </value>
-        public int OrderId { get; set; }
+        public int ProductionOrderId { get; set; }
 
         /// <summary>
-        /// Gets or sets ProductionOrderProcessingPayload.
+        /// Gets or sets Pieces.
         /// </summary>
         /// <value>
-        /// List ProductionOrderProcessingPayload.
+        /// List Pieces.
         /// </value>
         public int Pieces { get; set; }
     }

@@ -631,7 +631,7 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <returns> A result containing the matching user production orders. </returns>
         [Route("/separate/order")]
         [HttpPost]
-        public async Task<IActionResult> SeparateOrder([FromBody] SeparateOrderDto request)
+        public async Task<IActionResult> SeparateOrder([FromBody] SeparateProductionOrderDto request)
         {
             var response = await this.pedidoFacade.SeparateOrder(request);
             return this.Ok(response);

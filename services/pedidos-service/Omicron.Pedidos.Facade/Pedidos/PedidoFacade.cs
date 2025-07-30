@@ -374,7 +374,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
         }
 
         /// <inheritdoc/>
-        public async Task<ResultDto> SeparateOrder(SeparateOrderDto request)
+        public async Task<ResultDto> SeparateOrder(SeparateProductionOrderDto request)
         {
             return this.mapper.Map<ResultDto>(await this.productionOrdersService.SeparateOrder(request));
         }

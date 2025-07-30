@@ -1184,6 +1184,22 @@ namespace Omicron.Pedidos.Services.Constants
         public static string CreateChildOrderSapUrl => "child/order";
 
         /// <summary>
+        /// Gets ProductionOrderSeparationProcessKey.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderSeparationProcessKey.
+        /// </value>
+        public static string ProductionOrderSeparationProcessKey => "production-order-separation-process:{0}";
+
+        /// <summary>
+        /// Gets ProductionOrderSeparationProcessMessage.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderSeparationProcessMessage.
+        /// </value>
+        public static string ProductionOrderSeparationProcessMessage => "La orden de fabricación seleccionada ya tiene un proceso de división en curso. Por favor espera a que finalice antes de intentar dividirla nuevamente.";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

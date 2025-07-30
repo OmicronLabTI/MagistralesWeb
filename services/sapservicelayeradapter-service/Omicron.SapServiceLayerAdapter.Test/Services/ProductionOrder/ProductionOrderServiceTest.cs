@@ -441,6 +441,80 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
         /// <summary>
         /// validate CancelFabOrderTest.
         /// </summary>
+        /// <param name="successGet">The successGet.</param>
+        /// <param name="successPut">The successPut.</param>
+        /// <param name="successPost">The successPost.</param>
+        /// <param name="status">The status.</param>
+        /// <param name="responseServiceLayerHasError">responseServiceLayerHasError.</param>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
+        [Test]
+        [TestCase(true, true, true, "boposReleased", false)]
+        [TestCase(true, true, true, "boposCancelled", false)]
+        [TestCase(true, false, true, "boposReleased", false)]
+        [TestCase(true, true, false, "boposReleased", false)]
+        [TestCase(true, true, true, "boposReleased", true)]
+        public async Task CancelProductionOrderForSeparationProcess(
+            bool successGet,
+            bool successPut,
+            bool successPost,
+            string status,
+            bool responseServiceLayerHasError)
+        {
+            var mockServiceLayerClient = new Mock<IServiceLayerClient>();
+            var mockLogger = new Mock<ILogger>();
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper);
+
+            mockServiceLayerClient
+                .Setup(x => x.GetAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResult(successGet, GetProductionOrder(status, 0, 0))));
+
+            mockServiceLayerClient
+               .Setup(x => x.PutAsync(It.IsAny<string>(), It.IsAny<string>()))
+               .Returns(Task.FromResult(GetResult(successPut, null)));
+
+            if (!responseServiceLayerHasError)
+            {
+                mockServiceLayerClient
+                .Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResult(successPost, null)));
+            }
+            else
+            {
+                mockServiceLayerClient
+                .Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .ThrowsAsync(new Exception("Deadlock Error."));
+            }
+
+            var request = new CancelProductionOrderDto()
+            {
+                ProductionOrderId = 100001,
+                SeparationId = Guid.NewGuid().ToString(),
+            };
+            var result = await service.CancelProductionOrderForSeparationProcess(request);
+
+            if (result.Success && !responseServiceLayerHasError)
+            {
+                Assert.That(result.Success, Is.True);
+                Assert.That(result.Code, Is.EqualTo(200));
+                Assert.That(result.Response, Is.Null);
+                Assert.That(result.UserError, Is.Null);
+                Assert.That(result.Comments, Is.Null);
+                Assert.That(result.ExceptionMessage, Is.Null);
+            }
+            else
+            {
+                Assert.That(result.Success, Is.False);
+                Assert.That(result.Code, Is.EqualTo(500));
+                Assert.That(result.Response, Is.Null);
+                Assert.That(result.UserError, Is.Null);
+                Assert.That(result.Comments, Is.Null);
+                Assert.That(result.ExceptionMessage, Is.Not.Null);
+            }
+        }
+
+        /// <summary>
+        /// validate CancelFabOrderTest.
+        /// </summary>
         /// <param name="success">The success.</param>
         /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Test]

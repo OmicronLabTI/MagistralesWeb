@@ -341,6 +341,6 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// </summary>
         /// <param name="request"> the request. </param>
         /// <returns> A result containing the matching user production orders. </returns>
-        Task<ResultDto> SeparateOrder(SeparateOrderDto request);
+        Task<ResultDto> SeparateOrder(SeparateProductionOrderDto request);
     }
 }

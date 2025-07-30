@@ -63,8 +63,8 @@ namespace Omicron.Pedidos.Services.ProductionOrders
         /// <summary>
         /// SeparateOrder.
         /// </summary>
-        /// <param name="request">SeparateOrderDto.</param>
+        /// <param name="request">SeparateProductionOrderDto.</param>
         /// <returns>Process Result.</returns>
-        Task<ResultModel> SeparateOrder(SeparateOrderDto request);
+        Task<ResultModel> SeparateOrder(SeparateProductionOrderDto request);
     }
 }

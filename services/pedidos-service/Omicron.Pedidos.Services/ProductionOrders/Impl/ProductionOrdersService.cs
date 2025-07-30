@@ -276,9 +276,23 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
         }
 
         /// <inheritdoc/>
-        public async Task<ResultModel> SeparateOrder(SeparateOrderDto request)
+        public async Task<ResultModel> SeparateOrder(SeparateProductionOrderDto request)
         {
-            await this.SeparateProductionOrderProcessAsync(request.OrderId, request.Pieces);
+            var redisKey = string.Format(ServiceConstants.ProductionOrderSeparationProcessKey, request.ProductionOrderId);
+            var redisValue = await this.redisService.GetRedisKey(redisKey);
+
+            if (!string.IsNullOrEmpty(redisValue))
+            {
+                return ServiceUtils.CreateResult(
+                    false,
+                    (int)HttpStatusCode.InternalServerError,
+                    ServiceConstants.ProductionOrderSeparationProcessMessage,
+                    null,
+                    null);
+            }
+
+            await this.redisService.WriteToRedis(redisKey, JsonConvert.SerializeObject(request), new TimeSpan(12, 0, 0));
+            await this.SeparateProductionOrderProcessAsync(request.ProductionOrderId, request.Pieces);
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
         }
 

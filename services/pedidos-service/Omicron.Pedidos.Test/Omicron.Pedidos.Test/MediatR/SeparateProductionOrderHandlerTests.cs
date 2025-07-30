@@ -67,11 +67,15 @@ namespace Omicron.Pedidos.Test.MediatR
                .Returns(Task.FromResult(sapResult))
                .Returns(Task.FromResult(sapResultCreateDetail));
 
+            var mockRedisService = new Mock<IRedisService>();
+            mockRedisService.Setup(m => m.DeleteKey(It.IsAny<string>()));
+
             var handler = new SeparateProductionOrderHandler(
                 this.pedidosDao,
                 mockServiceLayerAdapterService.Object,
                 this.mockBackgroundTaskQueue.Object,
-                this.mockLogger.Object);
+                this.mockLogger.Object,
+                mockRedisService.Object);
 
             // Act
             var result = await handler.Handle(command, CancellationToken.None);
@@ -108,11 +112,15 @@ namespace Omicron.Pedidos.Test.MediatR
                .Setup(sla => sla.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                .Returns(Task.FromResult(sapResult));
 
+            var mockRedisService = new Mock<IRedisService>();
+            mockRedisService.Setup(m => m.DeleteKey(It.IsAny<string>()));
+
             var handler = new SeparateProductionOrderHandler(
                 this.pedidosDao,
                 mockServiceLayerAdapterService.Object,
                 this.mockBackgroundTaskQueue.Object,
-                this.mockLogger.Object);
+                this.mockLogger.Object,
+                mockRedisService.Object);
 
             // Act
             Assert.ThrowsAsync<Exception>(async () => await handler.Handle(command, CancellationToken.None));
