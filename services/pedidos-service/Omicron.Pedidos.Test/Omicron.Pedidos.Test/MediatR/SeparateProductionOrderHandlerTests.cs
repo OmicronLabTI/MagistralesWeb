@@ -60,11 +60,12 @@ namespace Omicron.Pedidos.Test.MediatR
             };
 
             var sapResult = this.GetResultModelCompl(new object(), closeSapProductionSuccessfully, string.Empty, exceptionMessage);
-
+            var sapResultCreateDetail = this.GetResultModelCompl(909090, true, string.Empty, null);
             var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
             mockServiceLayerAdapterService
-               .Setup(sla => sla.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
-               .Returns(Task.FromResult(sapResult));
+               .SetupSequence(sla => sla.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
+               .Returns(Task.FromResult(sapResult))
+               .Returns(Task.FromResult(sapResultCreateDetail));
 
             var handler = new SeparateProductionOrderHandler(
                 this.pedidosDao,
