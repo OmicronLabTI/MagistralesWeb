@@ -136,15 +136,12 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
 
                     successfuly.Add(productionOrder);
                     productionOrderProcessingStatus.Add(productionOrderProcessing);
-                    this.logger.Information(LogsConstants.SendKafkaMessageFinalizeProductionOrderSap, logBase, JsonConvert.SerializeObject(productionOrderProcessing));
-                    await this.kafkaConnector.PushMessage(
-                        productionOrderProcessing,
-                        ServiceConstants.KafkaFinalizeProductionOrderSapConfigName,
-                        logBase);
                 }
 
                 this.logger.Information(LogsConstants.InsertAllProductionOrderProcessingStatus, JsonConvert.SerializeObject(productionOrderProcessingStatus));
                 await this.pedidosDao.InsertProductionOrderProcessingStatus(productionOrderProcessingStatus);
+
+                _ = Task.Run(() => this.SendKafkaMessagesAsync(productionOrderProcessingStatus));
 
                 var validationsResult = new FinalizeProductionOrdersResult
                 {
@@ -362,6 +359,16 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             return modelToUpdate;
         }
 
+        private async Task SendKafkaMessagesAsync(List<ProductionOrderProcessingStatusModel> productionOrderProcessingStatusList)
+        {
+            foreach (var productionOrderProcessing in productionOrderProcessingStatusList)
+            {
+                var logBase = string.Format(LogsConstants.FinalizeProductionOrdersAsync, productionOrderProcessing.Id);
+                this.logger.Information(LogsConstants.SendKafkaMessageFinalizeProductionOrderSap, logBase, JsonConvert.SerializeObject(productionOrderProcessing));
+                await this.kafkaConnector.PushMessage(productionOrderProcessing, ServiceConstants.KafkaFinalizeProductionOrderSapConfigName, logBase);
+            }
+        }
+
         private async Task RetryFailedProductionOrderFinalizationProcess(ProductionOrderProcessingStatusModel payload, string logBase)
         {
             try
@@ -548,7 +555,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                 var (salesOrders, productionOrder) = await this.GetRelatedOrdersToProducionOrder(new List<string> { productionOrderId });
                 var salesOrder = salesOrders != null ? salesOrders.FirstOrDefault(x => x.IsSalesOrder) : null;
                 salesOrders?.Remove(salesOrder);
-                var preProductionOrders = await ServiceUtils.GetPreProductionOrdersFromSap(salesOrder, this.sapAdapter);
+                var preProductionOrders = salesOrder != null ? await ServiceUtils.GetPreProductionOrdersFromSap(salesOrder, this.sapAdapter) : new List<CompleteDetailOrderModel>();
                 var payload = payloadJson.FinalizeProductionOrder;
                 var userOrdersToUpdate = new List<UserOrderModel>();
                 var ordersToProcess = payload.SourceProcess == ServiceConstants.SalesOrders ? salesOrders : new List<UserOrderModel> { productionOrder };
@@ -574,15 +581,20 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                     userOrdersToUpdate.Add(userOrder);
                 }
 
-                var hasNoPreProductionOrders = !preProductionOrders.Any();
-                var productionOrdersCount = salesOrders.Count(x => x.IsProductionOrder);
-                var otherProductionOrdersFinalized = salesOrders
-                    .Where(x => x.IsProductionOrder && x.Productionorderid != productionOrderId)
-                    .All(x => ServiceConstants.ValidStatusFinalizar.Contains(x.Status));
+                var shouldUpdateSalesOrder = false;
 
-                var shouldUpdateSalesOrder = payload.SourceProcess == ServiceConstants.SalesOrders
-                    ? true
-                    : salesOrder != null && hasNoPreProductionOrders && (productionOrdersCount == 1 || otherProductionOrdersFinalized);
+                if (!productionOrder.IsIsolatedProductionOrder)
+                {
+                    var hasNoPreProductionOrders = !preProductionOrders.Any();
+                    var productionOrdersCount = salesOrders.Count(x => x.IsProductionOrder);
+                    var otherProductionOrdersFinalized = salesOrders
+                        .Where(x => x.IsProductionOrder && x.Productionorderid != productionOrderId)
+                        .All(x => ServiceConstants.ValidStatusFinalizar.Contains(x.Status));
+
+                    shouldUpdateSalesOrder = payload.SourceProcess == ServiceConstants.SalesOrders
+                        ? true
+                        : salesOrder != null && hasNoPreProductionOrders && (productionOrdersCount == 1 || otherProductionOrdersFinalized);
+                }
 
                 if (shouldUpdateSalesOrder)
                 {
