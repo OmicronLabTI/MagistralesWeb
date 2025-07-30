@@ -190,7 +190,7 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
                 CreatorUserId = productionOrder.CreatorUserId,
                 CloseDate = productionOrder.CloseDate,
                 CloseUserId = productionOrder.CloseUserId,
-                FinishedLabel = 0,
+                FinishedLabel = productionOrder.FinishedLabel,
                 MagistralQr = JsonConvert.SerializeObject(qr),
                 FinalizedDate = productionOrder.FinalizedDate,
                 StatusAlmacen = productionOrder.StatusAlmacen,
