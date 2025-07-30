@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+	<changeSet author="d.vargas" id="changelog-1.1">
+        <addColumn tableName="usersorders">
+            <column name="separationid" type="VARCHAR(40)">
+                <constraints nullable="true" unique="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+	<changeSet author="lreyes" id="changelog-1.2">
+		<createTable tableName="productionorderseparationdetail">
+			<column name="id" type="INT" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="detailproductionorderid" type="INT">
+				<constraints nullable="false" />
+			</column>
+			<column name="productionorderid" type="INT">
+				<constraints nullable="false" />
+			</column>
+			<column name="userid" type="VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="createdat" type="TIMESTAMPTZ">
+				<constraints nullable="false" />
+			</column>
+			<column name="dxporder" type="VARCHAR(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="saporder" type="INT">
+				<constraints nullable="false" />
+			</column>
+			<column name="assignedpieces" type="INT">
+				<constraints nullable="false" />
+			</column>
+			<column name="consecutiveindex" type="INT">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="lreyes" id="changelog-1.3">
+		<createTable tableName="productionorderseparation">
+			<column name="id" type="INT" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="productionorderid" type="INT">
+				<constraints nullable="false" />
+			</column>
+			<column name="productiondetailcount" type="INT">
+				<constraints nullable="false" />
+			</column>
+			<column name="totalpieces" type="INT">
+				<constraints nullable="false" />
+			</column>
+			<column name="availablepieces" type="INT">
+				<constraints nullable="false" />
+			</column>
+			<column name="status" type="VARCHAR(30)">
+				<constraints nullable="true" />
+			</column>
+			<column name="completedat" type="TIMESTAMPTZ">
+				<constraints nullable="true" />
+			</column>
+		</createTable>
+	</changeSet>
+</databaseChangeLog>

@@ -30,6 +30,7 @@ namespace Omicron.Pedidos.DependencyInjection
     using Omicron.Pedidos.Services.SapFile;
     using Omicron.Pedidos.Services.SapServiceLayerAdapter;
     using Omicron.Pedidos.Services.User;
+    using Omicron.Pedidos.Services.Utils;
 
     /// <summary>
     /// Class for DependencyInjector.
@@ -74,6 +75,9 @@ namespace Omicron.Pedidos.DependencyInjection
             Services.AddTransient<IAzureService, AzureServices>();
             Services.AddTransient<ISapServiceLayerAdapterService, SapServiceLayerAdapterService>();
             Services.AddTransient<IProductionOrdersService, ProductionOrdersService>();
+            Services.AddTransient<IOrderHistoryDao, OrderHistoryDao>();
+            Services.AddTransient<OrderHistoryHelper>();
+
             return Services;
         }
 
