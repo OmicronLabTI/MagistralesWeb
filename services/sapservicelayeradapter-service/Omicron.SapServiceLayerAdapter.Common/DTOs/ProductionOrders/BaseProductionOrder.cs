@@ -59,8 +59,7 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
         /// Gets or sets the IsParentRecord.
         /// </summary>
         /// <value>IsParentRecord.</value>
-        /// [JsonProperty("U_OPadre")]
-        [JsonIgnore]
+        [JsonProperty("U_OPadre")]
         public string IsParentRecord { get; set; }
     }
 }

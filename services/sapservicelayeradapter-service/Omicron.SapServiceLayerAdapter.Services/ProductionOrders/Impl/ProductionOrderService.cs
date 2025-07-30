@@ -305,8 +305,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                 }
 
                 productionOrder.Remarks = ServiceConstants.ProductionOrderSourceDivisionComment;
-
-                // productionOrder.IsParentRecord = ServiceConstants.YesValue;
+                productionOrder.IsParentRecord = ServiceConstants.YesValue;
                 var body = JsonConvert.SerializeObject(productionOrder);
 
                 this.logger.Information(LogsConstants.UpdateProductionOrderToCancel, logBase);
