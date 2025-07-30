@@ -6,6 +6,8 @@
 // </copyright>
 // </summary>
 
+using System.Text.Json.Serialization;
+
 namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
 {
     /// <summary>
@@ -60,6 +62,7 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
         /// </summary>
         /// <value>IsParentRecord.</value>
         [JsonProperty("U_OPadre")]
+        [JsonPropertyName("U_OPadre")]
         public string IsParentRecord { get; set; }
     }
 }

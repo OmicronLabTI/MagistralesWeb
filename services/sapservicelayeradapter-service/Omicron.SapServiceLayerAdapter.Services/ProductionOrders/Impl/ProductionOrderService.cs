@@ -816,7 +816,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             var result = await this.serviceLayerClient.PostAsync(ServiceQuerysConstants.QryProductionOrder, body);
             if (!result.Success)
             {
-                this.logger.Error("Error al crear la orden de fabricación");
+                this.logger.Error($"Error al crear la orden de fabricación error: {result.UserError}");
                 throw new CustomServiceException("Error al crear la orden de fabricación");
             }
 

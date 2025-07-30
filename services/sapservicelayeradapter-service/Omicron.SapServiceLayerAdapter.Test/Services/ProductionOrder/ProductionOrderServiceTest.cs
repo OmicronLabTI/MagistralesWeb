@@ -216,6 +216,50 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
         /// <summary>
         /// validate update formula.
         /// </summary>
+        /// <param name="success">success.</param>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task CreateChildFabOrders(bool success)
+        {
+            var mockServiceLayerClient = new Mock<IServiceLayerClient>();
+            var mockLogger = new Mock<ILogger>();
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper);
+
+            var productionOrder = GetProductionOrder("boposReleased", 0, 0);
+            mockServiceLayerClient
+                .Setup(x => x.GetAsync("ProductionOrders(123456)"))
+                .Returns(Task.FromResult(GetResult(true, productionOrder)));
+
+            var secondProductionOrder = GetProductionOrder("boposReleased", 0, 0);
+            secondProductionOrder.ProductionOrderLines[0].ItemNo = "TEST";
+
+            mockServiceLayerClient
+                .Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResult(success, secondProductionOrder)));
+
+            mockServiceLayerClient
+                .Setup(x => x.PutAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResult(true, secondProductionOrder)));
+            var request = new CreateChildProductionOrdersDto() { OrderId = 123456, Pieces = 1 };
+            var result = await service.CreateChildFabOrders(request);
+
+            if (success)
+            {
+                Assert.That(result.Success, Is.True);
+                Assert.That(result.Code, Is.EqualTo(200));
+            }
+            else
+            {
+                Assert.That(result.Success, Is.False);
+                Assert.That(result.Code, Is.EqualTo(400));
+            }
+        }
+
+        /// <summary>
+        /// validate update formula.
+        /// </summary>
         /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Test]
         public async Task UpdateFormulaWithErrorTest()
