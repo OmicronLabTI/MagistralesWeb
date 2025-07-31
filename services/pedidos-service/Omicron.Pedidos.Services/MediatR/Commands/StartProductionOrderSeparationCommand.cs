@@ -51,5 +51,37 @@ namespace Omicron.Pedidos.Services.MediatR.Commands
         /// SeparationId.
         /// </value>
         public string SeparationId { get; set; }
+
+        /// <summary>
+        /// Gets or sets UserId.
+        /// </summary>
+        /// <value>
+        /// UserId.
+        /// </value>
+        public string UserId { get; set; }
+
+        /// <summary>
+        /// Gets or sets DxpOrder.
+        /// </summary>
+        /// <value>
+        /// DxpOrder.
+        /// </value>
+        public string DxpOrder { get; set; }
+
+        /// <summary>
+        /// Gets or sets SapOrder.
+        /// </summary>
+        /// <value>
+        /// SapOrder.
+        /// </value>
+        public string SapOrder { get; set; }
+
+        /// <summary>
+        /// Gets or sets TotalPieces.
+        /// </summary>
+        /// <value>
+        /// TotalPieces.
+        /// </value>
+        public string TotalPieces { get; set; }
     }
 }
