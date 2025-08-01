@@ -42,6 +42,8 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
 
         private readonly IRedisService redisService;
 
+        private readonly OrderHistoryHelper orderHistoryHelper;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SeparateProductionOrderHandler"/> class.
         /// </summary>
@@ -50,18 +52,21 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
         /// <param name="backgroundTaskQueue">backgroundTaskQueue.</param>
         /// <param name="logger">Logger.</param>
         /// <param name="redisService">redisService.</param>
+        /// <param name="orderHistoryHelper">Order History Helper.</param>
         public SeparateProductionOrderHandler(
             IPedidosDao pedidosDao,
             ISapServiceLayerAdapterService serviceLayerAdapterService,
             IBackgroundTaskQueue backgroundTaskQueue,
             ILogger logger,
-            IRedisService redisService)
+            IRedisService redisService,
+            OrderHistoryHelper orderHistoryHelper)
         {
             this.pedidosDao = pedidosDao.ThrowIfNull(nameof(pedidosDao));
             this.serviceLayerAdapterService = serviceLayerAdapterService.ThrowIfNull(nameof(serviceLayerAdapterService));
             this.logger = logger.ThrowIfNull(nameof(logger));
             this.backgroundTaskQueue = backgroundTaskQueue.ThrowIfNull(nameof(backgroundTaskQueue));
             this.redisService = redisService.ThrowIfNull(nameof(redisService));
+            this.orderHistoryHelper = orderHistoryHelper.ThrowIfNull(nameof(orderHistoryHelper));
         }
 
         /// <inheritdoc/>
@@ -76,7 +81,16 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
                     .FirstOrDefault() ?? throw new Exception(LogsConstants.ProductionOrderNotFound);
 
                 await this.CancelProductionOrderProcess(productionOrder, request, logBase);
-                await this.CreateChildOrdersProcess(productionOrder, request.ProductionOrderId, request.Pieces, request.SeparationId);
+                var childOrderId = await this.CreateChildOrdersProcess(productionOrder, request.ProductionOrderId, request.Pieces, request.SeparationId);
+
+                await this.orderHistoryHelper.SaveHistoryOrdersFab(
+                    childOrderId,
+                    request.ProductionOrderId,
+                    request.UserId,
+                    request.DxpOrder,
+                    request.SapOrder,
+                    request.Pieces,
+                    request.TotalPieces);
 
                 var redisKey = string.Format(ServiceConstants.ProductionOrderSeparationProcessKey, request.ProductionOrderId);
                 await this.redisService.DeleteKey(redisKey);
@@ -142,7 +156,14 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
 
         private void ScheduleRetry(SeparateProductionOrderCommand request, string logBase)
         {
-            var retryCommand = new SeparateProductionOrderCommand(request.ProductionOrderId, request.Pieces, request.SeparationId)
+            var retryCommand = new SeparateProductionOrderCommand(
+                request.ProductionOrderId,
+                request.Pieces,
+                request.SeparationId,
+                request.UserId,
+                request.DxpOrder,
+                request.SapOrder,
+                request.TotalPieces)
             {
                 RetryCount = request.RetryCount + 1,
                 MaxRetries = request.MaxRetries,
@@ -158,22 +179,23 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
             this.logger.Information(LogsConstants.RetryScheduledLog, logBase, ServiceConstants.MinutesToRetrySeparationProductionOrder, request.RetryCount + 2);
         }
 
-        private async Task CreateChildOrdersProcess(UserOrderModel productionOrder, int productionOrderId, int pieces, string separationId)
+        private async Task<int> CreateChildOrdersProcess(UserOrderModel productionOrder, int productionOrderId, int pieces, string separationId)
         {
             this.logger.Information($"separationId-{separationId}: Validación orden creada");
             var separationOrders = await this.pedidosDao.GetOrdersBySeparationId(separationId);
             if (!separationOrders.Any())
             {
                 this.logger.Information($"separationId-{separationId}: Inicia proceso de creación");
-                await this.CreateChildOrders(productionOrder, productionOrderId, pieces, separationId);
+                var newFoId = await this.CreateChildOrders(productionOrder, productionOrderId, pieces, separationId);
                 this.logger.Information($"separationId-{separationId}: Finaliza proceso de creación");
-                return;
+                return newFoId;
             }
 
             this.logger.Information($"separationId-{separationId}: La orden ya fue creada anteriormente, omitiendo creación");
+            return separationOrders.First().Id;
         }
 
-        private async Task CreateChildOrders(UserOrderModel productionOrder, int productionOrderId, int pieces, string separationId)
+        private async Task<int> CreateChildOrders(UserOrderModel productionOrder, int productionOrderId, int pieces, string separationId)
         {
             var request = new CreateChildProductionOrdersDto() { OrderId = productionOrderId, Pieces = pieces };
             this.logger.Information($"separationId-{separationId}: Enviando al service layer para creación");
@@ -228,6 +250,7 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
             this.logger.Information($"separationId-{separationId}: Inicio guardado de orden de fabricacion {newFoId} en Postgres");
             await this.pedidosDao.InsertUserOrder(new List<UserOrderModel>() { newProductionOrder });
             this.logger.Information($"separationId-{separationId}: Se guardó la orden de fabricacion {newFoId} en Postgres correctamente");
+            return newFoId;
         }
     }
 }

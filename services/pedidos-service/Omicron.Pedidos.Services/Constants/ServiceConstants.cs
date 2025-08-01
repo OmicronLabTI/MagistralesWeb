@@ -1048,6 +1048,16 @@ namespace Omicron.Pedidos.Services.Constants
         public const string StepCreatePdf = "PDF Created";
 
         /// <summary>
+        /// CompletelyDivided.
+        /// </summary>
+        public const string CompletelyDivided = "Completamente dividida";
+
+        /// <summary>
+        /// PartiallyDivided.
+        /// </summary>
+        public const string PartiallyDivided = "Parcialmente dividida";
+
+        /// <summary>
         /// Gets DefaultRedisValueTimeToLive.
         /// </summary>
         /// <value>

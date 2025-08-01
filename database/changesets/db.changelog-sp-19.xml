@@ -25,10 +25,10 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="dxporder" type="VARCHAR(100)">
-				<constraints nullable="false" />
+				<constraints nullable="true" />
 			</column>
 			<column name="saporder" type="INT">
-				<constraints nullable="false" />
+				<constraints nullable="true" />
 			</column>
 			<column name="assignedpieces" type="INT">
 				<constraints nullable="false" />

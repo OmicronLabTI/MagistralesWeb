@@ -51,7 +51,7 @@ namespace Omicron.Pedidos.Dtos.Models
         /// <value>
         /// SapOrder.
         /// </value>
-        public string SapOrder { get; set; }
+        public int? SapOrder { get; set; }
 
         /// <summary>
         /// Gets or sets TotalPieces.
@@ -59,6 +59,6 @@ namespace Omicron.Pedidos.Dtos.Models
         /// <value>
         /// TotalPieces.
         /// </value>
-        public string TotalPieces { get; set; }
+        public int TotalPieces { get; set; }
     }
 }

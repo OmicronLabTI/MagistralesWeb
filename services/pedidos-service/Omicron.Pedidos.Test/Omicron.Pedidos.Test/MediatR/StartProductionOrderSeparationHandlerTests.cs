@@ -39,7 +39,14 @@ namespace Omicron.Pedidos.Test.MediatR
         public async Task HandleQueuesBackgroundTaskCorrectly()
         {
             // Arrange
-            var command = new StartProductionOrderSeparationCommand(12345, 100, "test-separation-id");
+            var command = new StartProductionOrderSeparationCommand(
+                12345,
+                100,
+                "test-separation-id",
+                "axity1",
+                "xxx-xxx-xxx",
+                123,
+                10);
             var cancellationToken = CancellationToken.None;
 
             // Act
@@ -59,7 +66,7 @@ namespace Omicron.Pedidos.Test.MediatR
         public Task HandleCompletesSuccessfully()
         {
             // Arrange
-            var command = new StartProductionOrderSeparationCommand(12345, 100, "test-separation-id");
+            var command = new StartProductionOrderSeparationCommand(12345, 100, "test-separation-id", "axity1", "xxx-xxx-xxx", 123, 10);
             var cancellationToken = CancellationToken.None;
 
             // Act & Assert

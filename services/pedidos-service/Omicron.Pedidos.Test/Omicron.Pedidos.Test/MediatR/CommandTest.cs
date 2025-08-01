@@ -24,9 +24,20 @@ namespace Omicron.Pedidos.Test.MediatR
             var productionOrderId = 12345;
             var pieces = 100;
             var separationId = "test-separation-id";
+            var userId = "axity1";
+            var dxpOrder = "xxx-xxx";
+            var sapOrder = 1212;
+            var totalPieces = 1;
 
             // Act
-            var command = new SeparateProductionOrderCommand(productionOrderId, pieces, separationId);
+            var command = new SeparateProductionOrderCommand(
+                productionOrderId,
+                pieces,
+                separationId,
+                userId,
+                dxpOrder,
+                sapOrder,
+                totalPieces);
 
             // Assert
             Assert.That(command.ProductionOrderId, Is.EqualTo(productionOrderId));
@@ -43,7 +54,7 @@ namespace Omicron.Pedidos.Test.MediatR
         public void SeparateProductionOrderCommandPropertiesCanBeSetAndRetrieved()
         {
             // Arrange
-            var command = new SeparateProductionOrderCommand(1, 1, "test");
+            var command = new SeparateProductionOrderCommand(1, 1, "test", "axity1", "xxx-xxx-xxx", 123, 10);
 
             // Act
             command.ProductionOrderId = 54321;
@@ -67,7 +78,7 @@ namespace Omicron.Pedidos.Test.MediatR
         public void SeparateProductionOrderCommandConstructorSetsDefaultValues()
         {
             // Act
-            var command = new SeparateProductionOrderCommand(1, 10, "test-id");
+            var command = new SeparateProductionOrderCommand(1, 10, "test-id", "axity1", "xxx-xxx-xxx", 123, 10);
 
             // Assert
             Assert.That(command.RetryCount, Is.EqualTo(0));
@@ -84,9 +95,20 @@ namespace Omicron.Pedidos.Test.MediatR
             var productionOrderId = 12345;
             var pieces = 100;
             var separationId = "test-separation-id";
+            var userId = "axity1";
+            var dxpOrder = "xx-xxx-xxx";
+            var sapOrder = 123;
+            var totalPieces = 10;
 
             // Act
-            var command = new StartProductionOrderSeparationCommand(productionOrderId, pieces, separationId);
+            var command = new StartProductionOrderSeparationCommand(
+                productionOrderId,
+                pieces,
+                separationId,
+                userId,
+                dxpOrder,
+                sapOrder,
+                totalPieces);
 
             // Assert
             Assert.That(command.ProductionOrderId, Is.EqualTo(productionOrderId));
@@ -101,7 +123,7 @@ namespace Omicron.Pedidos.Test.MediatR
         public void StartProductionOrderSeparationCommandPropertiesCanBeSetAndRetrieved()
         {
             // Arrange
-            var command = new StartProductionOrderSeparationCommand(1, 1, "test");
+            var command = new StartProductionOrderSeparationCommand(1, 1, "test", "axity1", "xxx-xxx-xxx", 123, 10);
 
             // Act
             command.ProductionOrderId = 54321;

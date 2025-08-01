@@ -32,43 +32,44 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
             this.databaseContext = databaseContext ?? throw new ArgumentNullException(nameof(databaseContext));
         }
 
-        public async Task<bool> InsertDetailOrder(List<ProductionOrderSeparationDetailModel> detaildOrder)
+        public async Task<bool> InsertDetailOrder(ProductionOrderSeparationDetailModel detaildOrder)
         {
-            this.databaseContext.ProductionOrderSeparationDetailModel.AddRange(detaildOrder);
+            this.databaseContext.ProductionOrderSeparationDetailModel.Add(detaildOrder);
             await((DatabaseContext)this.databaseContext).SaveChangesAsync();
             return true;
         }
 
-        public Task<bool> InsertOrder(ProductionOrderSeparationModel order)
+        public async Task<bool> InsertOrder(ProductionOrderSeparationModel orderId)
         {
-            throw new System.NotImplementedException();
+            this.databaseContext.ProductionOrderSeparationModel.Add(orderId);
+            await((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
         }
 
-        public Task<bool> UpdateOrder(ProductionOrderSeparationModel order)
+        public async Task<bool> UpdateOrder(ProductionOrderSeparationModel orderId)
         {
-            throw new System.NotImplementedException();
+            this.databaseContext.ProductionOrderSeparationModel.Update(orderId);
+            await((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
         }
 
-        public Task<IEnumerable<ProductionOrderSeparationDetailModel>> GetDetailOrderByParentOrder(List<string> detailOrderNumbers)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public async Task<int> GetMaxDivisionNumber(int orderNumber)
+        public async Task<int> GetMaxDivision(int orderId)
         {
             return await this.databaseContext.ProductionOrderSeparationDetailModel
-               .Where(c => c.OrderId == orderNumber)
+               .Where(c => c.OrderId == orderId)
                .MaxAsync(c => (int?)c.ConsecutiveIndex) ?? 0;
         }
 
-        public Task<ProductionOrderSeparationModel> GetParentOrderByOrderNumber(string orderNumber)
+        public async Task<ProductionOrderSeparationModel> GetParentOrderId(int orderId)
         {
-            throw new System.NotImplementedException();
+            return await this.databaseContext.ProductionOrderSeparationModel
+                .FirstOrDefaultAsync(x => x.OrderId == orderId);
         }
 
-        public Task<IEnumerable<ProductionOrderSeparationModel>> GetParentOrderByOrderNumbers(List<string> orderNumbers)
+        public async Task<ProductionOrderSeparationDetailModel> GetDetailOrderById(int detailOrderId)
         {
-            throw new System.NotImplementedException();
-        }       
+            return await this.databaseContext.ProductionOrderSeparationDetailModel
+                .FirstOrDefaultAsync(x => x.DetailOrderId == detailOrderId);
+        }
     }
 }

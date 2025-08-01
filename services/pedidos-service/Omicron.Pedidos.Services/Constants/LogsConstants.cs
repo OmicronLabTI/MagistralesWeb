@@ -460,5 +460,37 @@ namespace Omicron.Pedidos.Services.Constants
         /// CancellingProductionOrderInPostgreSQL.
         /// </value>
         public static string CancellingProductionOrderInPostgreSQL => "{LogBase} - Cancelling Production Order In PostgreSQL";
+
+        /// <summary>
+        /// Gets SaveHistoryOrdersFabLogBase.
+        /// </summary>
+        /// <value>
+        /// SaveHistoryOrdersFabLogBase.
+        /// </value>
+        public static string SaveHistoryOrdersFabLogBase => "Register Order History Service - ChildOrder: {0} - ParentOrder: {1} - Save History Orders Fab";
+
+        /// <summary>
+        /// Gets SaveHistoryOrdersFabStart.
+        /// </summary>
+        /// <value>
+        /// SaveHistoryOrdersFabStart.
+        /// </value>
+        public static string SaveHistoryOrdersFabStart => "{LogBase} - Start Process - Pieces: {Pieces} - User: {User} - SapOrder: {SapOrder}";
+
+        /// <summary>
+        /// Gets SaveHistoryOrdersFabChildExists.
+        /// </summary>
+        /// <value>
+        /// SaveHistoryOrdersFabChildExists.
+        /// </value>
+        public static string SaveHistoryOrdersFabChildExists => "{LogBase} - Child Order Already Exists - Skip Process";
+
+        /// <summary>
+        /// Gets SaveHistoryOrdersFabEndWithError.
+        /// </summary>
+        /// <value>
+        /// SaveHistoryOrdersFabEndWithError.
+        /// </value>
+        public static string SaveHistoryOrdersFabEndWithError => "{0} - End Process With Error";
     }
 }

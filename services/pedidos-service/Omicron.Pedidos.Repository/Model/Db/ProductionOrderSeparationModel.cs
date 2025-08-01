@@ -80,6 +80,6 @@ namespace Omicron.Pedidos.Entities.Model.Db
         /// DateTime completedat .
         /// </value>
         [Column("completedat")]
-        public DateTime CompletedAt { get; set; }
+        public DateTime? CompletedAt { get; set; }
     }
 }

@@ -21,11 +21,26 @@ namespace Omicron.Pedidos.Services.MediatR.Commands
         /// <param name="productionOrderId">Production Order Id.</param>
         /// <param name="pieces">Pieces.</param>
         /// <param name="separationId">SeparationId.</param>
-        public StartProductionOrderSeparationCommand(int productionOrderId, int pieces, string separationId)
+        /// <param name="userId">userId.</param>
+        /// <param name="dxpOrder">dxpOrder.</param>
+        /// <param name="sapOrder">sapOrder.</param>
+        /// <param name="totalPieces">totalPieces.</param>
+        public StartProductionOrderSeparationCommand(
+            int productionOrderId,
+            int pieces,
+            string separationId,
+            string userId,
+            string dxpOrder,
+            int? sapOrder,
+            int totalPieces)
         {
             this.ProductionOrderId = productionOrderId;
             this.Pieces = pieces;
             this.SeparationId = separationId;
+            this.UserId = userId;
+            this.DxpOrder = dxpOrder;
+            this.SapOrder = sapOrder;
+            this.TotalPieces = totalPieces;
         }
 
         /// <summary>
@@ -74,7 +89,7 @@ namespace Omicron.Pedidos.Services.MediatR.Commands
         /// <value>
         /// SapOrder.
         /// </value>
-        public string SapOrder { get; set; }
+        public int? SapOrder { get; set; }
 
         /// <summary>
         /// Gets or sets TotalPieces.
@@ -82,6 +97,6 @@ namespace Omicron.Pedidos.Services.MediatR.Commands
         /// <value>
         /// TotalPieces.
         /// </value>
-        public string TotalPieces { get; set; }
+        public int TotalPieces { get; set; }
     }
 }

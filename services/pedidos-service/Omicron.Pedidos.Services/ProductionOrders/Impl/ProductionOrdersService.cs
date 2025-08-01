@@ -292,7 +292,13 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             }
 
             await this.redisService.WriteToRedis(redisKey, JsonConvert.SerializeObject(request), new TimeSpan(12, 0, 0));
-            await this.SeparateProductionOrderProcessAsync(request.ProductionOrderId, request.Pieces);
+            await this.SeparateProductionOrderProcessAsync(
+                request.ProductionOrderId,
+                request.Pieces,
+                request.UserId,
+                request.DxpOrder,
+                request.SapOrder,
+                request.TotalPieces);
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
         }
 
@@ -339,10 +345,23 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             return model;
         }
 
-        private async Task SeparateProductionOrderProcessAsync(int productionOrderId, int pieces)
+        private async Task SeparateProductionOrderProcessAsync(
+            int productionOrderId,
+            int pieces,
+            string userId,
+            string dxpOrder,
+            int? sapOrder,
+            int totalPieces)
         {
             var separationId = Guid.NewGuid().ToString();
-            var command = new StartProductionOrderSeparationCommand(productionOrderId, pieces, separationId);
+            var command = new StartProductionOrderSeparationCommand(
+                productionOrderId,
+                pieces,
+                separationId,
+                userId,
+                dxpOrder,
+                sapOrder,
+                totalPieces);
             await this.mediator.Send(command);
         }
 

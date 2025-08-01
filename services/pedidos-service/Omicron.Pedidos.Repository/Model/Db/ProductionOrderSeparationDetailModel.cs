@@ -80,7 +80,7 @@ namespace Omicron.Pedidos.Entities.Model.Db
         /// int saporder.
         /// </value>
         [Column("saporder")]
-        public int SapOrder { get; set; }
+        public int? SapOrder { get; set; }
 
         /// <summary>
         /// Gets or sets assignedpieces .

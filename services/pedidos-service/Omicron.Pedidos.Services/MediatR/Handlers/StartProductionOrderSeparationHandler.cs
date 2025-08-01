@@ -49,7 +49,11 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
                 var updateCommand = new SeparateProductionOrderCommand(
                     request.ProductionOrderId,
                     request.Pieces,
-                    request.SeparationId);
+                    request.SeparationId,
+                    request.UserId,
+                    request.DxpOrder,
+                    request.SapOrder,
+                    request.TotalPieces);
                 await mediator.Send(updateCommand, token);
             });
 

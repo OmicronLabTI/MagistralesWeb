@@ -18,6 +18,7 @@ namespace Omicron.Pedidos.Test.MediatR
         private Mock<IBackgroundTaskQueue> mockBackgroundTaskQueue;
         private DatabaseContext context;
         private IPedidosDao pedidosDao;
+        private Mock<OrderHistoryHelper> mockOrderHistoryHelper;
 
         /// <summary>
         /// The set up.
@@ -35,6 +36,7 @@ namespace Omicron.Pedidos.Test.MediatR
             this.pedidosDao = new PedidosDao(this.context);
             this.mockLogger = new Mock<ILogger>();
             this.mockBackgroundTaskQueue = new Mock<IBackgroundTaskQueue>();
+            this.mockOrderHistoryHelper = new Mock<OrderHistoryHelper>();
         }
 
         /// <summary>
@@ -53,7 +55,14 @@ namespace Omicron.Pedidos.Test.MediatR
         public async Task HandleCancelProductionOrder(int productionOrderId, int retryCount, bool closeSapProductionSuccessfully, string exceptionMessage)
         {
             // Arrange
-            var command = new SeparateProductionOrderCommand(productionOrderId, 5, "b54659e3-d334-42c4-b91a-f59f5a463125")
+            var command = new SeparateProductionOrderCommand(
+                productionOrderId,
+                5,
+                "b54659e3-d334-42c4-b91a-f59f5a463125",
+                "axity1",
+                "xxx-xxx-xxx",
+                123,
+                10)
             {
                 RetryCount = retryCount,
                 MaxRetries = 3,
@@ -75,7 +84,8 @@ namespace Omicron.Pedidos.Test.MediatR
                 mockServiceLayerAdapterService.Object,
                 this.mockBackgroundTaskQueue.Object,
                 this.mockLogger.Object,
-                mockRedisService.Object);
+                mockRedisService.Object,
+                this.mockOrderHistoryHelper.Object);
 
             // Act
             var result = await handler.Handle(command, CancellationToken.None);
@@ -99,7 +109,7 @@ namespace Omicron.Pedidos.Test.MediatR
         public Task HandleCancelProductionOrderErrorRebasedMaxAttempt()
         {
             // Arrange
-            var command = new SeparateProductionOrderCommand(220003, 5, "b54659e3-d334-42c4-b91a-f59f5a463125")
+            var command = new SeparateProductionOrderCommand(220003, 5, "b54659e3-d334-42c4-b91a-f59f5a463125", "axity1", "xxx-xxx-xxx", 123, 10)
             {
                 RetryCount = 3,
                 MaxRetries = 3,
@@ -120,7 +130,8 @@ namespace Omicron.Pedidos.Test.MediatR
                 mockServiceLayerAdapterService.Object,
                 this.mockBackgroundTaskQueue.Object,
                 this.mockLogger.Object,
-                mockRedisService.Object);
+                mockRedisService.Object,
+                this.mockOrderHistoryHelper.Object);
 
             // Act
             Assert.ThrowsAsync<Exception>(async () => await handler.Handle(command, CancellationToken.None));
