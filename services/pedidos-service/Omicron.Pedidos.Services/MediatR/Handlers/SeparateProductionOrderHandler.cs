@@ -22,6 +22,7 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.MediatR.Commands;
     using Omicron.Pedidos.Services.MediatR.Services;
+    using Omicron.Pedidos.Services.OrderHistory;
     using Omicron.Pedidos.Services.Redis;
     using Omicron.Pedidos.Services.SapServiceLayerAdapter;
     using Omicron.Pedidos.Services.Utils;
@@ -42,7 +43,7 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
 
         private readonly IRedisService redisService;
 
-        private readonly OrderHistoryHelper orderHistoryHelper;
+        private readonly IOrderHistoryHelper orderHistoryHelper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SeparateProductionOrderHandler"/> class.
@@ -59,7 +60,7 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
             IBackgroundTaskQueue backgroundTaskQueue,
             ILogger logger,
             IRedisService redisService,
-            OrderHistoryHelper orderHistoryHelper)
+            IOrderHistoryHelper orderHistoryHelper)
         {
             this.pedidosDao = pedidosDao.ThrowIfNull(nameof(pedidosDao));
             this.serviceLayerAdapterService = serviceLayerAdapterService.ThrowIfNull(nameof(serviceLayerAdapterService));

@@ -6,6 +6,8 @@
 // </copyright>
 // </summary>
 
+using Omicron.Pedidos.Services.OrderHistory;
+
 namespace Omicron.Pedidos.Test.MediatR
 {
     /// <summary>

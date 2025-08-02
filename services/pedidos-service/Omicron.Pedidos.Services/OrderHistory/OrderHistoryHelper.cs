@@ -6,22 +6,22 @@
 // </copyright>
 // </summary>
 
-namespace Omicron.Pedidos.Services.Utils
+namespace Omicron.Pedidos.Services.OrderHistory
 {
     using System;
     using System.Threading.Tasks;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Model.Db;
     using Omicron.Pedidos.Services.Constants;
+    using Omicron.Pedidos.Services.Utils;
     using Serilog;
 
     /// <summary>
     /// Class for pedidos utils.
     /// </summary>
-    public class OrderHistoryHelper
+    public class OrderHistoryHelper : IOrderHistoryHelper
     {
         private readonly IOrderHistoryDao orderHistoryDao;
-
         private readonly ILogger logger;
 
         /// <summary>
