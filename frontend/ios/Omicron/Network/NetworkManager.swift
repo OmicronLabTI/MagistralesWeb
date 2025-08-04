@@ -232,6 +232,12 @@ class NetworkManager: SessionProtocol {
         let res: Observable<LotsByProductResponse> = makeRequest(request: req)
         return res
     }
+    
+    func postSplitOrder(_ data: SplitOrderRequest) -> Observable<SplitOrderResponse> {
+        let req: ApiService = ApiService.postSplitOrder(data: data)
+        let res: Observable<SplitOrderResponse> = makeRequest(request: req)
+        return res
+    }
 
     private func makeRequest<T: BaseMappable>(
         request: ApiService, needsVPN: Bool = false) -> Observable<T> {

@@ -60,6 +60,8 @@ extension OrderDetailViewController {
                 self.initLabelsWithContent(detail: res.first!)
                 self.changeTextColorLabel(color: .black)
                 self.orderDetail = res
+                self.onGoingSplitProcess = res[0].onSplitProcess ?? false
+                self.disableButtonsForFatherOrder(res[0].orderRelationType ?? OrderRelationTypes.completa)
                 let detail = res.first!
                 buildObjectToUpdateData(detail)
                 componentsToUpdate = []
@@ -185,6 +187,7 @@ extension OrderDetailViewController {
                 cell.selectedOption = data.warehouse ?? String()
                 cell.delegate = self
                 cell.productId = data.productID ?? String()
+                cell.pickerContainerView.isUserInteractionEnabled = self?.orderDetail[0].orderRelationType != OrderRelationTypes.padre
         }.disposed(by: disposeBag)
         orderDetailViewModel.tableData.subscribe(onNext: { [weak self] details in
             guard let self = self else { return }
@@ -206,5 +209,17 @@ extension OrderDetailViewController {
             self.orderDetailViewModel.updateQuantity(quantity ?? 0)
         }
         .disposed(by: self.disposeBag)
+    }
+    
+    func disableButtonsForFatherOrder(_ typeOrder: String) {
+        if typeOrder == OrderRelationTypes.padre {
+            self.processButton.isEnabled = false
+            self.finishedButton.isEnabled = false
+            self.penddingButton.isEnabled = false
+            self.addComponentButton.isEnabled = false
+            self.saveButton.isEnabled = false
+            self.seeLotsButton.isEnabled = false
+            self.saveWarehousesChangesButton.isEnabled = false
+        }
     }
 }

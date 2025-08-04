@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0511BBAE2E412304002EC973 /* SplitOrderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0511BBAD2E4122F8002EC973 /* SplitOrderTest.swift */; };
+		05B553882E39418100F2F0E5 /* SplitOrderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B553872E39417600F2F0E5 /* SplitOrderModel.swift */; };
+		05B553892E39418100F2F0E5 /* SplitOrderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B553872E39417600F2F0E5 /* SplitOrderModel.swift */; };
+		05B5538A2E39418100F2F0E5 /* SplitOrderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B553872E39417600F2F0E5 /* SplitOrderModel.swift */; };
+		05B5538B2E39418100F2F0E5 /* SplitOrderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B553872E39417600F2F0E5 /* SplitOrderModel.swift */; };
 		111005E229D367080069BEDE /* HistoryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 111005E129D367080069BEDE /* HistoryTest.swift */; };
 		1113E43729C27FBA0043083E /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1113E43629C27FBA0043083E /* History.swift */; };
 		1113E43829C27FBA0043083E /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1113E43629C27FBA0043083E /* History.swift */; };
@@ -630,6 +635,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0511BBAD2E4122F8002EC973 /* SplitOrderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitOrderTest.swift; sourceTree = "<group>"; };
+		05B553872E39417600F2F0E5 /* SplitOrderModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitOrderModel.swift; sourceTree = "<group>"; };
 		0A4BE9F3CB565F9C5BB8E3F8 /* Pods-Omicron.qa.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron.qa.xcconfig"; path = "Target Support Files/Pods-Omicron/Pods-Omicron.qa.xcconfig"; sourceTree = "<group>"; };
 		111005E129D367080069BEDE /* HistoryTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTest.swift; sourceTree = "<group>"; };
 		1113E43629C27FBA0043083E /* History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = History.swift; sourceTree = "<group>"; };
@@ -843,6 +850,16 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		05B5537D2E392EEF00F2F0E5 /* SplitOrder */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = SplitOrder;
+			sourceTree = "<group>";
+		};
+		05BDA76D2E37E11D007BAC4C /* SplitOrder */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = SplitOrder;
+			sourceTree = "<group>";
+		};
 		11254FBE2DDD30D100B71F9B /* AddComponent */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = AddComponent;
@@ -1033,6 +1050,7 @@
 		4989CC8F25ED900200257CA2 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				05B553872E39417600F2F0E5 /* SplitOrderModel.swift */,
 				11254FC82DDD3DC600B71F9B /* AddComponentModel.swift */,
 				1132D5302CB86557007345A6 /* OrderPDFRequestModel.swift */,
 				1EF0321F251932DA0040DC65 /* Workload.swift */,
@@ -1070,6 +1088,7 @@
 		4989CCB725ED956A00257CA2 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
+				05B5537D2E392EEF00F2F0E5 /* SplitOrder */,
 				11254FBE2DDD30D100B71F9B /* AddComponent */,
 				11717B7B29C2468900B9ADFC /* History */,
 				7FE43E2029B5C562001049A6 /* BulkOrder */,
@@ -1459,6 +1478,7 @@
 		98015CC524AFBC6D00E7772F /* OmicronTests */ = {
 			isa = PBXGroup;
 			children = (
+				0511BBAD2E4122F8002EC973 /* SplitOrderTest.swift */,
 				111005E029D366DB0069BEDE /* History */,
 				11E7879A29B65A9000B888C6 /* Supplies */,
 				4993351127F25DBD00CEBDC2 /* Batches */,
@@ -1569,6 +1589,7 @@
 		98C8C03624AFCB9800018A88 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				05BDA76D2E37E11D007BAC4C /* SplitOrder */,
 				11580C302DDBEC4500C00FE1 /* AddComponent */,
 				11717B8129C2470700B9ADFC /* History */,
 				11FD7B1A29C232F200F04747 /* Dropdown */,
@@ -1647,6 +1668,8 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				05B5537D2E392EEF00F2F0E5 /* SplitOrder */,
+				05BDA76D2E37E11D007BAC4C /* SplitOrder */,
 				11254FBE2DDD30D100B71F9B /* AddComponent */,
 				11580C302DDBEC4500C00FE1 /* AddComponent */,
 				115D38722DE91AB5008451A6 /* Extensions */,
@@ -1672,6 +1695,8 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				05B5537D2E392EEF00F2F0E5 /* SplitOrder */,
+				05BDA76D2E37E11D007BAC4C /* SplitOrder */,
 				11254FBE2DDD30D100B71F9B /* AddComponent */,
 				11580C302DDBEC4500C00FE1 /* AddComponent */,
 				115D38722DE91AB5008451A6 /* Extensions */,
@@ -1698,6 +1723,8 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				05B5537D2E392EEF00F2F0E5 /* SplitOrder */,
+				05BDA76D2E37E11D007BAC4C /* SplitOrder */,
 				11254FBE2DDD30D100B71F9B /* AddComponent */,
 				11580C302DDBEC4500C00FE1 /* AddComponent */,
 				115D38722DE91AB5008451A6 /* Extensions */,
@@ -1724,6 +1751,8 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				05B5537D2E392EEF00F2F0E5 /* SplitOrder */,
+				05BDA76D2E37E11D007BAC4C /* SplitOrder */,
 				11254FBE2DDD30D100B71F9B /* AddComponent */,
 				11580C302DDBEC4500C00FE1 /* AddComponent */,
 				115D38722DE91AB5008451A6 /* Extensions */,
@@ -2491,6 +2520,7 @@
 				490B69B2268E98ED00DBE9F1 /* LotsTableViewCell.swift in Sources */,
 				490B69B3268E98ED00DBE9F1 /* ValidateOrderModel.swift in Sources */,
 				490B69B4268E98ED00DBE9F1 /* LoginViewModel.swift in Sources */,
+				05B553882E39418100F2F0E5 /* SplitOrderModel.swift in Sources */,
 				490B69B5268E98ED00DBE9F1 /* HeaderCollectionViewCell.swift in Sources */,
 				490B69B6268E98ED00DBE9F1 /* CardCollectionViewCell.swift in Sources */,
 				4993350727F2202200CEBDC2 /* LotsViewModelExtension.swift in Sources */,
@@ -2599,6 +2629,7 @@
 				49CF65F225F2D4AB002CD598 /* LotsTableViewCell.swift in Sources */,
 				49CF65F325F2D4AB002CD598 /* ValidateOrderModel.swift in Sources */,
 				49CF65F425F2D4AB002CD598 /* LoginViewModel.swift in Sources */,
+				05B5538B2E39418100F2F0E5 /* SplitOrderModel.swift in Sources */,
 				49CF65F525F2D4AB002CD598 /* HeaderCollectionViewCell.swift in Sources */,
 				49CF65F625F2D4AB002CD598 /* CardCollectionViewCell.swift in Sources */,
 				4993350527F2202200CEBDC2 /* LotsViewModelExtension.swift in Sources */,
@@ -2707,6 +2738,7 @@
 				49CF667525F2D821002CD598 /* LotsTableViewCell.swift in Sources */,
 				49CF667625F2D821002CD598 /* ValidateOrderModel.swift in Sources */,
 				49CF667725F2D821002CD598 /* LoginViewModel.swift in Sources */,
+				05B553892E39418100F2F0E5 /* SplitOrderModel.swift in Sources */,
 				49CF667825F2D821002CD598 /* HeaderCollectionViewCell.swift in Sources */,
 				49CF667925F2D821002CD598 /* CardCollectionViewCell.swift in Sources */,
 				4993350627F2202200CEBDC2 /* LotsViewModelExtension.swift in Sources */,
@@ -2815,6 +2847,7 @@
 				7C0017A824EF4D300025B17D /* LotsTableViewCell.swift in Sources */,
 				1E2A7600255362780014F38D /* ValidateOrderModel.swift in Sources */,
 				98C8C03124AFBD4100018A88 /* LoginViewModel.swift in Sources */,
+				05B5538A2E39418100F2F0E5 /* SplitOrderModel.swift in Sources */,
 				1E1C01A0250EA53A00CA6263 /* HeaderCollectionViewCell.swift in Sources */,
 				7CBA553C24CF8E9B00918C38 /* CardCollectionViewCell.swift in Sources */,
 				4993350427F2202200CEBDC2 /* LotsViewModelExtension.swift in Sources */,
@@ -2827,6 +2860,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7C5DFB16251C82740041B2AC /* BatchTest.swift in Sources */,
+				0511BBAE2E412304002EC973 /* SplitOrderTest.swift in Sources */,
 				49005EB825DF1AC700EA4206 /* ExtensionInboxTest.swift in Sources */,
 				7C5DFB1A251D50920041B2AC /* OrderDetailFormTest.swift in Sources */,
 				49C2F71125DF1C8B00673471 /* ExtensionInbox2Test.swift in Sources */,
