@@ -6,10 +6,10 @@
 // </copyright>
 // </summary>
 
-using Omicron.Pedidos.Services.OrderHistory;
-
 namespace Omicron.Pedidos.Test.MediatR
 {
+    using Omicron.Pedidos.Services.OrderHistory;
+
     /// <summary>
     /// Tests for SeparateProductionOrderHandler.
     /// </summary>
@@ -20,7 +20,7 @@ namespace Omicron.Pedidos.Test.MediatR
         private Mock<IBackgroundTaskQueue> mockBackgroundTaskQueue;
         private DatabaseContext context;
         private IPedidosDao pedidosDao;
-        private Mock<OrderHistoryHelper> mockOrderHistoryHelper;
+        private Mock<IOrderHistoryHelper> mockOrderHistoryHelper;
 
         /// <summary>
         /// The set up.
@@ -38,7 +38,7 @@ namespace Omicron.Pedidos.Test.MediatR
             this.pedidosDao = new PedidosDao(this.context);
             this.mockLogger = new Mock<ILogger>();
             this.mockBackgroundTaskQueue = new Mock<IBackgroundTaskQueue>();
-            this.mockOrderHistoryHelper = new Mock<OrderHistoryHelper>();
+            this.mockOrderHistoryHelper = new Mock<IOrderHistoryHelper>();
         }
 
         /// <summary>
