@@ -9,6 +9,7 @@
 namespace Omicron.Pedidos.Services.OrderHistory
 {
     using System.Threading.Tasks;
+    using Omicron.Pedidos.Services.MediatR.Commands;
 
     /// <summary>
     /// IOrderHistoryHelper.
@@ -19,20 +20,8 @@ namespace Omicron.Pedidos.Services.OrderHistory
         /// SaveHistoryOrdersFab.
         /// </summary>
         /// <param name="detailOrderId">Child order number.</param>
-        /// <param name="orderId">Parent order number.</param>
-        /// <param name="userId">User who performed the division.</param>
-        /// <param name="dxpOrder">DXP order number (can be null).</param>
-        /// <param name="sapOrder">SAP order number (can be null).</param>
-        /// <param name="assignedPieces">Pieces assigned in this division.</param>
-        /// <param name="totalPieces">Total pieces of the parent order.</param>
+        /// <param name="request">Parent request.</param>
         /// <returns>the return.</returns>
-        Task SaveHistoryOrdersFab(
-            int detailOrderId,
-            int orderId,
-            string userId,
-            string dxpOrder,
-            int? sapOrder,
-            int assignedPieces,
-            int totalPieces);
+        Task SaveHistoryOrdersFab(int detailOrderId, SeparateProductionOrderCommand request);
     }
 }

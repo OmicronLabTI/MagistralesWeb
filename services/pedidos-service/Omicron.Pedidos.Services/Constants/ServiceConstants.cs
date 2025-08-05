@@ -1058,6 +1058,14 @@ namespace Omicron.Pedidos.Services.Constants
         public const string PartiallyDivided = "Parcialmente dividida";
 
         /// <summary>
+        /// Gets ProductionDetailCount.
+        /// </summary>
+        /// <value>
+        /// ProductionDetailCount.
+        /// </value>
+        public const int ProductionDetailCount = 1;
+
+        /// <summary>
         /// Gets DefaultRedisValueTimeToLive.
         /// </summary>
         /// <value>

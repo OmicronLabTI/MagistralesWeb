@@ -83,15 +83,7 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
 
                 await this.CancelProductionOrderProcess(productionOrder, request, logBase);
                 var childOrderId = await this.CreateChildOrdersProcess(productionOrder, request.ProductionOrderId, request.Pieces, request.SeparationId);
-
-                await this.orderHistoryHelper.SaveHistoryOrdersFab(
-                    childOrderId,
-                    request.ProductionOrderId,
-                    request.UserId,
-                    request.DxpOrder,
-                    request.SapOrder,
-                    request.Pieces,
-                    request.TotalPieces);
+                await this.orderHistoryHelper.SaveHistoryOrdersFab(childOrderId, request);
 
                 var redisKey = string.Format(ServiceConstants.ProductionOrderSeparationProcessKey, request.ProductionOrderId);
                 await this.redisService.DeleteKey(redisKey);

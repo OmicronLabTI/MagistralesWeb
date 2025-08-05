@@ -56,14 +56,17 @@ namespace Omicron.Pedidos.Test.MediatR
         {
             // Arrange
             int detailOrderId = 1001;
-            int orderId = 1000;
-            string userId = "testUser";
-            string dxpOrder = "99c7c928-2afa-4a84-8a3e-13ce38bfd98f";
-            int sapOrder = 789456;
-            int assignedPieces = 5;
+            var request = new SeparateProductionOrderCommand(
+                productionOrderId: 1000,
+                pieces: 5,
+                separationId: "99c7c928-2afa",
+                userId: "testUser",
+                dxpOrder: "99c7c928-2afa-4a84-8a3e-13ce38bfd98f",
+                sapOrder: 789456,
+                totalPieces: 10);
 
             this.mockOrderHistoryDao
-                .Setup(x => x.GetMaxDivision(orderId))
+                .Setup(x => x.GetMaxDivision(request.ProductionOrderId))
                 .ReturnsAsync(0);
 
             this.mockOrderHistoryDao
@@ -72,17 +75,12 @@ namespace Omicron.Pedidos.Test.MediatR
 
             // Act
             var result = await this.orderHistoryHelper.RegisterSeparatedOrdersDetail(
-                detailOrderId,
-                orderId,
-                userId,
-                dxpOrder,
-                sapOrder,
-                assignedPieces);
+                detailOrderId, request);
 
             // Assert
             Assert.That(result, Is.True);
             this.mockOrderHistoryDao.Verify(
-                x => x.GetMaxDivision(orderId),
+                x => x.GetMaxDivision(request.ProductionOrderId),
                 Times.Once);
             this.mockOrderHistoryDao.Verify(
                 x => x.InsertDetailOrder(It.IsAny<ProductionOrderSeparationDetailModel>()),
@@ -187,17 +185,19 @@ namespace Omicron.Pedidos.Test.MediatR
         {
             // Arrange
             int detailOrderId = 1001;
-            int orderId = 1000;
-            string userId = "testUser";
-            string dxpOrder = "99c7c928-2afa-4a84-8a3e-13ce38bfd98f";
-            int sapOrder = 789456;
-            int assignedPieces = 5;
-            int totalPieces = 10;
+            var request = new SeparateProductionOrderCommand(
+                productionOrderId: 1000,
+                pieces: 5,
+                separationId: "some-separation-id",
+                userId: "testUser",
+                dxpOrder: "some-dxporder",
+                sapOrder: 789456,
+                totalPieces: 10);
 
             var existingOrder = new ProductionOrderSeparationDetailModel
             {
                 DetailOrderId = detailOrderId,
-                OrderId = orderId,
+                OrderId = request.ProductionOrderId,
             };
 
             this.mockOrderHistoryDao
@@ -206,13 +206,7 @@ namespace Omicron.Pedidos.Test.MediatR
 
             // Act
             await this.orderHistoryHelper.SaveHistoryOrdersFab(
-                detailOrderId,
-                orderId,
-                userId,
-                dxpOrder,
-                sapOrder,
-                assignedPieces,
-                totalPieces);
+                detailOrderId, request);
 
             // Assert
             this.mockOrderHistoryDao.Verify(

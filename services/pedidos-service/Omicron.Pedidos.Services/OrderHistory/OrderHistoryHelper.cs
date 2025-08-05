@@ -10,9 +10,12 @@ namespace Omicron.Pedidos.Services.OrderHistory
 {
     using System;
     using System.Threading.Tasks;
+    using global::Azure.Core;
+    using Microsoft.EntityFrameworkCore.Query.Internal;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Model.Db;
     using Omicron.Pedidos.Services.Constants;
+    using Omicron.Pedidos.Services.MediatR.Commands;
     using Omicron.Pedidos.Services.Utils;
     using Serilog;
 
@@ -39,24 +42,12 @@ namespace Omicron.Pedidos.Services.OrderHistory
         /// Combined method to register both the child order and update the parent order.
         /// </summary>
         /// <param name="detailOrderId">Child order number.</param>
-        /// <param name="orderId">Parent order number.</param>
-        /// <param name="userId">User who performed the division.</param>
-        /// <param name="dxpOrder">DXP order number (can be null).</param>
-        /// <param name="sapOrder">SAP order number (can be null).</param>
-        /// <param name="assignedPieces">Pieces assigned in this division.</param>
-        /// <param name="totalPieces">Total pieces of the parent order.</param>
+        /// <param name="request">request.</param>
         /// <returns>True if the registration was successful.</returns>
-        public async Task SaveHistoryOrdersFab(
-            int detailOrderId,
-            int orderId,
-            string userId,
-            string dxpOrder,
-            int? sapOrder,
-            int assignedPieces,
-            int totalPieces)
+        public async Task SaveHistoryOrdersFab(int detailOrderId, SeparateProductionOrderCommand request)
         {
-            var logBase = string.Format(LogsConstants.SaveHistoryOrdersFabLogBase, detailOrderId, orderId);
-            this.logger.Information(LogsConstants.SaveHistoryOrdersFabStart, logBase, assignedPieces, userId, sapOrder);
+            var logBase = string.Format(LogsConstants.SaveHistoryOrdersFabLogBase, detailOrderId, request.ProductionOrderId);
+            this.logger.Information(LogsConstants.SaveHistoryOrdersFabStart, logBase, request.Pieces, request.UserId, request.SapOrder);
             try
             {
                 var existingOrderDetail = await this.orderHistoryDao.GetDetailOrderById(detailOrderId);
@@ -66,15 +57,9 @@ namespace Omicron.Pedidos.Services.OrderHistory
                     return;
                 }
 
-                var childResult = await this.RegisterSeparatedOrdersDetail(
-                detailOrderId,
-                orderId,
-                userId,
-                dxpOrder,
-                sapOrder,
-                assignedPieces);
+                var childResult = await this.RegisterSeparatedOrdersDetail(detailOrderId, request);
 
-                var parentResult = await this.UpsertOrderSeparation(orderId, totalPieces, assignedPieces);
+                var parentResult = await this.UpsertOrderSeparation(request.ProductionOrderId, request.TotalPieces, request.Pieces);
             }
             catch (Exception ex)
             {
@@ -88,31 +73,21 @@ namespace Omicron.Pedidos.Services.OrderHistory
         /// Register the details of an order.
         /// </summary>
         /// <param name="detailOrderId"> detailOrderId.</param>
-        /// <param name="orderId"> orderId.</param>
-        /// <param name="userId"> userId.</param>
-        /// <param name="dxpOrder">dxpOrder.</param>
-        /// <param name="sapOrder">sapOrder.</param>
-        /// <param name="assignedPieces">assignedPieces.</param>
+        /// <param name="request"> request.</param>
         /// <returns>True register successfully.</returns>
-        public async Task<bool> RegisterSeparatedOrdersDetail(
-            int detailOrderId,
-            int orderId,
-            string userId,
-            string dxpOrder,
-            int? sapOrder,
-            int assignedPieces)
+        public async Task<bool> RegisterSeparatedOrdersDetail(int detailOrderId, SeparateProductionOrderCommand request)
         {
-            var consecutiveIndex = await this.GetNextDivision(orderId);
+            var consecutiveIndex = await this.GetNextDivision(request.ProductionOrderId);
 
             var insertDetailOrderId = new ProductionOrderSeparationDetailModel
             {
                 DetailOrderId = detailOrderId,
-                OrderId = orderId,
-                UserId = userId,
+                OrderId = request.ProductionOrderId,
+                UserId = request.UserId,
                 CreatedAt = DateTime.Now,
-                DxpOrder = string.IsNullOrEmpty(dxpOrder) ? null : dxpOrder,
-                SapOrder = sapOrder,
-                AssignedPieces = assignedPieces,
+                DxpOrder = string.IsNullOrEmpty(request.DxpOrder) ? null : request.DxpOrder,
+                SapOrder = request.SapOrder,
+                AssignedPieces = request.Pieces,
                 ConsecutiveIndex = consecutiveIndex,
             };
 
@@ -141,7 +116,7 @@ namespace Omicron.Pedidos.Services.OrderHistory
                 var newParent = new ProductionOrderSeparationModel
                 {
                     OrderId = orderId,
-                    ProductionDetailCount = 1,
+                    ProductionDetailCount = ServiceConstants.ProductionDetailCount,
                     TotalPieces = totalPieces,
                     AvailablePieces = availablePieces,
                     Status = isCompleteDivided ? ServiceConstants.CompletelyDivided : ServiceConstants.PartiallyDivided,
