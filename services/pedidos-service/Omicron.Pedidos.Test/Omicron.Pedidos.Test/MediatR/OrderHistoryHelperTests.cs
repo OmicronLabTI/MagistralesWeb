@@ -8,8 +8,6 @@
 
 namespace Omicron.Pedidos.Test.MediatR
 {
-    using Omicron.Pedidos.Services.OrderHistory;
-
     /// <summary>
     /// Tests for OrderHistoryHelperTests.
     /// </summary>
@@ -40,7 +38,7 @@ namespace Omicron.Pedidos.Test.MediatR
         }
 
         /// <summary>
-        /// Resetear mocks.
+        /// Tests for OrderHistory.
         /// </summary>
         [SetUp]
         public void SetUp()
@@ -50,11 +48,11 @@ namespace Omicron.Pedidos.Test.MediatR
         }
 
         /// <summary>
-        /// Test RegisterSeparatedOrdersDetail with new order should return true.
+        /// successful insertion of child.
         /// </summary>
         /// <returns>Task.</returns>
         [Test]
-        public async Task RegisterSeparatedOrdersDetail_NewOrder_ShouldReturnTrue()
+        public async Task RegisterOrdersDetail()
         {
             // Arrange
             int detailOrderId = 1001;
@@ -92,11 +90,11 @@ namespace Omicron.Pedidos.Test.MediatR
         }
 
         /// <summary>
-        /// Test UpsertOrderSeparation with new parent order should insert.
+        /// successful insertion of parent.
         /// </summary>
         /// <returns>Task.</returns>
         [Test]
-        public async Task UpsertOrderSeparation_NewParentOrder_ShouldInsert()
+        public async Task UpsertOrderParent()
         {
             // Arrange
             int orderId = 1000;
@@ -133,11 +131,11 @@ namespace Omicron.Pedidos.Test.MediatR
         }
 
         /// <summary>
-        /// Test UpsertOrderSeparation with existing parent order should update.
+        /// successful update of parent.
         /// </summary>
         /// <returns>Task.</returns>
         [Test]
-        public async Task UpsertOrderSeparation_ExistingParentOrder_ShouldUpdate()
+        public async Task UpsertOrderExistingParent()
         {
             // Arrange
             int orderId = 1000;
@@ -181,11 +179,11 @@ namespace Omicron.Pedidos.Test.MediatR
         }
 
         /// <summary>
-        /// Test SaveHistoryOrdersFab with existing child should not register detail.
+        /// Validation of duplicates child.
         /// </summary>
         /// <returns>Task.</returns>
         [Test]
-        public async Task SaveHistoryOrdersFab_ExistingChild_ShouldNotRegisterDetail()
+        public async Task SaveHistoryOrdersExistingChild()
         {
             // Arrange
             int detailOrderId = 1001;

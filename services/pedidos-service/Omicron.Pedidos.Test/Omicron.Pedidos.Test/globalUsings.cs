@@ -29,6 +29,7 @@ global using Omicron.Pedidos.Services.Mapping;
 global using Omicron.Pedidos.Services.MediatR.Commands;
 global using Omicron.Pedidos.Services.MediatR.Handlers;
 global using Omicron.Pedidos.Services.MediatR.Services;
+global using Omicron.Pedidos.Services.OrderHistory;
 global using Omicron.Pedidos.Services.Pedidos;
 global using Omicron.Pedidos.Services.ProductionOrders;
 global using Omicron.Pedidos.Services.Redis;
