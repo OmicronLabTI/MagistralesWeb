@@ -344,3 +344,8 @@ struct OrderRelationTypes {
     static let padre = "Padre"
     static let hija = "Hija"
 }
+
+enum typeOrderIcon: String {
+    case padre = "parentOrdersIcon"
+    case hija = "childOrderIcon"
+}

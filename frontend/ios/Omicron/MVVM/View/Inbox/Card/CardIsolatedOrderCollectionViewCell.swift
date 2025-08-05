@@ -20,6 +20,7 @@ class CardIsolatedOrderCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var qfbNameContainer: UIView!
     @IBOutlet weak var itemCodeConstrains: NSLayoutConstraint!
     @IBOutlet weak var descriptionConstraint: NSLayoutConstraint!
+    @IBOutlet weak var splitIsolateOrderIcon: UIImageView!
     weak var delegate: CardCellDelegate?
     var row: Int = -1
 
