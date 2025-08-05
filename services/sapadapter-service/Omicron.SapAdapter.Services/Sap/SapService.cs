@@ -16,11 +16,9 @@ namespace Omicron.SapAdapter.Services.Sap
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
-    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
@@ -389,6 +387,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     PatientName = pedidoLocal.Patient.ValidateNull().Replace(ServiceConstants.PatientConstant, string.Empty),
                     Details = ServiceShared.CalculateTernary(returnDetails, details, new List<CompleteDetalleFormulaModel>()),
                     ShopTransaction = pedidoLocal.DocNumDxp,
+                    OnSplitProcess = await this.GetRedisSeparateKey(o.OrdenId),
                 };
 
                 listToReturn.Add(formulaDetalle);
@@ -991,6 +990,13 @@ namespace Omicron.SapAdapter.Services.Sap
             return orders
                 .Where(order => allowedClassifications.Contains(order.OrderType))
                 .ToList();
+        }
+
+        private async Task<bool> GetRedisSeparateKey(int productionOrderId)
+        {
+            var redisKey = string.Format(ServiceConstants.ProductionOrderSeparationProcessKey, productionOrderId);
+            var redisValue = await this.redisService.GetRedisKey(redisKey);
+            return !string.IsNullOrEmpty(redisValue);
         }
 
         private (string, string, string) RefillOrders(CompleteOrderModel order, string doctorName, List<string> specialCardCodes, List<ClientCatalogModel> alias)
