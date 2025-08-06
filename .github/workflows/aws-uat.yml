@@ -14,6 +14,7 @@ on:
       - frontend/**
       - services/**
       - database/**
+      - batches/**
 
 concurrency:
   group: ${{ github.ref }}
