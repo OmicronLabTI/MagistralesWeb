@@ -1181,6 +1181,34 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<ProductoModel> GetFullProductInfo(string itemCode)
+        {
+            return await (from p in this.databaseContext.ProductoModel
+                        .Where(x => x.ProductoId == itemCode)
+                          join firm in this.databaseContext.ProductFirmModel on p.ProductFirmCode equals firm.ProductFirmCode
+                            into productFirm
+                          from fm in productFirm.DefaultIfEmpty()
+                          select new ProductoModel
+                          {
+                              BarCode = p.BarCode,
+                              IsLine = p.IsLine,
+                              IsMagistral = p.IsMagistral,
+                              LargeDescription = p.LargeDescription,
+                              ManagedBatches = p.ManagedBatches,
+                              NeedsCooling = p.NeedsCooling,
+                              OnHand = p.OnHand,
+                              ProductGroupId = p.ProductGroupId,
+                              ProductoId = p.ProductoId,
+                              ProductoName = p.ProductoName,
+                              Unit = p.Unit,
+                              IsWorkableProduct = p.IsWorkableProduct,
+                              IsPackage = p.IsPackage,
+                              ThemeId = p.ThemeId,
+                              ProductFirmName = fm == default ? string.Empty : fm.ProductFirmName,
+                          }).FirstOrDefaultAsync();
+        }
+
+        /// <inheritdoc/>
         public async Task<IEnumerable<Repartidores>> GetDeliveryCompanies()
         {
             return await this.RetryQuery(this.databaseContext.Repartidores.Where(x => !string.IsNullOrEmpty(x.TrnspName)).AsNoTracking());
@@ -1549,6 +1577,43 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                 .ToListAsync();
 
             return products;
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<WarehouseModel>> GetWarehousesConfig(List<string> configwarehouses)
+        {
+            var wareshouses = await this.databaseContext.WarehouseModel
+            .Where(x => configwarehouses.Contains(x.WarehouseCode))
+            .ToListAsync();
+
+            return wareshouses;
+        }
+
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<ProductFirmModel>> GetManufacturers(List<string> manufacturers)
+        {
+            var query = from p in this.databaseContext.ProductFirmModel.AsNoTracking()
+                        where manufacturers.Contains(p.ProductFirmName)
+                        select new ProductFirmModel
+                        {
+                            ProductFirmCode = (int)(object)p.ProductFirmCode,
+                            ProductFirmName = p.ProductFirmName
+                        };
+
+            var list = await query.ToListAsync();
+
+            return list;
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<string>> GetProducts(List<string> products)
+        {
+            var list = await this.databaseContext.ProductoModel
+            .Where(x => products.Contains(x.ProductoId))
+            .Select(x => x.ProductoId)
+            .ToListAsync();
+            return list;
         }
 
         /// <inheritdoc/>

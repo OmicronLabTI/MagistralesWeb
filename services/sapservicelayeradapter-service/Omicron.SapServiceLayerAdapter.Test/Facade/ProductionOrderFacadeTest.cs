@@ -53,6 +53,34 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
         }
 
         /// <summary>
+        /// Test for selecting all models.
+        /// </summary>
+        /// <returns>nothing.</returns>
+        [Test]
+        public async Task PrimaryValidationForProductionOrderFinalizationInSap()
+        {
+            // Act
+            var response = await this.productionOrderfacade.PrimaryValidationForProductionOrderFinalizationInSap(new List<CloseProductionOrderDto>());
+
+            // Assert
+            AssertResponse(response);
+        }
+
+        /// <summary>
+        /// FinalizeProductionOrderInSap.
+        /// </summary>
+        /// <returns>nothing.</returns>
+        [Test]
+        public async Task FinalizeProductionOrderInSap()
+        {
+            // Act
+            var response = await this.productionOrderfacade.FinalizeProductionOrderInSap(new List<CloseProductionOrderDto>());
+
+            // Assert
+            AssertResponse(response);
+        }
+
+        /// <summary>
         /// Test for update formula.
         /// </summary>
         /// <returns>nothing.</returns>

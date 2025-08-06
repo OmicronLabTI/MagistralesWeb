@@ -156,10 +156,10 @@ extension Detail: Mappable {
     }
 }
 class OrderDetailRequest: Codable {
-    let fabOrderID: Int
-    let plannedQuantity: Decimal
-    let fechaFin, comments, warehouse: String
-    let components: [Component]
+    var fabOrderID: Int
+    var plannedQuantity: Decimal
+    var fechaFin, comments, warehouse: String
+    var components: [Component]
     init(fabOrderID: Int, plannedQuantity: Decimal, fechaFin: String,
          comments: String, warehouse: String, components: [Component]) {
         self.fabOrderID = fabOrderID
@@ -171,13 +171,13 @@ class OrderDetailRequest: Codable {
     }
 }
 class Component: Codable {
-    let orderFabId: Int
-    let productId, componentDescription: String
-    let baseQuantity, requiredQuantity, pendingQuantity, stock,
+    var orderFabId: Int
+    var productId, componentDescription: String
+    var baseQuantity, requiredQuantity, pendingQuantity, stock,
     warehouseQuantity, consumed, available: Double
-    let unit, warehouse: String
-    let action: String
-    let assignedBatches: [AssignedBatch]
+    var unit, warehouse: String
+    var action: String
+    var assignedBatches: [AssignedBatch]
     init(orderFabID: Int, productId: String, componentDescription: String,
          baseQuantity: Double, requiredQuantity: Double, consumed: Double, available: Double,
          unit: String, warehouse: String, pendingQuantity: Double, stock: Double,

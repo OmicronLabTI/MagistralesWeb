@@ -134,7 +134,8 @@ class ComponetsTest: XCTestCase {
         let values = ComponentFormValues(baseQuantity: 2.0,
                                          requiredQuantity: 2.0,
                                          warehouse: "MN",
-                                         selectedComponent: comp)
+                                         selectedComponent: comp,
+                                         warehouses: [])
         let productOrderId = 89466
         let plannedQuantity: Decimal = 1.0
         let fechaFin =
@@ -199,7 +200,8 @@ class ComponetsTest: XCTestCase {
         let values = ComponentFormValues(baseQuantity: 2,
                                          requiredQuantity: 1,
                                          warehouse: "MG",
-                                         selectedComponent: componentSelected)
+                                         selectedComponent: componentSelected,
+                                         warehouses: [])
         componentsViewModel?.saveSuccess.subscribe(onNext: { _ in
             XCTAssertTrue(true)
         }).disposed(by: disposeBag!)
@@ -211,7 +213,8 @@ class ComponetsTest: XCTestCase {
         let values = ComponentFormValues(baseQuantity: 2,
                                          requiredQuantity: 1,
                                          warehouse: "MG",
-                                         selectedComponent: ComponentO())
+                                         selectedComponent: ComponentO(),
+                                         warehouses: [])
         componentsViewModel?.saveSuccess.subscribe(onNext: { _ in
             XCTAssertTrue(true)
         }).disposed(by: disposeBag!)
@@ -223,7 +226,8 @@ class ComponetsTest: XCTestCase {
         let values = ComponentFormValues(baseQuantity: 2,
                                          requiredQuantity: 1,
                                          warehouse: "MG",
-                                         selectedComponent: ComponentO())
+                                         selectedComponent: ComponentO(),
+                                         warehouses: [])
         componentsViewModel?.saveSuccess.subscribe(onNext: { _ in
             XCTAssertTrue(true)
         }).disposed(by: disposeBag!)

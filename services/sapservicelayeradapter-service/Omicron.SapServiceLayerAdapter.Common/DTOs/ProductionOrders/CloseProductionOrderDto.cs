@@ -14,10 +14,26 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
     public class CloseProductionOrderDto
     {
         /// <summary>
-        /// Gets or sets order identifier.
+        /// Gets or sets ProductionOrderId.
         /// </summary>
-        /// <value>The order id.</value>
-        public int OrderId { get; set; }
+        /// <value>The ProductionOrderId.</value>
+        public int ProductionOrderId { get; set; }
+
+        /// <summary>
+        /// Gets or sets ProcessId.
+        /// </summary>
+        /// <value>
+        /// ProcessId.
+        /// </value>
+        public string ProcessId { get; set; }
+
+        /// <summary>
+        /// Gets or sets ProcessId.
+        /// </summary>
+        /// <value>
+        /// ProcessId.
+        /// </value>
+        public string LastStep { get; set; }
 
         /// <summary>
         /// Gets or sets batches.

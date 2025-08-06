@@ -1,0 +1,12 @@
+{
+  "code": 200,
+  "userError": null,
+  "exceptionMessage": null,
+  "success": true,
+  "response": [
+      "MG",
+      "PT",
+      "WEB"
+  ],
+  "comments": 477
+}

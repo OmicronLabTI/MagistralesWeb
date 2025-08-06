@@ -123,10 +123,15 @@ describe('AppComponent', () => {
     localStorageServiceSpy.getOrderIsolated.and.returnValue('orderTest');
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
       'getIsToSaveAnything',
-      'calculateTernary'
+      'calculateTernary',
+      'validateValidString'
     ]);
     dataServiceSpy.calculateTernary.and.callFake(<T, U>(validation: boolean, firstValue: T, secondaValue: U): T | U => {
       return validation ? firstValue : secondaValue;
+    });
+    dataServiceSpy.validateValidString.and.callFake((text: string) => {
+      const res = [text !== '', text !== undefined, text !== null];
+      return res.every( item => item);
     });
     dataServiceSpy.getIsToSaveAnything.and.returnValue(false);
     // ------------ Observable Service
@@ -247,17 +252,17 @@ describe('AppComponent', () => {
   });
 
   it('should createDialogHttpOhAboutTypePlace', () => {
-    component.createDialogHttpOhAboutTypePlace(MODAL_NAMES.placeOrders, true);
+    component.createDialogHttpOhAboutTypePlace(MODAL_NAMES.placeOrders, true, false);
     expect(observableServiceSpy.setCallHttpService).toHaveBeenCalled();
   });
 
   it('should createDialogHttpOhAboutTypePlace PlaceOrders', () => {
-    component.createDialogHttpOhAboutTypePlace(MODAL_NAMES.placeOrders, false);
+    component.createDialogHttpOhAboutTypePlace(MODAL_NAMES.placeOrders, false, false);
     expect(observableServiceSpy.setCallHttpService).toHaveBeenCalled();
   });
 
   it('should createDialogHttpOhAboutTypePlace another modal', () => {
-    component.createDialogHttpOhAboutTypePlace(MODAL_NAMES.placeOrdersDetail, false);
+    component.createDialogHttpOhAboutTypePlace(MODAL_NAMES.placeOrdersDetail, false, true);
     expect(observableServiceSpy.setCallHttpService).toHaveBeenCalled();
   });
 

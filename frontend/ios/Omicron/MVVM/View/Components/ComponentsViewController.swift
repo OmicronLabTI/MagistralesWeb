@@ -27,6 +27,7 @@ class ComponentsViewController: UIViewController {
     var typeOpen = TypeComponentsOpenDialog.detailOrder
     var disposeBag = DisposeBag()
     var delegate: ComponentsDelegate?
+    var warehouses: [String] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -108,7 +109,7 @@ class ComponentsViewController: UIViewController {
 
     func continueItemSelected(_ data: ComponentO) {
         switch typeOpen {
-        case .detailOrder: createFormView(data: data)
+        case .detailOrder: self.createFormView(data: data)
         case .supplies: closeSelection(data: data)
         default: break
         }
@@ -118,6 +119,7 @@ class ComponentsViewController: UIViewController {
         let compFormVC = ComponentFormViewController()
         compFormVC.selectedComponent = data
         compFormVC.delegate = self.delegate
+        compFormVC.warehouses = self.warehouses
         self.navigationController?.pushViewController(compFormVC, animated: true)
     }
     func closeSelection(data: ComponentO) {

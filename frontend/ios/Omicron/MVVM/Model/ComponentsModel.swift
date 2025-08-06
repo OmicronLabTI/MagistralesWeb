@@ -120,13 +120,16 @@ class ComponentFormValues {
     var requiredQuantity: Double
     var warehouse: String
     var selectedComponent: ComponentO
+    var warehouses: [String]
     init(baseQuantity: Double, requiredQuantity: Double,
          warehouse: String,
-         selectedComponent: ComponentO) {
+         selectedComponent: ComponentO,
+         warehouses: [String]) {
         self.baseQuantity = baseQuantity
         self.requiredQuantity = requiredQuantity
         self.warehouse = warehouse
         self.selectedComponent = selectedComponent
+        self.warehouses = warehouses
     }
 }
 
@@ -218,4 +221,18 @@ class CreateComponentsOrders: Mappable {
 class ProductionOrder {
     var productionOrderId: Int?
     var reason: String?
+}
+
+
+class WarehouseResponse: HttpResponse {
+    var response: [String]
+    required init?(map: Map) {
+        self.response = []
+        super.init(map: map)
+    }
+
+    override func mapping(map: Map) {
+        super.mapping(map: map)
+        response <- map["response"]
+    }
 }

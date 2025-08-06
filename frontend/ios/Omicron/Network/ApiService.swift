@@ -34,6 +34,7 @@ enum ApiService {
     case createComponents(data: SendToStoreRequest)
     case getHistory(data: RawMaterialHistoryReq)
     case getLotsByProduct(data: LotsByProductRequest)
+    case getWarehousesByItemcode(data: WarehouseByProductRequest)
 }
 
 extension ApiService: AuthorizedTargetType {
@@ -103,6 +104,8 @@ extension ApiService: AuthorizedTargetType {
             return "/sapadapter/get/rawmaterialrequest"
         case .getLotsByProduct:
             return "/sapadapter/components/lotes/byitemcode"
+        case .getWarehousesByItemcode:
+            return "/catalogos/product/warehouses"
         }
     }
     var method: Moya.Method {
@@ -128,7 +131,8 @@ extension ApiService: AuthorizedTargetType {
              .getBulks,
              .getContainer,
              .getHistory,
-             .getLotsByProduct:
+             .getLotsByProduct,
+             .getWarehousesByItemcode:
             return .get
         case .deleteItemOfOrdenDetail,
              .changeStatusOrder,
@@ -167,6 +171,8 @@ extension ApiService: AuthorizedTargetType {
         case .getWorkload(let data):
             return .requestParameters(parameters: data.dictionary ?? [:], encoding: URLEncoding.queryString)
         case .getLotsByProduct(let data):
+            return .requestParameters(parameters: data.dictionary ?? [:], encoding: URLEncoding.queryString)
+        case .getWarehousesByItemcode(let data):
             return .requestParameters(parameters: data.dictionary ?? [:], encoding: URLEncoding.queryString)
         case .postOrdersPDF(let data):
             return .requestJSONEncodable(data)
@@ -321,6 +327,12 @@ extension ApiService: AuthorizedTargetType {
             return data
         case .getLotsByProduct:
             guard let url = Bundle.main.url(forResource: "lotsByProduct", withExtension: "json"),
+                let data = try? Data(contentsOf: url) else {
+                    return Data()
+            }
+            return data
+        case .getWarehousesByItemcode:
+            guard let url = Bundle.main.url(forResource: "warehouses", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()
             }

@@ -35,6 +35,20 @@ namespace Omicron.SapServiceLayerAdapter.Facade.ProductionOrder
         Task<ResultDto> FinishOrder(List<CloseProductionOrderDto> productionOrders);
 
         /// <summary>
+        /// Primary Validation For Production Order Finalization In Sap.
+        /// </summary>
+        /// <param name="productionOrderInfoToValidate">Production Order Info To Validate.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultDto> PrimaryValidationForProductionOrderFinalizationInSap(List<CloseProductionOrderDto> productionOrderInfoToValidate);
+
+        /// <summary>
+        /// Finalize Production Order In Sap.
+        /// </summary>
+        /// <param name="productionOrdersToFinalize">Production Order Info To Finalize.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultDto> FinalizeProductionOrderInSap(List<CloseProductionOrderDto> productionOrdersToFinalize);
+
+        /// <summary>
         /// Update Production Orders Batches.
         /// </summary>
         /// <param name="batchesToAssign">Batches To Assign.</param>

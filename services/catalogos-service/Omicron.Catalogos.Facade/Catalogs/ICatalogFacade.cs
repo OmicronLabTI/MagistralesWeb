@@ -86,5 +86,18 @@ namespace Omicron.Catalogos.Facade.Catalogs
         /// <param name="themesIds">the dictionary.</param>
         /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
         Task<ResultDto> GetProductsColors(List<string> themesIds);
+
+        /// <summary>
+        /// PostConfigWarehouses.
+        /// </summary>
+        /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
+        Task<ResultDto> PostConfigWarehouses();
+
+        /// <summary>
+        /// GetProductsColors.
+        /// </summary>
+        /// <param name="itemCode">the dictionary.</param>
+        /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
+        Task<ResultDto> GetWarehouses(string itemCode);
     }
 }

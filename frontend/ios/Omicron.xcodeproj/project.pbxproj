@@ -24,6 +24,10 @@
 		11254FCA2DDD3DD500B71F9B /* AddComponentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11254FC82DDD3DC600B71F9B /* AddComponentModel.swift */; };
 		11254FCB2DDD3DD500B71F9B /* AddComponentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11254FC82DDD3DC600B71F9B /* AddComponentModel.swift */; };
 		11254FCC2DDD3DD500B71F9B /* AddComponentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11254FC82DDD3DC600B71F9B /* AddComponentModel.swift */; };
+		112ACAF12E271E5B00AF41E9 /* warehouses.json in Resources */ = {isa = PBXBuildFile; fileRef = 112ACAF02E271E5700AF41E9 /* warehouses.json */; };
+		112ACAF22E271E5B00AF41E9 /* warehouses.json in Resources */ = {isa = PBXBuildFile; fileRef = 112ACAF02E271E5700AF41E9 /* warehouses.json */; };
+		112ACAF32E271E5B00AF41E9 /* warehouses.json in Resources */ = {isa = PBXBuildFile; fileRef = 112ACAF02E271E5700AF41E9 /* warehouses.json */; };
+		112ACAF42E271E5B00AF41E9 /* warehouses.json in Resources */ = {isa = PBXBuildFile; fileRef = 112ACAF02E271E5700AF41E9 /* warehouses.json */; };
 		1132D5312CB86569007345A6 /* OrderPDFRequestModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1132D5302CB86557007345A6 /* OrderPDFRequestModel.swift */; };
 		1132D5322CB86569007345A6 /* OrderPDFRequestModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1132D5302CB86557007345A6 /* OrderPDFRequestModel.swift */; };
 		1132D5332CB86569007345A6 /* OrderPDFRequestModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1132D5302CB86557007345A6 /* OrderPDFRequestModel.swift */; };
@@ -632,6 +636,7 @@
 		1113E43B29C288070043083E /* getHistory.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = getHistory.json; sourceTree = "<group>"; };
 		1122026829AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplieTableViewCellExtension.swift; sourceTree = "<group>"; };
 		11254FC82DDD3DC600B71F9B /* AddComponentModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddComponentModel.swift; sourceTree = "<group>"; };
+		112ACAF02E271E5700AF41E9 /* warehouses.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = warehouses.json; sourceTree = "<group>"; };
 		1132D5302CB86557007345A6 /* OrderPDFRequestModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderPDFRequestModel.swift; sourceTree = "<group>"; };
 		1135809329C0F87800A58C74 /* HistoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTableViewCell.swift; sourceTree = "<group>"; };
 		1135809829C1020400A58C74 /* HistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewController.swift; sourceTree = "<group>"; };
@@ -1485,6 +1490,7 @@
 		980F234124DA115E0073E2C8 /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
+				112ACAF02E271E5700AF41E9 /* warehouses.json */,
 				1EC2920A254B4C9F002FD4E3 /* connect.json */,
 				381B3BDB25E032460077F764 /* container.json */,
 				1EF0321D251931B30040DC65 /* workload.json */,
@@ -1824,6 +1830,7 @@
 				490B69BE268E98ED00DBE9F1 /* finishedOrderResponse.json in Resources */,
 				490B69BF268E98ED00DBE9F1 /* connect.json in Resources */,
 				490B69C0268E98ED00DBE9F1 /* LaunchScreen.storyboard in Resources */,
+				112ACAF12E271E5B00AF41E9 /* warehouses.json in Resources */,
 				490B69C1268E98ED00DBE9F1 /* CardCollectionViewCell.xib in Resources */,
 				7F878B2629EF4C770071BB91 /* FrutigerNextLT-Light.ttf in Resources */,
 				490B69C2268E98ED00DBE9F1 /* SF-Pro-Display-Bold.otf in Resources */,
@@ -1871,6 +1878,7 @@
 				49CF65FF25F2D4AB002CD598 /* finishedOrderResponse.json in Resources */,
 				49CF660025F2D4AB002CD598 /* connect.json in Resources */,
 				49CF660125F2D4AB002CD598 /* LaunchScreen.storyboard in Resources */,
+				112ACAF42E271E5B00AF41E9 /* warehouses.json in Resources */,
 				49CF660225F2D4AB002CD598 /* CardCollectionViewCell.xib in Resources */,
 				7F878B2429EF4C770071BB91 /* FrutigerNextLT-Light.ttf in Resources */,
 				49CF660325F2D4AB002CD598 /* SF-Pro-Display-Bold.otf in Resources */,
@@ -1918,6 +1926,7 @@
 				49CF668225F2D821002CD598 /* finishedOrderResponse.json in Resources */,
 				49CF668325F2D821002CD598 /* connect.json in Resources */,
 				49CF668425F2D821002CD598 /* LaunchScreen.storyboard in Resources */,
+				112ACAF32E271E5B00AF41E9 /* warehouses.json in Resources */,
 				49CF668525F2D821002CD598 /* CardCollectionViewCell.xib in Resources */,
 				7F878B2529EF4C770071BB91 /* FrutigerNextLT-Light.ttf in Resources */,
 				49CF668625F2D821002CD598 /* SF-Pro-Display-Bold.otf in Resources */,
@@ -1980,6 +1989,7 @@
 				7C980E0624E3245000D58A85 /* UserInfo.json in Resources */,
 				388172AA25D1A5940089B8C8 /* SF-Pro-Display-Light.ttf in Resources */,
 				7C56BE0224EDE9900039B2E7 /* requestChangeStatusProcess.json in Resources */,
+				112ACAF22E271E5B00AF41E9 /* warehouses.json in Resources */,
 				4951104125E556E2007BE4DF /* ValidateOrders.json in Resources */,
 				7C2401DF24D4972D00E2D56C /* SF-Pro-Display-Regular.otf in Resources */,
 				7C41E6D524E1B61700B9033F /* orderDetail.json in Resources */,
@@ -2999,7 +3009,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 16;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 4574497W4X;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -3228,7 +3238,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 16;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 4574497W4X;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -3255,7 +3265,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 16;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 4574497W4X;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -3442,7 +3452,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 16;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 4574497W4X;
 				ENABLE_TESTING_SEARCH_PATHS = YES;

@@ -4,4 +4,5 @@ export class GeneralMessage {
     title: string;
     isButtonAccept: boolean;
     icon: SweetAlertIcon;
+    extraMessage?: string;
 }
