@@ -41,6 +41,8 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         private readonly ISapServiceLayerAdapterService serviceLayerAdapterService;
 
+        private readonly IOrderHistoryDao orderHistoryDao;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CancelPedidosService"/> class.
         /// </summary>
@@ -50,7 +52,8 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="usersService">The user service.</param>
         /// <param name="kafkaConnector">The kafka conector.</param>
         /// <param name="serviceLayerAdapterService">The serviceLayerAdapterService.</param>
-        public CancelPedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapFileService sapFileService, IUsersService usersService, IKafkaConnector kafkaConnector, ISapServiceLayerAdapterService serviceLayerAdapterService)
+        /// <param name="orderHistoryDao">orderHistory dao.</param>
+        public CancelPedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapFileService sapFileService, IUsersService usersService, IKafkaConnector kafkaConnector, ISapServiceLayerAdapterService serviceLayerAdapterService, IOrderHistoryDao orderHistoryDao)
         {
             this.sapAdapter = sapAdapter.ThrowIfNull(nameof(sapAdapter));
             this.pedidosDao = pedidosDao.ThrowIfNull(nameof(pedidosDao));
@@ -58,6 +61,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             this.userService = usersService.ThrowIfNull(nameof(usersService));
             this.kafkaConnector = kafkaConnector.ThrowIfNull(nameof(kafkaConnector));
             this.serviceLayerAdapterService = serviceLayerAdapterService.ThrowIfNull(nameof(serviceLayerAdapterService));
+            this.orderHistoryDao = orderHistoryDao.ThrowIfNull(nameof(orderHistoryDao));
         }
 
         /// <summary>
@@ -89,9 +93,29 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var cancellationResults = await this.CancelExistingProductionOrders(ordersToCancel, userOrders, results);
 
+            foreach (var orderFab in ordersToCancel)
+            {
+                await this.ResetAvailablePiecesForCancelledOrder(orderFab);
+            }
+
             await this.CancelSalesOrderWithAllProductionOrderCancelled(userId, cancellationResults.Item1, this.sapAdapter);
 
             return ServiceUtils.CreateResult(true, 200, null, cancellationResults.Item2.DistinctResults(), null);
+        }
+
+        /// <summary>
+        /// Reset orderFab.
+        /// </summary>
+        /// <param name="resetOrdersToCancel">ResetAvailablePiecesForCancelledOrder.</param>
+        /// <returns>Orders with updated info.</returns>urns>
+        public async Task ResetAvailablePiecesForCancelledOrder(OrderIdModel resetOrdersToCancel)
+        {
+                var childOrderInfo = await this.orderHistoryDao.GetChildOrderWithPieces(resetOrdersToCancel.OrderId);
+
+                if (childOrderInfo != null && childOrderInfo.AssignedPieces > 0)
+                {
+                    await this.orderHistoryDao.UpdateAvailablePieces(childOrderInfo.ParentId, childOrderInfo.AssignedPieces);
+                }
         }
 
         /// <summary>

@@ -24,6 +24,8 @@ namespace Omicron.Pedidos.Test.Services
 
         private Mock<ISapServiceLayerAdapterService> serviceLayerAdapterService;
 
+        private Mock<IOrderHistoryDao> mockOrderHistoryDao;
+
         private DatabaseContext context;
 
         private string userId = "abc";
@@ -114,6 +116,7 @@ namespace Omicron.Pedidos.Test.Services
             this.context.UserOrderModel.AddRange(this.GetUserModelsForTotalCancellationInformation());
             this.context.SaveChanges();
             this.pedidosDao = new PedidosDao(this.context);
+            this.mockOrderHistoryDao = new Mock<IOrderHistoryDao>();
 
             this.kafkaConnector = new Mock<IKafkaConnector>();
             this.kafkaConnector
@@ -162,7 +165,53 @@ namespace Omicron.Pedidos.Test.Services
             var mockUserService = new Mock<IUsersService>();
             var mockSapFile = new Mock<ISapFileService>();
 
-            return new CancelPedidosService(this.mockSapAdapter.Object, this.pedidosDao, mockSapFile.Object, mockUserService.Object, this.kafkaConnector.Object, this.serviceLayerAdapterService.Object);
+            return new CancelPedidosService(this.mockSapAdapter.Object, this.pedidosDao, mockSapFile.Object, mockUserService.Object, this.kafkaConnector.Object, this.serviceLayerAdapterService.Object, this.mockOrderHistoryDao.Object);
+        }
+
+        /// <summary>
+        /// Test ResetAvailablePiecesForCancelledOrder.
+        /// </summary>
+        /// <param name="childOrderId">Child order ID to test.</param>
+        /// <param name="parentId">Parent order ID.</param>
+        /// <param name="assignedPieces">Assigned pieces to reset.</param>
+        /// <returns>Task.</returns>
+        [Test]
+        [TestCase(1050, 1, 25)]
+        [TestCase(1055, 2, 30)]
+        [TestCase(1058, 3, 20)]
+        public async Task ResetAvailablePiecesForCancelledOrder(
+            int childOrderId,
+            int parentId,
+            int assignedPieces)
+        {
+            // Arrange
+            var orderFab = new OrderIdModel { UserId = this.userId, OrderId = childOrderId };
+            var childOrderInfo = new OrderFabModel
+            {
+                ParentId = parentId,
+                AvailablePieces = 100,
+                AssignedPieces = assignedPieces,
+            };
+
+            this.mockOrderHistoryDao = new Mock<IOrderHistoryDao>();
+
+            this.mockOrderHistoryDao
+                .Setup(x => x.GetChildOrderWithPieces(childOrderId))
+                .ReturnsAsync(childOrderInfo);
+
+            this.mockOrderHistoryDao
+                .Setup(x => x.UpdateAvailablePieces(parentId, assignedPieces))
+                .ReturnsAsync(true);
+
+            this.cancelPedidosService = this.BuildService(null, null);
+
+            // Act (cast porque el método no está en la interfaz)
+            await ((CancelPedidosService)this.cancelPedidosService)
+                .ResetAvailablePiecesForCancelledOrder(orderFab);
+
+            // Assert
+            this.mockOrderHistoryDao.Verify(x => x.GetChildOrderWithPieces(childOrderId), Times.Once);
+            this.mockOrderHistoryDao.Verify(x => x.UpdateAvailablePieces(parentId, assignedPieces), Times.Once);
         }
 
         /// <summary>

@@ -8,8 +8,9 @@
 
 namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
 {
+    using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Entities.Model.Db;
-    using System.Threading.Tasks;    
+    using System.Threading.Tasks;
     public interface IOrderHistoryDao
     {
         /// <summary>
@@ -52,6 +53,21 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// </summary>
         /// <param name="detailOrderId">detailOrderId</param>
         /// <returns>detailOrderId</returns>
-        Task<ProductionOrderSeparationDetailModel> GetDetailOrderById(int detailOrderId); 
+        Task<ProductionOrderSeparationDetailModel> GetDetailOrderById(int detailOrderId);
+
+        /// <summary>
+        /// Gets fabOrderId with assigned pieces.
+        /// </summary>
+        /// <param name="fabOrderId">fabOrderId</param>
+        /// <returns>fabOrderId order info with assigned pieces</returns>
+        Task<OrderFabModel> GetChildOrderWithPieces(int fabOrderId);
+
+        /// <summary>
+        /// Updates available pieces for a parent order
+        /// </summary>
+        /// <param name="parentOrderId">Parent order ID</param>
+        /// <param name="piecesToAdd">Pieces to add back to available</param>
+        /// <returns>Success indicator</returns>
+        Task<bool> UpdateAvailablePieces(int parentOrderId, int piecesToAdd);
     }
 }
