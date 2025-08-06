@@ -486,6 +486,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         }
 
         /// <summary>
+        /// Gets the matching configWarehouseDto.
+        /// </summary>
+        /// <param name="configWarehouseDto"> warehouses collection to search. </param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        [Route("/get/configwarehouses")]
+        [HttpPost]
+        public async Task<IActionResult> GetConfigWarehouses(ConfigWareshousesDto configWarehouseDto)
+        {
+            var response = await this.sapFacade.GetConfigWarehouses(configWarehouseDto);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Gets the matching warehouses.
         /// </summary>
         /// <param name="itemCodes"> itemCodes collection to search. </param>
@@ -495,6 +508,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         public async Task<IActionResult> GetUnitProducts([FromBody] List<string> itemCodes)
         {
             var response = await this.sapFacade.GetUnitProducts(itemCodes);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the matching warehouses.
+        /// </summary>
+        /// <param name="itemCodes"> itemCodes collection to search. </param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        [Route("/product/firmname")]
+        [HttpPost]
+        public async Task<IActionResult> GetProductFirmName([FromBody] string itemCodes)
+        {
+            var response = await this.sapFacade.GetProductFirmName(itemCodes);
             return this.Ok(response);
         }
     }

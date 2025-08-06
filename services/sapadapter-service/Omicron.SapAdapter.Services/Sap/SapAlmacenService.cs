@@ -711,6 +711,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var batches = new List<string>();
                 var remittedPieces = 0;
                 var pendingToStore = false;
+                var assigneddPieces = 0;
 
                 if (!string.IsNullOrEmpty(order.FabricationOrder))
                 {
@@ -739,6 +740,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     batches = allBatchModels
                         .Select(y => $"{y.BatchNumber} | {(int)y.BatchQty} pz | Cad: {this.GetExpirationDate(batchesDataBase, y.BatchNumber, order.Producto.ProductoId)}")
                         .ToList();
+                    assigneddPieces = (int)allBatchModels.Sum(x => x.BatchQty);
                     pendingToStore = lineProductsModel.Any(x => x.SaleOrderId == order.DocNum && !string.IsNullOrEmpty(x.ItemCode) && x.ItemCode == order.Producto.ProductoId && x.DeliveryId == 0 && x.CloseSampleOrderId == 0);
                 }
 
@@ -773,6 +775,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     BackgroundColor = selectedTheme.BackgroundColor,
                     LabelText = selectedTheme.LabelText,
                     LabelColor = selectedTheme.TextColor,
+                    AssignedPieces = assigneddPieces,
                 };
             }).ToList();
 

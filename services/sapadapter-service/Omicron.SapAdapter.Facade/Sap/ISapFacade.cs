@@ -228,10 +228,24 @@ namespace Omicron.SapAdapter.Facade.Sap
         Task<ResultDto> GetClassificationsByDescription(List<string> classifications);
 
         /// <summary>
+        /// Gets the matching configwarehouse.
+        /// </summary>
+        /// <param name="configWareshousesDto"> configwarehouses collection to search. </param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultDto> GetConfigWarehouses(ConfigWareshousesDto configWareshousesDto);
+
+        /// <summary>
         /// Gets the matching warehouse.
         /// </summary>
         /// <param name="itemCodes"> warehouse collection to search. </param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<ResultDto> GetUnitProducts(List<string> itemCodes);
+
+        /// <summary>
+        /// Gets the matching warehouse.
+        /// </summary>
+        /// <param name="itemCode"> warehouse collection to search. </param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultDto> GetProductFirmName(string itemCode);
     }
 }

@@ -18,7 +18,8 @@ class AddComponent {
     var componentInfo: ComponentO
     var unit: String
     var managedByBatches: Bool
-    init(productId: String, description: String, warehouse: String, availableLots: [LotsAvailable], selectedLots: [LotsSelected], requiredQuantity: Double, selectedQuantity: Double, baseQuantity: Double, totalNecesary: Decimal, selectedTotal: Decimal, componentInfo: ComponentO, unit: String, managedByBatches: Bool) {
+    var warehouses: [String]
+    init(productId: String, description: String, warehouse: String, availableLots: [LotsAvailable], selectedLots: [LotsSelected], requiredQuantity: Double, selectedQuantity: Double, baseQuantity: Double, totalNecesary: Decimal, selectedTotal: Decimal, componentInfo: ComponentO, unit: String, managedByBatches: Bool, warehouses: [String]) {
         self.productId = productId
         self.description = description
         self.warehouse = warehouse
@@ -32,5 +33,6 @@ class AddComponent {
         self.componentInfo = componentInfo
         self.unit = unit
         self.managedByBatches = managedByBatches
+        self.warehouses = warehouses
     }
 }

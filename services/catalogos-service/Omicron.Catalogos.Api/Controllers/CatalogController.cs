@@ -168,5 +168,31 @@ namespace Omicron.Catalogos.Api.Controllers
             var response = await this.catalogFacade.GetProductsColors(themesIds);
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// Asynchronously retrieves classification data based on the provided parameters.
+        /// </summary>
+        /// <returns>A <see cref="Task{ResultDto}"/> contains configurations the warehouses magistral. </returns>
+        [Route("/config/warehouses")]
+        [HttpPost]
+        public async Task<IActionResult> PostConfigWarehouses()
+        {
+            var response = await this.catalogFacade.PostConfigWarehouses();
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Asynchronously retrieves classification data based on the provided parameters.
+        /// </summary>
+        /// <param name="itemCode">The code scanned.</param>
+        /// <returns>A <see cref="Task{ResultDto}"/> contains configurations the warehouses magistral. </returns>
+        [Route("/product/warehouses")]
+        [HttpGet]
+        public async Task<IActionResult> GetWarehouses([FromQuery] string itemCode)
+        {
+            var response = await this.catalogFacade.GetWarehouses(itemCode);
+
+            return this.Ok(response);
+        }
     }
 }

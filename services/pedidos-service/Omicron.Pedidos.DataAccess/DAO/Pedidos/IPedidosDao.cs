@@ -83,6 +83,13 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <summary>
         /// Returns the user order by user id.
         /// </summary>
+        /// <param name="listIds">the list of sale order id.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<UserOrderModel>> GetUserOrderBySalesOrderIdAndNotInStatus(List<string> listIDs, List<string> status);
+
+        /// <summary>
+        /// Returns the user order by user id.
+        /// </summary>
         /// <param name="listStatus">the list of users.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<UserOrderModel>> GetUserOrderByStatus(List<string> listStatus);
@@ -294,7 +301,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <returns>the data.</returns>
         Task<List<UserOrderModel>> GetUserOrdersByInvoiceId(List<int> invoiceId);
 
-                /// <summary>
+        /// <summary>
         /// Gets the production qr invoice by invoiceid.
         /// </summary>
         /// <param name="invoiceId">the invoice.</param>
@@ -424,5 +431,47 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="modelsToSave"> the models to save. </param>
         /// <returns> the data. </returns>
         Task<bool> UpdatesQrRouteFactura(List<ProductionFacturaQrModel> modelsToSave);
+
+        /// <summary>
+        /// InsertProductionOrderProcessingStatus.
+        /// </summary>
+        /// <param name="productionOrderProcessingStatus">productionOrderProcessingStatus.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<bool> InsertProductionOrderProcessingStatus(List<ProductionOrderProcessingStatusModel> productionOrderProcessingStatus);
+
+        /// <summary>
+        /// UpdatesProductionOrderProcessingStatus.
+        /// </summary>
+        /// <param name="productionOrderProcessingStatus">productionOrderProcessingStatus.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<bool> UpdatesProductionOrderProcessingStatus(List<ProductionOrderProcessingStatusModel> productionOrderProcessingStatus);
+
+        /// <summary>
+        /// GetProductionOrderProcessingStatusByProductionOrderIds.
+        /// </summary>
+        /// <param name="productionOrderIds">productionOrderIds.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<IEnumerable<ProductionOrderProcessingStatusModel>> GetProductionOrderProcessingStatusByProductionOrderIds(IEnumerable<int> productionOrderIds);
+
+        /// <summary>
+        /// GetFirstProductionOrderProcessingStatusByProductionOrderId.
+        /// </summary>
+        /// <param name="productionOrderId">productionOrderId.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ProductionOrderProcessingStatusModel> GetFirstProductionOrderProcessingStatusByProductionOrderId(int productionOrderId);
+
+        /// <summary>
+        /// GetFirstProductionOrderProcessingStatusById.
+        /// </summary>
+        /// <param name="id">Id.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ProductionOrderProcessingStatusModel> GetFirstProductionOrderProcessingStatusById(string id);
+
+        /// <summary>
+        /// GetAllProductionOrderProcessingStatusByStatus.
+        /// </summary>
+        /// <param name="status">status.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<IEnumerable<ProductionOrderProcessingStatusModel>> GetAllProductionOrderProcessingStatusByStatus(List<string> status);
     }
 }

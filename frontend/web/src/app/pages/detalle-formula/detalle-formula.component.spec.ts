@@ -7,7 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { APP_BASE_HREF, DatePipe } from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { PedidosService } from 'src/app/services/pedidos.service';
-import { DetalleFormulaMock } from 'src/mocks/pedidosListMock';
+import { DetalleFormulaMock, productWarehousesResponseMock } from 'src/mocks/pedidosListMock';
 import { Observable, of, Subject, throwError } from 'rxjs';
 import { DataService } from '../../services/data.service';
 import { CarouselOption, CONST_DETAIL_FORMULA } from '../../constants/const';
@@ -50,20 +50,21 @@ describe('DetalleFormulaComponent', () => {
         'httpError'
       ]);
     localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
-        'getUserId',
-        'getOrderIsolated',
-        'removeOrderIsolated',
-        'setFiltersActivesOrders',
-        'getFiltersActivesOrders',
-        'removeFiltersActiveOrders',
-        'getFiltersActivesAsModelOrders',
-        'getToken'
-      ]);
+      'getUserId',
+      'getOrderIsolated',
+      'removeOrderIsolated',
+      'setFiltersActivesOrders',
+      'getFiltersActivesOrders',
+      'removeFiltersActiveOrders',
+      'getFiltersActivesAsModelOrders',
+      'getToken'
+    ]);
     pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService',
       [
         'getFormulaDetail',
         'getFormulaCarousel',
-        'updateFormula'
+        'updateFormula',
+        'getProductWarehouses'
       ]);
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
       'getItemOnDataOnlyIds',
@@ -72,15 +73,20 @@ describe('DetalleFormulaComponent', () => {
       'setIsToSaveAnything',
       'getFullStringForCarousel',
       'getIsToSaveAnything',
-      'calculateOrValueList'
+      'calculateOrValueList',
+      'validateValidString',
+      'calculateTernary'
     ]);
     dataServiceSpy.getIsToSaveAnything.and.callFake(() => {
       return true;
     });
-    // routerSpy = jasmine.createSpyObj<ActivatedRoute>('ActivateRoute', [
-    //   'paramMap'
-    // ]);
-    // routerSpy.paramMap.and.returnValue();
+    dataServiceSpy.validateValidString.and.callFake((text: string) => {
+      const res = [text !== '', text !== undefined, text !== null];
+      return res.every(item => item);
+    });
+    dataServiceSpy.calculateTernary.and.callFake(<T, U>(validation: boolean, firstValue: T, secondaValue: U): T | U => {
+      return validation ? firstValue : secondaValue;
+    });
     localStorageServiceSpy.getToken.and.callFake(() => {
       return '';
     });
@@ -93,6 +99,9 @@ describe('DetalleFormulaComponent', () => {
     });
     pedidosServiceSpy.updateFormula.and.callFake(() => {
       return of();
+    });
+    pedidosServiceSpy.getProductWarehouses.and.callFake(() => {
+      return of(productWarehousesResponseMock);
     });
     messagesServiceSpy.presentToastCustom.and.callFake(() => Promise.resolve([]));
 
@@ -153,12 +162,12 @@ describe('DetalleFormulaComponent', () => {
         { provide: DataService, useValue: dataServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
         { provide: ObservableService, useValue: observableServiceSpy },
-        { provide: LocalStorageService, useValue: localStorageServiceSpy},
+        { provide: LocalStorageService, useValue: localStorageServiceSpy },
         { provide: DateService, useValue: dateServiceSpy },
         { provide: MessagesService, useValue: messagesServiceSpy },
         { provide: FiltersService, useValue: filtersServiceSpy },
         { provide: ActivatedRoute, useValue: { paramMap: new Subject() } },
-        {provide: APP_BASE_HREF, useValue : '/' }
+        { provide: APP_BASE_HREF, useValue: '/' }
       ]
     })
       .compileComponents();
@@ -200,6 +209,7 @@ describe('DetalleFormulaComponent', () => {
       return throwError({ status: 500 });
     });
     component.getDetalleFormula();
+    component.productWarehouses = ['MN', 'BE'];
     expect(errorServiceSpy.httpError).toHaveBeenCalled();
   });
 
@@ -601,5 +611,27 @@ describe('DetalleFormulaComponent', () => {
 
   it('should openCustomList', () => {
     component.openCustomList();
+  });
+  it('should onOpenSelect', () => {
+    component.dataSource.data = [{
+      isChecked: false,
+      orderFabId: 89098,
+      productId: 'EN-075',
+      description: 'Pomadera 8 Oz c/ Tapa  R-89 Bonita',
+      baseQuantity: 210.000000,
+      requiredQuantity: 210.000000,
+      consumed: 0.000000,
+      available: 0.000000,
+      unit: 'Pieza',
+      warehouse: 'PROD',
+      pendingQuantity: 210.000000,
+      stock: 1606.000000,
+      warehouseQuantity: 0.000000,
+      hasBatches: false,
+      productoId: '1',
+      availableWarehouses: ['PROD']
+    }];
+    component.onOpenSelect(true, 0);
+    expect(pedidosServiceSpy.getProductWarehouses).toHaveBeenCalled();
   });
 });

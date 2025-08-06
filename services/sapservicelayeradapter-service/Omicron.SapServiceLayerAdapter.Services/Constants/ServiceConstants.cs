@@ -414,6 +414,39 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string No = "2";
 
         /// <summary>
+        /// EmptyValue.
+        /// </summary>
+        public const string EmptyValue = "";
+
+        /// <summary>
+        /// PrimaryValidationsStep.
+        /// </summary>
+        public const string PrimaryValidationsStep = "Primary Validations";
+
+        /// <summary>
+        /// CreateInventoryStep.
+        /// </summary>
+        public const string CreateInventoryStep = "Create Inventory";
+
+        /// <summary>
+        /// CreateReceiptStep.
+        /// </summary>
+        public const string CreateReceiptStep = "Create Receipt";
+
+        /// <summary>
+        /// SuccessfullyClosedInSapStep.
+        /// </summary>
+        public const string SuccessfullyClosedInSapStep = "Successfully Closed In SAP";
+
+        /// <summary>
+        /// Gets ManageBatchNumbers.
+        /// </summary>
+        /// <value>
+        /// String ManageBatchNumbers.
+        /// </value>
+        public static string ManageBatchNumbers => "tYES";
+
+        /// <summary>
         /// Gets DictionaryValueFormat.
         /// </summary>
         /// <value>
@@ -435,6 +468,21 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// Gets HypenChar.
         /// </summary>
         public static char HypenChar => '-';
+
+        /// <summary>
+        /// Gets FailReasonClosedProductionOrder.
+        /// </summary>
+        public static string FailReasonClosedProductionOrder => "La orden de producción {0} está cerrada.";
+
+        /// <summary>
+        /// Gets InventoryGenEntryLineTransactionType.
+        /// </summary>
+        public static string InventoryGenEntryLineTransactionType => "botrntComplete";
+
+        /// <summary>
+        /// Gets ProductionOrderClosedStatus.
+        /// </summary>
+        public static string ProductionOrderClosedStatus => "boposClosed";
 
         /// <summary>
         /// Gets the status of the order.

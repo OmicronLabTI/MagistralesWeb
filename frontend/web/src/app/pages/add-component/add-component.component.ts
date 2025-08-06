@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material';
 import { Title } from '@angular/platform-browser';
@@ -21,7 +21,7 @@ import { PedidosService } from 'src/app/services/pedidos.service';
   templateUrl: './add-component.component.html',
   styleUrls: ['./add-component.component.scss']
 })
-export class AddComponentComponent implements OnInit {
+export class AddComponentComponent implements OnInit, OnDestroy {
   // MARK: ROUTES PARAMS
   document: number;
   ordenFabricacionId: string;
@@ -35,6 +35,7 @@ export class AddComponentComponent implements OnInit {
   subscription = new Subscription();
   isReadyToSave = false;
   today = new Date();
+  productWarehouses: string[] = [];
 
   // MARK: VARIABLES DETALLE FORMULA
   warehouse = CONST_STRING.empty;
@@ -99,6 +100,10 @@ export class AddComponentComponent implements OnInit {
     private dateService: DateService,
   ) { }
 
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.document = Number(params.get('document'));
@@ -112,7 +117,10 @@ export class AddComponentComponent implements OnInit {
     });
     this.subscription.add(this.observableService.getNewFormulaComponent().subscribe(resultNewFormulaComponent => {
       if (resultNewFormulaComponent) {
-        this.getLotesForComponent(resultNewFormulaComponent);
+        const componentId = resultNewFormulaComponent.productId;
+        const principalWarehouse = this.productWarehouses[0];
+        const query = `?offset=${0}&limit=${1}&chips=${componentId}&catalogGroup=${principalWarehouse}`;
+        this.getComponentInfo(query, this.productWarehouses);
       }
     }));
     this.reloadData();
@@ -127,9 +135,17 @@ export class AddComponentComponent implements OnInit {
 
   getDetalleFormula(): Promise<void> {
     return this.pedidosService.getFormulaDetail(this.ordenFabricacionId).toPromise().then(({ response }) => {
-      this.onSuccessDetailFormula(response);
+      this.getProductWarehouses(response);
     }).catch(error => {
       this.errorService.httpError(error);
+    });
+  }
+
+  getProductWarehouses(response: IFormulaReq) {
+    const itemCode = response.code;
+    this.pedidosService.getProductWarehouses(itemCode).subscribe(res => {
+      this.productWarehouses = res.response;
+      this.onSuccessDetailFormula(response);
     });
   }
 
@@ -144,14 +160,28 @@ export class AddComponentComponent implements OnInit {
     this.catalogGroupName = response.catalogGroupName || '';
   }
 
-  getLotesForComponent(resultNewFormulaComponent: IFormulaDetalleReq) {
-    const queryParams = `?itemcode=${resultNewFormulaComponent.productId}&warehouse=${resultNewFormulaComponent.warehouse}`;
+  getLotesForComponent(resultNewFormulaComponent: IFormulaDetalleReq, warehouseSelected?: string) {
+    const warehouse = this.dataService.calculateTernary(
+      this.dataService.validateValidString(warehouseSelected),
+      warehouseSelected,
+      resultNewFormulaComponent.availableWarehouses[0]
+    );
+    const queryParams = `?itemcode=${resultNewFormulaComponent.productId}&warehouse=${warehouse}`;
+    if (!resultNewFormulaComponent.availableWarehouses || resultNewFormulaComponent.availableWarehouses.length === 0) {
+      this.observableService.setGeneralNotificationMessage(Messages.invalidWarehouses + resultNewFormulaComponent.productId);
+      return;
+    }
     this.pedidosService.getComponentsLotes(queryParams).subscribe(resLotes => {
-      this.generateObjectsForTables(resultNewFormulaComponent, resLotes.response);
+      this.generateObjectsForTables(resultNewFormulaComponent, resLotes.response, warehouseSelected);
     });
   }
 
-  generateObjectsForTables(resultNewFormulaComponent: IFormulaDetalleReq, lotes: IComponentLotes) {
+  generateObjectsForTables(resultNewFormulaComponent: IFormulaDetalleReq, lotes: IComponentLotes, warehouseSelected?: string) {
+    const warehousePicked = this.dataService.calculateTernary(
+      this.dataService.validateValidString(warehouseSelected),
+      warehouseSelected,
+      resultNewFormulaComponent.availableWarehouses[0]
+    );
     const dataLotesTable: ILotesReq[] = [];
 
     lotes.lotes.forEach(lote => {
@@ -173,7 +203,7 @@ export class AddComponentComponent implements OnInit {
       consumed: resultNewFormulaComponent.consumed,
       available: resultNewFormulaComponent.available,
       unit: resultNewFormulaComponent.unit,
-      warehouse: resultNewFormulaComponent.warehouse,
+      warehouse: warehousePicked,
       pendingQuantity: resultNewFormulaComponent.pendingQuantity,
       stock: resultNewFormulaComponent.stock,
       warehouseQuantity: resultNewFormulaComponent.warehouseQuantity,
@@ -182,6 +212,7 @@ export class AddComponentComponent implements OnInit {
       action: CONST_DETAIL_FORMULA.insert,
       lotes: dataLotesTable,
       lotesAsignados: [],
+      availableWarehouses: resultNewFormulaComponent.availableWarehouses,
       managedByBatches: resultNewFormulaComponent.managedByBatches
     };
     this.componentsData.push(resultNewFormulaComponent);
@@ -192,7 +223,7 @@ export class AddComponentComponent implements OnInit {
   }
 
   validateIsReadyToSave(): void {
-    this.isReadyToSave = this.dataSourceComponents.data.every( element => !element.managedByBatches);
+    this.isReadyToSave = this.dataSourceComponents.data.every(element => !element.managedByBatches);
   }
 
   setSelectedTr(elements?: IAddComponentsAndLotesTable): void {
@@ -253,10 +284,15 @@ export class AddComponentComponent implements OnInit {
   onSelectWareHouseChange(value: string, index: number) {
     const componente = this.dataSourceComponents.data[index].codigoProducto;
     const query = `?offset=${0}&limit=${1}&chips=${componente}&catalogGroup=${value}`;
-    this.pedidosService.getComponents(query, true).subscribe( response => {
-      this.dataSourceComponents.data[index].isChecked = true;
-      this.deleteComponents();
-      this.getLotesForComponent(response.response[0]);
+    const availableWarehouses = [...this.dataSourceComponents.data[index].availableWarehouses];
+    this.deleteComponent(index);
+    this.getComponentInfo(query, availableWarehouses, value);
+  }
+
+  getComponentInfo(query: string, wareHousesList: string[], warehouseSelected?: string) {
+    this.pedidosService.getComponents(query, true).subscribe(response => {
+      response.response[0].availableWarehouses = wareHousesList;
+      this.getLotesForComponent(response.response[0], warehouseSelected);
     });
   }
 
@@ -333,7 +369,6 @@ export class AddComponentComponent implements OnInit {
       this.setTotales(-element.cantidadSeleccionada);
       this.isReadyToSave = true;
     }
-    return false;
   }
 
   buildObjectToSap(): void {
@@ -390,6 +425,17 @@ export class AddComponentComponent implements OnInit {
       this.validateIsReadyToSave();
       this.dataSourceComponents._updateChangeSubscription();
     }
+  }
+
+  deleteComponent(index: number) {
+    const componentToDelete = this.dataSourceComponents.data[index];
+    const componentDataElement = this.componentsData.filter(data => data.productId === componentToDelete.codigoProducto);
+    const indexelementComponentData = this.componentsData.indexOf(componentDataElement[0]);
+
+    this.dataSourceComponents.data.splice(index, 1);
+    this.componentsData.splice(indexelementComponentData, 1);
+    this.validateIsReadyToSave();
+    this.dataSourceComponents._updateChangeSubscription();
   }
 
   deleteDetails(element?: ILotesAsignadosReq) {

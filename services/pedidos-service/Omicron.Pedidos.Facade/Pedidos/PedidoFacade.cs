@@ -17,6 +17,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
     using Omicron.Pedidos.Entities.Model.Db;
     using Omicron.Pedidos.Resources.Enums;
     using Omicron.Pedidos.Services.Pedidos;
+    using Omicron.Pedidos.Services.ProductionOrders;
 
     /// <summary>
     /// the pedidos facade.
@@ -40,6 +41,8 @@ namespace Omicron.Pedidos.Facade.Pedidos
 
         private readonly IProcessOrdersService processOrdersService;
 
+        private readonly IProductionOrdersService productionOrdersService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PedidoFacade"/> class.
         /// </summary>
@@ -50,7 +53,16 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="cancelPedidosService">The cancel pedidos service.</param>
         /// <param name="formulaPedidosService">The formula pedidos service.</param>
         /// <param name="processOrdersService">Proces Order service.</param>
-        public PedidoFacade(IPedidosService pedidoService, IMapper mapper, IAssignPedidosService assignPedidosService, ICancelPedidosService cancelPedidosService, IProductivityService productivityService, IFormulaPedidosService formulaPedidosService, IProcessOrdersService processOrdersService)
+        /// <param name="productionOrdersService">Production Orders Service.</param>
+        public PedidoFacade(
+            IPedidosService pedidoService,
+            IMapper mapper,
+            IAssignPedidosService assignPedidosService,
+            ICancelPedidosService cancelPedidosService,
+            IProductivityService productivityService,
+            IFormulaPedidosService formulaPedidosService,
+            IProcessOrdersService processOrdersService,
+            IProductionOrdersService productionOrdersService)
         {
             this.pedidoService = pedidoService ?? throw new ArgumentNullException(nameof(pedidoService));
             this.assignPedidosService = assignPedidosService ?? throw new ArgumentNullException(nameof(assignPedidosService));
@@ -59,6 +71,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
             this.formulaPedidosService = formulaPedidosService ?? throw new ArgumentNullException(nameof(formulaPedidosService));
             this.processOrdersService = processOrdersService ?? throw new ArgumentNullException(nameof(processOrdersService));
             this.mapper = mapper;
+            this.productionOrdersService = productionOrdersService ?? throw new ArgumentNullException(nameof(productionOrdersService));
         }
 
         /// <inheritdoc/>
@@ -314,6 +327,50 @@ namespace Omicron.Pedidos.Facade.Pedidos
         public async Task<ResultDto> GetUserOrdersByInvoiceId(List<int> invoicesid, string type)
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.GetUserOrdersByInvoiceId(invoicesid, type));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> FinalizeProductionOrdersAsync(List<FinalizeProductionOrderModel> productionOrdersToFinalize)
+        {
+            return this.mapper.Map<ResultDto>(
+                await this.productionOrdersService.FinalizeProductionOrdersAsync(
+                    this.mapper.Map<List<FinalizeProductionOrderModel>>(productionOrdersToFinalize)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> FinalizeProductionOrdersOnSapAsync(ProductionOrderProcessingStatusDto productionOrderProcessingPayload)
+        {
+            return this.mapper.Map<ResultDto>(
+                await this.productionOrdersService.FinalizeProductionOrdersOnSapAsync(
+                    this.mapper.Map<ProductionOrderProcessingStatusModel>(productionOrderProcessingPayload)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> FinalizeProductionOrdersOnPostgresqlAsync(ProductionOrderProcessingStatusDto productionOrderProcessingPayload)
+        {
+            return this.mapper.Map<ResultDto>(
+                await this.productionOrdersService.FinalizeProductionOrdersOnPostgresqlAsync(
+                    this.mapper.Map<ProductionOrderProcessingStatusModel>(productionOrderProcessingPayload)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> ProductionOrderPdfGenerationAsync(ProductionOrderProcessingStatusDto productionOrderProcessingPayload)
+        {
+            return this.mapper.Map<ResultDto>(
+                await this.productionOrdersService.ProductionOrderPdfGenerationAsync(
+                    this.mapper.Map<ProductionOrderProcessingStatusModel>(productionOrderProcessingPayload)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetFailedProductionOrders()
+        {
+            return this.mapper.Map<ResultDto>(await this.productionOrdersService.GetFailedProductionOrders());
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> RetryFailedProductionOrderFinalization(RetryFailedProductionOrderFinalizationDto payloadRetry)
+        {
+            return this.mapper.Map<ResultDto>(await this.productionOrdersService.RetryFailedProductionOrderFinalization(payloadRetry));
         }
     }
 }

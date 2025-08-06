@@ -178,7 +178,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var userError = listErrorId.Any() ? ServiceConstants.ErroAlAsignar : null;
 
             await this.pedidosDao.UpdateUserOrders(userOrdersToUpdate);
-            _ = this.kafkaConnector.PushMessage(listOrderLogToInsert);
+            _ = this.kafkaConnector.PushMessage(listOrderLogToInsert, ServiceConstants.KafkaInsertLogsConfigName);
 
             if (userSaleOrder.Item2.Any())
             {
@@ -251,7 +251,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             if (orders.Any())
             {
                 await this.pedidosDao.UpdateUserOrders(orders);
-                _ = this.kafkaConnector.PushMessage(listOrderLogToInsert);
+                _ = this.kafkaConnector.PushMessage(listOrderLogToInsert, ServiceConstants.KafkaInsertLogsConfigName);
             }
 
             return ServiceUtils.CreateResult(true, 200, null, null, null);
@@ -279,7 +279,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             await this.pedidosDao.UpdateUserOrders(ordersToUpdate);
             await this.UpdateOrderSignedByReassignment(orders.Select(x => x.Id).Distinct().ToList());
-            _ = this.kafkaConnector.PushMessage(listOrderLogToInsert);
+            _ = this.kafkaConnector.PushMessage(listOrderLogToInsert, ServiceConstants.KafkaInsertLogsConfigName);
             return ServiceUtils.CreateResult(true, 200, null, null, null);
         }
 
