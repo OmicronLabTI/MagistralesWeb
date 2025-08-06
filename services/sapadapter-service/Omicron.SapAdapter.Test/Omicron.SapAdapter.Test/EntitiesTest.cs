@@ -113,6 +113,8 @@ namespace Omicron.SapAdapter.Test
             new UnitCatalogModel(),
             new ConfigWareshousesDto(),
             new ConfigWareshousesModel(),
+            new ProductionOrderSeparationModel(),
+            new UserOrderSeparationModel(),
         };
 
         /// <summary>

@@ -665,6 +665,15 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
                 .ToListAsync();
         }
 
+        /// <inheritdoc/>
+        public async Task<List<ProductionOrderSeparationModel>> GetProductionOrderSeparationByOrderId(List<int> ordersIds)
+        {
+            return await this.databaseContext.ProductionOrderSeparationModel
+                .Where(po => ordersIds.Contains(po.OrderId))
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
         private async Task<List<UserOrderModel>> GetSaleOrderForAlmacenCommon(
             IQueryable<UserOrderModel> ordersQuery,
             List<string> statusPending,

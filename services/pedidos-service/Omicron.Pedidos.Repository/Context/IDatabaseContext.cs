@@ -96,5 +96,13 @@ namespace Omicron.Pedidos.Entities.Context
         /// Object ProductionOrderProcessingStatusModel.
         /// </value>
         DbSet<ProductionOrderProcessingStatusModel> ProductionOrderProcessingStatusModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets ProductionOrderSeparationModel.
+        /// </summary>
+        /// <value>
+        /// Object ProductionOrderSeparationModel.
+        /// </value>
+        DbSet<ProductionOrderSeparationModel> ProductionOrderSeparationModel { get; set; }
     }
 }

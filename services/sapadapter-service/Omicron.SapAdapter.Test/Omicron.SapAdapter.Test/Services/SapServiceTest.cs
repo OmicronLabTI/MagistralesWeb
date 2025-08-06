@@ -446,8 +446,37 @@ namespace Omicron.SapAdapter.Test.Services
             // arrange
             var listIds = new List<int> { id };
 
+            var mockPedidoService = new Mock<IPedidosService>();
+            var mockUserService = new Mock<IUsersService>();
+            var mockConfiguration = new Mock<IConfiguration>();
+            var mockRedis = new Mock<IRedisService>();
+            var mockCatalogs = new Mock<ICatalogsService>();
+            var mockLog = new Mock<ILogger>();
+            var mockDoctor = new Mock<IDoctorService>();
+
+            var parameters = new List<ParametersModel>
+            {
+                new ParametersModel { Id = 1, Value = "A1", Field = "Medic" },
+                new ParametersModel { Id = 2, Value = "Codigo", Field = "CardCodeResponsibleMedic" },
+            };
+
+            mockPedidoService
+                .Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetPedidosServiceResponse()));
+
+            mockDoctor
+                .Setup(m => m.PostDoctors(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetDoctorsInfo()));
+
+            mockCatalogs
+                .Setup(m => m.GetParams(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDto(parameters)));
+
+            IGetProductionOrderUtils getProdUtils = new GetProductionOrderUtils(this.sapDao, mockLog.Object);
+            var localSap = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils, mockRedis.Object, mockDoctor.Object, mockCatalogs.Object);
+
             // act
-            var result = await this.sapService.GetOrderFormula(listIds, true, true);
+            var result = await localSap.GetOrderFormula(listIds, true, true);
             var formulaDeatil = result.Response as CompleteFormulaWithDetalle;
 
             // assert
@@ -470,11 +499,48 @@ namespace Omicron.SapAdapter.Test.Services
             // arrange
             var listIds = new List<int> { 100 };
 
+            var mockPedidoService = new Mock<IPedidosService>();
+            var mockUserService = new Mock<IUsersService>();
+            var mockConfiguration = new Mock<IConfiguration>();
+            var mockRedis = new Mock<IRedisService>();
+            var mockCatalogs = new Mock<ICatalogsService>();
+            var mockLog = new Mock<ILogger>();
+            var mockDoctor = new Mock<IDoctorService>();
+
+            var parameters = new List<ParametersModel>
+            {
+                new ParametersModel { Id = 1, Value = "A1", Field = "Medic" },
+                new ParametersModel { Id = 2, Value = "Codigo", Field = "CardCodeResponsibleMedic" },
+            };
+
+            mockPedidoService
+                .Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetPedidosServiceResponse()));
+
+            mockDoctor
+                .Setup(m => m.PostDoctors(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetDoctorsInfo()));
+
+            mockCatalogs
+                .Setup(m => m.GetParams(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDto(parameters)));
+
+            IGetProductionOrderUtils getProdUtils = new GetProductionOrderUtils(this.sapDao, mockLog.Object);
+            var localSap = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils, mockRedis.Object, mockDoctor.Object, mockCatalogs.Object);
+
             // act
-            var result = await this.sapService.GetOrderFormula(listIds, false, true);
+            var result = await localSap.GetOrderFormula(listIds, true, true);
+            var response = result.Response as CompleteFormulaWithDetalle;
+
+            Console.WriteLine(JsonConvert.SerializeObject(response, Formatting.Indented));
 
             // assert
             Assert.That(result, Is.Not.Null);
+            Assert.That(response.ProductionOrderId, Is.EqualTo(100));
+            Assert.That(response.PlannedQuantity, Is.EqualTo(2.0));
+            Assert.That((int)response.PlannedQuantity, Is.Not.EqualTo(response.AvailablePieces));
+            Assert.That(response.OrderRelationType, Is.EqualTo("Padre"));
+            Assert.That(response.HasBatches);
         }
 
         /// <summary>
@@ -1151,8 +1217,23 @@ namespace Omicron.SapAdapter.Test.Services
             var productionOrders = new List<int> { 100 };
             var salesOrders = new List<int> { 100 };
 
+            var mockPedidoService = new Mock<IPedidosService>();
+            var mockUserService = new Mock<IUsersService>();
+            var mockConfiguration = new Mock<IConfiguration>();
+            var mockRedis = new Mock<IRedisService>();
+            var mockCatalogs = new Mock<ICatalogsService>();
+            var mockLog = new Mock<ILogger>();
+            var mockDoctor = new Mock<IDoctorService>();
+
+            mockPedidoService
+                .Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetPedidosServiceResponse()));
+
+            IGetProductionOrderUtils getProdUtils = new GetProductionOrderUtils(this.sapDao, mockLog.Object);
+            var localSap = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils, mockRedis.Object, mockDoctor.Object, mockCatalogs.Object);
+
             // act
-            var result = await this.sapService.GetFabricationOrdersByCriterial(salesOrders, productionOrders, false);
+            var result = await localSap.GetFabricationOrdersByCriterial(salesOrders, productionOrders, false);
 
             // assert
             Assert.That(result, Is.Not.Null);
@@ -1616,6 +1697,10 @@ namespace Omicron.SapAdapter.Test.Services
             Assert.That(response, Is.Not.Null);
         }
 
+        /// <summary>
+        /// Test to get classifications.
+        /// </summary>
+        /// <returns> The data. </returns>
         public async Task GetConfigWarehouses()
         {
             var model = new ConfigWareshousesModel
