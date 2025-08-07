@@ -34,7 +34,7 @@ spec:
                   valueFrom:
                     secretKeyRef:
                       name: omicron-prod
-                      key: redis_connection_string
+                      key: redis
                 - name: SEQLOG_SVC_SERVICE_HOST_NAME
                   valueFrom:
                     secretKeyRef:
