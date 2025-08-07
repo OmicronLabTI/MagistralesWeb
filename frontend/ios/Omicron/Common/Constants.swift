@@ -27,6 +27,7 @@ struct Constants {
         case hasBatches = "Se debe desasignar los lotes para poder editar el almacén"
         case unassignBatches = "Desasigna los lotes de la orden de fabricación [fabOrder] para poder dividirla."
         case onGoingSplitProcess = "La orden de fabricación seleccionada ya tiene un proceso de división en curso. Por favor espera a que finalice antes de intentar dividirla nuevamente."
+        case changeStatusParentOrders = "No es posible modificar el estatus de órdenes de fabricación padre: [fabOrders]"
     }
     enum Tags: Int {
         case loading = 101
