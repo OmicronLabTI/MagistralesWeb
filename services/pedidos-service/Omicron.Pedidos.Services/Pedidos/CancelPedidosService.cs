@@ -41,8 +41,6 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         private readonly ISapServiceLayerAdapterService serviceLayerAdapterService;
 
-        private readonly IOrderHistoryDao orderHistoryDao;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="CancelPedidosService"/> class.
         /// </summary>
@@ -52,8 +50,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="usersService">The user service.</param>
         /// <param name="kafkaConnector">The kafka conector.</param>
         /// <param name="serviceLayerAdapterService">The serviceLayerAdapterService.</param>
-        /// <param name="orderHistoryDao">orderHistory dao.</param>
-        public CancelPedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapFileService sapFileService, IUsersService usersService, IKafkaConnector kafkaConnector, ISapServiceLayerAdapterService serviceLayerAdapterService, IOrderHistoryDao orderHistoryDao)
+        public CancelPedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapFileService sapFileService, IUsersService usersService, IKafkaConnector kafkaConnector, ISapServiceLayerAdapterService serviceLayerAdapterService)
         {
             this.sapAdapter = sapAdapter.ThrowIfNull(nameof(sapAdapter));
             this.pedidosDao = pedidosDao.ThrowIfNull(nameof(pedidosDao));
@@ -61,7 +58,6 @@ namespace Omicron.Pedidos.Services.Pedidos
             this.userService = usersService.ThrowIfNull(nameof(usersService));
             this.kafkaConnector = kafkaConnector.ThrowIfNull(nameof(kafkaConnector));
             this.serviceLayerAdapterService = serviceLayerAdapterService.ThrowIfNull(nameof(serviceLayerAdapterService));
-            this.orderHistoryDao = orderHistoryDao.ThrowIfNull(nameof(orderHistoryDao));
         }
 
         /// <summary>
@@ -110,12 +106,16 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>Orders with updated info.</returns>urns>
         public async Task ResetAvailablePiecesForCancelledOrder(OrderIdModel resetOrdersToCancel)
         {
-                var childOrderInfo = await this.orderHistoryDao.GetChildOrderWithPieces(resetOrdersToCancel.OrderId);
-
-                if (childOrderInfo != null && childOrderInfo.AssignedPieces > 0)
+            var childOrderInfo = await this.pedidosDao.GetChildOrderWithPieces(resetOrdersToCancel.OrderId);
+            if (childOrderInfo != null && childOrderInfo.AssignedPieces > 0)
+            {
+                var parentOrder = await this.pedidosDao.GetParentOrderById(childOrderInfo.ParentId);
+                if (parentOrder != null)
                 {
-                    await this.orderHistoryDao.UpdateAvailablePieces(childOrderInfo.ParentId, childOrderInfo.AssignedPieces);
+                    parentOrder.AvailablePieces += childOrderInfo.AssignedPieces;
+                    await this.pedidosDao.UpdateParentOrder();
                 }
+            }
         }
 
         /// <summary>

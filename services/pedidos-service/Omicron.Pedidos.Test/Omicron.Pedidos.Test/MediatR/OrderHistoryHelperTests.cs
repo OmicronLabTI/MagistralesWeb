@@ -14,7 +14,7 @@ namespace Omicron.Pedidos.Test.MediatR
     public class OrderHistoryHelperTests : BaseTest
     {
         private OrderHistoryHelper orderHistoryHelper;
-        private Mock<IOrderHistoryDao> mockOrderHistoryDao;
+        private Mock<IPedidosDao> mockPedidosDao;
         private Mock<ILogger> mockLogger;
         private DatabaseContext context;
 
@@ -29,11 +29,11 @@ namespace Omicron.Pedidos.Test.MediatR
                 .Options;
             this.context = new DatabaseContext(options);
 
-            this.mockOrderHistoryDao = new Mock<IOrderHistoryDao>();
+            this.mockPedidosDao = new Mock<IPedidosDao>();
             this.mockLogger = new Mock<ILogger>();
 
             this.orderHistoryHelper = new OrderHistoryHelper(
-                this.mockOrderHistoryDao.Object,
+                this.mockPedidosDao.Object,
                 this.mockLogger.Object);
         }
 
@@ -43,7 +43,7 @@ namespace Omicron.Pedidos.Test.MediatR
         [SetUp]
         public void SetUp()
         {
-            this.mockOrderHistoryDao.Reset();
+            this.mockPedidosDao.Reset();
             this.mockLogger.Reset();
         }
 
@@ -65,11 +65,11 @@ namespace Omicron.Pedidos.Test.MediatR
                 sapOrder: 789456,
                 totalPieces: 10);
 
-            this.mockOrderHistoryDao
+            this.mockPedidosDao
                 .Setup(x => x.GetMaxDivision(request.ProductionOrderId))
                 .ReturnsAsync(0);
 
-            this.mockOrderHistoryDao
+            this.mockPedidosDao
                 .Setup(x => x.InsertDetailOrder(It.IsAny<ProductionOrderSeparationDetailModel>()))
                 .ReturnsAsync(true);
 
@@ -79,10 +79,10 @@ namespace Omicron.Pedidos.Test.MediatR
 
             // Assert
             Assert.That(result, Is.True);
-            this.mockOrderHistoryDao.Verify(
+            this.mockPedidosDao.Verify(
                 x => x.GetMaxDivision(request.ProductionOrderId),
                 Times.Once);
-            this.mockOrderHistoryDao.Verify(
+            this.mockPedidosDao.Verify(
                 x => x.InsertDetailOrder(It.IsAny<ProductionOrderSeparationDetailModel>()),
                 Times.Once);
         }
@@ -99,11 +99,11 @@ namespace Omicron.Pedidos.Test.MediatR
             int totalPieces = 10;
             int assignedPieces = 3;
 
-            this.mockOrderHistoryDao
+            this.mockPedidosDao
                 .Setup(x => x.GetParentOrderId(orderId))
                 .ReturnsAsync((ProductionOrderSeparationModel)null);
 
-            this.mockOrderHistoryDao
+            this.mockPedidosDao
                 .Setup(x => x.InsertOrder(It.IsAny<ProductionOrderSeparationModel>()))
                 .ReturnsAsync(true);
 
@@ -115,10 +115,10 @@ namespace Omicron.Pedidos.Test.MediatR
 
             // Assert
             Assert.That(result, Is.True);
-            this.mockOrderHistoryDao.Verify(
+            this.mockPedidosDao.Verify(
                 x => x.GetParentOrderId(orderId),
                 Times.Once);
-            this.mockOrderHistoryDao.Verify(
+            this.mockPedidosDao.Verify(
                 x => x.InsertOrder(It.Is<ProductionOrderSeparationModel>(
                 p => p.OrderId == orderId
                 && p.TotalPieces == totalPieces
@@ -150,11 +150,11 @@ namespace Omicron.Pedidos.Test.MediatR
                 CompletedAt = null,
             };
 
-            this.mockOrderHistoryDao
+            this.mockPedidosDao
                 .Setup(x => x.GetParentOrderId(orderId))
                 .ReturnsAsync(existingParent);
 
-            this.mockOrderHistoryDao
+            this.mockPedidosDao
                 .Setup(x => x.UpdateOrder(It.IsAny<ProductionOrderSeparationModel>()))
                 .ReturnsAsync(true);
 
@@ -171,7 +171,7 @@ namespace Omicron.Pedidos.Test.MediatR
             Assert.That(existingParent.Status, Is.EqualTo(ServiceConstants.PartiallyDivided));
             Assert.That(existingParent.CompletedAt, Is.Null);
 
-            this.mockOrderHistoryDao.Verify(
+            this.mockPedidosDao.Verify(
                 x => x.UpdateOrder(existingParent),
                 Times.Once);
         }
@@ -200,7 +200,7 @@ namespace Omicron.Pedidos.Test.MediatR
                 OrderId = request.ProductionOrderId,
             };
 
-            this.mockOrderHistoryDao
+            this.mockPedidosDao
                 .Setup(x => x.GetDetailOrderById(detailOrderId))
                 .ReturnsAsync(existingOrder);
 
@@ -209,19 +209,19 @@ namespace Omicron.Pedidos.Test.MediatR
                 detailOrderId, request);
 
             // Assert
-            this.mockOrderHistoryDao.Verify(
+            this.mockPedidosDao.Verify(
                 x => x.GetDetailOrderById(detailOrderId),
                 Times.Once);
-            this.mockOrderHistoryDao.Verify(
+            this.mockPedidosDao.Verify(
                 x => x.GetMaxDivision(It.IsAny<int>()),
                 Times.Never);
-            this.mockOrderHistoryDao.Verify(
+            this.mockPedidosDao.Verify(
                 x => x.InsertDetailOrder(It.IsAny<ProductionOrderSeparationDetailModel>()),
                 Times.Never);
-            this.mockOrderHistoryDao.Verify(
+            this.mockPedidosDao.Verify(
                 x => x.GetParentOrderId(It.IsAny<int>()),
                 Times.Never);
-            this.mockOrderHistoryDao.Verify(
+            this.mockPedidosDao.Verify(
                 x => x.InsertOrder(It.IsAny<ProductionOrderSeparationModel>()),
                 Times.Never);
         }

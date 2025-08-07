@@ -722,6 +722,84 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
 
             return orderstoReturn;
         }
+
+        /// <inheritdoc/>
+        public async Task<bool> InsertDetailOrder(ProductionOrderSeparationDetailModel detaildOrder)
+        {
+            this.databaseContext.ProductionOrderSeparationDetailModel.Add(detaildOrder);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> InsertOrder(ProductionOrderSeparationModel orderId)
+        {
+            this.databaseContext.ProductionOrderSeparationModel.Add(orderId);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> UpdateOrder(ProductionOrderSeparationModel orderId)
+        {
+            this.databaseContext.ProductionOrderSeparationModel.Update(orderId);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<int> GetMaxDivision(int orderId)
+        {
+            var maxIndex = await this.databaseContext.ProductionOrderSeparationDetailModel
+            .Where(c => c.OrderId == orderId)
+            .MaxAsync(c => (int?)c.ConsecutiveIndex) ?? 0;
+
+            return maxIndex + 1;
+        }
+
+        /// <inheritdoc/>
+        public async Task<ProductionOrderSeparationModel> GetParentOrderId(int orderId)
+        {
+            return await this.databaseContext.ProductionOrderSeparationModel
+                .FirstOrDefaultAsync(x => x.OrderId == orderId);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ProductionOrderSeparationDetailModel> GetDetailOrderById(int detailOrderId)
+        {
+            return await this.databaseContext.ProductionOrderSeparationDetailModel
+                .FirstOrDefaultAsync(x => x.DetailOrderId == detailOrderId);
+        }
+
+        /// <inheritdoc/>
+        public async Task<OrderFabModel> GetChildOrderWithPieces(int childOrderId)
+        {
+            var childOrderInfo = await (from parent in this.databaseContext.ProductionOrderSeparationModel
+                                        join detail in this.databaseContext.ProductionOrderSeparationDetailModel
+                                        on parent.OrderId equals detail.OrderId
+                                        where detail.DetailOrderId == childOrderId
+                                        select new OrderFabModel
+                                        {
+                                            ParentId = parent.OrderId,
+                                            AvailablePieces = parent.AvailablePieces,
+                                            AssignedPieces = detail.AssignedPieces
+                                        }).FirstOrDefaultAsync();
+
+            return childOrderInfo;
+        }
+
+        /// <inheritdoc/>
+        public async Task<ProductionOrderSeparationModel> GetParentOrderById(int parentOrderId)
+        {
+            return await this.databaseContext.ProductionOrderSeparationModel
+                .FirstOrDefaultAsync(x => x.OrderId == parentOrderId);
+        }
+
+        /// <inheritdoc/>
+        public async Task UpdateParentOrder()
+        {
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+        }
     }
 }
 

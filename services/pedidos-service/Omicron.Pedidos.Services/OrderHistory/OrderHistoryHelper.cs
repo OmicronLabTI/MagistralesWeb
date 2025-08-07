@@ -10,8 +10,6 @@ namespace Omicron.Pedidos.Services.OrderHistory
 {
     using System;
     using System.Threading.Tasks;
-    using global::Azure.Core;
-    using Microsoft.EntityFrameworkCore.Query.Internal;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Model.Db;
     using Omicron.Pedidos.Services.Constants;
@@ -24,17 +22,17 @@ namespace Omicron.Pedidos.Services.OrderHistory
     /// </summary>
     public class OrderHistoryHelper : IOrderHistoryHelper
     {
-        private readonly IOrderHistoryDao orderHistoryDao;
+        private readonly IPedidosDao pedidosDao;
         private readonly ILogger logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OrderHistoryHelper"/> class.
         /// </summary>
-        /// <param name="orderHistoryDao">Order History DAO.</param>
+        /// <param name="pedidosDao">Order History DAO.</param>
         /// <param name="logger">Logger.</param>
-        public OrderHistoryHelper(IOrderHistoryDao orderHistoryDao, ILogger logger)
+        public OrderHistoryHelper(IPedidosDao pedidosDao, ILogger logger)
         {
-            this.orderHistoryDao = orderHistoryDao ?? throw new ArgumentNullException(nameof(orderHistoryDao));
+            this.pedidosDao = pedidosDao ?? throw new ArgumentNullException(nameof(pedidosDao));
             this.logger = logger.ThrowIfNull(nameof(logger));
         }
 
@@ -50,7 +48,7 @@ namespace Omicron.Pedidos.Services.OrderHistory
             this.logger.Information(LogsConstants.SaveHistoryOrdersFabStart, logBase, request.Pieces, request.UserId, request.SapOrder);
             try
             {
-                var existingOrderDetail = await this.orderHistoryDao.GetDetailOrderById(detailOrderId);
+                var existingOrderDetail = await this.pedidosDao.GetDetailOrderById(detailOrderId);
                 if (existingOrderDetail != null)
                 {
                     this.logger.Warning(LogsConstants.SaveHistoryOrdersFabChildExists, logBase);
@@ -77,7 +75,7 @@ namespace Omicron.Pedidos.Services.OrderHistory
         /// <returns>True register successfully.</returns>
         public async Task<bool> RegisterSeparatedOrdersDetail(int detailOrderId, SeparateProductionOrderCommand request)
         {
-            var consecutiveIndex = await this.GetNextDivision(request.ProductionOrderId);
+            var consecutiveIndex = await this.pedidosDao.GetMaxDivision(request.ProductionOrderId);
 
             var insertDetailOrderId = new ProductionOrderSeparationDetailModel
             {
@@ -91,7 +89,7 @@ namespace Omicron.Pedidos.Services.OrderHistory
                 ConsecutiveIndex = consecutiveIndex,
             };
 
-            return await this.orderHistoryDao.InsertDetailOrder(insertDetailOrderId);
+            return await this.pedidosDao.InsertDetailOrder(insertDetailOrderId);
         }
 
         /// <summary>
@@ -106,7 +104,7 @@ namespace Omicron.Pedidos.Services.OrderHistory
             int totalPieces,
             int assignedPieces)
         {
-            var existingParent = await this.orderHistoryDao.GetParentOrderId(orderId);
+            var existingParent = await this.pedidosDao.GetParentOrderId(orderId);
 
             if (existingParent == null)
             {
@@ -123,7 +121,7 @@ namespace Omicron.Pedidos.Services.OrderHistory
                     CompletedAt = isCompleteDivided ? DateTime.UtcNow : null,
                 };
 
-                return await this.orderHistoryDao.InsertOrder(newParent);
+                return await this.pedidosDao.InsertOrder(newParent);
             }
             else
             {
@@ -138,19 +136,8 @@ namespace Omicron.Pedidos.Services.OrderHistory
                     existingParent.CompletedAt = DateTime.UtcNow;
                 }
 
-                return await this.orderHistoryDao.UpdateOrder(existingParent);
+                return await this.pedidosDao.UpdateOrder(existingParent);
             }
-        }
-
-        /// <summary>
-        /// Gets the next division number for a parent order.
-        /// </summary>
-        /// <param name="orderId">Parent order number.</param>
-        /// <returns>Next division number.</returns>
-        private async Task<int> GetNextDivision(int orderId)
-        {
-            var maxDivisionNumber = await this.orderHistoryDao.GetMaxDivision(orderId);
-            return maxDivisionNumber + 1;
         }
     }
 }

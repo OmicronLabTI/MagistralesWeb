@@ -75,7 +75,6 @@ namespace Omicron.Pedidos.DependencyInjection
             Services.AddTransient<IAzureService, AzureServices>();
             Services.AddTransient<ISapServiceLayerAdapterService, SapServiceLayerAdapterService>();
             Services.AddTransient<IProductionOrdersService, ProductionOrdersService>();
-            Services.AddTransient<IOrderHistoryDao, OrderHistoryDao>();
             Services.AddTransient<IOrderHistoryHelper, OrderHistoryHelper>();
 
             return Services;
