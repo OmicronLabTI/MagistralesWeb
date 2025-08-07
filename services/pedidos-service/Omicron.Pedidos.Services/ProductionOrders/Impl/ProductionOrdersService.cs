@@ -14,6 +14,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
     using System.Net;
     using System.Threading.Tasks;
     using AutoMapper;
+    using global::MediatR;
     using Newtonsoft.Json;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Dtos.Models;
@@ -21,6 +22,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
     using Omicron.Pedidos.Entities.Model.Db;
     using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Constants;
+    using Omicron.Pedidos.Services.MediatR.Commands;
     using Omicron.Pedidos.Services.ProductionOrders;
     using Omicron.Pedidos.Services.Redis;
     using Omicron.Pedidos.Services.SapAdapter;
@@ -53,6 +55,8 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
 
         private readonly IUsersService userService;
 
+        private readonly IMediator mediator;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductionOrdersService"/> class.
         /// </summary>
@@ -65,6 +69,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
         /// <param name="sapFileService">The sap file service.</param>
         /// <param name="logger">Logger.</param>
         /// <param name="mapper">Mapper.</param>
+        /// <param name="mediator">Mediator.</param>
         public ProductionOrdersService(
             IPedidosDao pedidosDao,
             ISapServiceLayerAdapterService serviceLayerAdapterService,
@@ -74,7 +79,8 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             IUsersService userService,
             ISapFileService sapFileService,
             ILogger logger,
-            IMapper mapper)
+            IMapper mapper,
+            IMediator mediator)
         {
             this.pedidosDao = pedidosDao.ThrowIfNull(nameof(pedidosDao));
             this.serviceLayerAdapterService = serviceLayerAdapterService.ThrowIfNull(nameof(serviceLayerAdapterService));
@@ -85,6 +91,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             this.mapper = mapper.ThrowIfNull(nameof(mapper));
             this.userService = userService.ThrowIfNull(nameof(userService));
             this.sapFileService = sapFileService.ThrowIfNull(nameof(sapFileService));
+            this.mediator = mediator.ThrowIfNull(nameof(mediator));
         }
 
         /// <inheritdoc/>
@@ -268,6 +275,33 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> SeparateOrder(SeparateProductionOrderDto request)
+        {
+            var redisKey = string.Format(ServiceConstants.ProductionOrderSeparationProcessKey, request.ProductionOrderId);
+            var redisValue = await this.redisService.GetRedisKey(redisKey);
+
+            if (!string.IsNullOrEmpty(redisValue))
+            {
+                return ServiceUtils.CreateResult(
+                    false,
+                    (int)HttpStatusCode.InternalServerError,
+                    ServiceConstants.ProductionOrderSeparationProcessMessage,
+                    null,
+                    null);
+            }
+
+            await this.redisService.WriteToRedis(redisKey, JsonConvert.SerializeObject(request), new TimeSpan(12, 0, 0));
+            await this.SeparateProductionOrderProcessAsync(
+                request.ProductionOrderId,
+                request.Pieces,
+                request.UserId,
+                request.DxpOrder,
+                request.SapOrder,
+                request.TotalPieces);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
+        }
+
         private static ProductionOrderFailedResultModel CreateFinalizedFailedResponse(FinalizeProductionOrderModel orderToFinish, string reason)
         {
             return new ProductionOrderFailedResultModel
@@ -309,6 +343,26 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             model.LastStep = lastStep;
             model.LastUpdated = DateTime.Now;
             return model;
+        }
+
+        private async Task SeparateProductionOrderProcessAsync(
+            int productionOrderId,
+            int pieces,
+            string userId,
+            string dxpOrder,
+            int? sapOrder,
+            int totalPieces)
+        {
+            var separationId = Guid.NewGuid().ToString();
+            var command = new StartProductionOrderSeparationCommand(
+                productionOrderId,
+                pieces,
+                separationId,
+                userId,
+                dxpOrder,
+                sapOrder,
+                totalPieces);
+            await this.mediator.Send(command);
         }
 
         private async Task InsertOnRedisKeysToProductionOrdersToRetry(List<ProductionOrderProcessingStatusDto> productionOrders)

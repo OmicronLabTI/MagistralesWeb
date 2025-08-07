@@ -64,7 +64,7 @@ namespace Omicron.Pedidos.Test.Services
             var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
 
             serviceLayer
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             this.pedidosDao = new PedidosDao(this.context);
@@ -94,7 +94,7 @@ namespace Omicron.Pedidos.Test.Services
             var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
 
             serviceLayer
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             this.sapAdapter
@@ -149,7 +149,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
             serviceLayer
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             var mockSapAdapter = new Mock<ISapAdapter>();
@@ -198,7 +198,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
             serviceLayer
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             var sapAdapterLocal = new Mock<ISapAdapter>();
@@ -232,7 +232,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
             serviceLayer
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             var detalle900 = new CompleteDetailOrderModel { CodigoProducto = "DZ Test 1", IsOmigenomics = false, DescripcionProducto = "dec", FechaOf = "2020/01/01", FechaOfFin = "2020/01/01", IsChecked = false, OrdenFabricacionId = 900, Qfb = "qfb", QtyPlanned = 1, QtyPlannedDetalle = 1, Status = "P", CreatedDate = DateTime.Now, Label = "Pesonalizada", ProductFirmName = string.Empty };
@@ -299,7 +299,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
             serviceLayer
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             var detalle900 = new CompleteDetailOrderModel { CodigoProducto = "DZ Test 1", IsOmigenomics = false, DescripcionProducto = "dec", FechaOf = "2020/01/01", FechaOfFin = "2020/01/01", IsChecked = false, OrdenFabricacionId = 900, Qfb = "qfb", QtyPlanned = 1, QtyPlannedDetalle = 1, Status = "P", CreatedDate = DateTime.Now, Label = "Pesonalizada", ProductFirmName = string.Empty };
@@ -362,7 +362,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
             serviceLayer
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             var detalle900 = new CompleteDetailOrderModel { CodigoProducto = "DZ Test 1", IsOmigenomics = false, DescripcionProducto = "dec", FechaOf = "2020/01/01", FechaOfFin = "2020/01/01", IsChecked = false, OrdenFabricacionId = 900, Qfb = "qfb", QtyPlanned = 1, QtyPlannedDetalle = 1, Status = "P", CreatedDate = DateTime.Now, Label = "Pesonalizada", ProductFirmName = string.Empty };
@@ -426,7 +426,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
             serviceLayer
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             var sapAdapterLocal = new Mock<ISapAdapter>();
@@ -460,7 +460,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
             serviceLayer
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             var detalle900 = new CompleteDetailOrderModel { CodigoProducto = "Aspirina", DescripcionProducto = "dec", FechaOf = "2020/01/01", FechaOfFin = "2020/01/01", IsChecked = false, OrdenFabricacionId = 900, Qfb = "qfb", QtyPlanned = 1, QtyPlannedDetalle = 1, Status = "L", CreatedDate = DateTime.Now, Label = "Pesonalizada", ProductFirmName = string.Empty };
@@ -587,7 +587,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
             serviceLayer
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             var mockUsers = new Mock<IUsersService>();

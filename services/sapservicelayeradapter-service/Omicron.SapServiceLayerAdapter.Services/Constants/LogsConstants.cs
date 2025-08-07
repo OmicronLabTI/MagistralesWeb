@@ -180,5 +180,77 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// ProcessLogThreeParts.
         /// </value>
         public static string ProcessLogThreeParts => "{0} - {1} - {2}";
+
+        /// <summary>
+        /// Gets CancelProductionOrderLogBase.
+        /// </summary>
+        /// <value>
+        /// CancelProductionOrderLogBase.
+        /// </value>
+        public static string CancelProductionOrderLogBase => "{0} - Sap Service Layer - ProductionOrder: {1} - Cancel Order In SAP";
+
+        /// <summary>
+        /// Gets SeparateProductionOrderStart.
+        /// </summary>
+        /// <value>
+        /// SeparateProductionOrderStart.
+        /// </value>
+        public static string CancelProductionOrderStart => "{LogBase} - Start Proccess";
+
+        /// <summary>
+        /// Gets GetProductionOrderToCancel.
+        /// </summary>
+        /// <value>
+        /// GetProductionOrderToCancel.
+        /// </value>
+        public static string GetProductionOrderToCancel => "{LogBase} - Get Production Order";
+
+        /// <summary>
+        /// Gets ProductionOrderNotFound.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderNotFound.
+        /// </value>
+        public static string ProductionOrderNotFound => "Production Order NotFound";
+
+        /// <summary>
+        /// Gets ProductionOrderIsAlreadyCancelled.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderIsAlreadyCancelled.
+        /// </value>
+        public static string ProductionOrderIsAlreadyCancelled => "{LogBase} - Production Order Is Already Cancelled";
+
+        /// <summary>
+        /// Gets ErrorToUpdateProductionOrder.
+        /// </summary>
+        /// <value>
+        /// ErrorToUpdateProductionOrder.
+        /// </value>
+        public static string ErrorToUpdateProductionOrder => "{LogBase} - Error To Update Production Order - Error: {Error} - {Message}";
+
+        /// <summary>
+        /// Gets ErrorToCancelProductionOrder.
+        /// </summary>
+        /// <value>
+        /// ErrorToCancelProductionOrder.
+        /// </value>
+        public static string ErrorToCancelProductionOrder => "{LogBase} - Error To Cancel Production Order - Error: {Error} - {Message}";
+
+        /// <summary>
+        /// Gets UpdateProductionOrderToCancel.
+        /// </summary>
+        /// <value>
+        /// UpdateProductionOrderToCancel.
+        /// </value>
+        public static string UpdateProductionOrderToCancel => "{LogBase} - Update Production Order";
+
+        /// <summary>
+        /// Gets CancelProductionOrderToCancel.
+        /// </summary>
+        /// <value>
+        /// CancelProductionOrderToCancel.
+        /// </value>
+        public static string CancelProductionOrderToCancel => "{LogBase} - Cancel Production Order";
     }
 }
