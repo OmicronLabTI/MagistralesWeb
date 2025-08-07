@@ -276,7 +276,7 @@ class OrderDetailTest: XCTestCase {
 
     func testHideButtonsModel() {
         let model = HideButtons(process: true, finished: false, pending: false,
-                                addComp: false, save: false, seeBatches: false, saveChanges: false)
+                                addComp: false, save: false, seeBatches: false, saveChanges: false, splitOrder: false)
         XCTAssertNotNil(model)
         XCTAssertTrue(model.process)
         XCTAssertFalse(model.finished)

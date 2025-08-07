@@ -25,6 +25,9 @@ struct Constants {
         case loadOrdersDetail = "Hubo un error al cargar el detalle de la orden de fabricación, intentar de nuevo"
         case nowarehouses = "No se tienen almacenes configurados para"
         case hasBatches = "Se debe desasignar los lotes para poder editar el almacén"
+        case unassignBatches = "Desasigna los lotes de la orden de fabricación [fabOrder] para poder dividirla."
+        case onGoingSplitProcess = "La orden de fabricación seleccionada ya tiene un proceso de división en curso. Por favor espera a que finalice antes de intentar dividirla nuevamente."
+        case changeStatusParentOrders = "No es posible modificar el estatus de órdenes de fabricación padre: [fabOrders]"
     }
     enum Tags: Int {
         case loading = 101
@@ -69,6 +72,7 @@ struct ViewControllerIdentifiers {
     static let dropdownViewController = "DropdownViewController"
     static let historyTableViewCell = "HistoryTableViewCell"
     static let addComponentViewController = "AddComponentViewController"
+    static let splitOrderViewController = "SplitOrderViewController"
 }
 struct OmicronColors {
     static let blue = UIColor.init(red: 16/255, green: 149/255, blue: 200/255, alpha: 1)
@@ -224,6 +228,8 @@ struct CommonStrings {
     static let errorGetLotsByProduct = "Error al obtener los lotes"
     static let errorSaveLots = "Error al guardar los nuevos componentes"
     static let warehousesChangesConfirm = "Existen cambios sin guardar, ¿Deseas cambiar de Fórmula sin guardar los cambios?"
+    static let succesSplitOrder = "Estamos dividiendo la orden. Estará visible en \"En proceso\" en cuanto se complete"
+    static let errorSplitOrder = "Error al dividir la orden de fabricación"
 }
 struct FontsNames {
     static let SFProDisplayBold = "SFProDisplay-Bold"
@@ -254,6 +260,7 @@ struct StatusNameConstants {
     static let getSupplies = "Solicitar insumos"
     static let createBulk = "Crear granel"
     static let addComponentAndLots = "Agregar componente y asignar lotes"
+    static let splitOrder = "Dividir orden"
 }
 struct ImageButtonNames {
     static let assigned = "showAssignedDetailButton.png"
@@ -331,4 +338,15 @@ enum StatusOrders: Int {
 enum UserType: Int {
     case technical = 9
     case qfb = 2
+}
+
+struct OrderRelationTypes {
+    static let completa = "Completa"
+    static let padre = "Padre"
+    static let hija = "Hija"
+}
+
+enum typeOrderIcon: String {
+    case padre = "parentOrdersIcon"
+    case hija = "childOrderIcon"
 }

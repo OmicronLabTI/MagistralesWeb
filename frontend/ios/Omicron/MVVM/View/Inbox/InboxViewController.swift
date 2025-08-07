@@ -214,24 +214,45 @@ class InboxViewController: UIViewController {
         inboxViewModel.showAlertToChangeOrderOfStatus
             .observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] data in
                 guard let self = self else { return }
-                if data.typeOfStatus == StatusNameConstants.finishedStatus {
-                    self.inboxViewModel.validOrders(indexPathOfOrdersSelected: self.indexPathsSelected)
+                let parentOrders = searchParentOrders(indexPath: self.indexPathsSelected)
+                if !parentOrders.isEmpty {
+                    self.inboxViewModel.showThereParentOrderSelectedMessage(parentOrders: parentOrders)
                     return
+                } else {
+                    continueStatusChange(data: data)
                 }
-                let alert = UIAlertController(title: data.message, message: nil, preferredStyle: .alert)
-                let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive, handler: nil)
-                let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: { [weak self] _ in
-                    guard let self = self else { return }
-                    self.view.isUserInteractionEnabled = false
-                    self.inboxViewModel.changeStatus(indexPath: self.indexPathsSelected,
-                                                     typeOfStatus: data.typeOfStatus)
-                })
-                alert.addAction(cancelAction)
-                alert.addAction(okAction)
-                self.present(alert, animated: true, completion: nil)
             }).disposed(by: self.disposeBag)
         didScrollBinding()
         showKPIViewBinding()
+    }
+    
+    func continueStatusChange(data: MessageToChangeStatus) {
+        if data.typeOfStatus == StatusNameConstants.finishedStatus {
+            self.inboxViewModel.validOrders(indexPathOfOrdersSelected: self.indexPathsSelected)
+            return
+        }
+        let alert = UIAlertController(title: data.message, message: nil, preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive, handler: nil)
+        let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: { [weak self] _ in
+            guard let self = self else { return }
+            self.view.isUserInteractionEnabled = false
+            self.inboxViewModel.changeStatus(indexPath: self.indexPathsSelected,
+                                             typeOfStatus: data.typeOfStatus)
+        })
+        alert.addAction(cancelAction)
+        alert.addAction(okAction)
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func searchParentOrders(indexPath: [IndexPath]?) -> [Order] {
+        var parentOrders = [Order]()
+        for index in indexPath ?? [] {
+            let card = inboxViewModel.sectionOrders[index.section].items[index.row]
+            if card.orderRelationType == OrderRelationTypes.padre {
+                parentOrders.append(card)
+            }
+        }
+        return parentOrders
     }
 
     func didScrollBinding() {

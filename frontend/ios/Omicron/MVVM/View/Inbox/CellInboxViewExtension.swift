@@ -29,6 +29,7 @@ extension InboxViewController: CardCellDelegate {
             cell.finishDateDescriptionLabel.text = element.finishDate ?? CommonStrings.empty
             cell.productDescriptionLabel.text = element.descriptionProduct?.uppercased() ?? CommonStrings.empty
             cell.missingStockImage.isHidden = !element.hasMissingStock
+            orderTypeImage(cell.splitIsolateOrderIcon, element.orderRelationType ?? OrderRelationTypes.completa)
             cell.isSelected = indexPathsSelected.contains(indexPath)
             cell.itemCode.text = element.itemCode
             cell.qfbNameContainer.isHidden = rootViewModel.userType != .technical
@@ -59,6 +60,7 @@ extension InboxViewController: CardCellDelegate {
         cell.finishDateDescriptionLabel.text = element.finishDate ?? CommonStrings.empty
         cell.productDescriptionLabel.text = element.descriptionProduct?.uppercased() ?? CommonStrings.empty
         cell.missingStockImage.isHidden = !element.hasMissingStock
+        orderTypeImage(cell.splitOrderIcon, element.orderRelationType ?? OrderRelationTypes.completa)
         cell.isSelected = indexPathsSelected.contains(indexPath)
         cell.itemCode.text = element.itemCode
         cell.destiny.text = element.destiny
@@ -71,6 +73,16 @@ extension InboxViewController: CardCellDelegate {
         cell.itemCodeConstrains.constant = rootViewModel.userType != .technical ? 16 : 40
         cell.descriptionConstraint.constant = rootViewModel.userType != .technical ? 16 : 40
         return cell
+    }
+    
+    func orderTypeImage(_ imageView: UIImageView, _ type: String) {
+        let hideIcon = type == OrderRelationTypes.completa || self.title == StatusNameConstants.assignedStatus
+        imageView.isHidden = hideIcon
+        
+        if !hideIcon {
+            let typeIcon = type == OrderRelationTypes.padre ? typeOrderIcon.padre.rawValue : typeOrderIcon.hija.rawValue
+            imageView.image = UIImage(named: typeIcon)
+        }
     }
 
     func downloadPdf(id: Int) {
