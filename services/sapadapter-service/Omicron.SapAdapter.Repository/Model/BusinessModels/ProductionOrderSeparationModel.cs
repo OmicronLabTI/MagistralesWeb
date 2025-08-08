@@ -50,11 +50,5 @@ namespace Omicron.SapAdapter.Entities.Model.BusinessModels
         /// </summary>
         /// <value>Card code.</value>
         public string Status { get; set; }
-
-        /// <summary>
-        /// Gets or sets the card code.
-        /// </summary>
-        /// <value>Card code.</value>
-        public DateTime CompletedAt { get; set; }
     }
 }
