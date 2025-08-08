@@ -109,7 +109,16 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var listIdString = listIds.Select(x => x.ToString()).ToList();
             var orders = await this.pedidosDao.GetUserOrderByProducionOrder(listIdString);
-            return ServiceUtils.CreateResult(true, 200, null, orders, null);
+
+            var ordersParent = await this.pedidosDao.GetProductionOrderSeparationByOrderId(listIds);
+
+            var listToReturn = new UserOrderSeparationModel
+            {
+                UserOrders = orders.ToList(),
+                ProductionOrderSeparations = ordersParent,
+            };
+
+            return ServiceUtils.CreateResult(true, 200, null, listToReturn, null);
         }
 
         /// <inheritdoc/>
@@ -147,6 +156,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var resultFormula = await this.GetSapOrders(userOrders);
             var groups = ServiceUtils.GroupUserOrder(resultFormula, userOrders, isTecnic);
             groups.RequireTechnical = users.First().TechnicalRequire;
+            await this.ValidateFabOrders(groups.Status);
             return ServiceUtils.CreateResult(true, 200, null, groups, null);
         }
 
@@ -1011,6 +1021,30 @@ namespace Omicron.Pedidos.Services.Pedidos
             var utils = new PedidosUtils(this.redis);
             var listComponents = new List<string> { productCode };
             await utils.UpdateMostUsedComponents(listComponents, ServiceConstants.RedisBulkOrderKey);
+        }
+
+        private async Task ValidateFabOrders(List<QfbOrderDetail> fabOrders)
+        {
+            var fabOrderParentIds = fabOrders.SelectMany(q => q.Orders).Where(o => o.OrderRelationType == ServiceConstants.ParentOrder).Select(o => o.ProductionOrderId).ToList();
+            var productionOrdersRecord = await this.pedidosDao.GetProductionOrderSeparationByOrderId(fabOrderParentIds);
+
+            var completelyDividedOrders = new HashSet<int>(productionOrdersRecord.Where(o => o.Status == ServiceConstants.CompletelyDivided).Select(o => o.OrderId));
+
+            var statusesToFilter = new[] { 2, 5 };
+
+            foreach (var fabOrder in fabOrders)
+            {
+                if (statusesToFilter.Contains(fabOrder.StatusId))
+                {
+                    fabOrder.Orders = fabOrder.Orders.Where(order => !completelyDividedOrders.Contains(order.ProductionOrderId)).ToList();
+
+                    fabOrder.Orders = fabOrder.Orders.OrderBy(order =>
+                    {
+                        var key = (order.HasBatches, order.OrderRelationType);
+                        return ServiceConstants.OrderPriorities.TryGetValue(key, out int priority) ? priority : 5;
+                    }).ToList();
+                }
+            }
         }
     }
 }

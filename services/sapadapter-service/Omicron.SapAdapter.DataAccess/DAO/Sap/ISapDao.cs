@@ -251,6 +251,14 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <summary>
         /// Gest the batch transaction by order and item code.
         /// </summary>
+        /// <param name="itemCode">the item code.</param>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderItems(List<string> itemCodes, List<int> orderIds);
+
+        /// <summary>
+        /// Gest the batch transaction by order and item code.
+        /// </summary>
         /// <param name="orderId">the order id.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderItem(List<int> orderId);

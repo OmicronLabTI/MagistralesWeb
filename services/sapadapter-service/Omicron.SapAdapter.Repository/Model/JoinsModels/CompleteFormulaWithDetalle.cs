@@ -212,5 +212,17 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// </summary>
         /// <value>The code.</value>
         public List<CompleteDetalleFormulaModel> Details { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderRelationType.
+        /// </summary>
+        /// <value>The OrderRelationType.</value>
+        public string OrderRelationType { get; set; }
+
+        /// <summary>
+        /// Gets or sets ChildrenOrderPieces.
+        /// </summary>
+        /// <value>The ChildrenOrderPieces.</value>
+        public int AvailablePieces { get; set; }
     }
 }

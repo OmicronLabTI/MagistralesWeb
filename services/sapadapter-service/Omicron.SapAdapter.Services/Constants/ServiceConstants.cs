@@ -526,6 +526,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Local = "Local";
 
         /// <summary>
+        /// the order Complete.
+        /// </summary>
+        public const string Complete = "Completa";
+
+        /// <summary>
         /// foregin package error.
         /// </summary>
         public const string ForeingPackage = "El paquete es foráneo y no puede ser entregado por un repartidor local";
@@ -1008,6 +1013,19 @@ namespace Omicron.SapAdapter.Services.Constants
             { "Bioequal", "BE" },
             { "Bioelite", "MN" },
             { "MAQUILA", "MP" },
+        };
+
+        /// <summary>
+        /// Gets the Order Relation.
+        /// </summary>
+        /// <value>
+        /// the OrderRelation.
+        /// </value>
+        public static Dictionary<string, string> OrderRelation { get; } = new Dictionary<string, string>
+        {
+            { "Y", "Padre" },
+            { "N", "Hija" },
+            { "SA", "Completa" },
         };
 
         /// <summary>
