@@ -325,8 +325,6 @@ namespace Omicron.SapAdapter.Services.Sap
             var catalogResponse = await this.catalogsService.GetParams($"{ServiceConstants.GetParams}?{ServiceConstants.CardCodeResponsibleMedic}={ServiceConstants.CardCodeResponsibleMedic}");
             var specialCardCodes = JsonConvert.DeserializeObject<List<ParametersModel>>(catalogResponse.Response.ToString()).Select(x => x.Value).ToList();
 
-            var batchesMap = !returnDetails ? await this.GetBatchesPresenceByOrders(ordenFab.Select(x => x.OrdenId).ToList()) : new Dictionary<int, bool>();
-
             foreach (var o in ordenFab)
             {
                 if (!dictUser.ContainsKey(o.User))
@@ -386,7 +384,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     DestinyAddress = detallePedidoLocal?.DestinyAddress ?? string.Empty,
                     Comments = comments,
                     ClientDxp = clientDxp,
-                    HasBatches = returnDetails ? details.Any(x => x.HasBatches) : batchesMap.GetValueOrDefault(o.OrdenId, false),
+                    HasBatches = details.Any(x => x.HasBatches),
                     HasMissingStock = ServiceShared.CalculateTernary(returnDetails, details.Any(y => y.Stock == 0), itemsByFormula.Any(y => y.OnHand == 0)),
                     CatalogGroupName = ServiceShared.GetDictionaryValueString(ServiceConstants.DictCatalogGroup, item.Groupname, "MG"),
                     PatientName = pedidoLocal.Patient.ValidateNull().Replace(ServiceConstants.PatientConstant, string.Empty),
@@ -1236,46 +1234,6 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var users = await this.usersService.GetUsersById(userIds, ServiceConstants.GetUsersById);
             return JsonConvert.DeserializeObject<List<UserModel>>(users.Response.ToString());
-        }
-
-        private async Task<Dictionary<int, bool>> GetBatchesPresenceByOrders(List<int> orderIds)
-        {
-            var details = await this.sapDao.GetDetalleFormula(orderIds);
-
-            if (!details.Any())
-            {
-                return orderIds.ToDictionary(id => id, id => false);
-            }
-
-            var itemCodes = details.Select(d => d.ProductId).Distinct().ToList();
-            var allBatchTransactions = await this.sapDao.GetBatchesTransactionByOrderItems(itemCodes, orderIds);
-
-            var lastTransactions = allBatchTransactions
-                .GroupBy(t => new { t.DocNum, t.ItemCode })
-                .Select(g =>
-                {
-                    var valid = g.Where(t => t.DocQuantity > 0).OrderBy(t => t.LogEntry).ToList();
-                    return valid.Any() ? valid.Last() : null;
-                })
-                .Where(t => t != null)
-                .ToList();
-
-            if (!lastTransactions.Any())
-            {
-                return orderIds.ToDictionary(id => id, id => false);
-            }
-
-            var logEntries = lastTransactions.Select(x => x.LogEntry).Distinct().ToList();
-
-            var batchQtys = await this.sapDao.GetBatchTransationsQtyByLogEntry(logEntries);
-
-            var ordersWithBatches = lastTransactions
-                .Where(t => batchQtys.Any(b => b.LogEntry == t.LogEntry && b.AllocQty > 0))
-                .Select(t => t.DocNum)
-                .Distinct()
-                .ToHashSet();
-
-            return orderIds.ToDictionary(id => id, id => ordersWithBatches.Contains(id));
         }
     }
 }

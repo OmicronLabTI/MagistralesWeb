@@ -1040,7 +1040,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                     fabOrder.Orders = fabOrder.Orders.OrderBy(order =>
                     {
-                        var key = (order.HasBatches, order.OrderRelationType);
+                        var key = (order.AreBatchesComplete, order.OrderRelationType);
                         return ServiceConstants.OrderPriorities.TryGetValue(key, out int priority) ? priority : 5;
                     }).ToList();
                 }
