@@ -332,6 +332,7 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, AcceptBu
                                         typeFont: CommonStrings.bold)
         UtilsManager.shared.labelsStyle(label: self.htDescription, text: CommonStrings.description, fontSize: 19,
                                         typeFont: CommonStrings.bold)
+        splitButton.isEnabled = false
     }
     
     func setupDismissPickerOnTap() {
@@ -511,6 +512,8 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, AcceptBu
             componentsVC?.orderId = orderDetail[0].number
             componentsVC?.totalPieces = NSDecimalNumber(decimal: orderDetail[0].plannedQuantity ?? 0).intValue
             componentsVC?.availableQuantity = availablePieces
+            let originalQuantity = NSDecimalNumber(decimal: (orderDetail[0].plannedQuantity ?? 0)).intValue
+            componentsVC?.originalQuantityOrder = originalQuantity
             componentsVC?.orderType = orderDetail[0].orderRelationType ?? OrderRelationTypes.completa
             componentsVC?.showOnGoingProcessMessage = { value in
                 self.onGoingSplitProcess = value

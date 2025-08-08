@@ -163,6 +163,7 @@ extension OrderDetailViewController {
         // Cambia de color los labels encabezado de tabla cuando termina de cargar las ordene
         self.orderDetailViewModel.changeColorLabelsHt.subscribe(onNext: { [weak self] _ in
             self?.changeTextColorHtLabels(color: .black)
+            self?.splitButton.isEnabled = true
         }).disposed(by: self.disposeBag)
         self.orderDetailViewModel.tableData.bind(to: tableView.rx.items(
             cellIdentifier: ViewControllerIdentifiers.detailTableViewCell,

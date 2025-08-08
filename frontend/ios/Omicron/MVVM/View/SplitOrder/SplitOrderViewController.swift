@@ -34,12 +34,11 @@ class SplitOrderViewController: UIViewController, UITextFieldDelegate {
     var totalPieces: Int = 0
     var showOnGoingProcessMessage: ((Bool) -> Void)?
     var orderType: String = String()
+    var originalQuantityOrder: Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         initComponents()
-        
-        
     }
     
     func initComponents(){
@@ -117,7 +116,7 @@ class SplitOrderViewController: UIViewController, UITextFieldDelegate {
             errors.append("Las piezas asignadas superan las disponibles.")
         }
         
-        if number == availableQuantity && orderType == OrderRelationTypes.completa {
+        if number == originalQuantityOrder {
             errors.append("El número de piezas seleccionadas es igual al total de la orden. No es posible dividir la orden.")
         }
         validateIsReadytoAplit(errors)
