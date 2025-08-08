@@ -108,6 +108,7 @@ extension OrderDetail: Mappable {
         self.comments <- map["comments"]
         self.catalogGroupName <- map["catalogGroupName"]
         self.shopTransaction <- map["shopTransaction"]
+        self.availablePieces <- map["availablePieces"]
     }
 }
 class Detail {
