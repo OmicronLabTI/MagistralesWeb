@@ -204,6 +204,12 @@ extension InboxViewModel {
             let orderIds = getFabOrderIDs(indexPathOfOrdersSelected: indexPathOfOrdersSelected)
             validateOrdersService(orderIds)
         }
+    
+    func showThereParentOrderSelectedMessage(parentOrders: [Order]) {
+        let ordersId = parentOrders.map{ String($0.productionOrderId ?? 0) }.joined(separator: ", ")
+        let messageConcat = Constants.Errors.changeStatusParentOrders.rawValue.replacingOccurrences(of: "[fabOrders]", with: ordersId)
+        self.showAlert.onNext(messageConcat)
+    }
 
     func getFabOrderIDs(indexPathOfOrdersSelected: [IndexPath]) -> [Int] {
         guard indexPathOfOrdersSelected.count > 0 else { return []}

@@ -1048,6 +1048,32 @@ namespace Omicron.Pedidos.Services.Constants
         public const string StepCreatePdf = "PDF Created";
 
         /// <summary>
+        /// Gets ParentOrder.
+        /// </summary>
+        /// <value>
+        /// ParentOrder.
+        /// </value>
+        public const string ParentOrder = "Padre";
+
+        /// <summary>
+        /// CompletelyDivided.
+        /// </summary>
+        public const string CompletelyDivided = "Completamente dividida";
+
+        /// <summary>
+        /// PartiallyDivided.
+        /// </summary>
+        public const string PartiallyDivided = "Parcialmente dividida";
+
+        /// <summary>
+        /// Gets ProductionDetailCount.
+        /// </summary>
+        /// <value>
+        /// ProductionDetailCount.
+        /// </value>
+        public const int ProductionDetailCount = 1;
+
+        /// <summary>
         /// Gets DefaultRedisValueTimeToLive.
         /// </summary>
         /// <value>
@@ -1166,6 +1192,38 @@ namespace Omicron.Pedidos.Services.Constants
         /// ErrorOccurredWhileCommunicatingWithServiceLayerAdapter.
         /// </value>
         public static string ErrorOccurredWhileCommunicatingWithServiceLayerAdapter => "An error occurred while communicating with the Service Layer Adapter.";
+
+        /// <summary>
+        /// Gets MinutesToRetrySeparationProductionOrder.
+        /// </summary>
+        /// <value>
+        /// MinutesToRetrySeparationProductionOrder.
+        /// </value>
+        public static int MinutesToRetrySeparationProductionOrder => 5;
+
+        /// <summary>
+        /// Gets CreateChildOrderSapUrl.
+        /// </summary>
+        /// <value>
+        /// CreateChildOrderSapUrl.
+        /// </value>
+        public static string CreateChildOrderSapUrl => "child/order";
+
+        /// <summary>
+        /// Gets ProductionOrderSeparationProcessKey.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderSeparationProcessKey.
+        /// </value>
+        public static string ProductionOrderSeparationProcessKey => "production-order-separation-process:{0}";
+
+        /// <summary>
+        /// Gets ProductionOrderSeparationProcessMessage.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderSeparationProcessMessage.
+        /// </value>
+        public static string ProductionOrderSeparationProcessMessage => "La orden de fabricación seleccionada ya tiene un proceso de división en curso. Por favor espera a que finalice antes de intentar dividirla nuevamente.";
 
         /// <summary>
         /// Gets the status of the order.
@@ -1387,6 +1445,14 @@ namespace Omicron.Pedidos.Services.Constants
         public static string DateTimeFormatddMMyyyy => "dd/MM/yyyy";
 
         /// <summary>
+        /// Gets SeparationProcessCancelProductionOrderEndPoint.
+        /// </summary>
+        /// <value>
+        /// String SeparationProcessCancelProductionOrderEndPoint.
+        /// </value>
+        public static string SeparationProcessCancelProductionOrderEndPoint => "separationprocess/cancelproductionorder";
+
+        /// <summary>
         /// Gets list of signatures to assign products DZ in lowercase.
         /// </summary>
         /// <value>
@@ -1397,5 +1463,20 @@ namespace Omicron.Pedidos.Services.Constants
             {
                 "dermazone",
             };
+
+        /// <summary>
+        /// Gets list of signatures to assign products DZ in lowercase.
+        /// </summary>
+        /// <value>
+        /// String SignaturesToAssignProductsDZ.
+        /// </value>
+        public static Dictionary<(bool, string), int> OrderPriorities { get; } = new Dictionary<(bool, string), int>
+        {
+            { (true, "Completa"), 1 },
+            { (true, "Hija"), 2 },
+            { (false, "Padre"), 3 },
+            { (false, "Completa"), 4 },
+            { (false, "Hija"), 5 },
+        };
     }
 }

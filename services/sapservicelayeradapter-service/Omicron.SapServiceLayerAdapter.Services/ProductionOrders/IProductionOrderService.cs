@@ -75,5 +75,19 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
         /// <param name="productionOrdersToFinalize">Production Order Info To Finalize.</param>
         /// <returns>Operation result.</returns>
         Task<ResultModel> FinalizeProductionOrderInSap(List<CloseProductionOrderDto> productionOrdersToFinalize);
+
+        /// <summary>
+        /// CreateChildFabOrders.
+        /// </summary>
+        /// <param name="data">Production Order Info To Finalize.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultModel> CreateChildFabOrders(CreateChildProductionOrdersDto data);
+
+        /// <summary>
+        /// CancelProductionOrderForSeparationProcess.
+        /// </summary>
+        /// <param name="cancelProductionOrder">cancelProductionOrder.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultModel> CancelProductionOrderForSeparationProcess(CancelProductionOrderDto cancelProductionOrder);
     }
 }

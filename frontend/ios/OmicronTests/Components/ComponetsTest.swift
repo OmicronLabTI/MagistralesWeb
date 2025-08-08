@@ -35,7 +35,7 @@ class ComponetsTest: XCTestCase {
             statusId: 1, itemCode: "3264   120 ML", productCode: "3264", destiny: "Foráneo",
             hasMissingStock: false, finishedLabel: false, patientName: "NamePatient",
             clientDxp: "clientDxp",
-            shopTransaction: "233r", qfbName: "", technicalSign: true, hasTechnicalAssigned: false)
+            shopTransaction: "233r", qfbName: "", technicalSign: true, hasTechnicalAssigned: false, orderRelationType: "Completa")
         provider = MoyaProvider<ApiService>(
             endpointClosure: customEndpointClosure,
             stubClosure: MoyaProvider.immediatelyStub)

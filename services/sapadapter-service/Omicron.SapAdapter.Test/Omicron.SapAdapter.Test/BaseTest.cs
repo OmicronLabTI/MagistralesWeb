@@ -320,11 +320,11 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<OrdenFabricacionModel>
             {
-                new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 100, PostDate = DateTime.Now, Quantity = 2, Status = "L", PedidoId = 100, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 100, CreatedDate = DateTime.Now, DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT" },
+                new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 100, PostDate = DateTime.Now, Quantity = 2, Status = "L", PedidoId = 100, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 100, CreatedDate = DateTime.Now, DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT", OrderRelationType = "Y" },
                 new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 110, PostDate = DateTime.Now, Quantity = 1, Status = "L", PedidoId = 0, User = 1, Type = "S", OriginType = "M", CardCode = string.Empty, CompleteQuantity = 0, CreatedDate = DateTime.Now, DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT", Comments = "token" },
                 new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 120, PostDate = DateTime.Now, Quantity = 2, Status = "L", PedidoId = 100, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 100, CreatedDate = DateTime.Today.AddDays(1), DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT" },
                 new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 130, PostDate = DateTime.Now, Quantity = 1, Status = "L", PedidoId = 0, User = 1, Type = "S", OriginType = "M", CardCode = string.Empty, CompleteQuantity = 0, CreatedDate = DateTime.Today.AddDays(1), DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT", Comments = "token" },
-                new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 103, PostDate = DateTime.Now, Quantity = 2, Status = "L", PedidoId = 103, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 100, CreatedDate = DateTime.Now, DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT" },
+                new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 103, PostDate = DateTime.Now, Quantity = 2, Status = "L", PedidoId = 103, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 100, CreatedDate = DateTime.Now, DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT", OrderRelationType = "SA" },
 
                 // For Almacen
                 new OrdenFabricacionModel { ProductoId = "Magistral1", OrdenId = 1000, PostDate = DateTime.Now, Quantity = 10, Status = "L", PedidoId = 75000, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 10, CreatedDate = DateTime.Now, DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT" },
@@ -989,6 +989,37 @@ namespace Omicron.SapAdapter.Test
             {
                 listUsers.Add(pedidoId);
             }
+
+            return new ResultDto
+            {
+                Response = JsonConvert.SerializeObject(listUsers),
+                Code = 200,
+                Comments = string.Empty,
+                ExceptionMessage = string.Empty,
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// gets the resultdto for getuserpedidos.
+        /// </summary>
+        /// <param name="returnsError">Indicates if pedidos services returns an error.</param>
+        /// <param name="pedidoId">Pedido id.</param>
+        /// <returns>the data.</returns>
+        public ResultDto GetPedidosServiceResponse()
+        {
+            var listUsers = new UserOrderSeparationModel
+            {
+                UserOrders = new List<UserOrderModel>
+                {
+                    new UserOrderModel { Id = 1000, Productionorderid = "100", Salesorderid = "175623", Status = "Finalizado", Userid = "8df154e0-5061-4749-b06e-6bd3a1aebef8", CloseDate = new DateTime(2025, 5, 28), Comments = "comments", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1 },
+                },
+                ProductionOrderSeparations = new List<ProductionOrderSeparationModel>
+                {
+                    new ProductionOrderSeparationModel { Id = 1, OrderId = 100, AvailablePieces = 1 },
+                },
+            };
 
             return new ResultDto
             {

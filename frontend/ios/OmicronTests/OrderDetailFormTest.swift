@@ -67,7 +67,9 @@ class OrderDetailFormTest: XCTestCase {
             completeQuantity: 0, realEndDate: "", productLabel: "Selecciona una...",
             container: "Selecciona una...", comments: "", isChecked: false,
             details: [detail],
-            catalogGroupName: "MG", orderCreateDate: "10/09/2020")
+            catalogGroupName: "MG", orderCreateDate: "10/09/2020",
+            shopTransaction: "49d343e9-14ea-4207-8e97-bf50579ea9ac", availablePieces: 28,
+            onSplitProcess: false, orderRelationType: "Completa")
         self.orderDetailFormViewModel!.success.subscribe(onNext: { res in
             if res != 0 {
                 XCTAssertEqual(89662, res)

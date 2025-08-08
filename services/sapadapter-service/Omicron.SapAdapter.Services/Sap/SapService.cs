@@ -16,11 +16,9 @@ namespace Omicron.SapAdapter.Services.Sap
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
-    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
@@ -303,11 +301,14 @@ namespace Omicron.SapAdapter.Services.Sap
             var dictUser = new Dictionary<int, string>();
 
             var userOrders = new List<UserOrderModel>();
+            var ordersParent = new List<ProductionOrderSeparationModel>();
 
             if (returnDetails)
             {
                 var result = await this.pedidosService.PostPedidos(ordenFab.Select(x => x.OrdenId).ToList(), ServiceConstants.GetUserOrders);
-                userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(result.Response.ToString());
+                var response = JsonConvert.DeserializeObject<UserOrderSeparationModel>(result.Response.ToString());
+                userOrders = response.UserOrders;
+                ordersParent = response.ProductionOrderSeparations;
             }
 
             var detailsFormula = !returnDetails ? (await this.sapDao.GetDetalleFormulaByProdOrdId(ordenFab.Select(x => x.OrdenId).Distinct().ToList())).ToList() : new List<DetalleFormulaModel>();
@@ -323,6 +324,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var catalogResponse = await this.catalogsService.GetParams($"{ServiceConstants.GetParams}?{ServiceConstants.CardCodeResponsibleMedic}={ServiceConstants.CardCodeResponsibleMedic}");
             var specialCardCodes = JsonConvert.DeserializeObject<List<ParametersModel>>(catalogResponse.Response.ToString()).Select(x => x.Value).ToList();
+
+            var batchesMap = !returnDetails ? await this.GetBatchesPresenceByOrders(ordenFab.Select(x => x.OrdenId).ToList()) : new Dictionary<int, bool>();
 
             foreach (var o in ordenFab)
             {
@@ -383,12 +386,15 @@ namespace Omicron.SapAdapter.Services.Sap
                     DestinyAddress = detallePedidoLocal?.DestinyAddress ?? string.Empty,
                     Comments = comments,
                     ClientDxp = clientDxp,
-                    HasBatches = details.Any(x => x.HasBatches),
+                    HasBatches = returnDetails ? details.Any(x => x.HasBatches) : batchesMap.GetValueOrDefault(o.OrdenId, false),
                     HasMissingStock = ServiceShared.CalculateTernary(returnDetails, details.Any(y => y.Stock == 0), itemsByFormula.Any(y => y.OnHand == 0)),
                     CatalogGroupName = ServiceShared.GetDictionaryValueString(ServiceConstants.DictCatalogGroup, item.Groupname, "MG"),
                     PatientName = pedidoLocal.Patient.ValidateNull().Replace(ServiceConstants.PatientConstant, string.Empty),
                     Details = ServiceShared.CalculateTernary(returnDetails, details, new List<CompleteDetalleFormulaModel>()),
                     ShopTransaction = pedidoLocal.DocNumDxp,
+                    OrderRelationType = o.OrderRelationType != null ? ServiceShared.GetDictionaryValueString(ServiceConstants.OrderRelation, o.OrderRelationType, ServiceConstants.Complete) : ServiceConstants.Complete,
+                    AvailablePieces = ordersParent.FirstOrDefault(x => x.OrderId == o.OrdenId)?.AvailablePieces ?? (int)o.Quantity,
+                    OnSplitProcess = await this.GetRedisSeparateKey(o.OrdenId),
                 };
 
                 listToReturn.Add(formulaDetalle);
@@ -443,7 +449,8 @@ namespace Omicron.SapAdapter.Services.Sap
             fabricationOrders = fabricationOrders.Where(x => !string.IsNullOrEmpty(x.Status)).Distinct().ToList();
 
             var resultUserOrders = await this.pedidosService.PostPedidos(fabricationOrders.Select(x => x.OrdenId).ToList(), ServiceConstants.GetUserOrders);
-            var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(resultUserOrders.Response.ToString());
+            var resultado = JsonConvert.DeserializeObject<UserOrderSeparationModel>(resultUserOrders.Response.ToString());
+            var userOrders = resultado.UserOrders;
 
             foreach (var fabricationOrder in fabricationOrders)
             {
@@ -993,6 +1000,13 @@ namespace Omicron.SapAdapter.Services.Sap
                 .ToList();
         }
 
+        private async Task<bool> GetRedisSeparateKey(int productionOrderId)
+        {
+            var redisKey = string.Format(ServiceConstants.ProductionOrderSeparationProcessKey, productionOrderId);
+            var redisValue = await this.redisService.GetRedisKey(redisKey);
+            return !string.IsNullOrEmpty(redisValue);
+        }
+
         private (string, string, string) RefillOrders(CompleteOrderModel order, string doctorName, List<string> specialCardCodes, List<ClientCatalogModel> alias)
         {
             if (order.ClientType == ServiceConstants.ClientTypeInstitutional || order.ClientType == ServiceConstants.ClientTypeClinic)
@@ -1222,6 +1236,46 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var users = await this.usersService.GetUsersById(userIds, ServiceConstants.GetUsersById);
             return JsonConvert.DeserializeObject<List<UserModel>>(users.Response.ToString());
+        }
+
+        private async Task<Dictionary<int, bool>> GetBatchesPresenceByOrders(List<int> orderIds)
+        {
+            var details = await this.sapDao.GetDetalleFormula(orderIds);
+
+            if (!details.Any())
+            {
+                return orderIds.ToDictionary(id => id, id => false);
+            }
+
+            var itemCodes = details.Select(d => d.ProductId).Distinct().ToList();
+            var allBatchTransactions = await this.sapDao.GetBatchesTransactionByOrderItems(itemCodes, orderIds);
+
+            var lastTransactions = allBatchTransactions
+                .GroupBy(t => new { t.DocNum, t.ItemCode })
+                .Select(g =>
+                {
+                    var valid = g.Where(t => t.DocQuantity > 0).OrderBy(t => t.LogEntry).ToList();
+                    return valid.Any() ? valid.Last() : null;
+                })
+                .Where(t => t != null)
+                .ToList();
+
+            if (!lastTransactions.Any())
+            {
+                return orderIds.ToDictionary(id => id, id => false);
+            }
+
+            var logEntries = lastTransactions.Select(x => x.LogEntry).Distinct().ToList();
+
+            var batchQtys = await this.sapDao.GetBatchTransationsQtyByLogEntry(logEntries);
+
+            var ordersWithBatches = lastTransactions
+                .Where(t => batchQtys.Any(b => b.LogEntry == t.LogEntry && b.AllocQty > 0))
+                .Select(t => t.DocNum)
+                .Distinct()
+                .ToHashSet();
+
+            return orderIds.ToDictionary(id => id, id => ordersWithBatches.Contains(id));
         }
     }
 }

@@ -1019,5 +1019,68 @@ namespace Omicron.Pedidos.Test.Facade
             Assert.That(response.UserError, Is.Empty);
             Assert.That(response.Code.Equals(200));
         }
+
+        /// <summary>
+        /// GetFailedProductionOrders.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task GetFailedProductionOrders()
+        {
+            // act
+            var response = await this.pedidoFacade.GetFailedProductionOrders();
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
+        }
+
+        /// <summary>
+        /// RetryFailedProductionOrderFinalization.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task RetryFailedProductionOrderFinalization()
+        {
+            // arrange
+            var payloadRetry = new RetryFailedProductionOrderFinalizationDto();
+
+            // act
+            var response = await this.pedidoFacade.RetryFailedProductionOrderFinalization(payloadRetry);
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
+        }
+
+        /// <summary>
+        /// SeparateOrder.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task SeparateOrder()
+        {
+            // arrange
+            var request = new SeparateProductionOrderDto();
+
+            // act
+            var response = await this.pedidoFacade.SeparateOrder(request);
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
+        }
     }
 }

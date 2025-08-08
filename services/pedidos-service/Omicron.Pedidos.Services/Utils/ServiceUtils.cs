@@ -495,15 +495,16 @@ namespace Omicron.Pedidos.Services.Utils
 
             var ordersDetail = new List<FabOrderDetail>();
 
-            userOrders
-                .Where(x => x.Status.Equals(status.ToString()))
-                .ToList()
-                .ForEach(o =>
+            var sapOrdersDict = sapOrders.ToDictionary(s => s.ProductionOrderId, s => s);
+
+            var filteredUserOrders = userOrders.Where(x => x.Status.Equals(status.ToString()) ||
+            (x.Status.Equals(ServiceConstants.Cancelled) && TryIncludeCancelledOrderInStatusGroup(x, sapOrdersDict, statusId))).ToList();
+
+            filteredUserOrders.ForEach(o =>
                 {
                     int.TryParse(o.Productionorderid, out int orderId);
-                    var sapOrder = sapOrders.FirstOrDefault(s => s.ProductionOrderId == orderId);
 
-                    if (sapOrder != null)
+                    if (sapOrdersDict.TryGetValue(orderId, out var sapOrder))
                     {
                         var destiny = sapOrder.DestinyAddress.Split(",");
 
@@ -528,6 +529,8 @@ namespace Omicron.Pedidos.Services.Utils
                             TechnicalSign = o.StatusForTecnic == ServiceConstants.SignedStatus,
                             QfbName = o.QfbName,
                             HasTechnicalAssigned = !string.IsNullOrEmpty(o.TecnicId),
+                            OrderRelationType = sapOrder.OrderRelationType,
+                            HasBatches = sapOrder.HasBatches,
                         };
 
                         ordersDetail.Add(order);
@@ -546,6 +549,22 @@ namespace Omicron.Pedidos.Services.Utils
                 UserId = orderToFinish.UserId,
                 Reason = reason,
             };
+        }
+
+        private static bool TryIncludeCancelledOrderInStatusGroup(UserOrderModel userOrder, Dictionary<int, CompleteFormulaWithDetalle> sapOrdersDict, int statusId)
+        {
+            int.TryParse(userOrder.Productionorderid, out int orderId);
+
+            if (!sapOrdersDict.TryGetValue(orderId, out var sapOrder))
+            {
+                return false;
+            }
+
+            var parentOrder = sapOrder.OrderRelationType == ServiceConstants.ParentOrder;
+            var reassignmentDateExists = userOrder.ReassignmentDate.HasValue;
+
+            return (statusId == (int)ServiceEnums.Status.Proceso && parentOrder && !reassignmentDateExists)
+                || (statusId == (int)ServiceEnums.Status.Reasignado && parentOrder && reassignmentDateExists);
         }
     }
 }

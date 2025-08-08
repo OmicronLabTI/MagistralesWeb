@@ -490,6 +490,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderItems(List<string> itemCodes, List<int> orderIds)
+        {
+            return await this.RetryQuery(this.databaseContext.BatchTransacitions.Where(x => orderIds.Contains(x.DocNum) && itemCodes.Contains(x.ItemCode)).AsNoTracking());
+        }
+
+        /// <inheritdoc/>
         public async Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderItem(List<int> orderId)
         {
             return await this.RetryQuery(this.databaseContext.BatchTransacitions.Where(x => orderId.Contains(x.DocNum)).AsNoTracking());

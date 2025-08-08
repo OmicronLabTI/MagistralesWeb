@@ -35,6 +35,7 @@ enum ApiService {
     case getHistory(data: RawMaterialHistoryReq)
     case getLotsByProduct(data: LotsByProductRequest)
     case getWarehousesByItemcode(data: WarehouseByProductRequest)
+    case postSplitOrder(data: SplitOrderRequest)
 }
 
 extension ApiService: AuthorizedTargetType {
@@ -106,6 +107,8 @@ extension ApiService: AuthorizedTargetType {
             return "/sapadapter/components/lotes/byitemcode"
         case .getWarehousesByItemcode:
             return "/catalogos/product/warehouses"
+        case .postSplitOrder:
+            return "/pedidos/separate/order"
         }
     }
     var method: Moya.Method {
@@ -117,7 +120,8 @@ extension ApiService: AuthorizedTargetType {
              .validateOrders,
              .createOrderBulk,
              .packageOrders,
-             .createComponents:
+             .createComponents,
+             .postSplitOrder:
             return .post
         case .getInfoUser,
              .getStatusList,
@@ -157,6 +161,8 @@ extension ApiService: AuthorizedTargetType {
         case .renew(let data):
             return .requestJSONEncodable(data)
         case .deleteItemOfOrdenDetail(let data):
+            return .requestJSONEncodable(data)
+        case .postSplitOrder(let data):
             return .requestJSONEncodable(data)
         case .changeStatusOrder(let data):
             return .requestJSONEncodable(data)
@@ -333,6 +339,12 @@ extension ApiService: AuthorizedTargetType {
             return data
         case .getWarehousesByItemcode:
             guard let url = Bundle.main.url(forResource: "warehouses", withExtension: "json"),
+                let data = try? Data(contentsOf: url) else {
+                    return Data()
+            }
+            return data
+        case .postSplitOrder:
+            guard let url = Bundle.main.url(forResource: "postSplitOrder", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()
             }
