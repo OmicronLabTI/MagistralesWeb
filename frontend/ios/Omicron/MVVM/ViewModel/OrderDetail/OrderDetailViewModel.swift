@@ -52,6 +52,7 @@ class OrderDetailViewModel {
     )
     var warehousesOptions: [String] = []
     var itemCode = String()
+    var splitButtonEnableFlag: BehaviorSubject<String> = BehaviorSubject<String>(value: String())
     @Injected var rootViewModel: RootViewModel
     @Injected var inboxViewModel: InboxViewModel
     @Injected var networkManager: NetworkManager
@@ -129,6 +130,7 @@ class OrderDetailViewModel {
             endRefreshingAction(isRefresh)
             changeColorLabelsHt.onNext(())
             catalogGroup = order.catalogGroupName ?? String()
+            splitButtonEnableFlag.onNext(order.orderRelationType ?? String())
         }
     }
     
