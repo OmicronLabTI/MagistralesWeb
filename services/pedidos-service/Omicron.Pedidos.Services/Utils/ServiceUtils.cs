@@ -530,7 +530,6 @@ namespace Omicron.Pedidos.Services.Utils
                             QfbName = o.QfbName,
                             HasTechnicalAssigned = !string.IsNullOrEmpty(o.TecnicId),
                             OrderRelationType = sapOrder.OrderRelationType,
-                            HasBatches = sapOrder.HasBatches,
                         };
 
                         ordersDetail.Add(order);
