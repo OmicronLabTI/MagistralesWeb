@@ -113,6 +113,8 @@ namespace Omicron.Pedidos.Services.Pedidos
                 if (parentOrder != null)
                 {
                     parentOrder.AvailablePieces += childOrderInfo.AssignedPieces;
+                    parentOrder.Status = ServiceConstants.PartiallyDivided;
+                    parentOrder.CompletedAt = null;
                     await this.pedidosDao.UpdateParentOrder();
                 }
             }
