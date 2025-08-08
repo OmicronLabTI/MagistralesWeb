@@ -8,9 +8,9 @@
 
 namespace Omicron.Pedidos.Test.Services.ProductionOrders
 {
+    using global::MediatR;
+    using Omicron.Pedidos.Services.MediatR.Commands;
     using Omicron.Pedidos.Services.ProductionOrders.Impl;
-    using StackExchange.Redis;
-    using ZXing;
 
     /// <summary>
     /// class for the test.
@@ -43,8 +43,10 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
             var mapperConfiguration = new MapperConfiguration(cfg => cfg.AddProfile<AutoMapperProfile>());
             this.mapper = mapperConfiguration.CreateMapper();
 
+            var databaseName = $"TestDb_{Guid.NewGuid()}";
+
             var options = new DbContextOptionsBuilder<DatabaseContext>()
-                .UseInMemoryDatabase(databaseName: "Temporal")
+                .UseInMemoryDatabase(databaseName: databaseName)
                 .Options;
 
             this.context = new DatabaseContext(options);
@@ -104,8 +106,10 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
 
             var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
             mockServiceLayerAdapterService
-                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultModelCompl(resultMessages, isServiceLayerSuccess)));
+
+            var mockMediator = new Mock<IMediator>();
 
             var mockProductionOrdersService = new ProductionOrdersService(
                 this.pedidosDao,
@@ -116,7 +120,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 this.userService.Object,
                 this.sapFileService.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                mockMediator.Object);
 
             var response = await mockProductionOrdersService.FinalizeProductionOrdersAsync(productionOrdersToFinalize);
 
@@ -148,8 +153,10 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
 
             var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
             mockServiceLayerAdapterService
-                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ThrowsAsync(new Exception("Connection Refused."));
+
+            var mockMediator = new Mock<IMediator>();
 
             var mockProductionOrdersService = new ProductionOrdersService(
                 this.pedidosDao,
@@ -160,7 +167,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 this.userService.Object,
                 this.sapFileService.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                mockMediator.Object);
 
             var response = await mockProductionOrdersService.FinalizeProductionOrdersAsync(productionOrdersToFinalize);
 
@@ -222,8 +230,10 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
 
             var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
             mockServiceLayerAdapterService
-                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultModelCompl(resultMessages, isServiceLayerSuccess)));
+
+            var mockMediator = new Mock<IMediator>();
 
             var mockProductionOrdersService = new ProductionOrdersService(
                 this.pedidosDao,
@@ -234,7 +244,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 this.userService.Object,
                 this.sapFileService.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                mockMediator.Object);
 
             var response = await mockProductionOrdersService.FinalizeProductionOrdersOnSapAsync(productionOrdersToFinalize);
 
@@ -291,8 +302,10 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
 
             var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
             mockServiceLayerAdapterService
-                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ThrowsAsync(new Exception("Connection Refused."));
+
+            var mockMediator = new Mock<IMediator>();
 
             var mockProductionOrdersService = new ProductionOrdersService(
                 this.pedidosDao,
@@ -303,7 +316,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 this.userService.Object,
                 this.sapFileService.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                mockMediator.Object);
 
             var response = await mockProductionOrdersService.FinalizeProductionOrdersOnSapAsync(productionOrdersToFinalize);
 
@@ -356,6 +370,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 .SetupSequence(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()));
 
+            var mockMediator = new Mock<IMediator>();
+
             var mockProductionOrdersService = new ProductionOrdersService(
                 this.pedidosDao,
                 mockServiceLayerAdapterService.Object,
@@ -365,7 +381,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 this.userService.Object,
                 this.sapFileService.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                mockMediator.Object);
 
             var response = await mockProductionOrdersService.FinalizeProductionOrdersOnPostgresqlAsync(productionOrdersToFinalize);
 
@@ -414,6 +431,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 .SetupSequence(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()));
 
+            var mockMediator = new Mock<IMediator>();
+
             // The error is in the sapAdapter response.
             var mockProductionOrdersService = new ProductionOrdersService(
                 this.pedidosDao,
@@ -424,7 +443,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 this.userService.Object,
                 this.sapFileService.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                mockMediator.Object);
 
             var response = await mockProductionOrdersService.FinalizeProductionOrdersOnPostgresqlAsync(productionOrdersToFinalize);
 
@@ -488,6 +508,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUserModel()));
 
+            var mockMediator = new Mock<IMediator>();
+
             var mockProductionOrdersService = new ProductionOrdersService(
                 this.pedidosDao,
                 mockServiceLayerAdapterService.Object,
@@ -497,7 +519,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 mockUsers.Object,
                 mockSapFile.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                mockMediator.Object);
 
             var response = await mockProductionOrdersService.ProductionOrderPdfGenerationAsync(productionOrdersToFinalize);
 
@@ -528,6 +551,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 .Setup(x => x.GetAllProductionOrderProcessingStatusByStatus(It.IsAny<List<string>>()))
                 .Returns(Task.FromResult(this.GetProductionOrderProcessingStatusModelForGetFailedProductionOrders()));
 
+            var mockMediator = new Mock<IMediator>();
+
             var mockProductionOrdersService = new ProductionOrdersService(
                 mockDao.Object,
                 mockServiceLayerAdapterService.Object,
@@ -537,7 +562,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 mockUsers.Object,
                 mockSapFile.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                mockMediator.Object);
 
             var response = await mockProductionOrdersService.GetFailedProductionOrders();
 
@@ -588,7 +614,7 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
 
             var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
             mockServiceLayerAdapterService
-                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultModelCompl(resultMessages, true)));
 
             var mockSapAdapter = new Mock<ISapAdapter>();
@@ -596,6 +622,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
             var mockSapFile = new Mock<ISapFileService>();
 
             var mockUsers = new Mock<IUsersService>();
+
+            var mockMediator = new Mock<IMediator>();
 
             var mockProductionOrdersService = new ProductionOrdersService(
                 this.pedidosDao,
@@ -606,7 +634,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 mockUsers.Object,
                 mockSapFile.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                mockMediator.Object);
 
             var response = await mockProductionOrdersService.RetryFailedProductionOrderFinalization(request);
 
@@ -661,6 +690,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUserModel()));
 
+            var mockMediator = new Mock<IMediator>();
+
             var mockProductionOrdersService = new ProductionOrdersService(
                 this.pedidosDao,
                 mockServiceLayerAdapterService.Object,
@@ -670,13 +701,90 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 mockUsers.Object,
                 mockSapFile.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                mockMediator.Object);
 
             var response = await mockProductionOrdersService.RetryFailedProductionOrderFinalization(request);
 
             // Assert
             Assert.That(response.Success, Is.True);
             Assert.That(response.Code.Equals((int)HttpStatusCode.OK));
+        }
+
+        /// <summary>
+        /// SeparateOrder.
+        /// </summary>
+        /// <param name="existRedisValue">Exist redis value.</param>
+        /// <returns>Test.</returns>
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task SeparateOrder(bool existRedisValue)
+        {
+            var mockRedisService = new Mock<IRedisService>();
+            var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
+            var mockSapAdapter = new Mock<ISapAdapter>();
+            var mockSapFile = new Mock<ISapFileService>();
+            var mockUsers = new Mock<IUsersService>();
+            var mockDao = new Mock<IPedidosDao>();
+            var mockMediator = new Mock<IMediator>();
+
+            var request = new SeparateProductionOrderDto
+            {
+                ProductionOrderId = 12345,
+                Pieces = 5,
+            };
+
+            var redisValue = string.Empty;
+
+            if (existRedisValue)
+            {
+                redisValue = JsonConvert.SerializeObject(new SeparateProductionOrderDto
+                {
+                    ProductionOrderId = 12345,
+                    Pieces = 5,
+                });
+            }
+
+            mockRedisService
+                .Setup(mr => mr.GetRedisKey(It.IsAny<string>()))
+                .Returns(Task.FromResult(redisValue));
+            mockRedisService.Setup(m => m.WriteToRedis(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>()));
+
+            var mockProductionOrdersService = new ProductionOrdersService(
+                mockDao.Object,
+                mockServiceLayerAdapterService.Object,
+                mockRedisService.Object,
+                this.mockKafkaConnector.Object,
+                mockSapAdapter.Object,
+                mockUsers.Object,
+                mockSapFile.Object,
+                this.logger.Object,
+                this.mapper,
+                mockMediator.Object);
+
+            var response = await mockProductionOrdersService.SeparateOrder(request);
+
+            // Assert
+            if (!existRedisValue)
+            {
+                Assert.That(response.Success, Is.True);
+                Assert.That(response.Code.Equals((int)HttpStatusCode.OK));
+                Assert.That(response.Response, Is.Null);
+                Assert.That(response.Comments, Is.Null);
+                Assert.That(response.ExceptionMessage, Is.Null);
+                Assert.That(response.UserError, Is.Null);
+            }
+            else
+            {
+                Assert.That(response.Success, Is.False);
+                Assert.That(response.Code.Equals((int)HttpStatusCode.InternalServerError));
+                Assert.That(response.Response, Is.Null);
+                Assert.That(response.Comments, Is.Null);
+                Assert.That(response.ExceptionMessage, Is.Null);
+                Assert.That(response.UserError, Is.Not.Null);
+                Assert.That(response.UserError.Equals("La orden de fabricación seleccionada ya tiene un proceso de división en curso. Por favor espera a que finalice antes de intentar dividirla nuevamente."));
+            }
         }
     }
 }

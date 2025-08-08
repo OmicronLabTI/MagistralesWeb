@@ -480,5 +480,73 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="ordersIds">production order ids.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<List<ProductionOrderSeparationModel>> GetProductionOrderSeparationByOrderId(List<int> ordersIds);
+
+        /// Returns the user orders by SalesOrder (Pedido)
+        /// </summary>
+        /// <param name="separationId">the list ids.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<UserOrderModel>> GetOrdersBySeparationId(string separationId);
+
+        /// <summary>
+        /// Insert order details
+        /// </summary>
+        /// <param name="detaildOrderId">order details</param>
+        /// <returns>True was successfully inserted</returns>
+        Task<bool> InsertDetailOrder(ProductionOrderSeparationDetailModel detaildOrderId);
+
+        /// <summary>
+        /// Insert order parent
+        /// </summary>
+        /// <param name="orderId">Parent order model</param>
+        /// <returns>True was successfully inserted</returns>
+        Task<bool> InsertOrder(ProductionOrderSeparationModel orderId);
+
+        /// <summary>
+        /// Updates an existing parent order
+        /// </summary>
+        /// <param name="orderId">Parent order model</param>
+        /// <returns>True si se actualizó correctamente</returns>
+        Task<bool> UpdateOrder(ProductionOrderSeparationModel orderId);
+
+        /// <summary>
+        /// Gets a parent order by its number
+        /// </summary>
+        /// <param name="orderId"> parent order number</param>
+        /// <returns>order model or null if it does not exist</returns>
+        Task<ProductionOrderSeparationModel> GetParentOrderId(int orderId);
+
+        /// <summary>
+        /// Gets the maximum split number for a parent order
+        /// </summary>
+        /// <param name="orderId">Parent order number</param>
+        /// <returns>Maximum division number</returns>
+        Task<int> GetMaxDivision(int orderId);
+
+        /// <summary>
+        /// Gets the detailOrderId
+        /// </summary>
+        /// <param name="detailOrderId">detailOrderId</param>
+        /// <returns>detailOrderId</returns>
+        Task<ProductionOrderSeparationDetailModel> GetDetailOrderById(int detailOrderId);
+
+        /// <summary>
+        /// Gets fabOrderId with assigned pieces.
+        /// </summary>
+        /// <param name="fabOrderId">fabOrderId</param>
+        /// <returns>fabOrderId order info with assigned pieces</returns>
+        Task<OrderFabModel> GetChildOrderWithPieces(int fabOrderId);
+
+        /// <summary>
+        /// GetParentOrderById available pieces for a parent order
+        /// </summary>
+        /// <param name="parentOrderId">Parent order ID</param>
+        /// <returns>Success indicator</returns>
+        Task<ProductionOrderSeparationModel> GetParentOrderById(int parentOrderId);
+
+        /// <summary>
+        /// Updates available pieces for a parent order
+        /// </summary>
+        /// <returns>Success indicator</returns>
+        Task UpdateParentOrder();
     }
 }

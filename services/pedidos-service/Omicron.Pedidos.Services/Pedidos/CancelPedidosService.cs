@@ -89,9 +89,33 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var cancellationResults = await this.CancelExistingProductionOrders(ordersToCancel, userOrders, results);
 
+            foreach (var orderFab in ordersToCancel)
+            {
+                await this.ResetAvailablePiecesForCancelledOrder(orderFab);
+            }
+
             await this.CancelSalesOrderWithAllProductionOrderCancelled(userId, cancellationResults.Item1, this.sapAdapter);
 
             return ServiceUtils.CreateResult(true, 200, null, cancellationResults.Item2.DistinctResults(), null);
+        }
+
+        /// <summary>
+        /// Reset orderFab.
+        /// </summary>
+        /// <param name="resetOrdersToCancel">ResetAvailablePiecesForCancelledOrder.</param>
+        /// <returns>Orders with updated info.</returns>urns>
+        public async Task ResetAvailablePiecesForCancelledOrder(OrderIdModel resetOrdersToCancel)
+        {
+            var childOrderInfo = await this.pedidosDao.GetChildOrderWithPieces(resetOrdersToCancel.OrderId);
+            if (childOrderInfo != null && childOrderInfo.AssignedPieces > 0)
+            {
+                var parentOrder = await this.pedidosDao.GetParentOrderById(childOrderInfo.ParentId);
+                if (parentOrder != null)
+                {
+                    parentOrder.AvailablePieces += childOrderInfo.AssignedPieces;
+                    await this.pedidosDao.UpdateParentOrder();
+                }
+            }
         }
 
         /// <summary>

@@ -127,6 +127,65 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
         }
 
         /// <inheritdoc/>
+        public async Task<ResultModel> CreateChildFabOrders(CreateChildProductionOrdersDto data)
+        {
+            try
+            {
+                var originalPO = await this.GetFromServiceLayer<ProductionOrderDto>(
+                    string.Format(ServiceQuerysConstants.QryProductionOrderById, data.OrderId),
+                    string.Format(ServiceConstants.FabOrderNotFound, data.OrderId));
+
+                var productionOrder = new CreateProductionOrderDto();
+                productionOrder.StartDate = originalPO.StartDate;
+                productionOrder.DueDate = originalPO.DueDate;
+                productionOrder.ItemNo = originalPO.ItemNo;
+                productionOrder.ProductDescription = originalPO.ProductDescription;
+                productionOrder.PlannedQuantity = data.Pieces;
+                productionOrder.ProductionOrderOriginEntry = originalPO.ProductionOrderOriginEntry ?? 0;
+                productionOrder.Remarks = string.Format(ServiceConstants.ChildFarOrderComments, originalPO.AbsoluteEntry);
+                productionOrder.IsParentRecord = ServiceConstants.IsNotPackage;
+
+                var newFabOrder = await this.SaveFabOrder(productionOrder);
+                newFabOrder.ProductionOrderLines = newFabOrder.ProductionOrderLines.Where(x => originalPO.ProductionOrderLines.Any(y => y.ItemNo == x.ItemNo)).ToList();
+                newFabOrder.ProductionOrderLines.ForEach(newPo =>
+                {
+                    var originalData = originalPO.ProductionOrderLines.Where(x => x.ItemNo == newPo.ItemNo).First();
+                    newPo.BaseQuantity = originalData.BaseQuantity;
+                    newPo.Warehouse = "PT";
+                });
+
+                var newComponentsAdded = originalPO.ProductionOrderLines.Where(x => !newFabOrder.ProductionOrderLines.Any(y => y.ItemNo == x.ItemNo)).ToList();
+                var lastIdLineNumber = newFabOrder.ProductionOrderLines.Max(x => x.LineNumber);
+                newComponentsAdded.ForEach(x =>
+                {
+                    lastIdLineNumber++;
+                    var newComponent = new ProductionOrderLineDto()
+                    {
+                        ItemNo = x.ItemNo,
+                        Warehouse = "PT",
+                        BaseQuantity = x.BaseQuantity,
+                        PlannedQuantity = x.PlannedQuantity,
+                        DocumentAbsoluteEntry = newFabOrder.AbsoluteEntry,
+                        BatchNumbers = new List<ProductionOrderItemBatchDto>(),
+                        UoMEntry = x.UoMEntry,
+                        UoMCode = x.UoMCode,
+                        LineNumber = lastIdLineNumber,
+                    };
+
+                    newFabOrder.ProductionOrderLines.Add(newComponent);
+                });
+
+                var request = this.mapper.Map<UpdateProductionOrderDto>(newFabOrder);
+                await this.SaveChanges(request, newFabOrder.AbsoluteEntry);
+                return ServiceUtils.CreateResult(true, 200, null, newFabOrder.AbsoluteEntry, null);
+            }
+            catch (Exception ex)
+            {
+                return ServiceUtils.CreateResult(false, 400, null, ex.Message, null);
+            }
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultModel> CreateFabOrder(List<OrderWithDetailDto> orderWithDetail)
         {
             var dictResult = new Dictionary<string, string>();
@@ -224,6 +283,77 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             }
 
             return ServiceUtils.CreateResult(true, 200, null, ServiceConstants.OkLabelResponse, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> CancelProductionOrderForSeparationProcess(CancelProductionOrderDto cancelProductionOrder)
+        {
+            var logBase = string.Format(LogsConstants.CancelProductionOrderLogBase, cancelProductionOrder.SeparationId, cancelProductionOrder.ProductionOrderId);
+
+            try
+            {
+                this.logger.Information(LogsConstants.CancelProductionOrderStart, logBase);
+
+                this.logger.Information(LogsConstants.GetProductionOrderToCancel, logBase);
+                var productionOrder = await this.GetFromServiceLayer<ProductionOrderDto>(
+                     string.Format(ServiceQuerysConstants.QryProductionOrderById, cancelProductionOrder.ProductionOrderId),
+                     LogsConstants.ProductionOrderNotFound);
+
+                if (productionOrder.ProductionOrderStatus == ServiceConstants.ProductionOrderCancelled)
+                {
+                    this.logger.Information(LogsConstants.ProductionOrderIsAlreadyCancelled, logBase);
+                    return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
+                }
+
+                productionOrder.Remarks = ServiceConstants.ProductionOrderSourceDivisionComment;
+                productionOrder.IsParentRecord = ServiceConstants.YesValue;
+                var body = JsonConvert.SerializeObject(productionOrder);
+
+                this.logger.Information(LogsConstants.UpdateProductionOrderToCancel, logBase);
+                var resultUpdate = await this.serviceLayerClient.PutAsync(
+                    string.Format(ServiceQuerysConstants.QryProductionOrderById, cancelProductionOrder.ProductionOrderId),
+                    body);
+
+                if (!resultUpdate.Success)
+                {
+                    this.logger.Error(LogsConstants.ErrorToUpdateProductionOrder, logBase, resultUpdate.UserError, resultUpdate.ExceptionMessage);
+                    return ServiceUtils.CreateResult(
+                        false,
+                        (int)HttpStatusCode.InternalServerError,
+                        null,
+                        null,
+                        string.Format(LogsConstants.ProcessLogTwoParts, resultUpdate.UserError, resultUpdate.ExceptionMessage));
+                }
+
+                this.logger.Information(LogsConstants.CancelProductionOrderToCancel, logBase);
+                var resultCancel = await this.serviceLayerClient.PostAsync(
+                    string.Format(ServiceQuerysConstants.QryProductionOrderByIdCancel, cancelProductionOrder.ProductionOrderId),
+                    body);
+
+                if (!resultCancel.Success)
+                {
+                    this.logger.Error(LogsConstants.ErrorToCancelProductionOrder, logBase, resultCancel.UserError, resultCancel.ExceptionMessage);
+                    return ServiceUtils.CreateResult(
+                        false,
+                        (int)HttpStatusCode.InternalServerError,
+                        null,
+                        null,
+                        string.Format(LogsConstants.ProcessLogTwoParts, resultCancel.UserError, resultCancel.ExceptionMessage));
+                }
+
+                return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
+            }
+            catch (Exception ex)
+            {
+                var error = string.Format(LogsConstants.ProcessLogThreeParts, logBase, ex.Message, ex.StackTrace);
+                this.logger.Error(ex, error);
+                return ServiceUtils.CreateResult(
+                    false,
+                    (int)HttpStatusCode.InternalServerError,
+                    null,
+                    string.Format(LogsConstants.ProcessLogTwoParts, ex.Message, ex.StackTrace),
+                    null);
+            }
         }
 
         /// <inheritdoc/>
@@ -392,7 +522,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                 }
                 catch (Exception ex)
                 {
-                    error = string.Format(LogsConstants.ProcessLogThreeParts, logBase, ex.StackTrace, ex.Message);
+                    error = string.Format(LogsConstants.ProcessLogThreeParts, logBase, ex.InnerException, ex.Message);
                     this.logger.Error(ex, error);
                     processResultResult.Add(
                             GenerateValidationResult(
@@ -678,6 +808,19 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                 this.logger.Error(LogsConstants.ErrorOcurredOnCreateInventoryGenExit, logBase, response.Code, response.UserError);
                 throw new CustomServiceException($"{string.Format(ServiceConstants.FailReasonNotGetExitCreated, productionOrderId)} - {response.UserError}");
             }
+        }
+
+        private async Task<ProductionOrderDto> SaveFabOrder(CreateProductionOrderDto fabOrder)
+        {
+            var body = JsonConvert.SerializeObject(fabOrder);
+            var result = await this.serviceLayerClient.PostAsync(ServiceQuerysConstants.QryProductionOrder, body);
+            if (!result.Success)
+            {
+                this.logger.Error($"Error al crear la orden de fabricación error: {result.UserError}");
+                throw new CustomServiceException("Error al crear la orden de fabricación");
+            }
+
+            return JsonConvert.DeserializeObject<ProductionOrderDto>(result.Response.ToString());
         }
 
         private async Task ValidateRequiredQuantityForRetroactiveIssues(ProductionOrderDto productionOrder)

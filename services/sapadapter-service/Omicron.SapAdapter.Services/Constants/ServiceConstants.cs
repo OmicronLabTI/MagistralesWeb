@@ -955,6 +955,14 @@ namespace Omicron.SapAdapter.Services.Constants
         public static string AlmacenDbValue => "ALM";
 
         /// <summary>
+        /// Gets ProductionOrderSeparationProcessKey.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderSeparationProcessKey.
+        /// </value>
+        public static string ProductionOrderSeparationProcessKey => "production-order-separation-process:{0}";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

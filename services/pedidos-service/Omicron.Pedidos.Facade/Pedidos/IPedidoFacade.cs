@@ -335,5 +335,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="payloadRetry">payloadRetry.</param>
         /// <returns>Process Result.</returns>urns>
         Task<ResultDto> RetryFailedProductionOrderFinalization(RetryFailedProductionOrderFinalizationDto payloadRetry);
+
+        /// <summary>
+        /// Retrieves the user orders based on invoice ids and order types.
+        /// </summary>
+        /// <param name="request"> the request. </param>
+        /// <returns> A result containing the matching user production orders. </returns>
+        Task<ResultDto> SeparateOrder(SeparateProductionOrderDto request);
     }
 }

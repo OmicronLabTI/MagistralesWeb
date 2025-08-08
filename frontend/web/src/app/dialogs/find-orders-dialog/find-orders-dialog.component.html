@@ -236,7 +236,8 @@
                     </div>
                     <div class="form-field-right padding-tp" *ngIf="isFromSearchOrders">
                         <mat-form-field appearance="outline" class="custom-field-full"
-                            *ngIf="localStorageService.getUserRole() === '3' && isFromSearchOrders">
+                            *ngIf="(localStorageService.getUserRole() === '3' || localStorageService.getUserRole() === '4')
+                                && isFromSearchOrders">
                             <mat-label>Clasificación</mat-label>
                             <mat-select formControlName="clasification">
                                 <ng-container *ngFor="let clasification of clasifications">

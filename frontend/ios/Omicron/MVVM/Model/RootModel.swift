@@ -99,6 +99,7 @@ class Order {
     var qfbName: String?
     var technicalSign: Bool?
     var hasTechnicalAssigned: Bool?
+    var orderRelationType: String?
     init(areBatchesComplete: Bool?, productionOrderId: Int?, baseDocument: Int?,
          container: String?, tag: String?, plannedQuantity: Decimal?,
          startDate: String?, finishDate: String?, descriptionProduct: String?,
@@ -110,7 +111,7 @@ class Order {
          shopTransaction: String?,
          qfbName: String?,
          technicalSign: Bool?,
-         hasTechnicalAssigned: Bool?) {
+         hasTechnicalAssigned: Bool?, orderRelationType: String?) {
         self.areBatchesComplete = areBatchesComplete
         self.productionOrderId = productionOrderId
         self.baseDocument = baseDocument
@@ -132,6 +133,7 @@ class Order {
         self.qfbName = qfbName
         self.technicalSign = technicalSign
         self.hasTechnicalAssigned = hasTechnicalAssigned
+        self.orderRelationType = orderRelationType
     }
     required init?(map: Map) {}
 }

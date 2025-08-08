@@ -151,7 +151,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var sapServiceLayer = new Mock<ISapServiceLayerAdapterService>();
             sapServiceLayer
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultCreateOrder()));
 
             var mockRedis = new Mock<IRedisService>();
@@ -198,7 +198,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var sapServiceLayer = new Mock<ISapServiceLayerAdapterService>();
             sapServiceLayer
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultCreateOrder()));
 
             var mockRedis = new Mock<IRedisService>();

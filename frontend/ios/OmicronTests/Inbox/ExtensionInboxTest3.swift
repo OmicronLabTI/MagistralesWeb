@@ -35,7 +35,7 @@ class ExtensionInboxTest3: XCTestCase {
             statusId: 1, itemCode: "3264   120 ML", productCode: "3264", destiny: "Foráneo",
             hasMissingStock: false, finishedLabel: false, patientName: "NamePatient",
             clientDxp: "clientDxp", shopTransaction: "emnjkd", qfbName: "", technicalSign: true,
-            hasTechnicalAssigned: false)
+            hasTechnicalAssigned: false, orderRelationType: "Completa")
         expectedResult = "http://172.30.5.49:5002/Pruebas_ArchivosOmicronTemp/SaleOrders/Order76260.pdf"
         provider = MoyaProvider<ApiService>(
             endpointClosure: customEndpointClosure,
