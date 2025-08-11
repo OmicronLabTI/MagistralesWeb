@@ -90,37 +90,30 @@ jobs:
           role-to-assume: "arn:aws:iam::891376991292:role/GithubActionsRole"
           output-credentials: true
 
-      - name: Configure CodeArtifact access
+      # Remover los pasos de debug
+      - name: Configure CodeArtifact access with token
         run: |
           set -e
           
-          # Opción 1: Si tienes un token pre-generado en secrets
           if [ -n "${{ secrets.CODEARTIFACT_AUTH_TOKEN }}" ]; then
-            echo "Using pre-configured CodeArtifact token..."
+            echo "Configuring CodeArtifact with authorization token..."
+            
+            # Agregar el source de CodeArtifact con el token
             dotnet nuget add source https://axity-992382646884.d.codeartifact.us-east-1.amazonaws.com/nuget/axity-nuget-repo/v3/index.json \
               --name "CodeArtifact" \
               --username "aws" \
               --password "${{ secrets.CODEARTIFACT_AUTH_TOKEN }}" \
               --store-password-in-clear-text
-          else
-            # Opción 2: Configurar manualmente el endpoint sin autenticación automática
-            echo "Setting up CodeArtifact endpoint manually..."
-            REPO_ENDPOINT=$(aws codeartifact get-repository-endpoint \
-              --domain axity \
-              --domain-owner 992382646884 \
-              --repository axity-nuget-repo \
-              --format nuget \
-              --region us-east-1 \
-              --query repositoryEndpoint \
-              --output text 2>/dev/null || echo "")
             
-            if [ -n "$REPO_ENDPOINT" ]; then
-              echo "Repository endpoint: $REPO_ENDPOINT"
-              dotnet nuget add source "${REPO_ENDPOINT}v3/index.json" \
-                --name "CodeArtifact"
-            else
-              echo "Warning: Could not configure CodeArtifact. Continuing with public NuGet only..."
-            fi
+            echo "CodeArtifact source configured successfully"
+            
+            # Verificar que el source se agregó correctamente
+            dotnet nuget list source
+            
+          else
+            echo "ERROR: CODEARTIFACT_AUTH_TOKEN secret is not configured!"
+            echo "Please add the CodeArtifact authorization token as a GitHub secret named 'CODEARTIFACT_AUTH_TOKEN'"
+            exit 1
           fi
 
       - name: Test frontend/web
