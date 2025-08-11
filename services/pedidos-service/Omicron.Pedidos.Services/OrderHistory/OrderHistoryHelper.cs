@@ -82,7 +82,7 @@ namespace Omicron.Pedidos.Services.OrderHistory
                 DetailOrderId = detailOrderId,
                 OrderId = request.ProductionOrderId,
                 UserId = request.UserId,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = DateTime.Now,
                 DxpOrder = string.IsNullOrEmpty(request.DxpOrder) ? null : request.DxpOrder,
                 SapOrder = request.SapOrder,
                 AssignedPieces = request.Pieces,
@@ -118,7 +118,7 @@ namespace Omicron.Pedidos.Services.OrderHistory
                     TotalPieces = totalPieces,
                     AvailablePieces = availablePieces,
                     Status = isCompleteDivided ? ServiceConstants.CompletelyDivided : ServiceConstants.PartiallyDivided,
-                    CompletedAt = isCompleteDivided ? DateTime.UtcNow : null,
+                    CompletedAt = isCompleteDivided ? DateTime.Now : null,
                 };
 
                 return await this.pedidosDao.InsertOrder(newParent);
@@ -133,7 +133,7 @@ namespace Omicron.Pedidos.Services.OrderHistory
 
                 if (isCompletelyDivided && existingParent.CompletedAt == null)
                 {
-                    existingParent.CompletedAt = DateTime.UtcNow;
+                    existingParent.CompletedAt = DateTime.Now;
                 }
 
                 return await this.pedidosDao.UpdateOrder(existingParent);
