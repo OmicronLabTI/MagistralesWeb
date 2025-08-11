@@ -174,6 +174,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
 
                     newFabOrder.ProductionOrderLines.Add(newComponent);
                 });
+                newFabOrder.ProductionOrderStatus = ServiceConstants.ProductionOrderReleased;
 
                 var request = this.mapper.Map<UpdateProductionOrderDto>(newFabOrder);
                 await this.SaveChanges(request, newFabOrder.AbsoluteEntry);
