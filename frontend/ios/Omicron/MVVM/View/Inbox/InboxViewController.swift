@@ -248,7 +248,7 @@ class InboxViewController: UIViewController {
         var parentOrders = [Order]()
         for index in indexPath ?? [] {
             let card = inboxViewModel.sectionOrders[index.section].items[index.row]
-            if card.orderRelationType == OrderRelationTypes.padre || card.orderRelationType == OrderRelationTypes.completa {
+            if card.orderRelationType == OrderRelationTypes.padre {
                 parentOrders.append(card)
             }
         }
