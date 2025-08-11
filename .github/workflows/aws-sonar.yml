@@ -76,15 +76,6 @@ jobs:
 
       - name: Set Environments
         uses: ./.github/actions/environments-aws
-        
-      - name: Configure AWS credentials for CodeArtifact
-        id: codeartifact-creds
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-          output-credentials: true
 
       - name: Login to AWS CodeArtifact (dotnet)
         run: |
