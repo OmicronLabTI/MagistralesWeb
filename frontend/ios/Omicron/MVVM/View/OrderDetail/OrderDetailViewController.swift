@@ -103,6 +103,7 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, AcceptBu
         orderDetailViewModel.tableData.onNext([])
         saveWarehousesChangesButton.isEnabled = false
         self.componentsToUpdate = []
+        splitButton.isEnabled = false
     }
 
     // MARK: - Functions

@@ -158,6 +158,7 @@ extension Order: Mappable {
         qfbName <- map["qfbName"]
         technicalSign <- map["technicalSign"]
         hasTechnicalAssigned <- map["hasTechnicalAssigned"]
+        orderRelationType <- map["orderRelationType"]
     }
 }
 struct SectionOrder {
