@@ -188,7 +188,9 @@ extension OrderDetailViewController {
                 cell.selectedOption = data.warehouse ?? String()
                 cell.delegate = self
                 cell.productId = data.productID ?? String()
-                cell.pickerContainerView.isUserInteractionEnabled = self?.orderDetail[0].orderRelationType != OrderRelationTypes.completa
+                cell.pickerContainerView.isUserInteractionEnabled = self?.enablePickerBySplitProcess(
+                    typeOrder: self?.orderDetail[0].orderRelationType ?? OrderRelationTypes.completa,
+                    onSpliProcess: self?.orderDetail[0].onSplitProcess ?? false) ?? true
         }.disposed(by: disposeBag)
         orderDetailViewModel.tableData.subscribe(onNext: { [weak self] details in
             guard let self = self else { return }
@@ -197,6 +199,15 @@ extension OrderDetailViewController {
                 return ""
             }
         }).disposed(by: disposeBag)
+        orderDetailViewModel.splitButtonEnableFlag.subscribe(onNext: { [weak self] typeOrder in
+            guard let self = self else { return }
+            splitButton.isEnabled = typeOrder != OrderRelationTypes.hija
+        }).disposed(by: disposeBag)
+    }
+    
+    func enablePickerBySplitProcess(typeOrder: String, onSpliProcess: Bool) -> Bool {
+        let enablePicker = typeOrder != OrderRelationTypes.padre || !onSpliProcess
+        return enablePicker
     }
     
     func enablePicketContainer() -> Bool{

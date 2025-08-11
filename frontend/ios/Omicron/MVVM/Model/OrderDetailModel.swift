@@ -110,6 +110,7 @@ extension OrderDetail: Mappable {
         self.shopTransaction <- map["shopTransaction"]
         self.availablePieces <- map["availablePieces"]
         self.orderRelationType <- map["orderRelationType"]
+        self.onSplitProcess <- map["onSplitProcess"]
     }
 }
 class Detail {
