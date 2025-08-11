@@ -89,17 +89,11 @@ jobs:
           role-to-assume: "arn:aws:iam::891376991292:role/GithubActionsRole"
           output-credentials: true
 
-      # Asumir rol en la cuenta de CodeArtifact
-      - name: Configure AWS credentials for CodeArtifact
-        id: creds-codeartifact
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: us-east-1
-          role-to-assume: "arn:aws:iam::992382646884:role/CodeArtifactAccessRole"  # Este rol debe existir
-          role-chaining: true
-          output-credentials: true
-
       - name: Login to AWS CodeArtifact (dotnet)
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AXITY_AWS_REGION }}
         run: |
           set -e
           aws codeartifact login --tool dotnet \
