@@ -59,12 +59,15 @@ class SplitOrderViewController: UIViewController, UITextFieldDelegate {
     
     func configButtons(){
         acceptButton.isEnabled = isReadytoSplit
-        acceptButton.isOpaque = !isReadytoSplit
+        acceptButton.layer.borderWidth = 1
         acceptButton.layer.cornerRadius = 8
+        acceptButton.layer.borderColor = OmicronColors.blue.cgColor
+        acceptButton.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
         
         cancelButton.layer.borderWidth = 1
         cancelButton.layer.cornerRadius = 8
-        cancelButton.layer.borderColor = OmicronColors.blue.cgColor
+        cancelButton.layer.borderColor = UIColor.systemRed.cgColor
+        cancelButton.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
     }
     
     func configTextField(){

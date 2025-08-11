@@ -64,5 +64,12 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
         [JsonProperty("U_OPadre")]
         [JsonPropertyName("U_OPadre")]
         public string IsParentRecord { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Remarks.
+        /// </summary>
+        /// <value>Remarks.</value>
+        [JsonProperty("Warehouse")]
+        public string Warehouse { get; set; }
     }
 }

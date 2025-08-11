@@ -97,6 +97,7 @@ struct OmicronColors {
     static let historyStatusOpen = UIColor(red: 19/255, green: 121/255, blue: 253/255, alpha: 1)
     static let historyStatusClosed = UIColor(red: 2/255, green: 172/255, blue: 74/255, alpha: 1)
     static let historyStatusCancel = UIColor(red: 227/255, green: 9/255, blue: 0/255, alpha: 1)
+    static let redColor = UIColor(red: 255/255, green: 59/255, blue: 48/255, alpha: 1)
 }
 
 struct UsersDefaultsConstants {
@@ -228,7 +229,7 @@ struct CommonStrings {
     static let errorGetLotsByProduct = "Error al obtener los lotes"
     static let errorSaveLots = "Error al guardar los nuevos componentes"
     static let warehousesChangesConfirm = "Existen cambios sin guardar, ¿Deseas cambiar de Fórmula sin guardar los cambios?"
-    static let succesSplitOrder = "Estamos dividiendo la orden. Estará visible en \"En proceso\" en cuanto se complete"
+    static let succesSplitOrder = "Estamos dividiendo la orden. Estará visible en \"[status]\" en cuanto se complete"
     static let errorSplitOrder = "Error al dividir la orden de fabricación"
 }
 struct FontsNames {
