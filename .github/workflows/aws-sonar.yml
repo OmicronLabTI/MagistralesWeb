@@ -89,13 +89,16 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
           role-to-assume: "arn:aws:iam::891376991292:role/GithubActionsRole"
           output-credentials: true
-          
+
+      # Remover los pasos de debug
       - name: Configure CodeArtifact access
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ""
           AWS_DEFAULT_REGION: us-east-1
         run: |
+          unset AWS_SESSION_TOKEN
           aws codeartifact login --tool dotnet \
             --domain axity \
             --domain-owner 992382646884 \
