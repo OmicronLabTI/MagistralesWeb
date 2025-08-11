@@ -89,32 +89,18 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
           role-to-assume: "arn:aws:iam::891376991292:role/GithubActionsRole"
           output-credentials: true
-
-      # Remover los pasos de debug
-      - name: Configure CodeArtifact access with token
-        run: |
-          set -e
           
-          if [ -n "${{ secrets.CODEARTIFACT_AUTH_TOKEN }}" ]; then
-            echo "Configuring CodeArtifact with authorization token..."
-            
-            # Agregar el source de CodeArtifact con el token
-            dotnet nuget add source https://axity-992382646884.d.codeartifact.us-east-1.amazonaws.com/nuget/axity-nuget-repo/v3/index.json \
-              --name "CodeArtifact" \
-              --username "aws" \
-              --password "${{ secrets.CODEARTIFACT_AUTH_TOKEN }}" \
-              --store-password-in-clear-text
-            
-            echo "CodeArtifact source configured successfully"
-            
-            # Verificar que el source se agregó correctamente
-            dotnet nuget list source
-            
-          else
-            echo "ERROR: CODEARTIFACT_AUTH_TOKEN secret is not configured!"
-            echo "Please add the CodeArtifact authorization token as a GitHub secret named 'CODEARTIFACT_AUTH_TOKEN'"
-            exit 1
-          fi
+      - name: Configure CodeArtifact access
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-1
+        run: |
+          aws codeartifact login --tool dotnet \
+            --domain axity \
+            --domain-owner 992382646884 \
+            --repository axity-nuget-repo \
+            --region us-east-1
 
       - name: Test frontend/web
         if: ${{ (contains(steps.changeset.outputs.changes, 'frontend/web')) || (inputs.force_test) }}
