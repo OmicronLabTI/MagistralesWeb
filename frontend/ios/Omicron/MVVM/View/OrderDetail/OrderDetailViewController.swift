@@ -524,7 +524,7 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, AcceptBu
     }
     
     func splitOrderAcceptButton(request: SplitOrderRequest) {
-        splitOrderViewModel.saveChanges(request)
+        splitOrderViewModel.saveChanges(request, section: statusType)
     }
     
     func someComponentHasBatches() -> Bool {

@@ -17,13 +17,14 @@ class SplitOrderViewModel {
     var showAlert: PublishSubject<String> = PublishSubject()
     var closeModal: PublishSubject<String> = PublishSubject()
     
-    func saveChanges(_ data: SplitOrderRequest) {
+    func saveChanges(_ data: SplitOrderRequest, section: String) {
         self.loading.onNext(true)
+        let mssg = CommonStrings.succesSplitOrder.replacingOccurrences(of: "[status]", with: section)
         networkManager.postSplitOrder(data).subscribe(onNext: {[weak self] res in
             guard let self = self else { return }
             self.loading.onNext(false)
             if res.code == 200 {
-                self.closeModal.onNext(CommonStrings.succesSplitOrder)
+                self.closeModal.onNext(mssg)
                 return
             }
             let errorMessage = res.userError ?? String()

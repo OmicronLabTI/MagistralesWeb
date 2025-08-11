@@ -22,6 +22,7 @@ class SplitOrderTest: XCTestCase {
     var statusCode = 200
     var testData = Data()
     var dataRequest: SplitOrderRequest?
+    var section = String()
     
     @Injected var networkManager: NetworkManager
     override func setUp() {
@@ -37,6 +38,7 @@ class SplitOrderTest: XCTestCase {
             dxpOrder: "d125566b-6321-4854-9a42-10fb5c5edcc1",
             sapOrder: 280028,
             totalPieces: 30)
+        section = "Reasignado"
     }
     
     func customEndpointClosure(_ target: ApiService) -> Endpoint {
@@ -51,6 +53,7 @@ class SplitOrderTest: XCTestCase {
         splitOrderModel = nil
         disposeBag = nil
         dataRequest = nil
+        section = String()
     }
     
     // MARK: - TEST FUNCTIONS
@@ -60,7 +63,7 @@ class SplitOrderTest: XCTestCase {
         }).disposed(by: disposeBag!)
         
         splitOrderModel?.networkManager = NetworkManager(provider: provider)
-        splitOrderModel?.saveChanges(dataRequest!)
+        splitOrderModel?.saveChanges(dataRequest!, section: section)
     }
     
 }
