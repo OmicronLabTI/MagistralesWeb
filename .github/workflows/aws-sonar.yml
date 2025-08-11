@@ -33,6 +33,10 @@ jobs:
       actions: write
       contents: read
       id-token: write
+    outputs:
+      aws_access_key_id: ${{ steps.creds.outputs.aws-access-key-id }}
+      aws_secret_access_key: ${{ steps.creds.outputs.aws-secret-access-key }}
+      aws_session_token: ${{ steps.creds.outputs.aws-session-token }}
     steps:
       - name: Configure AWS credentials
         id: creds
@@ -76,17 +80,18 @@ jobs:
 
       - name: Set Environments
         uses: ./.github/actions/environments-aws
-
+        
       # ------------------------
       # LOGIN ÚNICO A CODEARTIFACT
-      # Este paso configura las credenciales AWS y ejecuta aws codeartifact login --tool dotnet
-      # para que los siguientes usos/composite actions usen CodeArtifact como fuente NuGet.
+      # Usamos las credenciales temporales que obtuvo start-runner
       - name: Configure AWS credentials for CodeArtifact
         id: codeartifact-creds
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: ${{ env.AWS_REGION }}
-          role-to-assume: "arn:aws:iam::891376991292:role/GithubActionsRole"
+          aws-access-key-id: ${{ needs.start-runner.outputs.aws_access_key_id }}
+          aws-secret-access-key: ${{ needs.start-runner.outputs.aws_secret_access_key }}
+          aws-session-token: ${{ needs.start-runner.outputs.aws_session_token }}
           output-credentials: true
 
       - name: Login to AWS CodeArtifact (dotnet)
@@ -96,7 +101,7 @@ jobs:
           set -e
           aws codeartifact login --tool dotnet --domain axity --domain-owner 992382646884 --repository axity-nuget-repo --region us-east-1
       # ------------------------
-        
+
       - name: Test frontend/web
         if: ${{ (contains(steps.changeset.outputs.changes, 'frontend/web')) || (inputs.force_test) }}
         uses: ./.github/actions/sonar-aws-web
