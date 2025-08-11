@@ -80,10 +80,22 @@ jobs:
 
       - name: Set Environments
         uses: ./.github/actions/environments-aws
-        
-      # ------------------------
-      # LOGIN ÚNICO A CODEARTIFACT
-      # Usamos las credenciales temporales que obtuvo start-runner
+
+      # <-- Paso de verificación: asegura que start-runner entregó credenciales -->
+      - name: Verify start-runner AWS credentials are available
+        run: |
+          # No imprimimos las credenciales; solo comprobamos si existen
+          if [ -z "${{ needs.start-runner.outputs.aws_access_key_id }}" ] || [ -z "${{ needs.start-runner.outputs.aws_secret_access_key }}" ]; then
+            echo "ERROR: start-runner did not produce AWS credentials outputs."
+            echo "  Possible causes:"
+            echo "    - The 'Configure AWS credentials' step in start-runner failed."
+            echo "    - Job outputs were not set (check start-runner logs, step 'creds')."
+            echo "  Check the 'start-runner' job logs for the 'Configure AWS credentials' step."
+            exit 1
+          else
+            echo "start-runner AWS credential outputs are present."
+          fi
+
       - name: Configure AWS credentials for CodeArtifact
         id: codeartifact-creds
         uses: aws-actions/configure-aws-credentials@v4
@@ -100,7 +112,6 @@ jobs:
         run: |
           set -e
           aws codeartifact login --tool dotnet --domain axity --domain-owner 992382646884 --repository axity-nuget-repo --region us-east-1
-      # ------------------------
 
       - name: Test frontend/web
         if: ${{ (contains(steps.changeset.outputs.changes, 'frontend/web')) || (inputs.force_test) }}
@@ -174,6 +185,7 @@ jobs:
           project_name: SapServiceLayerAdapter
           sonar_server: ${{ secrets.SONAR_SERVER }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
+          
   stop-runner:
     name: Stop self-hosted EC2 runner
     needs:
@@ -184,7 +196,7 @@ jobs:
       actions: write
       contents: read
       id-token: write
-    if: ${{ always() }} # required to stop the runner even if the error happened in the previous jobs
+    if: ${{ always() }}
     steps:
       - name: Configure AWS credentials
         id: creds
