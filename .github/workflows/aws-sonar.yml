@@ -42,8 +42,9 @@ jobs:
         id: creds
         uses: aws-actions/configure-aws-credentials@v4
         with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
-          role-to-assume: "arn:aws:iam::891376991292:role/GithubActionsRole"
           output-credentials: true
 
       - name: Start EC2 runner
@@ -81,25 +82,23 @@ jobs:
       - name: Set Environments
         uses: ./.github/actions/environments-aws
         
-      # ------------------------
-      # LOGIN ÚNICO A CODEARTIFACT
-      # Usamos las credenciales temporales que obtuvo start-runner (se pasan via job outputs)
       - name: Configure AWS credentials for CodeArtifact
         id: codeartifact-creds
         uses: aws-actions/configure-aws-credentials@v4
         with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
-          aws-access-key-id: ${{ needs.start-runner.outputs.aws_access_key_id }}
-          aws-secret-access-key: ${{ needs.start-runner.outputs.aws_secret_access_key }}
-          aws-session-token: ${{ needs.start-runner.outputs.aws_session_token }}
           output-credentials: true
 
       - name: Login to AWS CodeArtifact (dotnet)
-        env:
-          AWS_REGION: ${{ env.AWS_REGION }}
         run: |
           set -e
-          aws codeartifact login --tool dotnet --domain axity --domain-owner 992382646884 --repository axity-nuget-repo --region us-east-1
+          aws codeartifact login --tool dotnet \
+            --domain axity \
+            --domain-owner 992382646884 \
+            --repository axity-nuget-repo \
+            --region us-east-1
 
       - name: Test frontend/web
         if: ${{ (contains(steps.changeset.outputs.changes, 'frontend/web')) || (inputs.force_test) }}
@@ -190,8 +189,9 @@ jobs:
         id: creds
         uses: aws-actions/configure-aws-credentials@v4
         with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
-          role-to-assume: "arn:aws:iam::891376991292:role/GithubActionsRole"
           output-credentials: true
 
       - name: Stop EC2 runner
