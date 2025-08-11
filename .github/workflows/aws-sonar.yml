@@ -90,33 +90,38 @@ jobs:
           role-to-assume: "arn:aws:iam::891376991292:role/GithubActionsRole"
           output-credentials: true
 
-      # Agregar debug para verificar credenciales
-      - name: Debug AWS credentials
-        run: |
-          echo "Current AWS identity:"
-          aws sts get-caller-identity
-          echo "AWS CLI version:"
-          aws --version
-
-      - name: Login to AWS CodeArtifact (dotnet) - Alternative approach
-        env:
-          AWS_ACCESS_KEY_ID: ${{ steps.creds.outputs.aws-access-key-id }}
-          AWS_SECRET_ACCESS_KEY: ${{ steps.creds.outputs.aws-secret-access-key }}
-          AWS_SESSION_TOKEN: ${{ steps.creds.outputs.aws-session-token }}
-          AWS_DEFAULT_REGION: us-east-1
+      - name: Configure CodeArtifact access
         run: |
           set -e
-          echo "Using explicit credential outputs..."
           
-          # Verificar credenciales con las variables explícitas
-          aws sts get-caller-identity --region us-east-1
-          
-          # Login a CodeArtifact
-          aws codeartifact login --tool dotnet \
-            --domain axity \
-            --domain-owner 992382646884 \
-            --repository axity-nuget-repo \
-            --region us-east-1
+          # Opción 1: Si tienes un token pre-generado en secrets
+          if [ -n "${{ secrets.CODEARTIFACT_AUTH_TOKEN }}" ]; then
+            echo "Using pre-configured CodeArtifact token..."
+            dotnet nuget add source https://axity-992382646884.d.codeartifact.us-east-1.amazonaws.com/nuget/axity-nuget-repo/v3/index.json \
+              --name "CodeArtifact" \
+              --username "aws" \
+              --password "${{ secrets.CODEARTIFACT_AUTH_TOKEN }}" \
+              --store-password-in-clear-text
+          else
+            # Opción 2: Configurar manualmente el endpoint sin autenticación automática
+            echo "Setting up CodeArtifact endpoint manually..."
+            REPO_ENDPOINT=$(aws codeartifact get-repository-endpoint \
+              --domain axity \
+              --domain-owner 992382646884 \
+              --repository axity-nuget-repo \
+              --format nuget \
+              --region us-east-1 \
+              --query repositoryEndpoint \
+              --output text 2>/dev/null || echo "")
+            
+            if [ -n "$REPO_ENDPOINT" ]; then
+              echo "Repository endpoint: $REPO_ENDPOINT"
+              dotnet nuget add source "${REPO_ENDPOINT}v3/index.json" \
+                --name "CodeArtifact"
+            else
+              echo "Warning: Could not configure CodeArtifact. Continuing with public NuGet only..."
+            fi
+          fi
 
       - name: Test frontend/web
         if: ${{ (contains(steps.changeset.outputs.changes, 'frontend/web')) || (inputs.force_test) }}
