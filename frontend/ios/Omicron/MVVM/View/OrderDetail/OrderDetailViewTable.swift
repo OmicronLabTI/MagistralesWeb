@@ -36,7 +36,7 @@ extension OrderDetailViewController: UITableViewDelegate {
     func actionsIsEnabled(_ index: Int) -> Bool {
         (self.statusType == StatusNameConstants.inProcessStatus
          || self.statusType == StatusNameConstants.reassignedStatus) &&
-        (orderDetail.count > 0 && !(orderDetail[0].details?[index].hasBatches ?? true))
+        (orderDetail.count > 0 && !(orderDetail[0].details?[index].hasBatches ?? true) && orderDetail[0].orderRelationType != OrderRelationTypes.padre)
         && (orderDetail[0].details?.count ?? 0)>1
     }
 
