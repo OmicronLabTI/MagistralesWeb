@@ -66,6 +66,7 @@ extension OrderDetailViewController {
                 buildObjectToUpdateData(detail)
                 componentsToUpdate = []
                 saveWarehousesChangesButton.isEnabled = false
+                self.productDescritionLabel.isHidden = false
                 self.productDescritionLabel.textColor = .black
                 self.productDescritionLabel.attributedText = self.getRichText(detail: detail)
                 self.destinyLabel.attributedText = UtilsManager.shared.boldSubstring(
@@ -200,6 +201,7 @@ extension OrderDetailViewController {
         }).disposed(by: disposeBag)
         orderDetailViewModel.splitButtonEnableFlag.subscribe(onNext: { [weak self] typeOrder in
             guard let self = self else { return }
+            self.infoView.isHidden = false
             splitButton.isEnabled = typeOrder != OrderRelationTypes.hija
         }).disposed(by: disposeBag)
     }

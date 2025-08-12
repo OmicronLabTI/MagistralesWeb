@@ -88,6 +88,7 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, AcceptBu
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
+        self.infoView.isHidden = true
         cleanLabels()
         self.initComponents()
         self.viewModelBinding()
@@ -99,6 +100,8 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, AcceptBu
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         splitButton.isEnabled = false
+        self.productDescritionLabel.isHidden = true
+
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
@@ -108,6 +111,8 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, AcceptBu
         saveWarehousesChangesButton.isEnabled = false
         self.componentsToUpdate = []
         splitButton.isEnabled = false
+        self.productDescritionLabel.isHidden = true
+
     }
 
     // MARK: - Functions
