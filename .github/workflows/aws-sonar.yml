@@ -106,14 +106,7 @@ jobs:
             --region us-east-1 \
             --query authorizationToken \
             --output text)
-          
-          # Debug: verificar que el token se generó
-          echo "Token generated successfully, length: ${#TOKEN}"
-          
-          # IMPORTANTE: Usar echo con >> para el output
           echo "token=$TOKEN" >> $GITHUB_OUTPUT
-          
-          # También configurar dotnet para uso global (opcional)
           aws codeartifact login --tool dotnet \
             --domain axity \
             --domain-owner 992382646884 \
