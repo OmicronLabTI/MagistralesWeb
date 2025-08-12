@@ -30,17 +30,34 @@ runs:
       - name: Copy and configure nuget.config
         working-directory: ${{ inputs.path }}
         run: |
+          # Debug: Verificar que los inputs existen
+          echo "axity_user: ${{ inputs.axity_user }}"
+          echo "codeartifact_token length: ${#CODEARTIFACT_TOKEN}"
+          
           # Copiar el template de nuget.config
+          if [ ! -f "nuget.config.template" ]; then
+            echo "Error: nuget.config.template not found"
+            exit 1
+          fi
+          
           cp nuget.config.template nuget.config
           
-          # Reemplazar los placeholders con los valores reales
-          sed -i -e "s/Username/${{ inputs.axity_user }}/g" \
-                 -e "s/ClearTextPassword/${{ inputs.codeartifact_token }}/g" \
-                 nuget.config
+          # Reemplazar los placeholders con los valores reales usando variables de entorno
+          sed -i "s/Username/${{ inputs.axity_user }}/g" nuget.config
+          sed -i "s/ClearTextPassword/${CODEARTIFACT_TOKEN}/g" nuget.config
           
-          # Verificar que el archivo se configuró correctamente (opcional)
-          echo "nuget.config configurado correctamente"
-          cat nuget.config | grep -E "(Username|ClearTextPassword)" || echo "Configuración aplicada"
+          # Verificar que el reemplazo funcionó
+          echo "=== nuget.config final ==="
+          cat nuget.config
+          echo "=========================="
+          
+          # Verificar que no quedan placeholders
+          if grep -q "Username\|ClearTextPassword" nuget.config; then
+            echo "Error: Placeholders no fueron reemplazados correctamente"
+            exit 1
+          fi
+        env:
+          CODEARTIFACT_TOKEN: ${{ inputs.codeartifact_token }}
         shell: bash
 
       - name: Setup .NET
