@@ -17,7 +17,7 @@ class OrderDetailViewModel {
     var disposeBag: DisposeBag = DisposeBag()
     var orderDetailData: BehaviorRelay<[OrderDetail]> = BehaviorRelay<[OrderDetail]>(value: [])
     weak var tempOrderDetailData: OrderDetail?
-    var tableData: BehaviorSubject<[Detail]> = BehaviorSubject<[Detail]>(value: [])
+    var tableData = PublishSubject<[Detail]>()
     var showAlert: PublishSubject<String> = PublishSubject()
     var showAlertConfirmation = PublishSubject<MessageToChangeStatus>()
     var loading: PublishSubject<Bool> = PublishSubject()
@@ -28,7 +28,7 @@ class OrderDetailViewModel {
     var pendingButtonDidTap = PublishSubject<Void>()
     var seeLotsButtonDidTap = PublishSubject<Void>()
     var deleteManyButtonDidTap = PublishSubject<Void>()
-    var deleteManyButtonIsEnable = BehaviorSubject<Bool>(value: false)
+    var deleteManyButtonIsEnable = PublishSubject<Bool>()
     var goToSeeLotsViewController = PublishSubject<Void>()
     let backToInboxView: PublishSubject<Void> = PublishSubject<Void>()
     var showIconComments = PublishSubject<String>()
@@ -106,7 +106,7 @@ class OrderDetailViewModel {
     func getOrdenDetail(isRefresh: Bool = false) {
         itemSelectedDetail = []
         deleteManyButtonIsEnable.onNext(false)
-        if needsRefresh { loading.onNext(true) }
+        loading.onNext(true)
         networkManager.getOrdenDetail(self.orderId)
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: {[weak self] res in
@@ -114,6 +114,7 @@ class OrderDetailViewModel {
                 self.getComponentWarehouses(response: res, isRefresh: isRefresh)
             }, onError: { [weak self] _ in
                 guard let self = self else { return }
+                self.loading.onNext(false)
                 self.onFaliedOrderDetail(isRefresh)
             }).disposed(by: self.disposeBag)
     }
@@ -181,7 +182,6 @@ class OrderDetailViewModel {
     }
     
     func getComponentWarehouses(response: OrderDetailResponse, isRefresh: Bool = false) {
-        loading.onNext(true)
         let itemcode = response.response?.code ?? String()
         self.itemCode = itemcode
         networkManager.getWarehouses(itemcode).subscribe(onNext: {
