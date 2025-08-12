@@ -13,12 +13,16 @@ inputs:
   sonar_token:
     required: true
     description: sonar token
-  nexus_user:
+  codeartifact_token:
+    required: true
+    description: CodeArtifact authorization token
+  axity_user:
+    required: true
+    description: AWS username for CodeArtifact
+  net_version:
     required: false
-    description: nexus user
-  nexus_pass:
-    required: false
-    description: nexus pass
+    description: .NET version to use
+    default: "3.1.x"
 
 runs:
   using: "composite"
@@ -27,16 +31,35 @@ runs:
         working-directory: ${{ inputs.path }}
         run: |
           cp nuget.config.template nuget.config
-          sed -i -e "s/USER/${{ inputs.nexus_user }}/g" -e "s/PW/${{ inputs.nexus_pass }}/g" nuget.config
+          sed -i "s|PLACEHOLDER_USERNAME|${{ inputs.axity_user }}|g" nuget.config
+          sed -i "s|PLACEHOLDER_PASSWORD|${CODEARTIFACT_TOKEN}|g" nuget.config
+        env:
+          CODEARTIFACT_TOKEN: ${{ inputs.codeartifact_token }}
         shell: bash
-        
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ inputs.net_version }}
+
       - name: Run SonarScanner
         env:
           DOTNET_CLI_HOME: /root
         run: |
-          dotnet sonarscanner begin /k:'20_Omicron_AppiOSFormulas_${{ inputs.project_name }}' /d:sonar.host.url='${{ inputs.sonar_server }}' /d:sonar.token='${{ inputs.sonar_token }}' /d:sonar.cs.opencover.reportsPaths='Omicron.${{ inputs.project_name }}.Test/Omicron.${{ inputs.project_name }}.Test/TestResults/coverage.opencover.xml' /d:sonar.coverage.exclusions='**Test*.cs, **/Controllers/**/*, **DependencyInjector.cs, **Startup.cs, **Program.cs, Omicron.${{ inputs.project_name }}.Api/**' &&
-          dotnet build Omicron.${{ inputs.project_name }}.Microservice.sln &&
-          dotnet test Omicron.${{ inputs.project_name }}.Test/Omicron.${{ inputs.project_name }}.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="TestResults/" &&
+          dotnet sonarscanner begin \
+            /k:'20_Omicron_AppiOSFormulas_${{ inputs.project_name }}' \
+            /d:sonar.host.url='${{ inputs.sonar_server }}' \
+            /d:sonar.token='${{ inputs.sonar_token }}' \
+            /d:sonar.cs.opencover.reportsPaths='Omicron.${{ inputs.project_name }}.Test/Omicron.${{ inputs.project_name }}.Test/TestResults/coverage.opencover.xml' \
+            /d:sonar.coverage.exclusions='**Test*.cs, **/Controllers/**/*, **DependencyInjector.cs, **Startup.cs, **Program.cs, Omicron.${{ inputs.project_name }}.Api/**'
+          
+          dotnet build Omicron.${{ inputs.project_name }}.Microservice.sln
+          
+          dotnet test Omicron.${{ inputs.project_name }}.Test/Omicron.${{ inputs.project_name }}.Test.csproj \
+            /p:CollectCoverage=true \
+            /p:CoverletOutputFormat=opencover \
+            /p:CoverletOutput="TestResults/"
+          
           dotnet sonarscanner end /d:sonar.login='${{ inputs.sonar_token }}'
         working-directory: ${{ inputs.path }}
         shell: bash

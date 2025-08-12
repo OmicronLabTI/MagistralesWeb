@@ -66,6 +66,7 @@ extension OrderDetailViewController {
                 buildObjectToUpdateData(detail)
                 componentsToUpdate = []
                 saveWarehousesChangesButton.isEnabled = false
+                self.productDescritionLabel.isHidden = false
                 self.productDescritionLabel.textColor = .black
                 self.productDescritionLabel.attributedText = self.getRichText(detail: detail)
                 self.destinyLabel.attributedText = UtilsManager.shared.boldSubstring(
@@ -163,7 +164,6 @@ extension OrderDetailViewController {
         // Cambia de color los labels encabezado de tabla cuando termina de cargar las ordene
         self.orderDetailViewModel.changeColorLabelsHt.subscribe(onNext: { [weak self] _ in
             self?.changeTextColorHtLabels(color: .black)
-            self?.splitButton.isEnabled = true
         }).disposed(by: self.disposeBag)
         self.orderDetailViewModel.tableData.bind(to: tableView.rx.items(
             cellIdentifier: ViewControllerIdentifiers.detailTableViewCell,
@@ -201,6 +201,7 @@ extension OrderDetailViewController {
         }).disposed(by: disposeBag)
         orderDetailViewModel.splitButtonEnableFlag.subscribe(onNext: { [weak self] typeOrder in
             guard let self = self else { return }
+            self.infoView.isHidden = false
             splitButton.isEnabled = typeOrder != OrderRelationTypes.hija
         }).disposed(by: disposeBag)
     }

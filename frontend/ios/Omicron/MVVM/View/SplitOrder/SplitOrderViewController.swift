@@ -55,6 +55,8 @@ class SplitOrderViewController: UIViewController, UITextFieldDelegate {
         configButtons()
         configTextField()
         quantityLabel.text = "\(availableQuantity)"
+        piecesQuantityTextField.text = "1"
+        validateInput(piecesQuantityTextField.text)
     }
     
     func configButtons(){

@@ -34,12 +34,7 @@ spec:
                   valueFrom:
                     secretKeyRef:
                       name: omicron-prod
-                      key: redis_connection_string
-                - name: SEQLOG_SVC_SERVICE_HOST_NAME
-                  valueFrom:
-                    secretKeyRef:
-                      name: omicron-prod
-                      key: seqlog_svc_service_host_name
+                      key: redis
           restartPolicy: OnFailure
           imagePullSecrets:
             - name: pullsecret
