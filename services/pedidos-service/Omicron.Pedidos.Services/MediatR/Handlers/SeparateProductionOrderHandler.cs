@@ -196,9 +196,14 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
             var newFoId = JsonConvert.DeserializeObject<int>(serviceLResult.Response.ToString());
             this.logger.Information($"separationId-{separationId}: Se creó la Orden de fabricación {newFoId}");
 
-            var qr = JsonConvert.DeserializeObject<MagistralQrModel>(productionOrder.MagistralQr);
-            qr.ProductionOrder = newFoId;
-            qr.Quantity = pieces;
+            var qr = new MagistralQrModel();
+            if (!string.IsNullOrEmpty(productionOrder.MagistralQr))
+            {
+                qr = JsonConvert.DeserializeObject<MagistralQrModel>(productionOrder.MagistralQr);
+                qr.ProductionOrder = newFoId;
+                qr.Quantity = pieces;
+            }
+
             var newStatus = productionOrder.ReassignmentDate.HasValue ? ServiceConstants.Reasignado : ServiceConstants.Proceso;
             var newProductionOrder = new UserOrderModel()
             {
@@ -214,7 +219,7 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
                 CloseDate = productionOrder.CloseDate,
                 CloseUserId = productionOrder.CloseUserId,
                 FinishedLabel = productionOrder.FinishedLabel,
-                MagistralQr = JsonConvert.SerializeObject(qr),
+                MagistralQr = ServiceShared.CalculateTernary(!string.IsNullOrEmpty(productionOrder.MagistralQr), JsonConvert.SerializeObject(qr), null),
                 FinalizedDate = productionOrder.FinalizedDate,
                 StatusAlmacen = productionOrder.StatusAlmacen,
                 UserCheckIn = productionOrder.UserCheckIn,
