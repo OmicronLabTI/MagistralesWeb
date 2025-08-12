@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <packageSources>
-        <add key="NexusAxity" value="https://devtools.axity.com/nexus/repository/nuget-hosted/" />
+         <add key="CodeArtifact" value="https://axity-992382646884.d.codeartifact.us-east-1.amazonaws.com/nuget/axity-nuget-repo/v3/index.json" />
+         <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
     </packageSources>
     <packageSourceCredentials>
-        <NexusAxity>
-            <add key="Username" value="USER" />
-            <add key="ClearTextPassword" value="PW" />
-        </NexusAxity>
+        <CodeArtifact>
+            <add key="Username" value="Username" />
+            <add key="ClearTextPassword" value="ClearTextPassword" />
+        </CodeArtifact>
     </packageSourceCredentials>
 </configuration>
