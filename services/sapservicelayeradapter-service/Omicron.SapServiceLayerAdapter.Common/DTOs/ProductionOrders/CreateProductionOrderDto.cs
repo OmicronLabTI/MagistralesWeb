@@ -18,6 +18,6 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
         /// </summary>
         /// <value>ProductionOrderOriginEntry.</value>
         [JsonProperty("ProductionOrderOriginEntry")]
-        public int ProductionOrderOriginEntry { get; set; }
+        public int? ProductionOrderOriginEntry { get; set; }
     }
 }

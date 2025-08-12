@@ -141,7 +141,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                 productionOrder.ItemNo = originalPO.ItemNo;
                 productionOrder.ProductDescription = originalPO.ProductDescription;
                 productionOrder.PlannedQuantity = data.Pieces;
-                productionOrder.ProductionOrderOriginEntry = originalPO.ProductionOrderOriginEntry ?? 0;
+                productionOrder.ProductionOrderOriginEntry = originalPO.ProductionOrderOriginEntry;
                 productionOrder.Remarks = string.Format(ServiceConstants.ChildFarOrderComments, originalPO.AbsoluteEntry);
                 productionOrder.IsParentRecord = ServiceConstants.IsNotPackage;
                 productionOrder.Warehouse = "PT";
