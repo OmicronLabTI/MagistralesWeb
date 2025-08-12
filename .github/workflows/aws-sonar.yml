@@ -90,7 +90,6 @@ jobs:
           role-to-assume: "arn:aws:iam::891376991292:role/GithubActionsRole"
           output-credentials: true
 
-      # NUEVO: Generar token de CodeArtifact una vez
       - name: Generate CodeArtifact token
         id: codeartifact-token
         env:
