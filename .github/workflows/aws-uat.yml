@@ -14,6 +14,7 @@ on:
       - frontend/**
       - services/**
       - database/**
+      - batches/**
 
 concurrency:
   group: ${{ github.ref }}
@@ -235,7 +236,7 @@ jobs:
         if: ${{ (contains(steps.changeset.outputs.changes, 'batches')) || (inputs.force_build) }}
         uses: ./.github/actions/docker-build
         with:
-          path: batches/Omicron.ProductionOrder.Microbatch
+          path: batches/productionorder-microbatch
           environment: uat
           registry: ${{ env.AZURE_REGISTRY }}
           axity_aws_user: ${{ vars.AXITY_AWS_USER }}
