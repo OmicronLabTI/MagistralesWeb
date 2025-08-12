@@ -52,7 +52,7 @@ class OrderDetailViewModel {
     )
     var warehousesOptions: [String] = []
     var itemCode = String()
-    var splitButtonEnableFlag: BehaviorSubject<String> = BehaviorSubject<String>(value: String())
+    var splitButtonEnableFlag = PublishSubject<String>()
     @Injected var rootViewModel: RootViewModel
     @Injected var inboxViewModel: InboxViewModel
     @Injected var networkManager: NetworkManager
