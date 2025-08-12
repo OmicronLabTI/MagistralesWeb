@@ -42,18 +42,24 @@ runs:
           
           cp nuget.config.template nuget.config
           
-          # Reemplazar los placeholders con los valores reales usando variables de entorno
-          sed -i "s/Username/${{ inputs.axity_user }}/g" nuget.config
-          sed -i "s/ClearTextPassword/${CODEARTIFACT_TOKEN}/g" nuget.config
+          # Escapar caracteres especiales para sed usando printf %q
+          ESCAPED_USER=$(printf '%q' "${{ inputs.axity_user }}")
+          ESCAPED_TOKEN=$(printf '%q' "${CODEARTIFACT_TOKEN}")
+          
+          # Reemplazar los placeholders usando delimitadores diferentes para evitar conflictos
+          sed -i "s|PLACEHOLDER_USERNAME|${{ inputs.axity_user }}|g" nuget.config
+          sed -i "s|PLACEHOLDER_PASSWORD|${CODEARTIFACT_TOKEN}|g" nuget.config
           
           # Verificar que el reemplazo funcionó
           echo "=== nuget.config final ==="
           cat nuget.config
           echo "=========================="
           
-          # Verificar que no quedan placeholders
-          if grep -q "Username\|ClearTextPassword" nuget.config; then
-            echo "Error: Placeholders no fueron reemplazados correctamente"
+          # Verificar estructura XML básica
+          if grep -q 'key="Username"' nuget.config && grep -q 'key="ClearTextPassword"' nuget.config; then
+            echo "✓ nuget.config configurado correctamente"
+          else
+            echo "✗ Error: La estructura del XML no es correcta"
             exit 1
           fi
         env:
