@@ -96,6 +96,10 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, AcceptBu
         self.refreshViewControl()
         self.componentsToUpdate = []
     }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        splitButton.isEnabled = false
+    }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         disposeBag = DisposeBag()
