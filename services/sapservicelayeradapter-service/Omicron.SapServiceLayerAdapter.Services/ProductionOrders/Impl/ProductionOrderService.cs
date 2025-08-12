@@ -141,9 +141,10 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                 productionOrder.ItemNo = originalPO.ItemNo;
                 productionOrder.ProductDescription = originalPO.ProductDescription;
                 productionOrder.PlannedQuantity = data.Pieces;
-                productionOrder.ProductionOrderOriginEntry = originalPO.ProductionOrderOriginEntry ?? 0;
+                productionOrder.ProductionOrderOriginEntry = originalPO.ProductionOrderOriginEntry;
                 productionOrder.Remarks = string.Format(ServiceConstants.ChildFarOrderComments, originalPO.AbsoluteEntry);
                 productionOrder.IsParentRecord = ServiceConstants.IsNotPackage;
+                productionOrder.Warehouse = "PT";
 
                 var newFabOrder = await this.SaveFabOrder(productionOrder);
                 newFabOrder.ProductionOrderLines = newFabOrder.ProductionOrderLines.Where(x => originalPO.ProductionOrderLines.Any(y => y.ItemNo == x.ItemNo)).ToList();
@@ -151,7 +152,6 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                 {
                     var originalData = originalPO.ProductionOrderLines.Where(x => x.ItemNo == newPo.ItemNo).First();
                     newPo.BaseQuantity = originalData.BaseQuantity;
-                    newPo.Warehouse = "PT";
                 });
 
                 var newComponentsAdded = originalPO.ProductionOrderLines.Where(x => !newFabOrder.ProductionOrderLines.Any(y => y.ItemNo == x.ItemNo)).ToList();
@@ -162,7 +162,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                     var newComponent = new ProductionOrderLineDto()
                     {
                         ItemNo = x.ItemNo,
-                        Warehouse = "PT",
+                        Warehouse = x.Warehouse,
                         BaseQuantity = x.BaseQuantity,
                         PlannedQuantity = x.PlannedQuantity,
                         DocumentAbsoluteEntry = newFabOrder.AbsoluteEntry,
@@ -174,6 +174,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
 
                     newFabOrder.ProductionOrderLines.Add(newComponent);
                 });
+                newFabOrder.ProductionOrderStatus = ServiceConstants.ProductionOrderReleased;
 
                 var request = this.mapper.Map<UpdateProductionOrderDto>(newFabOrder);
                 await this.SaveChanges(request, newFabOrder.AbsoluteEntry);
