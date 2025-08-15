@@ -15,13 +15,13 @@ import Resolver
 class OrderDetailViewModel {
     // MARK: - Variables
     var disposeBag: DisposeBag = DisposeBag()
-    var orderDetailData: BehaviorRelay<[OrderDetail]> = BehaviorRelay<[OrderDetail]>(value: [])
+    var orderDetailData = PublishSubject<[OrderDetail]>()
     weak var tempOrderDetailData: OrderDetail?
     var tableData = PublishSubject<[Detail]>()
     var showAlert: PublishSubject<String> = PublishSubject()
     var showAlertConfirmation = PublishSubject<MessageToChangeStatus>()
     var loading: PublishSubject<Bool> = PublishSubject()
-    var sumFormula: BehaviorRelay<Double> = BehaviorRelay<Double>(value: -1)
+    var sumFormula = PublishSubject<Double>()
     var auxTabledata: [Detail] = []
     var processButtonDidTap = PublishSubject<Void>()
     var finishedButtonDidTap = PublishSubject<Void>()
@@ -121,12 +121,12 @@ class OrderDetailViewModel {
     
     func onSuccessOrderDetail(response: OrderDetailResponse, _ isRefresh: Bool) {
         if let order = response.response, let details = order.details {
-            orderDetailData.accept([order])
+            orderDetailData.onNext([order])
             tableData.onNext(details)
             auxTabledata = details
             tempOrderDetailData = order
             needsRefresh(needsRefresh)
-            sumFormula.accept(self.sum(tableDetails: details))
+            sumFormula.onNext(self.sum(tableDetails: details))
             setComments(order: order)
             endRefreshingAction(isRefresh)
             changeColorLabelsHt.onNext(())

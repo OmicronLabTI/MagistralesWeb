@@ -124,7 +124,7 @@ extension OrderDetailViewModel {
                 self?.deleteManyButtonIsEnable.onNext(false)
                 self?.auxTabledata = self?.tempOrderDetailData?.details ?? []
                 self?.tableData.onNext(self?.tempOrderDetailData?.details ?? [])
-                self?.sumFormula.accept(self?.sum(tableDetails: (self?.tempOrderDetailData?.details ?? [])) ?? 0.0)
+                self?.sumFormula.onNext(self?.sum(tableDetails: (self?.tempOrderDetailData?.details ?? [])) ?? 0.0)
             }
             }, onError: {  [weak self] error in
                 self?.loading.onNext(false)
