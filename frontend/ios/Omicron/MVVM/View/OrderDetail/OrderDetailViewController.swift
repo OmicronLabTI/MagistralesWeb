@@ -100,6 +100,7 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, AcceptBu
         
         if self.isMovingFromParent {
             disposeBag = DisposeBag()
+        }
     }
 
     override func viewDidDisappear(_ animated: Bool) {
