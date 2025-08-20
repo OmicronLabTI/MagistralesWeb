@@ -325,7 +325,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy, OnInit {
                     cancelOrders.forEach(order => order.userId = this.localStorageService.getUserId());
                     this.pedidosService.putCancelOrders(cancelOrders, resultCancel.cancelType === MODAL_NAMES.placeOrders)
                         .subscribe(resultCancelHttp => {
-                            this.onSuccessFinalizeHttp(resultCancelHttp, resultCancel.cancelType, resultCancel.isFromCancelIsolated);
+                            this.onSuccessFinalizeHttp(resultCancelHttp, resultCancel.cancelType, resultCancel.isFromCancelIsolated, false);
                         }, error => this.errorService.httpError(error));
                 }
             });
@@ -353,12 +353,16 @@ export class AppComponent implements AfterViewChecked, OnDestroy, OnInit {
                     finalizeOrders.forEach(order => order.userId = userId);
                     this.pedidosService.putFinalizeOrders(finalizeOrders, resultFinalize.cancelType === MODAL_NAMES.placeOrders)
                         .subscribe(resultFinalizeHttp => {
-                            this.onSuccessFinalizeHttp(resultFinalizeHttp, resultFinalize.cancelType, resultFinalize.isFromCancelIsolated);
+                            this.onSuccessFinalizeHttp(
+                                resultFinalizeHttp,
+                                resultFinalize.cancelType,
+                                resultFinalize.isFromCancelIsolated,
+                                true);
                         }, error => this.errorService.httpError(error));
                 }
             });
     }
-    onSuccessFinalizeHttp(resultCancelHttp: ICancelOrdersRes, fromCall: string, isFromOrderIsolated: boolean) {
+    onSuccessFinalizeHttp(resultCancelHttp: ICancelOrdersRes, fromCall: string, isFromOrderIsolated: boolean, isFromFinalize: boolean) {
         if (resultCancelHttp.success && resultCancelHttp.response.failed.length > 0) {
             const titleFinalizeWithError = this.messagesService.getMessageTitle(
                 resultCancelHttp.response.failed, MessageType.finalizeOrder, true);
@@ -366,7 +370,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy, OnInit {
             this.messagesService.presentToastCustom(titleFinalizeWithError, 'error',
                 Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
         } else {
-            this.createDialogHttpOhAboutTypePlace(fromCall, isFromOrderIsolated, true);
+            this.createDialogHttpOhAboutTypePlace(fromCall, isFromOrderIsolated, isFromFinalize);
         }
     }
 
