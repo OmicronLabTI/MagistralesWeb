@@ -61,5 +61,12 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// <value>Prescription .</value>
         [JsonProperty("U_RECETA")]
         public string Prescription { get; set; }
+
+        /// <summary>
+        /// Gets or sets the PromotionalCode .
+        /// </summary>
+        /// <value>PromotionalCode .</value>
+        [JsonProperty("U_CodigoPromo")]
+        public string PromotionalCode { get; set; }
     }
 }
