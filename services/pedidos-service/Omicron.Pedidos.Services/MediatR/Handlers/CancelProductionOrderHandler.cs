@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="SeparateProductionOrderHandler.cs" company="Axity">
+// <copyright file="CancelProductionOrderHandler.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -29,9 +29,9 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
     using Serilog;
 
     /// <summary>
-    /// SeparateProductionOrderHandler.
+    /// CancelProductionOrderHandler.
     /// </summary>
-    public class SeparateProductionOrderHandler : IRequestHandler<SeparateProductionOrderCommand, bool>
+    public class CancelProductionOrderHandler : IRequestHandler<CancelProductionOrderCommand, bool>
     {
         private readonly IPedidosDao pedidosDao;
 
@@ -46,7 +46,7 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
         private readonly IOrderHistoryHelper orderHistoryHelper;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SeparateProductionOrderHandler"/> class.
+        /// Initializes a new instance of the <see cref="CancelProductionOrderHandler"/> class.
         /// </summary>
         /// <param name="pedidosDao">Pedidos Dao.</param>
         /// <param name="serviceLayerAdapterService">Service Layer Service.</param>
@@ -54,7 +54,7 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
         /// <param name="logger">Logger.</param>
         /// <param name="redisService">redisService.</param>
         /// <param name="orderHistoryHelper">Order History Helper.</param>
-        public SeparateProductionOrderHandler(
+        public CancelProductionOrderHandler(
             IPedidosDao pedidosDao,
             ISapServiceLayerAdapterService serviceLayerAdapterService,
             IBackgroundTaskQueue backgroundTaskQueue,
@@ -71,7 +71,7 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
         }
 
         /// <inheritdoc/>
-        public async Task<bool> Handle(SeparateProductionOrderCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(CancelProductionOrderCommand request, CancellationToken cancellationToken)
         {
             var logBase = string.Format(LogsConstants.SeparateProductionOrderLogBase, request.SeparationId, request.ProductionOrderId);
             this.logger.Information(LogsConstants.SeparateProductionOrderStart, logBase, request.Pieces, request.RetryCount + 1);
@@ -108,7 +108,7 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
             }
         }
 
-        private async Task CancelProductionOrderProcess(UserOrderModel productionOrder, SeparateProductionOrderCommand request, string logBase)
+        private async Task CancelProductionOrderProcess(UserOrderModel productionOrder, CancelProductionOrderCommand request, string logBase)
         {
             if (productionOrder.Status == ServiceConstants.Cancelled)
             {
@@ -121,7 +121,7 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
             this.logger.Information(LogsConstants.ProductionOrderCancelledSuccessfully, logBase);
         }
 
-        private async Task CancelProductionOrderOnSapAsync(SeparateProductionOrderCommand request, string logBase)
+        private async Task CancelProductionOrderOnSapAsync(CancelProductionOrderCommand request, string logBase)
         {
             this.logger.Information(LogsConstants.CancellingProductionOrderInSAP, logBase);
             var result = await this.serviceLayerAdapterService.PostAsync(
@@ -147,9 +147,9 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
             await this.pedidosDao.UpdateUserOrders([userOrderToCancel]);
         }
 
-        private void ScheduleRetry(SeparateProductionOrderCommand request, string logBase)
+        private void ScheduleRetry(CancelProductionOrderCommand request, string logBase)
         {
-            var retryCommand = new SeparateProductionOrderCommand(
+            var retryCommand = new CancelProductionOrderCommand(
                 request.ProductionOrderId,
                 request.Pieces,
                 request.SeparationId,

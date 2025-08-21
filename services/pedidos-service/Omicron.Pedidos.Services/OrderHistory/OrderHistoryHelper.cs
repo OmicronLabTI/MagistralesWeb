@@ -42,7 +42,7 @@ namespace Omicron.Pedidos.Services.OrderHistory
         /// <param name="detailOrderId">Child order number.</param>
         /// <param name="request">request.</param>
         /// <returns>True if the registration was successful.</returns>
-        public async Task SaveHistoryOrdersFab(int detailOrderId, SeparateProductionOrderCommand request)
+        public async Task SaveHistoryOrdersFab(int detailOrderId, CancelProductionOrderCommand request)
         {
             var logBase = string.Format(LogsConstants.SaveHistoryOrdersFabLogBase, detailOrderId, request.ProductionOrderId);
             this.logger.Information(LogsConstants.SaveHistoryOrdersFabStart, logBase, request.Pieces, request.UserId, request.SapOrder);
@@ -73,7 +73,7 @@ namespace Omicron.Pedidos.Services.OrderHistory
         /// <param name="detailOrderId"> detailOrderId.</param>
         /// <param name="request"> request.</param>
         /// <returns>True register successfully.</returns>
-        public async Task<bool> RegisterSeparatedOrdersDetail(int detailOrderId, SeparateProductionOrderCommand request)
+        public async Task<bool> RegisterSeparatedOrdersDetail(int detailOrderId, CancelProductionOrderCommand request)
         {
             var consecutiveIndex = await this.pedidosDao.GetMaxDivision(request.ProductionOrderId);
 

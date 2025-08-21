@@ -22,6 +22,6 @@ namespace Omicron.Pedidos.Services.OrderHistory
         /// <param name="detailOrderId">Child order number.</param>
         /// <param name="request">Parent request.</param>
         /// <returns>the return.</returns>
-        Task SaveHistoryOrdersFab(int detailOrderId, SeparateProductionOrderCommand request);
+        Task SaveHistoryOrdersFab(int detailOrderId, CancelProductionOrderCommand request);
     }
 }

@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="SeparateProductionOrderCommand.cs" company="Axity">
+// <copyright file="CancelProductionOrderCommand.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -11,12 +11,12 @@ namespace Omicron.Pedidos.Services.MediatR.Commands
     using global::MediatR;
 
     /// <summary>
-    /// SeparateProductionOrderCommand.
+    /// CancelProductionOrderCommand.
     /// </summary>
-    public class SeparateProductionOrderCommand : IRequest<bool>
+    public class CancelProductionOrderCommand : IRequest<bool>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SeparateProductionOrderCommand"/> class.
+        /// Initializes a new instance of the <see cref="CancelProductionOrderCommand"/> class.
         /// </summary>
         /// <param name="productionOrderId">Production Order Id.</param>
         /// <param name="pieces">Pieces.</param>
@@ -25,7 +25,7 @@ namespace Omicron.Pedidos.Services.MediatR.Commands
         /// <param name="dxpOrder">dxpOrder.</param>
         /// <param name="sapOrder">sapOrder.</param>
         /// <param name="totalPieces">totalPieces.</param>
-        public SeparateProductionOrderCommand(
+        public CancelProductionOrderCommand(
             int productionOrderId,
             int pieces,
             string separationId,

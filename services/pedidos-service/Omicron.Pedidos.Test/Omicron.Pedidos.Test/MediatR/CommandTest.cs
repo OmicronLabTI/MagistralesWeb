@@ -30,7 +30,7 @@ namespace Omicron.Pedidos.Test.MediatR
             var totalPieces = 1;
 
             // Act
-            var command = new SeparateProductionOrderCommand(
+            var command = new CancelProductionOrderCommand(
                 productionOrderId,
                 pieces,
                 separationId,
@@ -54,7 +54,7 @@ namespace Omicron.Pedidos.Test.MediatR
         public void SeparateProductionOrderCommandPropertiesCanBeSetAndRetrieved()
         {
             // Arrange
-            var command = new SeparateProductionOrderCommand(1, 1, "test", "axity1", "xxx-xxx-xxx", 123, 10);
+            var command = new CancelProductionOrderCommand(1, 1, "test", "axity1", "xxx-xxx-xxx", 123, 10);
 
             // Act
             command.ProductionOrderId = 54321;
@@ -78,7 +78,7 @@ namespace Omicron.Pedidos.Test.MediatR
         public void SeparateProductionOrderCommandConstructorSetsDefaultValues()
         {
             // Act
-            var command = new SeparateProductionOrderCommand(1, 10, "test-id", "axity1", "xxx-xxx-xxx", 123, 10);
+            var command = new CancelProductionOrderCommand(1, 10, "test-id", "axity1", "xxx-xxx-xxx", 123, 10);
 
             // Assert
             Assert.That(command.RetryCount, Is.EqualTo(0));

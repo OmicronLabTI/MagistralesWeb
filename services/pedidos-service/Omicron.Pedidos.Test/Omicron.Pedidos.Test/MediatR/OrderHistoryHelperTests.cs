@@ -56,7 +56,7 @@ namespace Omicron.Pedidos.Test.MediatR
         {
             // Arrange
             int detailOrderId = 1001;
-            var request = new SeparateProductionOrderCommand(
+            var request = new CancelProductionOrderCommand(
                 productionOrderId: 1000,
                 pieces: 5,
                 separationId: "99c7c928-2afa",
@@ -185,7 +185,7 @@ namespace Omicron.Pedidos.Test.MediatR
         {
             // Arrange
             int detailOrderId = 1001;
-            var request = new SeparateProductionOrderCommand(
+            var request = new CancelProductionOrderCommand(
                 productionOrderId: 1000,
                 pieces: 5,
                 separationId: "some-separation-id",

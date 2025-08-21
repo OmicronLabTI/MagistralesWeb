@@ -57,7 +57,7 @@ namespace Omicron.Pedidos.Test.MediatR
         public async Task HandleCancelProductionOrder(int productionOrderId, int retryCount, bool closeSapProductionSuccessfully, string exceptionMessage)
         {
             // Arrange
-            var command = new SeparateProductionOrderCommand(
+            var command = new CancelProductionOrderCommand(
                 productionOrderId,
                 5,
                 "b54659e3-d334-42c4-b91a-f59f5a463125",
@@ -81,7 +81,7 @@ namespace Omicron.Pedidos.Test.MediatR
             var mockRedisService = new Mock<IRedisService>();
             mockRedisService.Setup(m => m.DeleteKey(It.IsAny<string>()));
 
-            var handler = new SeparateProductionOrderHandler(
+            var handler = new CancelProductionOrderHandler(
                 this.pedidosDao,
                 mockServiceLayerAdapterService.Object,
                 this.mockBackgroundTaskQueue.Object,
@@ -111,7 +111,7 @@ namespace Omicron.Pedidos.Test.MediatR
         public Task HandleCancelProductionOrderErrorRebasedMaxAttempt()
         {
             // Arrange
-            var command = new SeparateProductionOrderCommand(220003, 5, "b54659e3-d334-42c4-b91a-f59f5a463125", "axity1", "xxx-xxx-xxx", 123, 10)
+            var command = new CancelProductionOrderCommand(220003, 5, "b54659e3-d334-42c4-b91a-f59f5a463125", "axity1", "xxx-xxx-xxx", 123, 10)
             {
                 RetryCount = 3,
                 MaxRetries = 3,
@@ -127,7 +127,7 @@ namespace Omicron.Pedidos.Test.MediatR
             var mockRedisService = new Mock<IRedisService>();
             mockRedisService.Setup(m => m.DeleteKey(It.IsAny<string>()));
 
-            var handler = new SeparateProductionOrderHandler(
+            var handler = new CancelProductionOrderHandler(
                 this.pedidosDao,
                 mockServiceLayerAdapterService.Object,
                 this.mockBackgroundTaskQueue.Object,
