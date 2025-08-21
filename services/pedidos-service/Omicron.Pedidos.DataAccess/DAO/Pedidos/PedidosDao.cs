@@ -809,6 +809,28 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         {
             await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
         }
+
+        /// <inheritdoc/>
+        public async Task<ProductionOrderSeparationDetailLogsModel> GetProductionOrderSeparationDetailLogById(string separationId)
+        {
+            return await this.databaseContext.ProductionOrderSeparationDetailLogsModel.FirstOrDefaultAsync(x => x.Id == separationId);
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> InsertProductionOrderSeparationDetailLogById(ProductionOrderSeparationDetailLogsModel modelToSave)
+        {
+            this.databaseContext.ProductionOrderSeparationDetailLogsModel.AddRange(modelToSave);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> UpdateProductionOrderSeparationDetailLog(ProductionOrderSeparationDetailLogsModel modelToSave)
+        {
+            this.databaseContext.ProductionOrderSeparationDetailLogsModel.UpdateRange(modelToSave);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
     }
 }
 

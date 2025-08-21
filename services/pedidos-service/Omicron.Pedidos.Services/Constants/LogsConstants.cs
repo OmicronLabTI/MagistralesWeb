@@ -283,6 +283,14 @@ namespace Omicron.Pedidos.Services.Constants
         /// <value>
         /// StartFinalizeProductionOrderInSap.
         /// </value>
+        public static string CreateChildOrdersSapLogBase => "Pedidos Service - Start Create Child Production Order On Sap - {ProductionOrdersToCreateO}";
+
+        /// <summary>
+        /// Gets StartFinalizeProductionOrderInSap.
+        /// </summary>
+        /// <value>
+        /// StartFinalizeProductionOrderInSap.
+        /// </value>
         public static string StartCreationPdf => "Pedidos Service - Start Create PDF - {ProductionOrdersToFinalize}";
 
         /// <summary>

@@ -1210,6 +1210,14 @@ namespace Omicron.Pedidos.Services.Constants
         public static string CreateChildOrderSapUrl => "child/order";
 
         /// <summary>
+        /// Gets CreateChildOrderSapUrl.
+        /// </summary>
+        /// <value>
+        /// CreateChildOrderSapUrl.
+        /// </value>
+        public static string StepSuccessfullyCloseInSapStep => "Successfully Close Parent In SAP";
+
+        /// <summary>
         /// Gets ProductionOrderSeparationProcessKey.
         /// </summary>
         /// <value>
