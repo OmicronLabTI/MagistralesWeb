@@ -1066,6 +1066,26 @@ namespace Omicron.Pedidos.Services.Constants
         public const string PartiallyDivided = "Parcialmente dividida";
 
         /// <summary>
+        /// CancelSapStep.
+        /// </summary>
+        public const string CancelSapStep = "CancelSAP";
+
+        /// <summary>
+        /// CancelPostgresStep.
+        /// </summary>
+        public const string CancelPostgresStep = "CancelPostgres";
+
+        /// <summary>
+        /// SaveHistoryStep.
+        /// </summary>
+        public const string SaveHistoryStep = "SaveHistory";
+
+        /// <summary>
+        /// EmptyValue.
+        /// </summary>
+        public const string EmptyValue = "";
+
+        /// <summary>
         /// Gets ProductionDetailCount.
         /// </summary>
         /// <value>

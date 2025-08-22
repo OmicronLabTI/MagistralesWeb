@@ -46,7 +46,7 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
             this.backgroundTaskQueue.QueueBackgroundWorkItem(async (services, token) =>
             {
                 var mediator = services.GetRequiredService<IMediator>();
-                var updateCommand = new SeparateProductionOrderCommand(
+                var updateCommand = new CancelProductionOrderCommand(
                     request.ProductionOrderId,
                     request.Pieces,
                     request.SeparationId,

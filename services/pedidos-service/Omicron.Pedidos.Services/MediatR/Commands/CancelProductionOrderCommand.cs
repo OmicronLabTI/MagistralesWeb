@@ -114,5 +114,13 @@ namespace Omicron.Pedidos.Services.MediatR.Commands
         /// TotalPieces.
         /// </value>
         public int TotalPieces { get; set; }
+
+        /// <summary>
+        /// Gets lastStep.
+        /// </summary>
+        /// <value>
+        /// LastStep.
+        /// </value>
+        public string LastStep { get; internal set; }
     }
 }

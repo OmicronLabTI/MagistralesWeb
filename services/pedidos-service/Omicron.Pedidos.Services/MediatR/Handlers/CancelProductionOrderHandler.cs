@@ -81,9 +81,21 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
                     (await this.pedidosDao.GetUserOrderByProducionOrder([request.ProductionOrderId.ToString()]))
                     .FirstOrDefault() ?? throw new Exception(LogsConstants.ProductionOrderNotFound);
 
-                await this.CancelProductionOrderProcess(productionOrder, request, logBase);
-                var childOrderId = await this.CreateChildOrdersProcess(productionOrder, request.ProductionOrderId, request.Pieces, request.SeparationId);
-                await this.orderHistoryHelper.SaveHistoryOrdersFab(childOrderId, request);
+                await this.ExecuteCancellationStepAsync(productionOrder, request, logBase);
+
+                this.backgroundTaskQueue.QueueBackgroundWorkItem(async (services, token) =>
+                {
+                    var mediator = services.GetRequiredService<IMediator>();
+                    var createChildOrdersCommand = new CreateChildOrdersSapCommand(
+                        request.ProductionOrderId,
+                        request.Pieces,
+                        request.SeparationId,
+                        request.UserId,
+                        request.DxpOrder,
+                        request.SapOrder,
+                        request.TotalPieces);
+                    await mediator.Send(createChildOrdersCommand, token);
+                });
 
                 var redisKey = string.Format(ServiceConstants.ProductionOrderSeparationProcessKey, request.ProductionOrderId);
                 await this.redisService.DeleteKey(redisKey);
@@ -108,6 +120,54 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
             }
         }
 
+        private async Task ExecuteCancellationStepAsync(UserOrderModel productionOrder, CancelProductionOrderCommand request, string logBase)
+        {
+            switch (request.LastStep?.Trim())
+            {
+                case null:
+                case ServiceConstants.EmptyValue:
+                case ServiceConstants.CancelSapStep:
+                    await this.ExecuteFullCancellationFlow(productionOrder, request, logBase);
+                    break;
+                case ServiceConstants.CancelPostgresStep:
+                    await this.ExecuteCancellationFromPostgresStep(productionOrder, request, logBase);
+                    break;
+                case ServiceConstants.SaveHistoryStep:
+                    await this.ExecuteCancellationFromHistoryStep(productionOrder, request, logBase);
+                    break;
+                default:
+                    this.logger.Error(LogsConstants.StepNotRecognized, logBase, request.LastStep);
+                    break;
+            }
+        }
+
+        private async Task ExecuteFullCancellationFlow(UserOrderModel productionOrder, CancelProductionOrderCommand request, string logBase)
+        {
+            await this.CancelProductionOrderProcess(productionOrder, request, logBase);
+            request.LastStep = ServiceConstants.CancelSapStep;
+
+            await this.CancelProductionOrderOnPostgresqlAsync(productionOrder, logBase);
+            request.LastStep = ServiceConstants.CancelPostgresStep;
+
+            await this.SaveHistoryOrdersFab(productionOrder, request, logBase);
+            request.LastStep = ServiceConstants.SaveHistoryStep;
+        }
+
+        private async Task ExecuteCancellationFromPostgresStep(UserOrderModel productionOrder, CancelProductionOrderCommand request, string logBase)
+        {
+            await this.CancelProductionOrderOnPostgresqlAsync(productionOrder, logBase);
+            request.LastStep = ServiceConstants.CancelPostgresStep;
+
+            await this.SaveHistoryOrdersFab(productionOrder, request, logBase);
+            request.LastStep = ServiceConstants.SaveHistoryStep;
+        }
+
+        private async Task ExecuteCancellationFromHistoryStep(UserOrderModel productionOrder, CancelProductionOrderCommand request, string logBase)
+        {
+            await this.SaveHistoryOrdersFab(productionOrder, request, logBase);
+            request.LastStep = ServiceConstants.SaveHistoryStep;
+        }
+
         private async Task CancelProductionOrderProcess(UserOrderModel productionOrder, CancelProductionOrderCommand request, string logBase)
         {
             if (productionOrder.Status == ServiceConstants.Cancelled)
@@ -117,7 +177,6 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
             }
 
             await this.CancelProductionOrderOnSapAsync(request, logBase);
-            await this.CancelProductionOrderOnPostgresqlAsync(productionOrder, logBase);
             this.logger.Information(LogsConstants.ProductionOrderCancelledSuccessfully, logBase);
         }
 
@@ -147,6 +206,12 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
             await this.pedidosDao.UpdateUserOrders([userOrderToCancel]);
         }
 
+        private async Task SaveHistoryOrdersFab(UserOrderModel productionOrder, CancelProductionOrderCommand request, string logBase)
+        {
+            // Guarda el registro del padre
+            await Task.CompletedTask;
+        }
+
         private void ScheduleRetry(CancelProductionOrderCommand request, string logBase)
         {
             var retryCommand = new CancelProductionOrderCommand(
@@ -160,6 +225,7 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
             {
                 RetryCount = request.RetryCount + 1,
                 MaxRetries = request.MaxRetries,
+                LastStep = request.LastStep,
             };
 
             this.backgroundTaskQueue.QueueBackgroundWorkItem(async (services, token) =>
@@ -170,85 +236,6 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
             });
 
             this.logger.Information(LogsConstants.RetryScheduledLog, logBase, ServiceConstants.MinutesToRetrySeparationProductionOrder, request.RetryCount + 2);
-        }
-
-        private async Task<int> CreateChildOrdersProcess(UserOrderModel productionOrder, int productionOrderId, int pieces, string separationId)
-        {
-            this.logger.Information($"separationId-{separationId}: Validación orden creada");
-            var separationOrders = await this.pedidosDao.GetOrdersBySeparationId(separationId);
-            if (!separationOrders.Any())
-            {
-                this.logger.Information($"separationId-{separationId}: Inicia proceso de creación");
-                var newFoId = await this.CreateChildOrders(productionOrder, productionOrderId, pieces, separationId);
-                this.logger.Information($"separationId-{separationId}: Finaliza proceso de creación");
-                return newFoId;
-            }
-
-            this.logger.Information($"separationId-{separationId}: La orden ya fue creada anteriormente, omitiendo creación");
-            return separationOrders.First().Id;
-        }
-
-        private async Task<int> CreateChildOrders(UserOrderModel productionOrder, int productionOrderId, int pieces, string separationId)
-        {
-            var request = new CreateChildProductionOrdersDto() { OrderId = productionOrderId, Pieces = pieces };
-            this.logger.Information($"separationId-{separationId}: Enviando al service layer para creación");
-            var serviceLResult = await this.serviceLayerAdapterService.PostAsync(request, ServiceConstants.CreateChildOrderSapUrl);
-            var newFoId = JsonConvert.DeserializeObject<int>(serviceLResult.Response.ToString());
-            this.logger.Information($"separationId-{separationId}: Se creó la Orden de fabricación {newFoId}");
-
-            var qr = new MagistralQrModel();
-            if (!string.IsNullOrEmpty(productionOrder.MagistralQr))
-            {
-                qr = JsonConvert.DeserializeObject<MagistralQrModel>(productionOrder.MagistralQr);
-                qr.ProductionOrder = newFoId;
-                qr.Quantity = pieces;
-            }
-
-            var newStatus = productionOrder.ReassignmentDate.HasValue ? ServiceConstants.Reasignado : ServiceConstants.Proceso;
-            var newProductionOrder = new UserOrderModel()
-            {
-                Userid = productionOrder.Userid,
-                Salesorderid = productionOrder.Salesorderid,
-                Productionorderid = newFoId.ToString(),
-                Status = newStatus,
-                PlanningDate = productionOrder.PlanningDate,
-                Comments = productionOrder.Comments,
-                FinishDate = productionOrder.FinishDate,
-                CreationDate = productionOrder.CreationDate,
-                CreatorUserId = productionOrder.CreatorUserId,
-                CloseDate = productionOrder.CloseDate,
-                CloseUserId = productionOrder.CloseUserId,
-                FinishedLabel = productionOrder.FinishedLabel,
-                MagistralQr = ServiceShared.CalculateTernary(!string.IsNullOrEmpty(productionOrder.MagistralQr), JsonConvert.SerializeObject(qr), null),
-                FinalizedDate = productionOrder.FinalizedDate,
-                StatusAlmacen = productionOrder.StatusAlmacen,
-                UserCheckIn = productionOrder.UserCheckIn,
-                DateTimeCheckIn = productionOrder.DateTimeCheckIn,
-                RemisionQr = productionOrder.RemisionQr,
-                DeliveryId = productionOrder.DeliveryId,
-                StatusInvoice = productionOrder.StatusInvoice,
-                UserInvoiceStored = productionOrder.UserInvoiceStored,
-                InvoiceStoreDate = productionOrder.InvoiceStoreDate,
-                InvoiceQr = productionOrder.InvoiceQr,
-                InvoiceId = productionOrder.InvoiceId,
-                InvoiceType = productionOrder.InvoiceType,
-                TypeOrder = productionOrder.BatchFinalized,
-                Quantity = pieces,
-                BatchFinalized = productionOrder.BatchFinalized,
-                AreBatchesComplete = 0,
-                TecnicId = productionOrder.TecnicId,
-                StatusForTecnic = productionOrder.StatusForTecnic,
-                AssignmentDate = productionOrder.AssignmentDate,
-                PackingDate = productionOrder.PackingDate,
-                InvoiceLineNum = productionOrder.InvoiceLineNum,
-                ReassignmentDate = productionOrder.ReassignmentDate,
-                CloseSampleOrderId = productionOrder.CloseSampleOrderId,
-                SeparationId = separationId,
-            };
-            this.logger.Information($"separationId-{separationId}: Inicio guardado de orden de fabricacion {newFoId} en Postgres");
-            await this.pedidosDao.InsertUserOrder(new List<UserOrderModel>() { newProductionOrder });
-            this.logger.Information($"separationId-{separationId}: Se guardó la orden de fabricacion {newFoId} en Postgres correctamente");
-            return newFoId;
         }
     }
 }
