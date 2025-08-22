@@ -155,8 +155,4 @@ services/sapfile-service/Omicron.SapFile.Api/packages/FreeSpire.Doc.6.3/
 services/sapfile-service/Omicron.SapFile.Api/logs/
 **/launchSettings.json
 
-deploy/aws/qa/secrets.yml
-deploy/dev/secretsdev.yml
-deploy/prod/secretsprod.yml
-deploy/qa/secretsqa.yml
-deploy/uat/secretsuat.yml
+deploy/**/secrets*.yml
