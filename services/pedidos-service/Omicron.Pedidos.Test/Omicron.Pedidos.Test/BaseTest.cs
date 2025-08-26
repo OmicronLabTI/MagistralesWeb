@@ -1027,6 +1027,9 @@ namespace Omicron.Pedidos.Test
                 new UserOrderModel { Id = 56, Productionorderid = "220001", Salesorderid = null, Status = "Almacenado", Userid = "abc", Quantity = 10, MagistralQr = "{\"SaleOrder\":1234,\"ProductionOrder\":220001,\"Quantity\":1.0,\"NeedsCooling\":\"Y\",\"ItemCode\":\"ItemCode\",\"DocNumDxp\":\"DocNumDxp\"}" },
                 new UserOrderModel { Id = 57, Productionorderid = "220002", Salesorderid = null, Status = "Cancelado", Userid = "abc", Quantity = 10, MagistralQr = "{\"SaleOrder\":1234,\"ProductionOrder\":220002,\"Quantity\":1.0,\"NeedsCooling\":\"Y\",\"ItemCode\":\"ItemCode\",\"DocNumDxp\":\"DocNumDxp\"}" },
                 new UserOrderModel { Id = 58, Productionorderid = "220003", Salesorderid = null, Status = "Almacenado", Userid = "abc", Quantity = 10, MagistralQr = "{\"SaleOrder\":1234,\"ProductionOrder\":220003,\"Quantity\":1.0,\"NeedsCooling\":\"Y\",\"ItemCode\":\"ItemCode\",\"DocNumDxp\":\"DocNumDxp\"}" },
+
+                // Create Child Order
+                new UserOrderModel { Id = 59, Productionorderid = "226744", Salesorderid = null, Status = "Almacenado", Userid = "abc", Quantity = 10, MagistralQr = "{\"SaleOrder\":1234,\"ProductionOrder\":226744,\"Quantity\":1.0,\"NeedsCooling\":\"Y\",\"ItemCode\":\"ItemCode\",\"DocNumDxp\":\"DocNumDxp\"}" },
             };
         }
 

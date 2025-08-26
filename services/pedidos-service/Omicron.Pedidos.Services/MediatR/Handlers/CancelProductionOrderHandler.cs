@@ -93,7 +93,8 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
                         request.UserId,
                         request.DxpOrder,
                         request.SapOrder,
-                        request.TotalPieces);
+                        request.TotalPieces,
+                        request.LastStep);
                     await mediator.Send(createChildOrdersCommand, token);
                 });
 

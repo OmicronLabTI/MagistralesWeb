@@ -13,7 +13,7 @@ namespace Omicron.Pedidos.Services.MediatR.Commands
     /// <summary>
     /// CreateChildOrdersSapCommand.
     /// </summary>
-    public class CreateChildOrdersSapCommand : IRequest<bool>
+    public class CreateChildOrdersSapCommand : IRequest
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CreateChildOrdersSapCommand"/> class.
@@ -25,6 +25,7 @@ namespace Omicron.Pedidos.Services.MediatR.Commands
         /// <param name="dxpOrder">dxpOrder.</param>
         /// <param name="sapOrder">sapOrder.</param>
         /// <param name="totalPieces">totalPieces.</param>
+        /// <param name="lastStep">lastStep.</param>
         public CreateChildOrdersSapCommand(
             int productionOrderId,
             int pieces,
@@ -32,7 +33,8 @@ namespace Omicron.Pedidos.Services.MediatR.Commands
             string userId,
             string dxpOrder,
             int? sapOrder,
-            int totalPieces)
+            int totalPieces,
+            string lastStep)
         {
             this.ProductionOrderId = productionOrderId;
             this.Pieces = pieces;
@@ -41,6 +43,7 @@ namespace Omicron.Pedidos.Services.MediatR.Commands
             this.DxpOrder = dxpOrder;
             this.SapOrder = sapOrder;
             this.TotalPieces = totalPieces;
+            this.LastStep = lastStep;
         }
 
         /// <summary>
@@ -98,5 +101,21 @@ namespace Omicron.Pedidos.Services.MediatR.Commands
         /// TotalPieces.
         /// </value>
         public int TotalPieces { get; set; }
+
+        /// <summary>
+        /// Gets or sets lastStep.
+        /// </summary>
+        /// <value>
+        /// lastStep.
+        /// </value>
+        public string LastStep { get; set; }
+
+        /// <summary>
+        /// Gets or sets productionOrderId.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderId.
+        /// </value>
+        public int ProductionOrderChildId { get; set; }
     }
 }

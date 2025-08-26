@@ -129,60 +129,31 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
         /// <inheritdoc/>
         public async Task<ResultModel> CreateChildFabOrders(CreateChildProductionOrdersDto data)
         {
+            var result = new CreateChildOrderResultDto();
+            var logBase = string.Format(LogsConstants.FinalizeProductionOrderInSap, data.OrderId);
             try
             {
                 var originalPO = await this.GetFromServiceLayer<ProductionOrderDto>(
                     string.Format(ServiceQuerysConstants.QryProductionOrderById, data.OrderId),
                     string.Format(ServiceConstants.FabOrderNotFound, data.OrderId));
 
-                var productionOrder = new CreateProductionOrderDto();
-                productionOrder.StartDate = originalPO.StartDate;
-                productionOrder.DueDate = originalPO.DueDate;
-                productionOrder.ItemNo = originalPO.ItemNo;
-                productionOrder.ProductDescription = originalPO.ProductDescription;
-                productionOrder.PlannedQuantity = data.Pieces;
-                productionOrder.ProductionOrderOriginEntry = originalPO.ProductionOrderOriginEntry;
-                productionOrder.Remarks = string.Format(ServiceConstants.ChildFarOrderComments, originalPO.AbsoluteEntry);
-                productionOrder.IsParentRecord = ServiceConstants.IsNotPackage;
-                productionOrder.Warehouse = "PT";
+                await this.ExecuteCreateChildOrderProcces(data, originalPO, result, logBase);
 
-                var newFabOrder = await this.SaveFabOrder(productionOrder);
-                newFabOrder.ProductionOrderLines = newFabOrder.ProductionOrderLines.Where(x => originalPO.ProductionOrderLines.Any(y => y.ItemNo == x.ItemNo)).ToList();
-                newFabOrder.ProductionOrderLines.ForEach(newPo =>
-                {
-                    var originalData = originalPO.ProductionOrderLines.Where(x => x.ItemNo == newPo.ItemNo).First();
-                    newPo.BaseQuantity = originalData.BaseQuantity;
-                });
-
-                var newComponentsAdded = originalPO.ProductionOrderLines.Where(x => !newFabOrder.ProductionOrderLines.Any(y => y.ItemNo == x.ItemNo)).ToList();
-                var lastIdLineNumber = newFabOrder.ProductionOrderLines.Max(x => x.LineNumber);
-                newComponentsAdded.ForEach(x =>
-                {
-                    lastIdLineNumber++;
-                    var newComponent = new ProductionOrderLineDto()
-                    {
-                        ItemNo = x.ItemNo,
-                        Warehouse = x.Warehouse,
-                        BaseQuantity = x.BaseQuantity,
-                        PlannedQuantity = x.PlannedQuantity,
-                        DocumentAbsoluteEntry = newFabOrder.AbsoluteEntry,
-                        BatchNumbers = new List<ProductionOrderItemBatchDto>(),
-                        UoMEntry = x.UoMEntry,
-                        UoMCode = x.UoMCode,
-                        LineNumber = lastIdLineNumber,
-                    };
-
-                    newFabOrder.ProductionOrderLines.Add(newComponent);
-                });
-                newFabOrder.ProductionOrderStatus = ServiceConstants.ProductionOrderReleased;
-
-                var request = this.mapper.Map<UpdateProductionOrderDto>(newFabOrder);
-                await this.SaveChanges(request, newFabOrder.AbsoluteEntry);
-                return ServiceUtils.CreateResult(true, 200, null, newFabOrder.AbsoluteEntry, null);
+                return ServiceUtils.CreateResult(true, 200, null, result, null);
+            }
+            catch (CustomServiceException ex)
+            {
+                var error = string.Format(LogsConstants.ProcessLogTwoParts, logBase, ex.Message);
+                this.logger.Error(ex, error);
+                result.ErrorMessage = ex.Message;
+                return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, result, null);
             }
             catch (Exception ex)
             {
-                return ServiceUtils.CreateResult(false, 400, null, ex.Message, null);
+                var error = string.Format(LogsConstants.ProcessLogThreeParts, logBase, ex.InnerException, ex.Message);
+                this.logger.Error(ex, error);
+                result.ErrorMessage = ex.Message;
+                return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, result, null);
             }
         }
 
@@ -970,6 +941,114 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             return await this.GetFromServiceLayer<ProductionOrderDto>(
                         string.Format(ServiceQuerysConstants.QryProductionOrderById, productionOrderId),
                         string.Format(LogsConstants.NotFoundProductionOrder, productionOrderId));
+        }
+
+        private async Task ExecuteCreateChildOrderProcces(CreateChildProductionOrdersDto data, ProductionOrderDto originalPO, CreateChildOrderResultDto result, string logBase)
+        {
+            switch (data.LastStep?.Trim())
+            {
+                case null:
+                case ServiceConstants.EmptyValue:
+                case ServiceConstants.SaveHistoryStep:
+                    await this.ExecuteFullCreateChildFabOrdersFlow(data, originalPO, result, logBase);
+                    break;
+                case ServiceConstants.StepCreateChildOrderSap:
+                    await this.ExecuteAddComponentsStep(data, originalPO, result, logBase);
+                    break;
+                default:
+                    this.logger.Error(LogsConstants.StepNotRecognized, logBase, data.LastStep);
+                    break;
+            }
+        }
+
+        private async Task ExecuteFullCreateChildFabOrdersFlow(CreateChildProductionOrdersDto data, ProductionOrderDto originalPO, CreateChildOrderResultDto result, string logBase)
+        {
+            var productionOrder = new CreateProductionOrderDto();
+            productionOrder.StartDate = originalPO.StartDate;
+            productionOrder.DueDate = originalPO.DueDate;
+            productionOrder.ItemNo = originalPO.ItemNo;
+            productionOrder.ProductDescription = originalPO.ProductDescription;
+            productionOrder.PlannedQuantity = data.Pieces;
+            productionOrder.ProductionOrderOriginEntry = originalPO.ProductionOrderOriginEntry;
+            productionOrder.Remarks = string.Format(ServiceConstants.ChildFarOrderComments, originalPO.AbsoluteEntry);
+            productionOrder.IsParentRecord = ServiceConstants.IsNotPackage;
+            productionOrder.Warehouse = "PT";
+
+            var newFabOrder = await this.SaveFabOrder(productionOrder);
+            result.ProductionOrderChildId = newFabOrder.AbsoluteEntry;
+            result.LastStep = ServiceConstants.StepCreateChildOrderSap;
+            newFabOrder.ProductionOrderLines = newFabOrder.ProductionOrderLines.Where(x => originalPO.ProductionOrderLines.Any(y => y.ItemNo == x.ItemNo)).ToList();
+            newFabOrder.ProductionOrderLines.ForEach(newPo =>
+            {
+                var originalData = originalPO.ProductionOrderLines.Where(x => x.ItemNo == newPo.ItemNo).First();
+                newPo.BaseQuantity = originalData.BaseQuantity;
+            });
+
+            var newComponentsAdded = originalPO.ProductionOrderLines.Where(x => !newFabOrder.ProductionOrderLines.Any(y => y.ItemNo == x.ItemNo)).ToList();
+            var lastIdLineNumber = newFabOrder.ProductionOrderLines.Max(x => x.LineNumber);
+            newComponentsAdded.ForEach(x =>
+            {
+                lastIdLineNumber++;
+                var newComponent = new ProductionOrderLineDto()
+                {
+                    ItemNo = x.ItemNo,
+                    Warehouse = x.Warehouse,
+                    BaseQuantity = x.BaseQuantity,
+                    PlannedQuantity = x.PlannedQuantity,
+                    DocumentAbsoluteEntry = newFabOrder.AbsoluteEntry,
+                    BatchNumbers = new List<ProductionOrderItemBatchDto>(),
+                    UoMEntry = x.UoMEntry,
+                    UoMCode = x.UoMCode,
+                    LineNumber = lastIdLineNumber,
+                };
+
+                newFabOrder.ProductionOrderLines.Add(newComponent);
+            });
+            newFabOrder.ProductionOrderStatus = ServiceConstants.ProductionOrderReleased;
+
+            var request = this.mapper.Map<UpdateProductionOrderDto>(newFabOrder);
+            await this.SaveChanges(request, newFabOrder.AbsoluteEntry);
+            result.LastStep = ServiceConstants.StepCreateChildOrderWithComponentsSap;
+        }
+
+        private async Task ExecuteAddComponentsStep(CreateChildProductionOrdersDto data, ProductionOrderDto originalPO, CreateChildOrderResultDto result, string logBase)
+        {
+            var newFabOrder = await this.GetFromServiceLayer<ProductionOrderDto>(
+                string.Format(ServiceQuerysConstants.QryProductionOrderById, data.ProductionOrderChildId),
+                string.Format(ServiceConstants.FabOrderNotFound, data.ProductionOrderChildId));
+
+            newFabOrder.ProductionOrderLines = newFabOrder.ProductionOrderLines.Where(x => originalPO.ProductionOrderLines.Any(y => y.ItemNo == x.ItemNo)).ToList();
+            newFabOrder.ProductionOrderLines.ForEach(newPo =>
+            {
+                var originalData = originalPO.ProductionOrderLines.Where(x => x.ItemNo == newPo.ItemNo).First();
+                newPo.BaseQuantity = originalData.BaseQuantity;
+            });
+
+            var newComponentsAdded = originalPO.ProductionOrderLines.Where(x => !newFabOrder.ProductionOrderLines.Any(y => y.ItemNo == x.ItemNo)).ToList();
+            var lastIdLineNumber = newFabOrder.ProductionOrderLines.Max(x => x.LineNumber);
+            newComponentsAdded.ForEach(x =>
+            {
+                lastIdLineNumber++;
+                var newComponent = new ProductionOrderLineDto()
+                {
+                    ItemNo = x.ItemNo,
+                    Warehouse = x.Warehouse,
+                    BaseQuantity = x.BaseQuantity,
+                    PlannedQuantity = x.PlannedQuantity,
+                    DocumentAbsoluteEntry = newFabOrder.AbsoluteEntry,
+                    BatchNumbers = new List<ProductionOrderItemBatchDto>(),
+                    UoMEntry = x.UoMEntry,
+                    UoMCode = x.UoMCode,
+                    LineNumber = lastIdLineNumber,
+                };
+
+                newFabOrder.ProductionOrderLines.Add(newComponent);
+            });
+            newFabOrder.ProductionOrderStatus = ServiceConstants.ProductionOrderReleased;
+
+            var request = this.mapper.Map<UpdateProductionOrderDto>(newFabOrder);
+            await this.SaveChanges(request, newFabOrder.AbsoluteEntry);
+            result.LastStep = ServiceConstants.StepCreateChildOrderWithComponentsSap;
         }
     }
 }

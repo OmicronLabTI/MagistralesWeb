@@ -88,6 +88,7 @@ namespace Omicron.Pedidos.Test.Entities
             new ProductionOrderSeparationDetailModel(),
             new ProductionOrderSeparationModel(),
             new SeparateProductionOrderDto(),
+            new CreateChildOrderResultDto(),
         };
 
         /// <summary>

@@ -244,16 +244,19 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
                 .Returns(Task.FromResult(GetResult(true, secondProductionOrder)));
             var request = new CreateChildProductionOrdersDto() { OrderId = 123456, Pieces = 1 };
             var result = await service.CreateChildFabOrders(request);
+            var response = result.Response as CreateChildOrderResultDto;
 
             if (success)
             {
                 Assert.That(result.Success, Is.True);
                 Assert.That(result.Code, Is.EqualTo(200));
+                Assert.That(string.IsNullOrEmpty(response.ErrorMessage), Is.True);
             }
             else
             {
-                Assert.That(result.Success, Is.False);
-                Assert.That(result.Code, Is.EqualTo(400));
+                Assert.That(result.Success, Is.True);
+                Assert.That(result.Code, Is.EqualTo(200));
+                Assert.That(string.IsNullOrEmpty(response.ErrorMessage), Is.False);
             }
         }
 

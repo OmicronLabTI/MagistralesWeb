@@ -1081,6 +1081,26 @@ namespace Omicron.Pedidos.Services.Constants
         public const string SaveHistoryStep = "SaveHistory";
 
         /// <summary>
+        /// StepCreateChildOrderSap.
+        /// </summary>
+        public const string StepCreateChildOrderSap = "CreateChildOrderSap";
+
+        /// <summary>
+        /// StepCreateChildOrderSap.
+        /// </summary>
+        public const string StepCreateChildOrderWithComponentsSap = "CreateChildOrderSapWithComponents";
+
+        /// <summary>
+        /// StepCreateChildOrderPostgres.
+        /// </summary>
+        public const string StepCreateChildOrderPostgres = "CreateChildOrderPostgres";
+
+        /// <summary>
+        /// StepCreateChildOrderPostgres.
+        /// </summary>
+        public const string StepSaveChildOrderHistory = "SaveChildOrderHistory";
+
+        /// <summary>
         /// EmptyValue.
         /// </summary>
         public const string EmptyValue = "";
@@ -1228,14 +1248,6 @@ namespace Omicron.Pedidos.Services.Constants
         /// CreateChildOrderSapUrl.
         /// </value>
         public static string CreateChildOrderSapUrl => "child/order";
-
-        /// <summary>
-        /// Gets CreateChildOrderSapUrl.
-        /// </summary>
-        /// <value>
-        /// CreateChildOrderSapUrl.
-        /// </value>
-        public static string StepSuccessfullyCloseInSapStep => "Successfully Close Parent In SAP";
 
         /// <summary>
         /// Gets ProductionOrderSeparationProcessKey.

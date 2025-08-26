@@ -56,14 +56,15 @@ namespace Omicron.Pedidos.Test.MediatR
         {
             // Arrange
             int detailOrderId = 1001;
-            var request = new CancelProductionOrderCommand(
+            var request = new CreateChildOrdersSapCommand(
                 productionOrderId: 1000,
                 pieces: 5,
                 separationId: "99c7c928-2afa",
                 userId: "testUser",
                 dxpOrder: "99c7c928-2afa-4a84-8a3e-13ce38bfd98f",
                 sapOrder: 789456,
-                totalPieces: 10);
+                totalPieces: 10,
+                lastStep: string.Empty);
 
             this.mockPedidosDao
                 .Setup(x => x.GetMaxDivision(request.ProductionOrderId))
@@ -185,14 +186,15 @@ namespace Omicron.Pedidos.Test.MediatR
         {
             // Arrange
             int detailOrderId = 1001;
-            var request = new CancelProductionOrderCommand(
+            var request = new CreateChildOrdersSapCommand(
                 productionOrderId: 1000,
                 pieces: 5,
                 separationId: "some-separation-id",
                 userId: "testUser",
                 dxpOrder: "some-dxporder",
                 sapOrder: 789456,
-                totalPieces: 10);
+                totalPieces: 10,
+                lastStep: string.Empty);
 
             var existingOrder = new ProductionOrderSeparationDetailModel
             {
