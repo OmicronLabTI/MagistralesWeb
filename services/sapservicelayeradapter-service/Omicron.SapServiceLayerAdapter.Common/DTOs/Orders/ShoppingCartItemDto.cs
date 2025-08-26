@@ -72,5 +72,11 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// </summary>
         /// <value>Discount Percentage.</value>
         public double DiscountPercentage { get; set; }
+
+        /// <summary>
+        /// Gets or sets the PromotionalCode.
+        /// </summary>
+        /// <value>PromotionalCode.</value>
+        public string PromotionalCode { get; set; }
     }
 }
