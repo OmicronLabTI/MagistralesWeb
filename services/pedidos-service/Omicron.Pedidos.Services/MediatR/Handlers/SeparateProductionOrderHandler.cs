@@ -232,7 +232,7 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
                 InvoiceQr = productionOrder.InvoiceQr,
                 InvoiceId = productionOrder.InvoiceId,
                 InvoiceType = productionOrder.InvoiceType,
-                TypeOrder = productionOrder.BatchFinalized,
+                TypeOrder = productionOrder.TypeOrder,
                 Quantity = pieces,
                 BatchFinalized = productionOrder.BatchFinalized,
                 AreBatchesComplete = 0,

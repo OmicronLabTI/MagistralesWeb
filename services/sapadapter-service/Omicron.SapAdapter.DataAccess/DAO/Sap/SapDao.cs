@@ -1450,6 +1450,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              IsOmigenomics = string.IsNullOrEmpty(order.IsOmigenomics) ? order.IsSecondary : order.IsOmigenomics == "1" ? "Y" : "N",
                              IsSecondary = order.IsSecondary,
                              ThemeId = p.ThemeId,
+                             IsParentFabOrder = dpf != null ? dpf.OrderRelationType : null,
+                             FabOrder = dpf,
                          });
 
             return (await this.RetryQuery(query)).ToList();

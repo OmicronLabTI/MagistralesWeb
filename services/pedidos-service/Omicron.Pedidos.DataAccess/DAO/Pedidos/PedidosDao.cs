@@ -723,7 +723,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
 
                 if (productionStatus.Count > 0 &&
                     productionStatus.All(z => z.FinishedLabel == 1) &&
-                    orders.All(z => statusPending.Contains(z.Status) && !orders.All(z => z.Status == secondStatus)))
+                    orders.All(z => !orders.All(z => z.Status == secondStatus)))
                 {
                     orderstoReturn.AddRange(group);
                 }

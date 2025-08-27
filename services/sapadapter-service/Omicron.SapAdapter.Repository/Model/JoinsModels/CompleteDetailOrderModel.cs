@@ -160,11 +160,19 @@ namespace Omicron.SapAdapter.Entities.Model
         public bool IsOmigenomics { get; set; }
 
         /// <summary>
-        /// Gets or sets ProductFirmName.
+        /// Gets or sets OrderRelationType.
         /// </summary>
         /// <value>
-        /// string ProductFirmName.
+        /// string OrderRelationType.
         /// </value>
         public string ProductFirmName { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderRelationType.
+        /// </summary>
+        /// <value>
+        /// string OrderRelationType.
+        /// </value>
+        public string OrderRelationType { get; set; }
     }
 }
