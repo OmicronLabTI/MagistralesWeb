@@ -60,20 +60,12 @@ namespace Omicron.Pedidos.Services.OrderHistory
         /// <summary>
         /// Combined method to register both the child order and update the parent order.
         /// </summary>
-        /// <param name="detailOrderId">Child order number.</param>
         /// <param name="request">request.</param>
         /// <returns>True if the registration was successful.</returns>
-        public async Task SaveHistoryParentOrdersFab(int detailOrderId, CancelProductionOrderCommand request)
+        public async Task SaveHistoryParentOrdersFab(CancelProductionOrderCommand request)
         {
-            var logBase = string.Format(LogsConstants.SaveHistoryOrdersFabLogBase, detailOrderId, request.ProductionOrderId);
+            var logBase = string.Format(LogsConstants.SaveHistoryParentOrdersFabLogBase, request.ProductionOrderId);
             this.logger.Information(LogsConstants.SaveHistoryOrdersFabStart, logBase, request.Pieces, request.UserId, request.SapOrder);
-
-            var existingOrderDetail = await this.pedidosDao.GetDetailOrderById(detailOrderId);
-            if (existingOrderDetail != null)
-            {
-                this.logger.Warning(LogsConstants.SaveHistoryOrdersFabChildExists, logBase);
-                return;
-            }
 
             await this.UpsertOrderSeparation(request.ProductionOrderId, request.TotalPieces, request.Pieces);
         }

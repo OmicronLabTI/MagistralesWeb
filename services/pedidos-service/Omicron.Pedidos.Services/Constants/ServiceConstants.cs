@@ -1068,6 +1068,16 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// CancelSapStep.
         /// </summary>
+        public const string StartStep = "StartCancelParentOrderProcess";
+
+        /// <summary>
+        /// CancelSapStep.
+        /// </summary>
+        public const string UpdateCancelParentOrderStep = "UpdateCancelParentOrderProcess";
+
+        /// <summary>
+        /// CancelSapStep.
+        /// </summary>
         public const string CancelSapStep = "CancelSAP";
 
         /// <summary>

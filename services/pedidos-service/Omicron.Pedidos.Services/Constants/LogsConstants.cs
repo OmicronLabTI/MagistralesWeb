@@ -395,7 +395,7 @@ namespace Omicron.Pedidos.Services.Constants
         /// <value>
         /// SeparateProductionOrderStart.
         /// </value>
-        public static string SeparateProductionOrderStart => "{LogBase} - Start Proccess - Pieces: {Pieces} - RetryAttempt: {RetryAttempt}";
+        public static string SeparateProductionOrderStart => "{LogBase} - Start Proccess - Pieces: {Pieces}";
 
         /// <summary>
         /// Gets SeparateProductionOrderEndSuccessfuly.
@@ -484,6 +484,14 @@ namespace Omicron.Pedidos.Services.Constants
         /// SaveHistoryOrdersFabLogBase.
         /// </value>
         public static string SaveHistoryOrdersFabLogBase => "Register Order History Service - ChildOrder: {0} - ParentOrder: {1} - Save History Orders Fab";
+
+        /// <summary>
+        /// Gets SaveHistoryOrdersFabLogBase.
+        /// </summary>
+        /// <value>
+        /// SaveHistoryOrdersFabLogBase.
+        /// </value>
+        public static string SaveHistoryParentOrdersFabLogBase => "Register Order History Service - ParentOrder: {1} - Save History Orders Fab";
 
         /// <summary>
         /// Gets SaveHistoryOrdersFabStart.

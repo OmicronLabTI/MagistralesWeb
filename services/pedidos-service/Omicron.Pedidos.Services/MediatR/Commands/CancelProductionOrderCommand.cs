@@ -9,6 +9,7 @@
 namespace Omicron.Pedidos.Services.MediatR.Commands
 {
     using global::MediatR;
+    using Omicron.Pedidos.Services.Constants;
 
     /// <summary>
     /// CancelProductionOrderCommand.
@@ -68,22 +69,6 @@ namespace Omicron.Pedidos.Services.MediatR.Commands
         public string SeparationId { get; set; }
 
         /// <summary>
-        /// Gets or sets RetryCount.
-        /// </summary>
-        /// <value>
-        /// RetryCount.
-        /// </value>
-        public int RetryCount { get; set; } = 0;
-
-        /// <summary>
-        /// Gets or sets MaxRetries.
-        /// </summary>
-        /// <value>
-        /// MaxRetries.
-        /// </value>
-        public int MaxRetries { get; set; } = 3;
-
-        /// <summary>
         /// Gets or sets UserId.
         /// </summary>
         /// <value>
@@ -116,11 +101,11 @@ namespace Omicron.Pedidos.Services.MediatR.Commands
         public int TotalPieces { get; set; }
 
         /// <summary>
-        /// Gets lastStep.
+        /// Gets or sets lastStep.
         /// </summary>
         /// <value>
         /// LastStep.
         /// </value>
-        public string LastStep { get; internal set; }
+        public string LastStep { get; set; } = ServiceConstants.StartStep;
     }
 }

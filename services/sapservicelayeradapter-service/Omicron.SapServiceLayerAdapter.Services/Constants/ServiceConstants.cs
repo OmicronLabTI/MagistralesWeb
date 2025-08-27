@@ -464,6 +464,16 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string SuccessfullyClosedInSapStep = "Successfully Closed In SAP";
 
         /// <summary>
+        /// CancelSapStep.
+        /// </summary>
+        public const string StartCancelParentOrderStep = "StartCancelParentOrderProcess";
+
+        /// <summary>
+        /// CancelSapStep.
+        /// </summary>
+        public const string UpdateCancelParentOrderStep = "UpdateCancelParentOrderProcess";
+
+        /// <summary>
         /// Gets ManageBatchNumbers.
         /// </summary>
         /// <value>

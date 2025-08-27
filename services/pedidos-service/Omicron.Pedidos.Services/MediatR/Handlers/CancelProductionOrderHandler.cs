@@ -19,6 +19,7 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Entities.Model.Db;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.MediatR.Commands;
     using Omicron.Pedidos.Services.MediatR.Services;
@@ -74,7 +75,7 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
         public async Task<bool> Handle(CancelProductionOrderCommand request, CancellationToken cancellationToken)
         {
             var logBase = string.Format(LogsConstants.SeparateProductionOrderLogBase, request.SeparationId, request.ProductionOrderId);
-            this.logger.Information(LogsConstants.SeparateProductionOrderStart, logBase, request.Pieces, request.RetryCount + 1);
+            this.logger.Information(LogsConstants.SeparateProductionOrderStart, logBase, request.Pieces);
             try
             {
                 var productionOrder =
@@ -98,8 +99,6 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
                     await mediator.Send(createChildOrdersCommand, token);
                 });
 
-                var redisKey = string.Format(ServiceConstants.ProductionOrderSeparationProcessKey, request.ProductionOrderId);
-                await this.redisService.DeleteKey(redisKey);
                 this.logger.Information(LogsConstants.SeparateProductionOrderEndSuccessfuly, logBase);
                 return true;
             }
@@ -107,17 +106,37 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
             {
                 var error = string.Format(LogsConstants.SeparateProductionOrderEndWithError, logBase);
                 this.logger.Error(ex, error);
-                if (request.RetryCount < request.MaxRetries)
+                var productionOrderSeparationLog = await this.pedidosDao.GetProductionOrderSeparationDetailLogById(request.SeparationId);
+
+                if (productionOrderSeparationLog != null)
                 {
-                    this.ScheduleRetry(request, logBase);
-                    return false;
+                    productionOrderSeparationLog.ErrorMessage = ex.Message;
+                    productionOrderSeparationLog.LastStep = request.LastStep;
+                    productionOrderSeparationLog.LastUpdated = DateTime.Now;
+
+                    await this.pedidosDao.UpdateProductionOrderSeparationDetailLog(productionOrderSeparationLog);
                 }
                 else
                 {
-                    var finalError = string.Format(LogsConstants.MaximumNumberOfRetriesReached, logBase);
-                    this.logger.Error(ex, finalError);
-                    throw;
+                    var processWithError = new ProductionOrderSeparationDetailLogsModel
+                    {
+                        Id = request.SeparationId,
+                        ParentProductionOrderId = request.ProductionOrderId,
+                        LastStep = request.LastStep,
+                        IsSuccessful = false,
+                        ErrorMessage = ex.Message,
+                        ChildProductionOrderId = null,
+                        Payload = JsonConvert.SerializeObject(request),
+                        CreatedAt = DateTime.Now,
+                        LastUpdated = DateTime.Now,
+                    };
+
+                    await this.pedidosDao.InsertProductionOrderSeparationDetailLogById(processWithError);
                 }
+
+                var redisKey = string.Format(ServiceConstants.ProductionOrderSeparationProcessKey, request.ProductionOrderId);
+                await this.redisService.DeleteKey(redisKey);
+                return false;
             }
         }
 
@@ -127,13 +146,14 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
             {
                 case null:
                 case ServiceConstants.EmptyValue:
-                case ServiceConstants.CancelSapStep:
+                case ServiceConstants.StartStep:
+                case ServiceConstants.UpdateCancelParentOrderStep:
                     await this.ExecuteFullCancellationFlow(productionOrder, request, logBase);
                     break;
-                case ServiceConstants.CancelPostgresStep:
+                case ServiceConstants.CancelSapStep:
                     await this.ExecuteCancellationFromPostgresStep(productionOrder, request, logBase);
                     break;
-                case ServiceConstants.SaveHistoryStep:
+                case ServiceConstants.CancelPostgresStep:
                     await this.ExecuteCancellationFromHistoryStep(productionOrder, request, logBase);
                     break;
                 default:
@@ -189,6 +209,7 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
                 {
                     ProductionOrderId = request.ProductionOrderId,
                     SeparationId = request.SeparationId,
+                    LastStep = request.LastStep,
                 },
                 ServiceConstants.SeparationProcessCancelProductionOrderEndPoint,
                 string.Format(LogsConstants.FailedToCancelProductionOrderInSAP, logBase));
@@ -196,7 +217,17 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
             if (!result.Success)
             {
                 this.logger.Error(string.Format(LogsConstants.FailedToCancelProductionOrderInSAP, logBase));
+                request.LastStep = ServiceConstants.StartStep;
                 throw new Exception(result.ExceptionMessage);
+            }
+
+            var response = JsonConvert.DeserializeObject<CancelProductionOrderDto>(result.Response.ToString());
+
+            if (!string.IsNullOrEmpty(response.ErrorMessage))
+            {
+                this.logger.Error(string.Format(LogsConstants.FailedToCancelProductionOrderInSAP, logBase));
+                request.LastStep = response.LastStep;
+                throw new Exception(response.ErrorMessage);
             }
         }
 
@@ -209,34 +240,7 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
 
         private async Task SaveHistoryOrdersFab(UserOrderModel productionOrder, CancelProductionOrderCommand request, string logBase)
         {
-            // Guarda el registro del padre
-            await Task.CompletedTask;
-        }
-
-        private void ScheduleRetry(CancelProductionOrderCommand request, string logBase)
-        {
-            var retryCommand = new CancelProductionOrderCommand(
-                request.ProductionOrderId,
-                request.Pieces,
-                request.SeparationId,
-                request.UserId,
-                request.DxpOrder,
-                request.SapOrder,
-                request.TotalPieces)
-            {
-                RetryCount = request.RetryCount + 1,
-                MaxRetries = request.MaxRetries,
-                LastStep = request.LastStep,
-            };
-
-            this.backgroundTaskQueue.QueueBackgroundWorkItem(async (services, token) =>
-            {
-                await Task.Delay(TimeSpan.FromMinutes(ServiceConstants.MinutesToRetrySeparationProductionOrder), token);
-                var mediator = services.GetRequiredService<IMediator>();
-                await mediator.Send(retryCommand, token);
-            });
-
-            this.logger.Information(LogsConstants.RetryScheduledLog, logBase, ServiceConstants.MinutesToRetrySeparationProductionOrder, request.RetryCount + 2);
+            await this.orderHistoryHelper.SaveHistoryParentOrdersFab(request);
         }
     }
 }

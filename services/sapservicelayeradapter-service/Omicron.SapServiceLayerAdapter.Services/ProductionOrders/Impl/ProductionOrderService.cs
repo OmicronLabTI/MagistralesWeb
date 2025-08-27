@@ -129,7 +129,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
         /// <inheritdoc/>
         public async Task<ResultModel> CreateChildFabOrders(CreateChildProductionOrdersDto data)
         {
-            var result = new CreateChildOrderResultDto();
+            var result = new CreateChildOrderResultDto { LastStep = data.LastStep };
             var logBase = string.Format(LogsConstants.FinalizeProductionOrderInSap, data.OrderId);
             try
             {
@@ -260,71 +260,33 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
         /// <inheritdoc/>
         public async Task<ResultModel> CancelProductionOrderForSeparationProcess(CancelProductionOrderDto cancelProductionOrder)
         {
+            var result = new CancelProductionOrderDto { LastStep = cancelProductionOrder.LastStep };
             var logBase = string.Format(LogsConstants.CancelProductionOrderLogBase, cancelProductionOrder.SeparationId, cancelProductionOrder.ProductionOrderId);
 
             try
             {
-                this.logger.Information(LogsConstants.CancelProductionOrderStart, logBase);
-
                 this.logger.Information(LogsConstants.GetProductionOrderToCancel, logBase);
                 var productionOrder = await this.GetFromServiceLayer<ProductionOrderDto>(
                      string.Format(ServiceQuerysConstants.QryProductionOrderById, cancelProductionOrder.ProductionOrderId),
                      LogsConstants.ProductionOrderNotFound);
 
-                if (productionOrder.ProductionOrderStatus == ServiceConstants.ProductionOrderCancelled)
-                {
-                    this.logger.Information(LogsConstants.ProductionOrderIsAlreadyCancelled, logBase);
-                    return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
-                }
+                await this.ExecuteCancelParentOrderProcces(cancelProductionOrder, productionOrder, result, logBase);
 
-                productionOrder.Remarks = ServiceConstants.ProductionOrderSourceDivisionComment;
-                productionOrder.IsParentRecord = ServiceConstants.YesValue;
-                var body = JsonConvert.SerializeObject(productionOrder);
-
-                this.logger.Information(LogsConstants.UpdateProductionOrderToCancel, logBase);
-                var resultUpdate = await this.serviceLayerClient.PutAsync(
-                    string.Format(ServiceQuerysConstants.QryProductionOrderById, cancelProductionOrder.ProductionOrderId),
-                    body);
-
-                if (!resultUpdate.Success)
-                {
-                    this.logger.Error(LogsConstants.ErrorToUpdateProductionOrder, logBase, resultUpdate.UserError, resultUpdate.ExceptionMessage);
-                    return ServiceUtils.CreateResult(
-                        false,
-                        (int)HttpStatusCode.InternalServerError,
-                        null,
-                        null,
-                        string.Format(LogsConstants.ProcessLogTwoParts, resultUpdate.UserError, resultUpdate.ExceptionMessage));
-                }
-
-                this.logger.Information(LogsConstants.CancelProductionOrderToCancel, logBase);
-                var resultCancel = await this.serviceLayerClient.PostAsync(
-                    string.Format(ServiceQuerysConstants.QryProductionOrderByIdCancel, cancelProductionOrder.ProductionOrderId),
-                    body);
-
-                if (!resultCancel.Success)
-                {
-                    this.logger.Error(LogsConstants.ErrorToCancelProductionOrder, logBase, resultCancel.UserError, resultCancel.ExceptionMessage);
-                    return ServiceUtils.CreateResult(
-                        false,
-                        (int)HttpStatusCode.InternalServerError,
-                        null,
-                        null,
-                        string.Format(LogsConstants.ProcessLogTwoParts, resultCancel.UserError, resultCancel.ExceptionMessage));
-                }
-
-                return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
+                return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, result, null);
+            }
+            catch (CustomServiceException ex)
+            {
+                var error = string.Format(LogsConstants.ProcessLogTwoParts, logBase, ex.Message);
+                this.logger.Error(ex, error);
+                result.ErrorMessage = ex.Message;
+                return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, result, null);
             }
             catch (Exception ex)
             {
-                var error = string.Format(LogsConstants.ProcessLogThreeParts, logBase, ex.Message, ex.StackTrace);
+                var error = string.Format(LogsConstants.ProcessLogThreeParts, logBase, ex.InnerException, ex.Message);
                 this.logger.Error(ex, error);
-                return ServiceUtils.CreateResult(
-                    false,
-                    (int)HttpStatusCode.InternalServerError,
-                    null,
-                    string.Format(LogsConstants.ProcessLogTwoParts, ex.Message, ex.StackTrace),
-                    null);
+                result.ErrorMessage = ex.Message;
+                return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, result, null);
             }
         }
 
@@ -1049,6 +1011,79 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             var request = this.mapper.Map<UpdateProductionOrderDto>(newFabOrder);
             await this.SaveChanges(request, newFabOrder.AbsoluteEntry);
             result.LastStep = ServiceConstants.StepCreateChildOrderWithComponentsSap;
+        }
+
+        private async Task ExecuteCancelParentOrderProcces(CancelProductionOrderDto cancelProductionOrder, ProductionOrderDto productionOrder, CancelProductionOrderDto result, string logBase)
+        {
+            switch (cancelProductionOrder.LastStep?.Trim())
+            {
+                case null:
+                case ServiceConstants.EmptyValue:
+                case ServiceConstants.StartCancelParentOrderStep:
+                    await this.ExecuteFullCancelParentFabOrderFlow(cancelProductionOrder, productionOrder, result, logBase);
+                    break;
+                case ServiceConstants.StepCreateChildOrderSap:
+                    await this.ExecuteCancelParentFabOrderStep(cancelProductionOrder, productionOrder, result, logBase);
+                    break;
+                default:
+                    this.logger.Error(LogsConstants.StepNotRecognized, logBase, cancelProductionOrder.LastStep);
+                    break;
+            }
+        }
+
+        private async Task ExecuteFullCancelParentFabOrderFlow(CancelProductionOrderDto cancelProductionOrder, ProductionOrderDto productionOrder, CancelProductionOrderDto result, string logBase)
+        {
+            this.logger.Information(LogsConstants.CancelProductionOrderStart, logBase);
+
+            if (productionOrder.ProductionOrderStatus == ServiceConstants.ProductionOrderCancelled)
+            {
+                this.logger.Information(LogsConstants.ProductionOrderIsAlreadyCancelled, logBase);
+                return;
+            }
+
+            productionOrder.Remarks = ServiceConstants.ProductionOrderSourceDivisionComment;
+            productionOrder.IsParentRecord = ServiceConstants.YesValue;
+            var body = JsonConvert.SerializeObject(productionOrder);
+
+            this.logger.Information(LogsConstants.UpdateProductionOrderToCancel, logBase);
+            var resultUpdate = await this.serviceLayerClient.PutAsync(
+                string.Format(ServiceQuerysConstants.QryProductionOrderById, cancelProductionOrder.ProductionOrderId),
+                body);
+
+            if (!resultUpdate.Success)
+            {
+                this.logger.Error(LogsConstants.ErrorToUpdateProductionOrder, logBase, resultUpdate.UserError, resultUpdate.ExceptionMessage);
+                result.LastStep = ServiceConstants.StartCancelParentOrderStep;
+                throw new CustomServiceException(result.ErrorMessage);
+            }
+
+            this.logger.Information(LogsConstants.CancelProductionOrderToCancel, logBase);
+            var resultCancel = await this.serviceLayerClient.PostAsync(
+                string.Format(ServiceQuerysConstants.QryProductionOrderByIdCancel, cancelProductionOrder.ProductionOrderId),
+                body);
+
+            if (!resultCancel.Success)
+            {
+                this.logger.Error(LogsConstants.ErrorToCancelProductionOrder, logBase, resultCancel.UserError, resultCancel.ExceptionMessage);
+                result.LastStep = ServiceConstants.UpdateCancelParentOrderStep;
+                throw new CustomServiceException(result.ErrorMessage);
+            }
+        }
+
+        private async Task ExecuteCancelParentFabOrderStep(CancelProductionOrderDto cancelProductionOrder, ProductionOrderDto productionOrder, CancelProductionOrderDto result, string logBase)
+        {
+            var body = JsonConvert.SerializeObject(productionOrder);
+            var resultCancel = await this.serviceLayerClient.PostAsync(
+                string.Format(ServiceQuerysConstants.QryProductionOrderByIdCancel, cancelProductionOrder.ProductionOrderId),
+                body);
+
+            if (!resultCancel.Success)
+            {
+                this.logger.Error(LogsConstants.ErrorToCancelProductionOrder, logBase, resultCancel.UserError, resultCancel.ExceptionMessage);
+                result.LastStep = "UpdateParentOrder";
+                result.ErrorMessage = string.Format(LogsConstants.ProcessLogTwoParts, resultCancel.UserError, resultCancel.ExceptionMessage);
+                throw new CustomServiceException(result.ErrorMessage);
+            }
         }
     }
 }

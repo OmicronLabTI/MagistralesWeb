@@ -43,8 +43,6 @@ namespace Omicron.Pedidos.Test.MediatR
             Assert.That(command.ProductionOrderId, Is.EqualTo(productionOrderId));
             Assert.That(command.Pieces, Is.EqualTo(pieces));
             Assert.That(command.SeparationId, Is.EqualTo(separationId));
-            Assert.That(command.RetryCount, Is.EqualTo(0));
-            Assert.That(command.MaxRetries, Is.EqualTo(3));
         }
 
         /// <summary>
@@ -60,29 +58,11 @@ namespace Omicron.Pedidos.Test.MediatR
             command.ProductionOrderId = 54321;
             command.Pieces = 200;
             command.SeparationId = "new-separation-id";
-            command.RetryCount = 2;
-            command.MaxRetries = 5;
 
             // Assert
             Assert.That(command.ProductionOrderId, Is.EqualTo(54321));
             Assert.That(command.Pieces, Is.EqualTo(200));
             Assert.That(command.SeparationId, Is.EqualTo("new-separation-id"));
-            Assert.That(command.RetryCount, Is.EqualTo(2));
-            Assert.That(command.MaxRetries, Is.EqualTo(5));
-        }
-
-        /// <summary>
-        /// Test default values for optional properties.
-        /// </summary>
-        [Test]
-        public void SeparateProductionOrderCommandConstructorSetsDefaultValues()
-        {
-            // Act
-            var command = new CancelProductionOrderCommand(1, 10, "test-id", "axity1", "xxx-xxx-xxx", 123, 10);
-
-            // Assert
-            Assert.That(command.RetryCount, Is.EqualTo(0));
-            Assert.That(command.MaxRetries, Is.EqualTo(3));
         }
 
         /// <summary>

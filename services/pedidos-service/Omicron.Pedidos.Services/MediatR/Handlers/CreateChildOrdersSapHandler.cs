@@ -104,7 +104,7 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
                         LastStep = request.LastStep,
                         IsSuccessful = false,
                         ErrorMessage = ex.Message,
-                        ChildProductionOrderId = null,
+                        ChildProductionOrderId = request.ProductionOrderChildId > 0 ? request.ProductionOrderChildId : null,
                         Payload = JsonConvert.SerializeObject(request),
                         CreatedAt = DateTime.Now,
                         LastUpdated = DateTime.Now,

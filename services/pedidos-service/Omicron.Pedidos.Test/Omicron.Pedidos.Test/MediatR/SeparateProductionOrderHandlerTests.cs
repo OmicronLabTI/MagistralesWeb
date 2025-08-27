@@ -64,11 +64,7 @@ namespace Omicron.Pedidos.Test.MediatR
                 "axity1",
                 "xxx-xxx-xxx",
                 123,
-                10)
-            {
-                RetryCount = retryCount,
-                MaxRetries = 3,
-            };
+                10);
 
             var sapResult = this.GetResultModelCompl(new object(), closeSapProductionSuccessfully, string.Empty, exceptionMessage);
             var sapResultCreateDetail = this.GetResultModelCompl(909090, true, string.Empty, null);
@@ -101,43 +97,6 @@ namespace Omicron.Pedidos.Test.MediatR
             {
                 Assert.That(result, Is.False);
             }
-        }
-
-        /// <summary>
-        /// Test HandleCancelProductionOrder_ErrorRebasedMaxAttempt.
-        /// </summary>
-        /// <returns>Test task.</returns>
-        [Test]
-        public Task HandleCancelProductionOrderErrorRebasedMaxAttempt()
-        {
-            // Arrange
-            var command = new CancelProductionOrderCommand(220003, 5, "b54659e3-d334-42c4-b91a-f59f5a463125", "axity1", "xxx-xxx-xxx", 123, 10)
-            {
-                RetryCount = 3,
-                MaxRetries = 3,
-            };
-
-            var sapResult = this.GetResultModelCompl(new object(), false, string.Empty, "Error al cerrar la orden de fabricación en SAP.");
-
-            var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
-            mockServiceLayerAdapterService
-               .Setup(sla => sla.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
-               .Returns(Task.FromResult(sapResult));
-
-            var mockRedisService = new Mock<IRedisService>();
-            mockRedisService.Setup(m => m.DeleteKey(It.IsAny<string>()));
-
-            var handler = new CancelProductionOrderHandler(
-                this.pedidosDao,
-                mockServiceLayerAdapterService.Object,
-                this.mockBackgroundTaskQueue.Object,
-                this.mockLogger.Object,
-                mockRedisService.Object,
-                this.mockOrderHistoryHelper.Object);
-
-            // Act
-            Assert.ThrowsAsync<Exception>(async () => await handler.Handle(command, CancellationToken.None));
-            return Task.CompletedTask;
         }
     }
 }

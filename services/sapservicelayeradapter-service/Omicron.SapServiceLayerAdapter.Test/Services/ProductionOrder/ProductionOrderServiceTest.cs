@@ -494,26 +494,21 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
                 SeparationId = Guid.NewGuid().ToString(),
             };
             var result = await service.CancelProductionOrderForSeparationProcess(request);
+            var response = result.Response as CancelProductionOrderDto;
 
-            if (result.Success && !responseServiceLayerHasError)
+            if (!responseServiceLayerHasError && successPut && successPost)
             {
                 Assert.That(result.Success, Is.True);
                 Assert.That(result.Code, Is.EqualTo(200));
-
-                // Assert.That(result.Response, Is.Null);
-                Assert.That(result.UserError, Is.Null);
-                Assert.That(result.Comments, Is.Null);
-                Assert.That(result.ExceptionMessage, Is.Null);
+                Assert.That(result.Response, Is.Not.Null);
+                Assert.That(response.ErrorMessage, Is.Null);
             }
             else
             {
-                Assert.That(result.Success, Is.False);
-                Assert.That(result.Code, Is.EqualTo(500));
-                Assert.That(result.UserError, Is.Null);
-                Assert.That(result.Comments, Is.Null);
-
-                // Assert.That(result.Response, Is.Null);
-                // Assert.That(result.ExceptionMessage, Is.Not.Null);
+                Assert.That(result.Success, Is.True);
+                Assert.That(result.Code, Is.EqualTo(200));
+                Assert.That(result.Response, Is.Not.Null);
+                Assert.That(response.ErrorMessage, Is.Not.Null);
             }
         }
 
