@@ -12,17 +12,26 @@ import Lottie
 class LottieManager {
     // MARK: Variables
     static let shared = LottieManager()
+    
     // MARK: Functions
     func showLoading() {
-        if let window = UIApplication.shared.windows.filter({$0.isKeyWindow}).first {
+        if let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) {
+            
+            if window.viewWithTag(Constants.Tags.loading.rawValue) != nil {
+                return
+            }
+
             let loadingView = LottieAnimationView(name: "loading")
             loadingView.loopMode = .loop
             loadingView.play()
+            
             let backView = UIView(frame: window.bounds)
             backView.tag = Constants.Tags.loading.rawValue
             backView.backgroundColor = UIColor(white: 0.0, alpha: 0.25)
+            
             backView.addSubview(loadingView)
             loadingView.center = backView.center
+            
             window.addSubview(backView)
         }
     }

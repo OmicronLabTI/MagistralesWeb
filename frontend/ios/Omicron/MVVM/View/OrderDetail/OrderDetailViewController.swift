@@ -84,35 +84,30 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, AcceptBu
         infoView.layer.cornerRadius = 10
         setupDismissPickerOnTap()
         initNavigationBar()
+        self.initComponents()
+        self.viewModelBinding()
+        quantityButtonBindind()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        self.infoView.isHidden = true
-        cleanLabels()
-        self.initComponents()
-        self.viewModelBinding()
-        quantityButtonBindind()
         self.orderDetailViewModel.getOrdenDetail()
         self.refreshViewControl()
         self.componentsToUpdate = []
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        splitButton.isEnabled = false
-        self.productDescritionLabel.isHidden = true
-
+        
+        if self.isMovingFromParent {
+            disposeBag = DisposeBag()
+        }
     }
+
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        disposeBag = DisposeBag()
-        cleanLabels()
         orderDetailViewModel.tableData.onNext([])
         saveWarehousesChangesButton.isEnabled = false
         self.componentsToUpdate = []
-        splitButton.isEnabled = false
-        self.productDescritionLabel.isHidden = true
-
     }
 
     // MARK: - Functions
@@ -201,13 +196,6 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, AcceptBu
             guard let self = self else { return }
             AlertManager.shared.showAlert(message: message, view: self)
         }).disposed(by: self.disposeBag)
-        orderDetailViewModel.loading.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
-            if showLoading {
-                self?.lottieManager.showLoading()
-            } else {
-                self?.lottieManager.hideLoading()
-            }
-        }).disposed(by: self.disposeBag)
         self.orderDetailViewModel.showSignatureView
             .observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] titleView in
                 let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
@@ -219,6 +207,15 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, AcceptBu
                 signatureVC?.modalTransitionStyle = .crossDissolve
                 self?.present(signatureVC ?? SignaturePadViewController(), animated: true, completion: nil)
             }).disposed(by: self.disposeBag)
+        
+        orderDetailViewModel.loading.observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] showLoading in
+            if showLoading {
+                self?.lottieManager.showLoading()
+            } else {
+                self?.lottieManager.hideLoading()
+            }
+        }).disposed(by: self.disposeBag)
     }
     func viewModelBinding1() {
         // Termina la ejecución del refresh control
@@ -539,28 +536,6 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, AcceptBu
     func someComponentHasBatches() -> Bool {
         let someHasBatches = orderDetail[0].details?.contains{ $0.hasBatches ?? false }
         return someHasBatches ?? false
-    }
-    
-    func cleanLabels() {
-        titleLabel.text = ""
-        codeDescriptionLabel.text = ""
-        documentBaseDescriptionLabel.text = ""
-        containerDescriptionLabel.text = ""
-        tagDescriptionLabel.text = ""
-        sumFormulaDescriptionLabel.text = ""
-        quantityPlannedDescriptionLabel.text = ""
-        startDateDescriptionLabel.text = ""
-        finishedDateDescriptionLabel.text = ""
-        productDescritionLabel.text = ""
-        hashtagLabel.text = ""
-        htCode.text = ""
-        htDescription.text = ""
-        htBaseQuantity.text = ""
-        htrequiredQuantity.text = ""
-        htUnit.text = ""
-        htWerehouse.text = ""
-        destinyLabel.text = ""
-        labelSpaceQuantity.text = ""
     }
     
     func emptyOptions() {
