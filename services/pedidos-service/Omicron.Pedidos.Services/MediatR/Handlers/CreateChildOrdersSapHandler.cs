@@ -84,37 +84,15 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
             catch (Exception ex)
             {
                 this.logger.Error(ex, $"{logBase} - Error en el proceso de division (Step: {request.LastStep} ProductionOrder: {request.ProductionOrderId})");
-
-                var productionOrderSeparationLog = await this.pedidosDao.GetProductionOrderSeparationDetailLogById(request.SeparationId);
-
-                if (productionOrderSeparationLog != null)
-                {
-                    productionOrderSeparationLog.ErrorMessage = ex.Message;
-                    productionOrderSeparationLog.LastStep = request.LastStep;
-                    productionOrderSeparationLog.LastUpdated = DateTime.Now;
-
-                    await this.pedidosDao.UpdateProductionOrderSeparationDetailLog(productionOrderSeparationLog);
-                }
-                else
-                {
-                    var processWithError = new ProductionOrderSeparationDetailLogsModel
-                    {
-                        Id = request.SeparationId,
-                        ParentProductionOrderId = request.ProductionOrderId,
-                        LastStep = request.LastStep,
-                        IsSuccessful = false,
-                        ErrorMessage = ex.Message,
-                        ChildProductionOrderId = request.ProductionOrderChildId > 0 ? request.ProductionOrderChildId : null,
-                        Payload = JsonConvert.SerializeObject(request),
-                        CreatedAt = DateTime.Now,
-                        LastUpdated = DateTime.Now,
-                    };
-
-                    await this.pedidosDao.InsertProductionOrderSeparationDetailLogById(processWithError);
-                }
-
-                var redisKey = string.Format(ServiceConstants.ProductionOrderSeparationProcessKey, request.ProductionOrderId);
-                await this.redisService.DeleteKey(redisKey);
+                await ServiceUtils.UpsertSeparationDetailLog(
+                    request.SeparationId,
+                    request.ProductionOrderId,
+                    request.LastStep,
+                    ex.Message,
+                    request.ProductionOrderChildId > 0 ? request.ProductionOrderChildId : null,
+                    JsonConvert.SerializeObject(request),
+                    this.pedidosDao,
+                    this.redisService);
             }
         }
 
