@@ -143,43 +143,31 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
         private async Task ExecuteFullCreationFlow(UserOrderModel productionOrder, CreateChildOrdersSapCommand request, string logBase)
         {
             this.logger.Information($"{logBase} - Iniciando flujo completo de creación de orden hija (Step: {request.LastStep})");
-            int productionOrderChild;
-            productionOrderChild = await this.CreateChildOrderProcess(request.ProductionOrderId, request.Pieces, request.SeparationId, request);
+
+            int productionOrderChild = await this.CreateChildOrderProcess(request.ProductionOrderId, request.Pieces, request.SeparationId, request);
             request.ProductionOrderChildId = productionOrderChild;
             request.LastStep = ServiceConstants.StepCreateChildOrderWithComponentsSap;
+
             await this.CreateChildOrderOnPostgres(productionOrder, request.ProductionOrderId, request.Pieces, request.SeparationId, request.ProductionOrderChildId);
             request.LastStep = ServiceConstants.StepCreateChildOrderPostgres;
+
             await this.orderHistoryHelper.SaveHistoryOrdersFab(request.ProductionOrderChildId, request);
             request.LastStep = ServiceConstants.StepSaveChildOrderHistory;
 
-            var productionOrderSeparationLog = await this.pedidosDao.GetProductionOrderSeparationDetailLogById(request.SeparationId);
-            if (productionOrderSeparationLog != null)
-            {
-                productionOrderSeparationLog.LastStep = request.LastStep;
-                productionOrderSeparationLog.LastUpdated = DateTime.Now;
-                productionOrderSeparationLog.IsSuccessful = true;
-
-                await this.pedidosDao.UpdateProductionOrderSeparationDetailLog(productionOrderSeparationLog);
-            }
+            await this.UpdateProductionOrderSeparationDetailLogAsync(request);
         }
 
         private async Task ExecuteCreationFromPostgresStep(UserOrderModel productionOrder, CreateChildOrdersSapCommand request, string logBase)
         {
             this.logger.Information($"{logBase} - Proceso de reintento desde Postgres (Step: {request.LastStep})");
+
             await this.CreateChildOrderOnPostgres(productionOrder, request.ProductionOrderId, request.Pieces, request.SeparationId, request.ProductionOrderChildId);
             request.LastStep = ServiceConstants.StepCreateChildOrderPostgres;
+
             await this.orderHistoryHelper.SaveHistoryOrdersFab(request.ProductionOrderChildId, request);
             request.LastStep = ServiceConstants.StepSaveChildOrderHistory;
 
-            var productionOrderSeparationLog = await this.pedidosDao.GetProductionOrderSeparationDetailLogById(request.SeparationId);
-            if (productionOrderSeparationLog != null)
-            {
-                productionOrderSeparationLog.LastStep = request.LastStep;
-                productionOrderSeparationLog.LastUpdated = DateTime.Now;
-                productionOrderSeparationLog.IsSuccessful = true;
-
-                await this.pedidosDao.UpdateProductionOrderSeparationDetailLog(productionOrderSeparationLog);
-            }
+            await this.UpdateProductionOrderSeparationDetailLogAsync(request);
         }
 
         private async Task ExecuteCreationFromHistoryStep(CreateChildOrdersSapCommand request, string logBase)
@@ -188,15 +176,7 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
             await this.orderHistoryHelper.SaveHistoryOrdersFab(request.ProductionOrderChildId, request);
             request.LastStep = ServiceConstants.StepSaveChildOrderHistory;
 
-            var productionOrderSeparationLog = await this.pedidosDao.GetProductionOrderSeparationDetailLogById(request.SeparationId);
-            if (productionOrderSeparationLog != null)
-            {
-                productionOrderSeparationLog.LastStep = request.LastStep;
-                productionOrderSeparationLog.LastUpdated = DateTime.Now;
-                productionOrderSeparationLog.IsSuccessful = true;
-
-                await this.pedidosDao.UpdateProductionOrderSeparationDetailLog(productionOrderSeparationLog);
-            }
+            await this.UpdateProductionOrderSeparationDetailLogAsync(request);
         }
 
         private async Task<int> CreateChildOrderProcess(int productionOrderId, int pieces, string separationId, CreateChildOrdersSapCommand request)
@@ -209,7 +189,6 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
             }
 
             this.logger.Information($"separationId-{separationId}: Inicia proceso de creación");
-
             var requestSap = new CreateChildProductionOrdersDto()
             {
                 OrderId = productionOrderId,
@@ -297,6 +276,20 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
             };
             await this.pedidosDao.InsertUserOrder(new List<UserOrderModel>() { newProductionOrder });
             this.logger.Information($"separationId-{separationId}: Se guardó la orden de fabricacion {newFoId} en Postgres correctamente");
+        }
+
+        private async Task UpdateProductionOrderSeparationDetailLogAsync(CreateChildOrdersSapCommand request)
+        {
+            var productionOrderSeparationLog = await this.pedidosDao.GetProductionOrderSeparationDetailLogById(request.SeparationId);
+
+            if (productionOrderSeparationLog != null)
+            {
+                productionOrderSeparationLog.LastStep = request.LastStep;
+                productionOrderSeparationLog.LastUpdated = DateTime.Now;
+                productionOrderSeparationLog.IsSuccessful = true;
+
+                await this.pedidosDao.UpdateProductionOrderSeparationDetailLog(productionOrderSeparationLog);
+            }
         }
     }
 }
