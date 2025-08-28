@@ -569,5 +569,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="modelToSave">Model to save</param>
         /// <returns>Success indicator</returns>
         Task<bool> UpdateProductionOrderSeparationDetailLog(ProductionOrderSeparationDetailLogsModel modelToSave);
+
+        /// <summary>
+        /// GetProductionOrderSeparationDetailLogById 
+        /// </summary>
+        /// <param name="parentId">Parent id</param>
+        /// <returns>the model</returns>
+        Task<ProductionOrderSeparationDetailLogsModel> GetProductionOrderSeparationDetailLogByParentOrderId(int parentId);
     }
 }
