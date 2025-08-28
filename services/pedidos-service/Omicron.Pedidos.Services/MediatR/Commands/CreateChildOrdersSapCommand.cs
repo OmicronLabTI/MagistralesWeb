@@ -1,0 +1,121 @@
+﻿// <summary>
+// <copyright file="CreateChildOrdersSapCommand.cs" company="Axity">
+// This source code is Copyright Axity and MAY NOT be copied, reproduced,
+// published, distributed or transmitted to or stored in any manner without prior
+// written consent from Axity (www.axity.com).
+// </copyright>
+// </summary>
+
+namespace Omicron.Pedidos.Services.MediatR.Commands
+{
+    using global::MediatR;
+
+    /// <summary>
+    /// CreateChildOrdersSapCommand.
+    /// </summary>
+    public class CreateChildOrdersSapCommand : IRequest
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CreateChildOrdersSapCommand"/> class.
+        /// </summary>
+        /// <param name="productionOrderId">Production Order Id.</param>
+        /// <param name="pieces">Pieces.</param>
+        /// <param name="separationId">SeparationId.</param>
+        /// <param name="userId">userId.</param>
+        /// <param name="dxpOrder">dxpOrder.</param>
+        /// <param name="sapOrder">sapOrder.</param>
+        /// <param name="totalPieces">totalPieces.</param>
+        /// <param name="lastStep">lastStep.</param>
+        public CreateChildOrdersSapCommand(
+            int productionOrderId,
+            int pieces,
+            string separationId,
+            string userId,
+            string dxpOrder,
+            int? sapOrder,
+            int totalPieces,
+            string lastStep)
+        {
+            this.ProductionOrderId = productionOrderId;
+            this.Pieces = pieces;
+            this.SeparationId = separationId;
+            this.UserId = userId;
+            this.DxpOrder = dxpOrder;
+            this.SapOrder = sapOrder;
+            this.TotalPieces = totalPieces;
+            this.LastStep = lastStep;
+        }
+
+        /// <summary>
+        /// Gets or sets productionOrderId.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderId.
+        /// </value>
+        public int ProductionOrderId { get; set; }
+
+        /// <summary>
+        /// Gets or sets Pieces.
+        /// </summary>
+        /// <value>
+        /// Pieces.
+        /// </value>
+        public int Pieces { get; set; }
+
+        /// <summary>
+        /// Gets or sets SeparationId.
+        /// </summary>
+        /// <value>
+        /// SeparationId.
+        /// </value>
+        public string SeparationId { get; set; }
+
+        /// <summary>
+        /// Gets or sets UserId.
+        /// </summary>
+        /// <value>
+        /// UserId.
+        /// </value>
+        public string UserId { get; set; }
+
+        /// <summary>
+        /// Gets or sets DxpOrder.
+        /// </summary>
+        /// <value>
+        /// DxpOrder.
+        /// </value>
+        public string DxpOrder { get; set; }
+
+        /// <summary>
+        /// Gets or sets SapOrder.
+        /// </summary>
+        /// <value>
+        /// SapOrder.
+        /// </value>
+        public int? SapOrder { get; set; }
+
+        /// <summary>
+        /// Gets or sets TotalPieces.
+        /// </summary>
+        /// <value>
+        /// TotalPieces.
+        /// </value>
+        public int TotalPieces { get; set; }
+
+        /// <summary>
+        /// Gets or sets lastStep.
+        /// </summary>
+        /// <value>
+        /// lastStep.
+        /// </value>
+        public string LastStep { get; set; }
+
+        /// <summary>
+        /// Gets or sets productionOrderId.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderId.
+        /// </value>
+        public int ProductionOrderChildId { get; set; }
+    }
+}
