@@ -24,5 +24,21 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
         /// </summary>
         /// <value>The code.</value>
         public int Pieces { get; set; }
+
+        /// <summary>
+        /// Gets or sets lastStep.
+        /// </summary>
+        /// <value>
+        /// lastStep.
+        /// </value>
+        public string LastStep { get; set; }
+
+        /// <summary>
+        /// Gets or sets productionOrderId.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderId.
+        /// </value>
+        public int ProductionOrderChildId { get; set; }
     }
 }
