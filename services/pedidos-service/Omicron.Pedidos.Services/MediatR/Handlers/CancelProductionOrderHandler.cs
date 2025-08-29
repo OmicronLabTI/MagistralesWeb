@@ -106,36 +106,16 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
             {
                 var error = string.Format(LogsConstants.SeparateProductionOrderEndWithError, logBase);
                 this.logger.Error(ex, error);
-                var productionOrderSeparationLog = await this.pedidosDao.GetProductionOrderSeparationDetailLogById(request.SeparationId);
+                await ServiceUtils.UpsertSeparationDetailLog(
+                    request.SeparationId,
+                    request.ProductionOrderId,
+                    request.LastStep,
+                    ex.Message,
+                    null,
+                    JsonConvert.SerializeObject(request),
+                    this.pedidosDao,
+                    this.redisService);
 
-                if (productionOrderSeparationLog != null)
-                {
-                    productionOrderSeparationLog.ErrorMessage = ex.Message;
-                    productionOrderSeparationLog.LastStep = request.LastStep;
-                    productionOrderSeparationLog.LastUpdated = DateTime.Now;
-
-                    await this.pedidosDao.UpdateProductionOrderSeparationDetailLog(productionOrderSeparationLog);
-                }
-                else
-                {
-                    var processWithError = new ProductionOrderSeparationDetailLogsModel
-                    {
-                        Id = request.SeparationId,
-                        ParentProductionOrderId = request.ProductionOrderId,
-                        LastStep = request.LastStep,
-                        IsSuccessful = false,
-                        ErrorMessage = ex.Message,
-                        ChildProductionOrderId = null,
-                        Payload = JsonConvert.SerializeObject(request),
-                        CreatedAt = DateTime.Now,
-                        LastUpdated = DateTime.Now,
-                    };
-
-                    await this.pedidosDao.InsertProductionOrderSeparationDetailLogById(processWithError);
-                }
-
-                var redisKey = string.Format(ServiceConstants.ProductionOrderSeparationProcessKey, request.ProductionOrderId);
-                await this.redisService.DeleteKey(redisKey);
                 return false;
             }
         }

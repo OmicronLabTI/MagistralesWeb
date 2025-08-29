@@ -280,8 +280,9 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
         {
             var redisKey = string.Format(ServiceConstants.ProductionOrderSeparationProcessKey, request.ProductionOrderId);
             var redisValue = await this.redisService.GetRedisKey(redisKey);
+            var detailLog = await this.pedidosDao.GetProductionOrderSeparationDetailLogByParentOrderId(request.ProductionOrderId);
 
-            if (!string.IsNullOrEmpty(redisValue))
+            if (!string.IsNullOrEmpty(redisValue) || detailLog != null)
             {
                 return ServiceUtils.CreateResult(
                     false,

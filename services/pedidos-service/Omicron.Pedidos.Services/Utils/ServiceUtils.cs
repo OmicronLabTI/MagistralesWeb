@@ -18,6 +18,7 @@ namespace Omicron.Pedidos.Services.Utils
     using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Enums;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Entities.Model.Db;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.Redis;
     using Omicron.Pedidos.Services.SapAdapter;
@@ -180,7 +181,7 @@ namespace Omicron.Pedidos.Services.Utils
             var enums = isTecnic ? Enum.GetValues(typeof(ServiceEnums.StatusTecnic)) : Enum.GetValues(typeof(ServiceEnums.Status));
             foreach (var status in enums)
             {
-                BuildGroupUserOrderResult(sapOrders, userOrders, result, status);
+                BuildGroupUserOrderResult(sapOrders, userOrders, result, status, isTecnic);
             }
 
             return result;
@@ -436,6 +437,52 @@ namespace Omicron.Pedidos.Services.Utils
         /// <summary>
         /// Calculates the "or´s" conditions.
         /// </summary>
+        /// <param name="separationId">list of FinalizeProductionOrderModel.</param>
+        /// <param name="productionOrderId">list of failed.</param>
+        /// <param name="lastStep">last step.</param>
+        /// <param name="errorMessage">error message.</param>
+        /// <param name="childProductionOrderId">child order.</param>
+        /// <param name="payload">payload.</param>
+        /// <param name="pedidosDao">value to save on redis.</param>
+        /// <param name="redisService">redis service.</param>
+        /// <returns>void.</returns>
+        public static async Task UpsertSeparationDetailLog(string separationId, int productionOrderId, string lastStep, string errorMessage, int? childProductionOrderId, string payload, IPedidosDao pedidosDao, IRedisService redisService)
+        {
+            var productionOrderSeparationLog = await pedidosDao.GetProductionOrderSeparationDetailLogById(separationId);
+
+            if (productionOrderSeparationLog != null)
+            {
+                productionOrderSeparationLog.ErrorMessage = errorMessage;
+                productionOrderSeparationLog.LastStep = lastStep;
+                productionOrderSeparationLog.LastUpdated = DateTime.Now;
+
+                await pedidosDao.UpdateProductionOrderSeparationDetailLog(productionOrderSeparationLog);
+            }
+            else
+            {
+                var processWithError = new ProductionOrderSeparationDetailLogsModel
+                {
+                    Id = separationId,
+                    ParentProductionOrderId = productionOrderId,
+                    LastStep = lastStep,
+                    IsSuccessful = false,
+                    ErrorMessage = errorMessage,
+                    ChildProductionOrderId = childProductionOrderId,
+                    Payload = payload,
+                    CreatedAt = DateTime.Now,
+                    LastUpdated = DateTime.Now,
+                };
+
+                await pedidosDao.InsertProductionOrderSeparationDetailLogById(processWithError);
+            }
+
+            var redisKey = string.Format(ServiceConstants.ProductionOrderSeparationProcessKey, productionOrderId);
+            await redisService.DeleteKey(redisKey);
+        }
+
+        /// <summary>
+        /// Calculates the "or´s" conditions.
+        /// </summary>
         /// <param name="list">list of bools to evaluate.</param>
         /// <returns>the data.</returns>
         public static bool CalculateOr(params bool[] list)
@@ -483,7 +530,7 @@ namespace Omicron.Pedidos.Services.Utils
             }
         }
 
-        private static void BuildGroupUserOrderResult(List<CompleteFormulaWithDetalle> sapOrders, List<UserOrderModel> userOrders, QfbOrderModel result, object status)
+        private static void BuildGroupUserOrderResult(List<CompleteFormulaWithDetalle> sapOrders, List<UserOrderModel> userOrders, QfbOrderModel result, object status, bool isTecnic)
         {
             var statusId = (int)Enum.Parse(typeof(ServiceEnums.Status), status.ToString());
             var orders = new QfbOrderDetail
@@ -494,6 +541,11 @@ namespace Omicron.Pedidos.Services.Utils
             };
 
             var ordersDetail = new List<FabOrderDetail>();
+
+            if (isTecnic)
+            {
+                sapOrders = sapOrders.Where(x => x.OrderRelationType != ServiceConstants.ParentOrder).ToList();
+            }
 
             var sapOrdersDict = sapOrders.ToDictionary(s => s.ProductionOrderId, s => s);
 

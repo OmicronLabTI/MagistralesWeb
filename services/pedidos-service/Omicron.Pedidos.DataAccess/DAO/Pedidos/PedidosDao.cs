@@ -832,6 +832,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
             return true;
         }
 
+        /// <inheritdoc/>
+        public async Task<ProductionOrderSeparationDetailLogsModel> GetProductionOrderSeparationDetailLogByParentOrderId(int parentId)
+        {
+            return await this.databaseContext.ProductionOrderSeparationDetailLogsModel.FirstOrDefaultAsync(x => x.ParentProductionOrderId == parentId && x.IsSuccessful == false);
+        }
+
         public async Task<IEnumerable<ProductionOrderSeparationDetailLogsModel>> GetAllFailedDivisionOrders()
         {
             return await this.databaseContext.ProductionOrderSeparationDetailLogsModel
