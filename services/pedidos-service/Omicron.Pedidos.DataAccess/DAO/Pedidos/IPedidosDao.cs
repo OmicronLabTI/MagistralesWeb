@@ -569,5 +569,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="modelToSave">Model to save</param>
         /// <returns>Success indicator</returns>
         Task<bool> UpdateProductionOrderSeparationDetailLog(ProductionOrderSeparationDetailLogsModel modelToSave);
+
+        /// <summary>
+        /// GetAllFailedDivisionOrders.
+        /// </summary>
+        /// <param>status.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<IEnumerable<ProductionOrderSeparationDetailLogsModel>> GetAllFailedDivisionOrders();
     }
 }

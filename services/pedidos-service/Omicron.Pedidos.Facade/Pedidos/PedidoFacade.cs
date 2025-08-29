@@ -378,5 +378,17 @@ namespace Omicron.Pedidos.Facade.Pedidos
         {
             return this.mapper.Map<ResultDto>(await this.productionOrdersService.SeparateOrder(request));
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetFailedDivisionOrdersWithError()
+        {
+            return this.mapper.Map<ResultDto>(await this.productionOrdersService.GetFailedDivisionOrders());
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> RetryFailedProductionOrderDivision(RetryFailedProductionOrderFinalizationDto payloadRetry)
+        {
+            return this.mapper.Map<ResultDto>(await this.productionOrdersService.RetryFailedProductionOrderDivision(payloadRetry));
+        }
     }
 }

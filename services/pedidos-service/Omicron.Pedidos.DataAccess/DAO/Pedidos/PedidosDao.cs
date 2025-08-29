@@ -831,6 +831,14 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
             await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
             return true;
         }
+
+        public async Task<IEnumerable<ProductionOrderSeparationDetailLogsModel>> GetAllFailedDivisionOrders()
+        {
+            return await this.databaseContext.ProductionOrderSeparationDetailLogsModel
+                .Where(x => !x.IsSuccessful)
+                .AsNoTracking()
+                .ToListAsync();
+        }
     }
 }
 
