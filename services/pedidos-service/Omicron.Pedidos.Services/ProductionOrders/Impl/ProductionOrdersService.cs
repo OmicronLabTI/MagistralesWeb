@@ -308,36 +308,15 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
         {
             var allFailedDivisionOrders = (await this.pedidosDao.GetAllFailedDivisionOrders()).ToList();
 
-            if (allFailedDivisionOrders.Count == 0)
-            {
-                return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, 0, null);
-            }
-
-            var toRetry = new List<ProductionOrderSeparationDetailLogsModel>();
-
-            foreach (var order in allFailedDivisionOrders)
-            {
-                var lockKey = string.Format(
-                    ServiceConstants.DivisionProcessingKey,
-                    order.ParentProductionOrderId,
-                    order.ChildProductionOrderId ?? 0);
-
-                var existing = await this.redisService.GetRedisKey(lockKey);
-                if (string.IsNullOrEmpty(existing))
-                {
-                    toRetry.Add(order);
-                }
-            }
-
-            if (toRetry.Count != 0)
+            if (allFailedDivisionOrders.Count != 0)
             {
                 await this.redisService.StoreListAsync(
                     ServiceConstants.DivisionOrdersToProcessKey,
-                    toRetry.OrderBy(x => x.LastUpdated),
+                    allFailedDivisionOrders.OrderBy(x => x.LastUpdated),
                     ServiceConstants.DefaultRedisValueTimeToLive);
             }
 
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, toRetry.Count, null);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, allFailedDivisionOrders.Count, null);
         }
 
         /// <inheritdoc/>
