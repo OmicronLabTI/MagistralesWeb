@@ -100,5 +100,14 @@ namespace Omicron.Pedidos.Services.Redis
                 .Select(value => JsonConvert.DeserializeObject<T>(value.ToString()))
                 .ToList();
         }
+
+        /// <inheritdoc/>
+        public async Task<List<string>> GetRedisKeys(List<string> keys)
+        {
+            // Convertir las keys a RedisKey[]
+            var redisKeys = keys.Select(k => (RedisKey)k).ToArray();
+            var results = await this.database.StringGetAsync(redisKeys);
+            return results.Select(r => r.HasValue ? r.ToString() : string.Empty).ToList();
+        }
     }
 }

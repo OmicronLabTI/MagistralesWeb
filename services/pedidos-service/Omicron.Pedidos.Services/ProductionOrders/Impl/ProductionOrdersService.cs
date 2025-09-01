@@ -292,7 +292,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                     null);
             }
 
-            await this.redisService.WriteToRedis(redisKey, JsonConvert.SerializeObject(request), new TimeSpan(12, 0, 0));
+            await this.redisService.WriteToRedis(redisKey, JsonConvert.SerializeObject(request));
             await this.SeparateProductionOrderProcessAsync(
                 request.ProductionOrderId,
                 request.Pieces,
@@ -611,7 +611,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                 var (salesOrders, productionOrder) = await this.GetRelatedOrdersToProducionOrder(new List<string> { productionOrderId });
                 var salesOrder = salesOrders != null ? salesOrders.FirstOrDefault(x => x.IsSalesOrder) : null;
                 salesOrders?.Remove(salesOrder);
-                var preProductionOrders = salesOrder != null ? await ServiceUtils.GetPreProductionOrdersFromSap(salesOrder, this.sapAdapter) : new List<CompleteDetailOrderModel>();
+                var preProductionOrders = salesOrder != null ? await ServiceUtils.GetPreProductionOrdersFromSap(salesOrder, this.sapAdapter) : (new List<CompleteDetailOrderModel>(), new List<OrderWithDetailModel>());
                 var payload = payloadJson.FinalizeProductionOrder;
                 var userOrdersToUpdate = new List<UserOrderModel>();
                 var ordersToProcess = payload.SourceProcess == ServiceConstants.SalesOrders ? salesOrders : new List<UserOrderModel> { productionOrder };
@@ -641,15 +641,18 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
 
                 if (!productionOrder.IsIsolatedProductionOrder)
                 {
-                    var hasNoPreProductionOrders = !preProductionOrders.Any();
+                    var hasNoPreProductionOrders = !preProductionOrders.Item1.Any();
+                    var parentFabOrders = preProductionOrders.Item2.SelectMany(x => x.Detalle).Where(detail => detail.OrderRelationType == "Y").ToList();
+                    var parentOrdersSeparationDetail = await this.pedidosDao.GetProductionOrderSeparationByOrderId(parentFabOrders.Select(x => x.OrdenFabricacionId).ToList());
+                    var hasPendingParentOrdersToSplit = parentOrdersSeparationDetail.Any(x => x.AvailablePieces > 0);
                     var productionOrdersCount = salesOrders.Count(x => x.IsProductionOrder);
                     var otherProductionOrdersFinalized = salesOrders
                         .Where(x => x.IsProductionOrder && x.Productionorderid != productionOrderId)
                         .All(x => ServiceConstants.ValidStatusFinalizar.Contains(x.Status));
 
                     shouldUpdateSalesOrder = payload.SourceProcess == ServiceConstants.SalesOrders
-                        ? true
-                        : salesOrder != null && hasNoPreProductionOrders && (productionOrdersCount == 1 || otherProductionOrdersFinalized);
+                        ? !hasPendingParentOrdersToSplit
+                        : salesOrder != null && hasNoPreProductionOrders && (productionOrdersCount == 1 || otherProductionOrdersFinalized) && !hasPendingParentOrdersToSplit;
                 }
 
                 if (shouldUpdateSalesOrder)
@@ -750,7 +753,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                 return (null, productionOrder);
             }
 
-            var salesOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { salesOrdersId })).ToList();
+            var salesOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { salesOrdersId })).Where(x => x.Status != ServiceConstants.Cancelled).ToList();
 
             return (salesOrders, productionOrder);
         }

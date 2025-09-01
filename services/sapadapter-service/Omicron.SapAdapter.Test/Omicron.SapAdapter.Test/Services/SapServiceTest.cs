@@ -97,6 +97,10 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(x => x.IsConnectedRedis())
                 .Returns(true);
 
+            mockRedis
+                .Setup(r => r.GetRedisKeys(It.IsAny<List<string>>()))
+                .ReturnsAsync(new List<string>());
+
             var mockDoctor = new Mock<IDoctorService>();
             mockDoctor
                 .Setup(m => m.PostDoctors(It.IsAny<object>(), It.IsAny<string>()))
@@ -133,6 +137,10 @@ namespace Omicron.SapAdapter.Test.Services
                 new ParametersModel { Id = 1, Value = "A1", Field = "Medic" },
                 new ParametersModel { Id = 2, Value = "Codigo", Field = "CardCodeResponsibleMedic" },
             };
+
+            mockRedis
+                .Setup(r => r.GetRedisKeys(It.IsAny<List<string>>()))
+                .ReturnsAsync(new List<string>());
 
             mockCatalogs
                 .SetupSequence(m => m.GetParams(It.IsAny<string>()))
@@ -196,6 +204,10 @@ namespace Omicron.SapAdapter.Test.Services
             {
                 new ParametersModel { Id = 1, Value = "A1", Field = "Medic" },
             };
+
+            mockRedis
+            .Setup(r => r.GetRedisKeys(It.IsAny<List<string>>()))
+            .ReturnsAsync(new List<string>());
 
             mockCatalogs
                 .Setup(m => m.GetParams(It.IsAny<string>()))
@@ -541,6 +553,7 @@ namespace Omicron.SapAdapter.Test.Services
             Assert.That((int)response.PlannedQuantity, Is.Not.EqualTo(response.AvailablePieces));
             Assert.That(response.OrderRelationType, Is.EqualTo("Padre"));
             Assert.That(response.HasBatches);
+            Assert.That(response.OnSplitProcess, Is.True);
         }
 
         /// <summary>
@@ -1467,6 +1480,10 @@ namespace Omicron.SapAdapter.Test.Services
             var mockRedis = new Mock<IRedisService>();
             var mockCatalogs = new Mock<ICatalogsService>();
             var mockDao = new Mock<ISapDao>();
+
+            mockRedis
+            .Setup(r => r.GetRedisKeys(It.IsAny<List<string>>()))
+            .ReturnsAsync(new List<string>());
 
             mockDao
             .Setup(dao => dao.GetAllOrdersByFechaIni(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<OrderFiltersByConfigType>()))

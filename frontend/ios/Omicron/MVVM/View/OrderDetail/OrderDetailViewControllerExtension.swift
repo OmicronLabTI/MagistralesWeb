@@ -206,7 +206,7 @@ extension OrderDetailViewController {
     }
     
     func enablePickerBySplitProcess(typeOrder: String, onSpliProcess: Bool) -> Bool {
-        let enablePicker = typeOrder != OrderRelationTypes.padre || !onSpliProcess
+        let enablePicker = typeOrder != OrderRelationTypes.padre && !onSpliProcess
         return enablePicker
     }
     

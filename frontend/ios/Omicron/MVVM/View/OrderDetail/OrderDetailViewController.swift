@@ -524,6 +524,11 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, AcceptBu
             componentsVC?.orderType = orderDetail[0].orderRelationType ?? OrderRelationTypes.completa
             componentsVC?.showOnGoingProcessMessage = { value in
                 self.onGoingSplitProcess = value
+                for cell in self.tableView.visibleCells {
+                    if let detailCell = cell as? DetailTableViewCell {
+                        detailCell.pickerContainerView.isUserInteractionEnabled = !value
+                    }
+                }
             }
             self.present(navigationVC, animated: true, completion: nil)
         }

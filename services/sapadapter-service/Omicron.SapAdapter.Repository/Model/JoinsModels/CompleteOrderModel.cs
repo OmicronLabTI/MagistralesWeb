@@ -186,5 +186,11 @@ namespace Omicron.SapAdapter.Entities.Model
         /// </summary>
         /// <value> client type. </value>
         public string ClientType { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the production order OnSplitProcess.
+        /// </summary>
+        /// <value>The OnSplitProcess.</value>
+        public bool OnSplitProcess { get; set; }
     }
 }

@@ -79,6 +79,9 @@ namespace Omicron.Pedidos.Test.Services
 
             var mockSapFile = new Mock<ISapFileService>();
             this.redisService = new Mock<IRedisService>();
+            this.redisService
+                .Setup(r => r.GetRedisKeys(It.IsAny<List<string>>()))
+                .ReturnsAsync(new List<string>());
 
             this.sapServiceLayerService = new Mock<ISapServiceLayerAdapterService>();
             this.sapServiceLayerService
@@ -1153,6 +1156,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var localSapAdapter = new Mock<ISapAdapter>();
             var mockUsers = new Mock<IUsersService>();
+            var mockRedis = new Mock<IRedisService>();
 
             localSapAdapter
                 .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
@@ -1162,9 +1166,13 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetUserModel()));
 
+            mockRedis
+                .Setup(r => r.GetRedisKeys(It.IsAny<List<string>>()))
+                .ReturnsAsync(new List<string>());
+
             var mockSapFile = new Mock<ISapFileService>();
             var mockSaDiApi = new Mock<ISapDiApi>();
-            var localService = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object, this.sapServiceLayerService.Object, mockSaDiApi.Object, this.productionOrdersService.Object, this.logger.Object);
+            var localService = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, mockRedis.Object, this.kafkaConnector.Object, this.sapServiceLayerService.Object, mockSaDiApi.Object, this.productionOrdersService.Object, this.logger.Object);
 
             // act
             var result = await localService.GetFabOrders(dicParams);
@@ -1196,6 +1204,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var localSapAdapter = new Mock<ISapAdapter>();
             var mockUsers = new Mock<IUsersService>();
+            var mockRedis = new Mock<IRedisService>();
 
             localSapAdapter
                 .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
@@ -1205,9 +1214,13 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetUserModel()));
 
+            mockRedis
+                .Setup(r => r.GetRedisKeys(It.IsAny<List<string>>()))
+                .ReturnsAsync(new List<string>());
+
             var mockSapFile = new Mock<ISapFileService>();
             var mockSaDiApi = new Mock<ISapDiApi>();
-            var localService = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object, this.sapServiceLayerService.Object, mockSaDiApi.Object, this.productionOrdersService.Object, this.logger.Object);
+            var localService = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, mockRedis.Object, this.kafkaConnector.Object, this.sapServiceLayerService.Object, mockSaDiApi.Object, this.productionOrdersService.Object, this.logger.Object);
 
             // act
             var result = await localService.GetFabOrders(dicParams);

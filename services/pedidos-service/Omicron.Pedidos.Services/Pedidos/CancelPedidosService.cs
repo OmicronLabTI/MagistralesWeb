@@ -440,7 +440,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var productionordersId = cancelledProductionOrders.Select(x => x.Productionorderid).ToList();
 
                 var previousStatus = salesOrder.Status;
-                salesOrder.Status = this.CalculateStatus(salesOrder, sapMissingOrders, productionOrders, productionordersId);
+                salesOrder.Status = this.CalculateStatus(salesOrder, sapMissingOrders.Item1, productionOrders, productionordersId);
 
                 var familyOrders = productionOrders.Where(y => !productionordersId.Contains(y.Productionorderid)).ToList();
                 salesOrder.FinishedLabel = ServiceShared.CalculateTernary(familyOrders.Any() && familyOrders.All(x => x.FinishedLabel == 1), 1, 0);

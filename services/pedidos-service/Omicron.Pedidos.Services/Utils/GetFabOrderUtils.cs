@@ -15,6 +15,7 @@ namespace Omicron.Pedidos.Services.Utils
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Services.Constants;
+    using Omicron.Pedidos.Services.Redis;
 
     /// <summary>
     /// The class for the get orders.
@@ -73,10 +74,16 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="fabOrderModel">the order.</param>
         /// <param name="userOrders">the user order.</param>
         /// <param name="users">the user.</param>
+        /// <param name="redisService">redis.</param>
         /// <returns>the data.</returns>
-        public static List<CompleteOrderModel> CreateModels(List<FabricacionOrderModel> fabOrderModel, List<UserOrderModel> userOrders, List<UserModel> users)
+        public static async Task<List<CompleteOrderModel>> CreateModels(List<FabricacionOrderModel> fabOrderModel, List<UserOrderModel> userOrders, List<UserModel> users, IRedisService redisService)
         {
             var listToReturn = new List<CompleteOrderModel>();
+
+            var redisKeys = fabOrderModel.Select(x => string.Format(ServiceConstants.ProductionOrderSeparationProcessKey, x.OrdenId)).ToList();
+            var redisValues = await redisService.GetRedisKeys(redisKeys);
+
+            var redisLookup = redisKeys.Zip(redisValues, (key, value) => new { key, value }).ToDictionary(x => int.Parse(x.key.Split(':').Last()), x => !string.IsNullOrEmpty(x.value));
 
             fabOrderModel.ForEach(x =>
             {
@@ -100,6 +107,7 @@ namespace Omicron.Pedidos.Services.Utils
                     Unit = x.Unit,
                     HasMissingStock = x.HasMissingStock,
                     Batch = userOrder.BatchFinalized,
+                    OnSplitProcess = redisLookup.TryGetValue(x.OrdenId, out var exists) && exists,
                 };
 
                 listToReturn.Add(fabOrder);

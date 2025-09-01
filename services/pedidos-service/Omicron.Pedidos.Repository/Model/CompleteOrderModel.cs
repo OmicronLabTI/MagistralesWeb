@@ -86,5 +86,11 @@ namespace Omicron.Pedidos.Entities.Model
         /// <value>
         /// Bool is sales order.
         public string Batch { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the production order OnSplitProcess.
+        /// </summary>
+        /// <value>The OnSplitProcess.</value>
+        public bool OnSplitProcess { get; set; }
     }
 }

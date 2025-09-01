@@ -1019,6 +1019,7 @@ namespace Omicron.SapAdapter.Test
                 {
                     new ProductionOrderSeparationModel { Id = 1, OrderId = 100, AvailablePieces = 1 },
                 },
+                OnSplitProcess = true,
             };
 
             return new ResultDto
