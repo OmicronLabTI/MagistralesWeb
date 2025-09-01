@@ -6,6 +6,9 @@
 
 namespace Omicron.OrderDivisionProcess.Batch.Utils
 {
+    /// <summary>
+    /// CommonFunctions.
+    /// </summary>
     public static class CommonFunctions
     {
         /// <summary>

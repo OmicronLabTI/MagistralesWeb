@@ -12,36 +12,36 @@ namespace Omicron.OrderDivisionProcess.Batch.Constants
     public static class BatchConstants
     {
         /// <summary>
-        /// Gets ProductionOrderFinalizingRetryCronjob.
+        /// Gets DivisionOrdersRetryCronjob.
         /// </summary>
         /// <value>
-        /// ProductionOrderFinalizingRetryCronjob.
+        /// DivisionOrdersRetryCronjob.
         /// </value>
-        public static string ProductionOrderFinalizingRetryCronjob => "production-order-finalizing-retry-cronjob";
+        public static string DivisionOrdersRetryCronjob => "division-orders-retry-cronjob";
 
         /// <summary>
-        /// Gets ProductionOrderFinalizingToProcessKey.
+        /// Gets DivisionOrdersToProcessKey .
         /// </summary>
         /// <value>
-        /// ProductionOrderFinalizingToProcessKey.
+        /// DivisionOrdersToProcessKey .
         /// </value>
-        public static string ProductionOrderFinalizingToProcessKey => "production-order-finalizing-to-process";
+        public static string DivisionOrdersToProcessKey => "division-orders-to-process";
 
         /// <summary>
-        /// Gets GetFailedProductionOrdersEndpoint.
+        /// Gets GetFailedDivisionOrdersEndpoint.
         /// </summary>
         /// <value>
-        /// GetFailedProductionOrdersEndpoint.
+        /// GetFailedDivisionOrdersEndpoint.
         /// </value>
-        public static string GetFailedProductionOrdersEndpoint => "failedproductionorders";
+        public static string GetFailedDivisionOrdersEndpoint => "failed/divisionorders";
 
         /// <summary>
-        /// Gets PostRetryFinalizeFailedProductionOrdersEndpoint.
+        /// Gets PostRetryDivisionFailedProductionOrdersEndpoint.
         /// </summary>
         /// <value>
-        /// PostRetryFinalizeFailedProductionOrdersEndpoint.
+        /// PostRetryDivisionFailedProductionOrdersEndpoint.
         /// </value>
-        public static string PostRetryFinalizeFailedProductionOrdersEndpoint => "retry/finalize/failed/productionorders";
+        public static string PostRetryDivisionFailedProductionOrdersEndpoint => "retry/division/failed/productionorders";
 
         /// <summary>
         /// Gets StringContentMediaType.
@@ -60,12 +60,12 @@ namespace Omicron.OrderDivisionProcess.Batch.Constants
         public static TimeSpan DefaultRedisValueTimeToLive => new TimeSpan(8, 0, 0);
 
         /// <summary>
-        /// Gets FinalizeProductionOrdersCronJob.
+        /// Gets DivisionOrdersCronJob .
         /// </summary>
         /// <value>
-        /// FinalizeProductionOrdersCronJob.
+        /// DivisionOrdersCronJob .
         /// </value>
-        public static string FinalizeProductionOrdersCronJob => "{0} - Finalize Production Order Cron Job";
+        public static string DivisionOrdersCronJob => "{0} - Division Orders Retry Cron Job";
 
         /// <summary>
         /// Gets StartCronJobProcess.
@@ -84,28 +84,28 @@ namespace Omicron.OrderDivisionProcess.Batch.Constants
         public static string CronJobProcessAlreadyRunning => "{LogBase} - Cron Job Is Already Running";
 
         /// <summary>
-        /// Gets ErrorRetrievingProductionOrders.
+        /// Gets ErrorRetrievingDivisionOrders.
         /// </summary>
         /// <value>
-        /// ErrorRetrievingProductionOrders.
+        /// ErrorRetrievingDivisionOrders.
         /// </value>
-        public static string ErrorRetrievingProductionOrders => "{LogBase} - Error Retrieving Production Orders";
+        public static string ErrorRetrievingDivisionOrders => "{LogBase} - Error Retrieving Division Orders";
 
         /// <summary>
-        /// Gets ThereAreNoProductionOrdersToProcess.
+        /// Gets ThereAreNoDivisionOrdersToProcess .
         /// </summary>
         /// <value>
-        /// ThereAreNoProductionOrdersToProcess.
+        /// ThereAreNoDivisionOrdersToProcess .
         /// </value>
-        public static string ThereAreNoProductionOrdersToProcess => "{LogBase} - There Are No Production Orders To Process";
+        public static string ThereAreNoDivisionOrdersToProcess => "{LogBase} - There Are No Division Orders To Process";
 
         /// <summary>
-        /// Gets NumberOfProductionOrdersToProcess.
+        /// Gets NumberOfDivisionOrdersToProcess.
         /// </summary>
         /// <value>
-        /// NumberOfProductionOrdersToProcess.
+        /// NumberOfDivisionOrdersToProcess.
         /// </value>
-        public static string NumberOfProductionOrdersToProcess => "{LogBase} - Number Of Production Orders To Process: {ProductionOrdersCount}";
+        public static string NumberOfDivisionOrdersToProcess => "{LogBase} - Number Of Division Orders To Process: {DivisionOrdersCount}";
 
         /// <summary>
         /// Gets BatchRangeCount.
@@ -116,28 +116,28 @@ namespace Omicron.OrderDivisionProcess.Batch.Constants
         public static string BatchRangeCount => "{LogBase} - Batch Range Count: {BatchCount}";
 
         /// <summary>
-        /// Gets ProductionOrdersAreRetrievedFromRedis.
+        /// Gets DivisionOrdersAreRetrievedFromRedis.
         /// </summary>
         /// <value>
-        /// ProductionOrdersAreRetrievedFromRedis.
+        /// DivisionOrdersAreRetrievedFromRedis.
         /// </value>
-        public static string ProductionOrdersAreRetrievedFromRedis => "{LogBase} - Production Orders Are Retrieved From Redis - Offset: {Offset} - Limit: {Limit}";
+        public static string DivisionOrdersAreRetrievedFromRedis => "{LogBase} - Division Orders Are Retrieved From Redis - Offset: {Offset} - Limit: {Limit}";
 
         /// <summary>
-        /// Gets StartProductionOrdersAreSentForRetry.
+        /// Gets StartDivisionOrdersAreSentForRetry .
         /// </summary>
         /// <value>
-        /// StartProductionOrdersAreSentForRetry.
+        /// StartDivisionOrdersAreSentForRetry .
         /// </value>
-        public static string StartProductionOrdersAreSentForRetry => "{LogBase} - Start - Production Orders Are Sent For Retry - {Object}";
+        public static string StartDivisionOrdersAreSentForRetry => "{LogBase} - Start - Division Orders Are Sent For Retry - {Object}";
 
         /// <summary>
-        /// Gets EndProductionOrdersAreSentForRetry.
+        /// Gets EndDivisionOrdersAreSentForRetry .
         /// </summary>
         /// <value>
-        /// EndProductionOrdersAreSentForRetry.
+        /// EndDivisionOrdersAreSentForRetry .
         /// </value>
-        public static string EndProductionOrdersAreSentForRetry => "{LogBase} - End - Production Orders Are Sent For Retry";
+        public static string EndDivisionOrdersAreSentForRetry => "{LogBase} - End - Division Orders Are Sent For Retry";
 
         /// <summary>
         /// Gets EndCronJobProcess.

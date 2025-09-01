@@ -18,6 +18,5 @@ namespace Omicron.OrderDivisionProcess.Batch.Handlers
         /// </summary>
         /// <returns>Task.</returns>
         Task Handle();
-
     }
 }
