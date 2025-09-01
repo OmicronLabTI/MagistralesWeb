@@ -166,5 +166,11 @@ namespace Omicron.SapAdapter.Entities.Model
         /// string ProductFirmName.
         /// </value>
         public string ProductFirmName { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the production order OnSplitProcess.
+        /// </summary>
+        /// <value>The OnSplitProcess.</value>
+        public bool OnSplitProcess { get; set; }
     }
 }
