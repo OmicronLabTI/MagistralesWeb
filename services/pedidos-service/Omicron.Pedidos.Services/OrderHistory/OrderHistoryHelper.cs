@@ -42,29 +42,32 @@ namespace Omicron.Pedidos.Services.OrderHistory
         /// <param name="detailOrderId">Child order number.</param>
         /// <param name="request">request.</param>
         /// <returns>True if the registration was successful.</returns>
-        public async Task SaveHistoryOrdersFab(int detailOrderId, SeparateProductionOrderCommand request)
+        public async Task SaveHistoryOrdersFab(int detailOrderId, CreateChildOrdersSapCommand request)
         {
             var logBase = string.Format(LogsConstants.SaveHistoryOrdersFabLogBase, detailOrderId, request.ProductionOrderId);
             this.logger.Information(LogsConstants.SaveHistoryOrdersFabStart, logBase, request.Pieces, request.UserId, request.SapOrder);
-            try
-            {
-                var existingOrderDetail = await this.pedidosDao.GetDetailOrderById(detailOrderId);
-                if (existingOrderDetail != null)
-                {
-                    this.logger.Warning(LogsConstants.SaveHistoryOrdersFabChildExists, logBase);
-                    return;
-                }
 
-                var childResult = await this.RegisterSeparatedOrdersDetail(detailOrderId, request);
-
-                var parentResult = await this.UpsertOrderSeparation(request.ProductionOrderId, request.TotalPieces, request.Pieces);
-            }
-            catch (Exception ex)
+            var existingOrderDetail = await this.pedidosDao.GetDetailOrderById(detailOrderId);
+            if (existingOrderDetail != null)
             {
-                var error = string.Format(LogsConstants.SaveHistoryOrdersFabEndWithError, logBase);
-                this.logger.Error(ex, error);
-                throw;
+                this.logger.Warning(LogsConstants.SaveHistoryOrdersFabChildExists, logBase);
+                return;
             }
+
+            await this.RegisterSeparatedOrdersDetail(detailOrderId, request);
+        }
+
+        /// <summary>
+        /// Combined method to register both the child order and update the parent order.
+        /// </summary>
+        /// <param name="request">request.</param>
+        /// <returns>True if the registration was successful.</returns>
+        public async Task SaveHistoryParentOrdersFab(CancelProductionOrderCommand request)
+        {
+            var logBase = string.Format(LogsConstants.SaveHistoryParentOrdersFabLogBase, request.ProductionOrderId);
+            this.logger.Information(LogsConstants.SaveHistoryOrdersFabStart, logBase, request.Pieces, request.UserId, request.SapOrder);
+
+            await this.UpsertOrderSeparation(request.ProductionOrderId, request.TotalPieces, request.Pieces);
         }
 
         /// <summary>
@@ -73,7 +76,7 @@ namespace Omicron.Pedidos.Services.OrderHistory
         /// <param name="detailOrderId"> detailOrderId.</param>
         /// <param name="request"> request.</param>
         /// <returns>True register successfully.</returns>
-        public async Task<bool> RegisterSeparatedOrdersDetail(int detailOrderId, SeparateProductionOrderCommand request)
+        public async Task<bool> RegisterSeparatedOrdersDetail(int detailOrderId, CreateChildOrdersSapCommand request)
         {
             var consecutiveIndex = await this.pedidosDao.GetMaxDivision(request.ProductionOrderId);
 

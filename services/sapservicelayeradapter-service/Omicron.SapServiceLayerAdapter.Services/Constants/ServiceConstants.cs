@@ -444,9 +444,34 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string CreateReceiptStep = "Create Receipt";
 
         /// <summary>
+        /// SaveHistoryStep.
+        /// </summary>
+        public const string SaveHistoryStep = "SaveHistory";
+
+        /// <summary>
+        /// StepCreateChildOrderSap.
+        /// </summary>
+        public const string StepCreateChildOrderSap = "CreateChildOrderSap";
+
+        /// <summary>
+        /// StepCreateChildOrderSap.
+        /// </summary>
+        public const string StepCreateChildOrderWithComponentsSap = "CreateChildOrderSapWithComponents";
+
+        /// <summary>
         /// SuccessfullyClosedInSapStep.
         /// </summary>
         public const string SuccessfullyClosedInSapStep = "Successfully Closed In SAP";
+
+        /// <summary>
+        /// CancelSapStep.
+        /// </summary>
+        public const string StartCancelParentOrderStep = "StartCancelParentOrderProcess";
+
+        /// <summary>
+        /// CancelSapStep.
+        /// </summary>
+        public const string UpdateCancelParentOrderStep = "UpdateCancelParentOrderProcess";
 
         /// <summary>
         /// Gets ManageBatchNumbers.

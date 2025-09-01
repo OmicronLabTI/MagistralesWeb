@@ -1066,6 +1066,56 @@ namespace Omicron.Pedidos.Services.Constants
         public const string PartiallyDivided = "Parcialmente dividida";
 
         /// <summary>
+        /// CancelSapStep.
+        /// </summary>
+        public const string StartStep = "StartCancelParentOrderProcess";
+
+        /// <summary>
+        /// CancelSapStep.
+        /// </summary>
+        public const string UpdateCancelParentOrderStep = "UpdateCancelParentOrderProcess";
+
+        /// <summary>
+        /// CancelSapStep.
+        /// </summary>
+        public const string CancelSapStep = "CancelSAP";
+
+        /// <summary>
+        /// CancelPostgresStep.
+        /// </summary>
+        public const string CancelPostgresStep = "CancelPostgres";
+
+        /// <summary>
+        /// SaveHistoryStep.
+        /// </summary>
+        public const string SaveHistoryStep = "SaveHistory";
+
+        /// <summary>
+        /// StepCreateChildOrderSap.
+        /// </summary>
+        public const string StepCreateChildOrderSap = "CreateChildOrderSap";
+
+        /// <summary>
+        /// StepCreateChildOrderSap.
+        /// </summary>
+        public const string StepCreateChildOrderWithComponentsSap = "CreateChildOrderSapWithComponents";
+
+        /// <summary>
+        /// StepCreateChildOrderPostgres.
+        /// </summary>
+        public const string StepCreateChildOrderPostgres = "CreateChildOrderPostgres";
+
+        /// <summary>
+        /// StepCreateChildOrderPostgres.
+        /// </summary>
+        public const string StepSaveChildOrderHistory = "SaveChildOrderHistory";
+
+        /// <summary>
+        /// EmptyValue.
+        /// </summary>
+        public const string EmptyValue = "";
+
+        /// <summary>
         /// Gets ProductionDetailCount.
         /// </summary>
         /// <value>
