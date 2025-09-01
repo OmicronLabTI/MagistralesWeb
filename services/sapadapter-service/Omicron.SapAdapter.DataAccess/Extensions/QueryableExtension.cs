@@ -74,6 +74,7 @@ namespace Omicron.SapAdapter.DataAccess.Extensions
                 CatalogGroup = x.CatalogProductModel.CatalogName,
                 IsOmigenomics = x.CatalogProductModel.CatalogName.ToLower() == "omigenomics",
                 ProductFirmName = x.ProductFirmModel == default ? string.Empty : x.ProductFirmModel.ProductFirmName,
+                OrderRelationType = x.OrdenFabricacionModel == default ? null :  x.OrdenFabricacionModel.OrderRelationType,
             });
         }
     }
