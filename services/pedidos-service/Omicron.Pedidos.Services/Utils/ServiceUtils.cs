@@ -475,9 +475,6 @@ namespace Omicron.Pedidos.Services.Utils
 
                 await pedidosDao.InsertProductionOrderSeparationDetailLogById(processWithError);
             }
-
-            var redisKey = string.Format(ServiceConstants.ProductionOrderSeparationProcessKey, productionOrderId);
-            await redisService.DeleteKey(redisKey);
         }
 
         /// <summary>
