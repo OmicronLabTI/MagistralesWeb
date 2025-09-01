@@ -180,7 +180,7 @@ namespace Omicron.Pedidos.Services.Utils
             var enums = isTecnic ? Enum.GetValues(typeof(ServiceEnums.StatusTecnic)) : Enum.GetValues(typeof(ServiceEnums.Status));
             foreach (var status in enums)
             {
-                BuildGroupUserOrderResult(sapOrders, userOrders, result, status);
+                BuildGroupUserOrderResult(sapOrders, userOrders, result, status, isTecnic);
             }
 
             return result;
@@ -483,7 +483,7 @@ namespace Omicron.Pedidos.Services.Utils
             }
         }
 
-        private static void BuildGroupUserOrderResult(List<CompleteFormulaWithDetalle> sapOrders, List<UserOrderModel> userOrders, QfbOrderModel result, object status)
+        private static void BuildGroupUserOrderResult(List<CompleteFormulaWithDetalle> sapOrders, List<UserOrderModel> userOrders, QfbOrderModel result, object status, bool isTecnic)
         {
             var statusId = (int)Enum.Parse(typeof(ServiceEnums.Status), status.ToString());
             var orders = new QfbOrderDetail
@@ -494,6 +494,11 @@ namespace Omicron.Pedidos.Services.Utils
             };
 
             var ordersDetail = new List<FabOrderDetail>();
+
+            if (isTecnic)
+            {
+                sapOrders = sapOrders.Where(x => x.OrderRelationType != ServiceConstants.ParentOrder).ToList();
+            }
 
             var sapOrdersDict = sapOrders.ToDictionary(s => s.ProductionOrderId, s => s);
 
