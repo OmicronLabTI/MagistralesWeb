@@ -491,7 +491,7 @@ namespace Omicron.Pedidos.Services.Constants
         /// <value>
         /// SaveHistoryOrdersFabLogBase.
         /// </value>
-        public static string SaveHistoryParentOrdersFabLogBase => "Register Order History Service - ParentOrder: {1} - Save History Orders Fab";
+        public static string SaveHistoryParentOrdersFabLogBase => "Register Order History Service - ParentOrder: {0} - Save History Orders Fab";
 
         /// <summary>
         /// Gets SaveHistoryOrdersFabStart.

@@ -120,5 +120,13 @@ namespace Omicron.Pedidos.Entities.Model
         /// String ProductFirmName.
         /// </value>
         public string ProductFirmName { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderRelationType.
+        /// </summary>
+        /// <value>
+        /// string OrderRelationType.
+        /// </value>
+        public string OrderRelationType { get; set; }
     }
 }

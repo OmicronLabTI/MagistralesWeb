@@ -82,6 +82,12 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         public string FabricationOrder { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether gets or sets Order Type.
+        /// </summary>
+        /// <value>The IsChecked.</value>
+        public string IsParentFabOrder { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether order is cancelled.
         /// </summary>
         /// <value>The IsChecked.</value>
@@ -128,5 +134,11 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// </summary>
         /// <value>The code.</value>
         public string ThemeId { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public OrdenFabricacionModel? FabOrder { get; set; }
     }
 }

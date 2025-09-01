@@ -108,6 +108,12 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                     newDeliveryNote.BatchNumbers.Add(batch);
                 }
             }
+            else
+            {
+                var sameProduct = createDelivery.Where(x => x.ItemCode.Equals(itemCode) && x.SaleOrderId == saleOrderId).ToList();
+                var totalPieces = sameProduct.Sum(x => x.Quantity);
+                newDeliveryNote.Quantity = totalPieces;
+            }
 
             deliveryNote.DeliveryNoteLines.Add(newDeliveryNote);
             return deliveryNote;

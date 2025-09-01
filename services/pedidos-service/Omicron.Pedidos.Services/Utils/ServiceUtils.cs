@@ -311,10 +311,10 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="salesOrder">Sales order in local db.</param>
         /// <param name="sapAdapter">The sap adapter.</param>
         /// <returns>Preproduction orders.</returns>
-        public static async Task<List<CompleteDetailOrderModel>> GetPreProductionOrdersFromSap(UserOrderModel salesOrder, ISapAdapter sapAdapter)
+        public static async Task<(List<CompleteDetailOrderModel>, List<OrderWithDetailModel> SapOrder)> GetPreProductionOrdersFromSap(UserOrderModel salesOrder, ISapAdapter sapAdapter)
         {
             var sapResults = await GetSalesOrdersFromSapBySaleId(new List<int> { int.Parse(salesOrder.Salesorderid) }, sapAdapter);
-            return sapResults.PreProductionOrders;
+            return (sapResults.PreProductionOrders, sapResults.SapOrder);
         }
 
         /// <summary>
