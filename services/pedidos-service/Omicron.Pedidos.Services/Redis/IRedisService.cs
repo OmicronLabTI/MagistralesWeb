@@ -67,5 +67,12 @@ namespace Omicron.Pedidos.Services.Redis
         /// <param name="take">Take list.</param>
         /// <returns>List.</returns>
         Task<List<T>> ReadListAsync<T>(string redisKey, int skip, int take);
+
+        /// <summary>
+        /// Gets the redis keys.
+        /// </summary>
+        /// <param name="keys">the keys.</param>
+        /// <returns>the data.</returns>
+        Task<List<string>> GetRedisKeys(List<string> keys);
     }
 }

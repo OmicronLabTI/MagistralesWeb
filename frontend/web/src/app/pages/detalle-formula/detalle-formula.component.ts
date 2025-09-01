@@ -136,6 +136,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     this.currentOrdenFabricacionId = response.productionOrderId;
     this.oldDataFormulaDetail = response;
     this.plannedQuantityControl.setValue(response.plannedQuantity, { emitEvent: false });
+    this.disableControlForSplitProcess();
     this.warehouse = response.warehouse;
     this.comments = response.comments || '';
     const endDate = this.oldDataFormulaDetail.dueDate.split('/');
@@ -164,6 +165,13 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     this.dataService.setIsToSaveAnything(false);
     this.catalogGroupName = response.catalogGroupName || '';
     this.sumFormulaAction();
+  }
+
+  disableControlForSplitProcess() {
+    if (this.oldDataFormulaDetail.onSplitProcess) {
+      this.plannedQuantityControl.disable();
+      return;
+    }
   }
 
   validateWarehouse(warehouse: string): boolean {

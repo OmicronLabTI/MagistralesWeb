@@ -34,6 +34,7 @@ export class IPedidoDetalleReq {
     patientName?: string;
     realLabel?: string;
     catalogGroup?: string;
+    onSplitProcess: boolean;
 }
 export class IPedidoDetalleRes extends BaseResponseHttp {
     response: any;

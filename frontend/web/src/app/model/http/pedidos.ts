@@ -98,6 +98,7 @@ export class IPedidoReq {
     canceled?: string;
     clientType: string;
     color?: string;
+    onSplitProcess: boolean;
 }
 
 export class CancelOrderReq {

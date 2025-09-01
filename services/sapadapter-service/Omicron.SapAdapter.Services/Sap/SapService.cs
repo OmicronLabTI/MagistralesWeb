@@ -142,6 +142,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var alias = await this.sapDao.GetClientCatalogCardCode(cardcodes);
 
+            var splitProcess = await this.SplitProccess(orderToReturn, userOrders);
+
             orderToReturn.ForEach(o =>
             {
                 var doctor = listDoctors.FirstOrDefault(x => x.CardCode == o.Codigo);
@@ -152,6 +154,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 o.Medico = medico;
                 o.ClientType = clientType;
                 o.Cliente = client;
+                o.OnSplitProcess = splitProcess[o.DocNum];
             });
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, orderToReturn, null, orders.Count);
@@ -200,6 +203,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.Label = ServiceShared.CalculateTernary(x.Label.ToLower().Equals(ServiceConstants.Personalizado.ToLower()), ServiceConstants.Personalizado, ServiceConstants.Generico);
                 x.FinishedLabel = userOrder.FinishedLabel;
                 x.PedidoId = docId;
+                x.OnSplitProcess = await this.GetRedisSeparateKey(x.OrdenFabricacionId);
             }
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listToProcess, null, null);
@@ -302,6 +306,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var userOrders = new List<UserOrderModel>();
             var ordersParent = new List<ProductionOrderSeparationModel>();
+            var onSplitProcess = false;
 
             if (returnDetails)
             {
@@ -309,6 +314,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var response = JsonConvert.DeserializeObject<UserOrderSeparationModel>(result.Response.ToString());
                 userOrders = response.UserOrders;
                 ordersParent = response.ProductionOrderSeparations;
+                onSplitProcess = await this.GetRedisSeparateKey(listIds.FirstOrDefault()) || response.OnSplitProcess;
             }
 
             var detailsFormula = !returnDetails ? (await this.sapDao.GetDetalleFormulaByProdOrdId(ordenFab.Select(x => x.OrdenId).Distinct().ToList())).ToList() : new List<DetalleFormulaModel>();
@@ -392,7 +398,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     ShopTransaction = pedidoLocal.DocNumDxp,
                     OrderRelationType = o.OrderRelationType != null ? ServiceShared.GetDictionaryValueString(ServiceConstants.OrderRelation, o.OrderRelationType, ServiceConstants.Complete) : ServiceConstants.Complete,
                     AvailablePieces = ordersParent.FirstOrDefault(x => x.OrderId == o.OrdenId)?.AvailablePieces ?? (int)o.Quantity,
-                    OnSplitProcess = await this.GetRedisSeparateKey(o.OrdenId),
+                    OnSplitProcess = onSplitProcess,
                 };
 
                 listToReturn.Add(formulaDetalle);
@@ -1003,6 +1009,31 @@ namespace Omicron.SapAdapter.Services.Sap
             var redisKey = string.Format(ServiceConstants.ProductionOrderSeparationProcessKey, productionOrderId);
             var redisValue = await this.redisService.GetRedisKey(redisKey);
             return !string.IsNullOrEmpty(redisValue);
+        }
+
+        private async Task<Dictionary<int, bool>> SplitProccess(List<CompleteOrderModel> orders, List<UserOrderModel> userOrders)
+        {
+            var result = new Dictionary<int, bool>();
+
+            var docNumToKeys = orders.ToDictionary(
+                order => order.DocNum,
+                order => userOrders
+                    .Where(u => u.Salesorderid == order.DocNum.ToString())
+                    .Select(u => string.Format(ServiceConstants.ProductionOrderSeparationProcessKey, u.Productionorderid)).ToList());
+
+            var allRedisKeys = docNumToKeys.Values.SelectMany(x => x).Distinct().ToList();
+
+            var allRedisValues = await this.redisService.GetRedisKeys(allRedisKeys);
+
+            var redisLookup = allRedisKeys.Zip(allRedisValues, (key, value) => new { key, value }).ToDictionary(x => x.key, x => !string.IsNullOrEmpty(x.value));
+
+            foreach (var kvp in docNumToKeys)
+            {
+                bool exists = kvp.Value.Any(key => redisLookup.TryGetValue(key, out var found) && found);
+                result[kvp.Key] = exists;
+            }
+
+            return result;
         }
 
         private (string, string, string) RefillOrders(CompleteOrderModel order, string doctorName, List<string> specialCardCodes, List<ClientCatalogModel> alias)

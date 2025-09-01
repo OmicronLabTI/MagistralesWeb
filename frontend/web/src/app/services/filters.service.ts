@@ -22,8 +22,11 @@ export class FiltersService {
     switch (fromToFilter) {
       case FromToFilter.fromOrders:
         return (
-          dataToSearch.filter((t) => this.dataService.calculateAndValueList([t.isChecked, t.pedidoStatus === status]))
-            .length > 0
+          dataToSearch.filter((t) => this.dataService.calculateAndValueList([
+            t.isChecked,
+            t.pedidoStatus === status,
+            !t.onSplitProcess
+          ])).length > 0
         );
       case FromToFilter.fromOrdersReassign:
         return (this.getValidationFromOrderReassign(dataToSearch, status).length > 0);
@@ -36,7 +39,8 @@ export class FiltersService {
                 t.pedidoStatus !== status,
                 t.pedidoStatus !== ConstStatus.cancelado,
                 t.pedidoStatus !== ConstStatus.almacenado,
-                t.pedidoStatus !== ConstStatus.rechazado
+                t.pedidoStatus !== ConstStatus.rechazado,
+                !t.onSplitProcess
               ])
           ).length > 0
         );
@@ -49,7 +53,8 @@ export class FiltersService {
                 t.status !== status,
                 t.status !== ConstStatus.cancelado,
                 t.status !== ConstStatus.abierto,
-                t.status !== ConstStatus.almacenado
+                t.status !== ConstStatus.almacenado,
+                !t.onSplitProcess
               ])
           ).length > 0
         );
@@ -57,13 +62,17 @@ export class FiltersService {
         return (
           dataToSearch.filter(
             (t) =>
-              t.isChecked &&
-              (t.status === status ||
-                t.status === ConstStatus.asignado ||
-                t.status.toLowerCase() ===
-                ConstStatus.enProceso.toLowerCase() ||
-                t.status === ConstStatus.pendiente ||
-                t.status === ConstStatus.terminado)
+              this.dataService.calculateAndValueList([
+                t.isChecked,
+                this.dataService.calculateOrValueList([
+                  t.status === status,
+                  t.status === ConstStatus.asignado,
+                  t.status.toLowerCase() === ConstStatus.enProceso.toLowerCase(),
+                  t.status === ConstStatus.pendiente,
+                  t.status === ConstStatus.terminado
+                ]),
+                !t.onSplitProcess
+              ])
           ).length > 0
         );
       case FromToFilter.fromOrdersIsolatedCancel:
@@ -74,7 +83,8 @@ export class FiltersService {
                 t.isChecked,
                 t.status !== status,
                 t.status !== ConstStatus.cancelado,
-                t.status !== ConstStatus.almacenado
+                t.status !== ConstStatus.almacenado,
+                !t.onSplitProcess
               ])
           ).length > 0
         );
@@ -92,7 +102,11 @@ export class FiltersService {
         );
       default:
         return (
-          dataToSearch.filter((t) => this.dataService.calculateAndValueList([t.isChecked, t.status === status]))
+          dataToSearch.filter((t) => this.dataService.calculateAndValueList([
+            t.isChecked,
+            t.status === status,
+            !t.onSplitProcess
+          ]))
             .length > 0
         );
     }
@@ -122,10 +136,10 @@ export class FiltersService {
 
   getValidationFromOrderReassign(dataToSearch: any[], status: string): any[] {
     return dataToSearch.filter(
-      (t) =>
-        t.isChecked &&
-        (t.pedidoStatus === status ||
-          t.pedidoStatus === ConstStatus.terminado)
+      (t) => this.dataService.calculateAndValueList([
+        t.isChecked && (t.pedidoStatus === status || t.pedidoStatus === ConstStatus.terminado),
+        !t.onSplitProcess
+      ])
     );
   }
 
