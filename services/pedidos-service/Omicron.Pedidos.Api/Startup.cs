@@ -102,7 +102,7 @@ namespace Omicron.Pedidos.Api
             webApplication.AddRedis();
             webApplication.AddCorsSvc();
 
-            webApplication.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(SeparateProductionOrderHandler).Assembly));
+            webApplication.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CancelProductionOrderHandler).Assembly));
             webApplication.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
             webApplication.Services.AddHostedService<QueuedHostedService>();
 

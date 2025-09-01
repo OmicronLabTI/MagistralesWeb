@@ -723,7 +723,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
 
                 if (productionStatus.Count > 0 &&
                     productionStatus.All(z => z.FinishedLabel == 1) &&
-                    orders.All(z => statusPending.Contains(z.Status) && !orders.All(z => z.Status == secondStatus)))
+                    orders.All(z => !orders.All(z => z.Status == secondStatus)))
                 {
                     orderstoReturn.AddRange(group);
                 }
@@ -808,6 +808,34 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         public async Task UpdateParentOrder()
         {
             await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<ProductionOrderSeparationDetailLogsModel> GetProductionOrderSeparationDetailLogById(string separationId)
+        {
+            return await this.databaseContext.ProductionOrderSeparationDetailLogsModel.FirstOrDefaultAsync(x => x.Id == separationId);
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> InsertProductionOrderSeparationDetailLogById(ProductionOrderSeparationDetailLogsModel modelToSave)
+        {
+            this.databaseContext.ProductionOrderSeparationDetailLogsModel.AddRange(modelToSave);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> UpdateProductionOrderSeparationDetailLog(ProductionOrderSeparationDetailLogsModel modelToSave)
+        {
+            this.databaseContext.ProductionOrderSeparationDetailLogsModel.UpdateRange(modelToSave);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<ProductionOrderSeparationDetailLogsModel> GetProductionOrderSeparationDetailLogByParentOrderId(int parentId)
+        {
+            return await this.databaseContext.ProductionOrderSeparationDetailLogsModel.FirstOrDefaultAsync(x => x.ParentProductionOrderId == parentId && x.IsSuccessful == false);
         }
     }
 }

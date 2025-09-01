@@ -567,15 +567,19 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var saleOrder = allOrders.Where(x => x.IsSalesOrder).ToList();
                 var saleIds = saleOrder.Select(y => int.Parse(y.Salesorderid)).ToList();
                 var preProdOrderSap = await ServiceUtils.GetOrdersDetailsForMagistral(this.sapAdapter, saleIds);
+                var parentOrders = preProdOrderSap.SelectMany(pre => pre.Detalle).Where(pre => pre.OrderRelationType == "Y").ToList();
+                var parentOrdersSeparationDetail = await this.pedidosDao.GetProductionOrderSeparationByOrderId(parentOrders.Select(x => x.OrdenFabricacionId).ToList());
 
                 saleOrder.ForEach(sale =>
                 {
                     var orderBySale = allOrders.Where(x => x.Salesorderid == sale.Salesorderid).ToList();
+                    var productionOrders = orderBySale.Where(x => x.IsProductionOrder).Select(x => int.Parse(x.Productionorderid)).ToList();
+                    var hasPendingToSeparate = productionOrders.Any(x => parentOrdersSeparationDetail.Any(y => x == y.OrderId && y.AvailablePieces > 0));
                     var areInvalidOrders = orderBySale.Any(x => x.IsProductionOrder && !listProductionOrders.Contains(x.Productionorderid) && !ServiceConstants.ValidStatusTerminar.Contains(x.Status));
                     var tupleValues = preProdOrderSap.FirstOrDefault(x => x.Order.DocNum == int.Parse(sale.Salesorderid));
                     tupleValues ??= new OrderWithDetailModel { Detalle = new List<CompleteDetailOrderModel>() };
                     var previousStatus = sale.Status;
-                    sale.Status = ServiceShared.CalculateTernary(areInvalidOrders || tupleValues.Detalle.Any(x => string.IsNullOrEmpty(x.Status)), sale.Status, ServiceConstants.Terminado);
+                    sale.Status = ServiceShared.CalculateTernary(areInvalidOrders || tupleValues.Detalle.Any(x => string.IsNullOrEmpty(x.Status)) || hasPendingToSeparate, sale.Status, ServiceConstants.Terminado);
                     sale.StatusForTecnic = sale.Status;
 
                     /** add logs**/

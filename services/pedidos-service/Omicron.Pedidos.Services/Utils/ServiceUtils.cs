@@ -18,6 +18,7 @@ namespace Omicron.Pedidos.Services.Utils
     using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Enums;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Entities.Model.Db;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.Redis;
     using Omicron.Pedidos.Services.SapAdapter;
@@ -310,10 +311,10 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="salesOrder">Sales order in local db.</param>
         /// <param name="sapAdapter">The sap adapter.</param>
         /// <returns>Preproduction orders.</returns>
-        public static async Task<List<CompleteDetailOrderModel>> GetPreProductionOrdersFromSap(UserOrderModel salesOrder, ISapAdapter sapAdapter)
+        public static async Task<(List<CompleteDetailOrderModel>, List<OrderWithDetailModel> SapOrder)> GetPreProductionOrdersFromSap(UserOrderModel salesOrder, ISapAdapter sapAdapter)
         {
             var sapResults = await GetSalesOrdersFromSapBySaleId(new List<int> { int.Parse(salesOrder.Salesorderid) }, sapAdapter);
-            return sapResults.PreProductionOrders;
+            return (sapResults.PreProductionOrders, sapResults.SapOrder);
         }
 
         /// <summary>
@@ -431,6 +432,52 @@ namespace Omicron.Pedidos.Services.Utils
             }
 
             return validProductionOrders;
+        }
+
+        /// <summary>
+        /// Calculates the "or´s" conditions.
+        /// </summary>
+        /// <param name="separationId">list of FinalizeProductionOrderModel.</param>
+        /// <param name="productionOrderId">list of failed.</param>
+        /// <param name="lastStep">last step.</param>
+        /// <param name="errorMessage">error message.</param>
+        /// <param name="childProductionOrderId">child order.</param>
+        /// <param name="payload">payload.</param>
+        /// <param name="pedidosDao">value to save on redis.</param>
+        /// <param name="redisService">redis service.</param>
+        /// <returns>void.</returns>
+        public static async Task UpsertSeparationDetailLog(string separationId, int productionOrderId, string lastStep, string errorMessage, int? childProductionOrderId, string payload, IPedidosDao pedidosDao, IRedisService redisService)
+        {
+            var productionOrderSeparationLog = await pedidosDao.GetProductionOrderSeparationDetailLogById(separationId);
+
+            if (productionOrderSeparationLog != null)
+            {
+                productionOrderSeparationLog.ErrorMessage = errorMessage;
+                productionOrderSeparationLog.LastStep = lastStep;
+                productionOrderSeparationLog.LastUpdated = DateTime.Now;
+
+                await pedidosDao.UpdateProductionOrderSeparationDetailLog(productionOrderSeparationLog);
+            }
+            else
+            {
+                var processWithError = new ProductionOrderSeparationDetailLogsModel
+                {
+                    Id = separationId,
+                    ParentProductionOrderId = productionOrderId,
+                    LastStep = lastStep,
+                    IsSuccessful = false,
+                    ErrorMessage = errorMessage,
+                    ChildProductionOrderId = childProductionOrderId,
+                    Payload = payload,
+                    CreatedAt = DateTime.Now,
+                    LastUpdated = DateTime.Now,
+                };
+
+                await pedidosDao.InsertProductionOrderSeparationDetailLogById(processWithError);
+            }
+
+            var redisKey = string.Format(ServiceConstants.ProductionOrderSeparationProcessKey, productionOrderId);
+            await redisService.DeleteKey(redisKey);
         }
 
         /// <summary>
