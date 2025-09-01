@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import {
   ComponentSearch,
   CONST_NUMBER,
@@ -11,20 +11,20 @@ import {
   MODAL_FIND_ORDERS,
   MODAL_NAMES, RouterPaths
 } from '../../constants/const';
-import {DataService} from '../../services/data.service';
-import {ErrorService} from '../../services/error.service';
-import {MatPaginator, PageEvent} from '@angular/material/paginator';
-import {Title} from '@angular/platform-browser';
-import {MatTableDataSource} from '@angular/material';
-import {IOrdersReq} from 'src/app/model/http/ordenfabricacion';
-import {ErrorHttpInterface} from 'src/app/model/http/commons';
-import {OrdersService} from 'src/app/services/orders.service';
-import {CancelOrderReq, ParamsPedidos} from 'src/app/model/http/pedidos';
-import {Subscription} from 'rxjs';
-import {MatDialog} from '@angular/material/dialog';
-import {FinalizeOrdersComponent} from '../../dialogs/finalize-orders/finalize-orders.component';
-import {Router} from '@angular/router';
-import {PedidosService} from '../../services/pedidos.service';
+import { DataService } from '../../services/data.service';
+import { ErrorService } from '../../services/error.service';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { Title } from '@angular/platform-browser';
+import { MatTableDataSource } from '@angular/material';
+import { IOrdersReq } from 'src/app/model/http/ordenfabricacion';
+import { ErrorHttpInterface } from 'src/app/model/http/commons';
+import { OrdersService } from 'src/app/services/orders.service';
+import { CancelOrderReq, ParamsPedidos } from 'src/app/model/http/pedidos';
+import { Subscription } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { FinalizeOrdersComponent } from '../../dialogs/finalize-orders/finalize-orders.component';
+import { Router } from '@angular/router';
+import { PedidosService } from '../../services/pedidos.service';
 import { ObservableService } from '../../services/observable.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { DateService } from '../../services/date.service';
@@ -53,14 +53,14 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   ];
   dataSource = new MatTableDataSource<IOrdersReq>();
   pageEvent: PageEvent;
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   lengthPaginator = CONST_NUMBER.zero;
   offset = CONST_NUMBER.zero;
   limit = CONST_NUMBER.ten;
   userClasification = CONST_STRING.empty;
   queryString = CONST_STRING.empty;
   fullQueryString = CONST_STRING.empty;
-  isDateInit =  true;
+  isDateInit = true;
   filterDataOrders = new ParamsPedidos();
   pageIndex = 0;
   subscriptionObservables = new Subscription();
@@ -100,21 +100,21 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     }
     this.titleService.setTitle('OmicronLab - Órdenes de fabricación');
     this.dataSource.paginator = this.paginator;
-    this.subscriptionObservables.add(this.observableService.getNewSearchOrdersModal().subscribe( resultSearchOrdersModal => {
+    this.subscriptionObservables.add(this.observableService.getNewSearchOrdersModal().subscribe(resultSearchOrdersModal => {
       if (!resultSearchOrdersModal.isFromOrders) {
         this.onSuccessSearchOrdersModal(resultSearchOrdersModal);
       }
     }));
     this.subscriptionObservables.add(this.observableService.getCallHttpService().subscribe(detailHttpCall => {
-          if (detailHttpCall === HttpServiceTOCall.ORDERS_ISOLATED) {
-            this.getOrdersAction();
-          }
-        }));
+      if (detailHttpCall === HttpServiceTOCall.ORDERS_ISOLATED) {
+        this.getOrdersAction();
+      }
+    }));
     this.localStorageService.removeFiltersActiveOrders();
   }
   createInitRageOrders() {
-    this.pedidosService.getInitRangeDate().subscribe(({response}) => this.getInitRange(response.filter(
-        catalog => catalog.field === 'MagistralesDaysToLook')[0].value), error => this.errorService.httpError(error));
+    this.pedidosService.getInitRangeDate().subscribe(({ response }) => this.getInitRange(response.filter(
+      catalog => catalog.field === 'MagistralesDaysToLook')[0].value), error => this.errorService.httpError(error));
   }
   getInitRange(daysInitRange: string) {
     this.filterDataOrders.isFromOrders = false;
@@ -190,7 +190,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
         this.allComplete = false;
         this.isOnInit = false;
       },
-        (error: ErrorHttpInterface) => {
+      (error: ErrorHttpInterface) => {
         if (error.status !== HttpStatus.notFound) {
           this.errorService.httpError(error);
         }
@@ -221,11 +221,11 @@ export class FabordersListComponent implements OnInit, OnDestroy {
 
   createOrderIsolated() {
     this.localStorageService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrders));
-    this.observableService.setSearchComponentModal({modalType: ComponentSearch.createOrderIsolated});
+    this.observableService.setSearchComponentModal({ modalType: ComponentSearch.createOrderIsolated });
   }
 
   openSearchOrders() {
-    this.observableService.setSearchOrdersModal({modalType: ConstOrders.modalOrdersIsolated, filterOrdersData: this.filterDataOrders });
+    this.observableService.setSearchOrdersModal({ modalType: ConstOrders.modalOrdersIsolated, filterOrdersData: this.filterDataOrders });
 
   }
 
@@ -243,34 +243,40 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   }
 
   cancelOrder() {
-    this.observableService.setCancelOrders({list: this.dataSource.data.filter
-      (t => (t.isChecked && t.status !== ConstStatus.finalizado && t.status !== ConstStatus.almacenado)).map(order => {
-        const cancelOrder = new CancelOrderReq();
-        cancelOrder.orderId = Number(order.fabOrderId);
-        return cancelOrder;
-      }),
-      cancelType: MODAL_NAMES.placeOrdersDetail, isFromCancelIsolated: true});
+    this.observableService.setCancelOrders({
+      list: this.dataSource.data.filter
+        (t => (t.isChecked && t.status !== ConstStatus.finalizado && t.status !== ConstStatus.almacenado)).map(order => {
+          const cancelOrder = new CancelOrderReq();
+          cancelOrder.orderId = Number(order.fabOrderId);
+          return cancelOrder;
+        }),
+      cancelType: MODAL_NAMES.placeOrdersDetail, isFromCancelIsolated: true
+    });
   }
   assignOrderIsolated() {
-    this.observableService.setQbfToPlace({modalType: MODAL_NAMES.placeOrdersDetail,
+    this.observableService.setQbfToPlace({
+      modalType: MODAL_NAMES.placeOrdersDetail,
       list: this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrdersIsolated)
-      , isFromOrderIsolated: true});
+      , isFromOrderIsolated: true
+    });
   }
   private getButtonsOrdersIsolatedToUnLooked() {
     this.isFinalizeOrderIsolated = this.filtersService.
       getIsThereOnData(this.dataSource.data, ConstStatus.terminado, FromToFilter.fromDefault);
     this.isThereOrdersIsolatedToCancel = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
-                                                                           FromToFilter.fromOrdersIsolatedCancel);
+      FromToFilter.fromOrdersIsolatedCancel);
     this.isAssignOrderIsolated = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado,
-        FromToFilter.fromDefault);
+      FromToFilter.fromDefault);
     this.isReAssignOrderIsolated = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.reasingado,
-                                                                      FromToFilter.fromOrderIsolatedReassign);
+      FromToFilter.fromOrderIsolatedReassign);
   }
   reAssignOrder() {
-    this.observableService.setQbfToPlace({modalType: MODAL_NAMES.placeOrdersDetail,
+    this.observableService.setQbfToPlace({
+      modalType: MODAL_NAMES.placeOrdersDetail,
       list: this.filtersService.getItemOnDateWithFilter(this.dataSource.data,
-                                FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.fabOrderId))
-      , isFromOrderIsolated: true, isFromReassign: true});
+        FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.fabOrderId))
+      , isFromOrderIsolated: true, isFromReassign: true
+    });
   }
   ngOnDestroy() {
     this.subscriptionObservables.unsubscribe();
@@ -292,7 +298,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     this.filterDataOrders.pageIndex = this.pageIndex;
     this.localStorageService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrders));
     this.router.navigate([RouterPaths.materialRequest,
-      this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrdersIsolated).toString() || CONST_NUMBER.zero
+    this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrdersIsolated).toString() || CONST_NUMBER.zero
       , CONST_NUMBER.zero]);
   }
 
@@ -302,7 +308,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     this.filterDataOrders.pageIndex = this.pageIndex;
     this.localStorageService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrders));
     this.dataService.changeRouterForFormula(fabOrderId,
-        this.dataSource.data.map(order => order.fabOrderId).toString(),
-        CONST_NUMBER.zero);
+      this.dataSource.data.map(order => order.fabOrderId).toString(),
+      CONST_NUMBER.zero);
   }
 }
