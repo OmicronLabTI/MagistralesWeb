@@ -51,25 +51,33 @@
         </div>
 
         <div class="table-toolbar-buttons with-table-toolbar-custom">
-            <button mat-raised-button class="button-blue"
+            <button mat-raised-button
                 [routerLink]="['/lotes', oldDataFormulaDetail.baseDocument,
                                                             oldDataFormulaDetail.productionOrderId, oldDataFormulaDetail.code , oldDataFormulaDetail.productDescription,
-                                                            oldDataFormulaDetail.hasMissingStock ? 1 : 0, isFromDetail ? 1 : 0, detailOrders.toString()]">
+                                                            oldDataFormulaDetail.hasMissingStock ? 1 : 0, isFromDetail ? 1 : 0, detailOrders.toString()]"
+                [ngClass]="!oldDataFormulaDetail.onSplitProcess ? 'button-blue' : 'disable-button'"
+                [disabled]="oldDataFormulaDetail.onSplitProcess">
                 Lotes
             </button>
-            <button mat-raised-button class="button-blue" (click)="openCustomList()">
+            <button mat-raised-button (click)="openCustomList()"
+                [ngClass]="!oldDataFormulaDetail.onSplitProcess ? 'button-blue' : 'disable-button'"
+                [disabled]="oldDataFormulaDetail.onSplitProcess">
                 Mi lista de componentes
             </button>
             <button mat-raised-button (click)="openMiListaDialog()" class="button-blue">
                 Crear lista de componentes
             </button>
-            <button mat-raised-button class="button-blue" (click)="goToAddComponent(['/addComponent', oldDataFormulaDetail.baseDocument,
+            <button mat-raised-button
+                (click)="goToAddComponent(['/addComponent', oldDataFormulaDetail.baseDocument,
                                                             oldDataFormulaDetail.productionOrderId, oldDataFormulaDetail.code , oldDataFormulaDetail.productDescription,
-                                                            oldDataFormulaDetail.hasMissingStock ? 1 : 0, isFromDetail ? 1 : 0, detailOrders.toString()])">
+                                                            oldDataFormulaDetail.hasMissingStock ? 1 : 0, isFromDetail ? 1 : 0, detailOrders.toString()])"
+                [ngClass]="!oldDataFormulaDetail.onSplitProcess ? 'button-blue' : 'disable-button'"
+                [disabled]="oldDataFormulaDetail.onSplitProcess">
                 Agregar componente
             </button>
-            <button mat-raised-button [ngClass]="isComponentsToDelete ? 'button-blue' : 'disable-button'"
-                [disabled]="!isComponentsToDelete" (click)="deleteComponents()">
+            <button mat-raised-button
+                [ngClass]="isComponentsToDelete && !oldDataFormulaDetail.onSplitProcess ? 'button-blue' : 'disable-button'"
+                [disabled]="!isComponentsToDelete || oldDataFormulaDetail.onSplitProcess" (click)="deleteComponents()">
                 Eliminar componente
             </button>
             <button mat-raised-button [ngClass]="isReadyToSave ? 'button-blue' : 'disable-button'"
@@ -94,8 +102,9 @@
                     <mat-form-field appearance="outline" class="generalinput" style="width: 15.8%;">
                         <mat-label [ngClass]="isPlannedQuantityError ? 'input-with-error': ''">Cantidad
                             planificada</mat-label>
-                        <input matInput [disabled]="oldDataFormulaDetail.hasBatches" type="text"
-                            placeholder="Cantidad planificada"
+                        <input matInput
+                            [disabled]="oldDataFormulaDetail.hasBatches || oldDataFormulaDetail.onSplitProcess"
+                            type="text" placeholder="Cantidad planificada"
                             [ngClass]="isPlannedQuantityError ? 'input-with-error': ''"
                             [formControl]="plannedQuantityControl" step="any" mask="separator.6" thousandSeparator=","
                             entiresPlaces="10" appLimitEntires>
@@ -107,7 +116,8 @@
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="generalinput disabled" style="width: 15.8%;">
                         <mat-label>Almacén</mat-label>
-                        <mat-select [(ngModel)]="warehouse" (ngModelChange)="changeData()">
+                        <mat-select [(ngModel)]="warehouse" (ngModelChange)="changeData()"
+                            [disabled]="oldDataFormulaDetail.onSplitProcess">
                             <mat-option value="AMP">
                                 AMP
                             </mat-option>
@@ -258,14 +268,16 @@
                         <td mat-cell *matCellDef="let element; let i = index;"
                             class="color-text-intables tdcell color-black mobile-hide cantbase">
                             <mat-form-field appearance="outline" *ngIf="!element.isContainer">
-                                <input matInput type="number" [disabled]="element.hasBatches"
+                                <input matInput type="number"
+                                    [disabled]="element.hasBatches || oldDataFormulaDetail.onSplitProcess"
                                     class="number color-number text-bold" placeholder="Cantidad base"
                                     [(ngModel)]="element.baseQuantity" (ngModelChange)="onBaseQuantityChange($event, i)"
                                     appDigitDecimalNumber decimalPlaces="6">
                             </mat-form-field>
 
                             <mat-form-field appearance="outline" *ngIf="element.isContainer">
-                                <input matInput type="text" [disabled]="element.hasBatches"
+                                <input matInput type="text"
+                                    [disabled]="element.hasBatches || oldDataFormulaDetail.onSplitProcess"
                                     class="number color-number text-bold" placeholder="Cantidad base <>"
                                     [(ngModel)]="element.baseQuantity" (ngModelChange)="onBaseQuantityChange($event, i)"
                                     pattern="[0-9]*" maxlength="10" (keypress)="dataService.inputNumbersOnly($event)" />
@@ -279,7 +291,8 @@
                         <td mat-cell *matCellDef="let element;let i = index;"
                             class="color-text-intables tdcell color-black mobile-hide cantreq">
                             <mat-form-field appearance="outline" *ngIf="!element.isContainer">
-                                <input matInput type="number" [disabled]="element.hasBatches"
+                                <input matInput type="number"
+                                    [disabled]="element.hasBatches || oldDataFormulaDetail.onSplitProcess"
                                     class="number color-number text-bold" placeholder="Cantidad requerida"
                                     [(ngModel)]="element.requiredQuantity"
                                     (ngModelChange)="onRequiredQuantityChange($event, i)" appDigitDecimalNumber
@@ -287,7 +300,8 @@
                             </mat-form-field>
 
                             <mat-form-field appearance="outline" *ngIf="element.isContainer">
-                                <input matInput type="text" [disabled]="element.hasBatches"
+                                <input matInput type="text"
+                                    [disabled]="element.hasBatches || oldDataFormulaDetail.onSplitProcess"
                                     class="number color-number text-bold" placeholder="Cantidad requerida <>"
                                     [(ngModel)]="element.requiredQuantity"
                                     (ngModelChange)="onRequiredQuantityChange($event, i)" pattern="[0-9]*"
@@ -322,11 +336,11 @@
                         <td mat-cell *matCellDef="let element;let i = index;"
                             class="color-text-intables tdcell color-black mobile-hide almacen">
                             <mat-form-field appearance="outline">
-                                <mat-select #selectRef [disabled]="element.hasBatches" [(ngModel)]="element.warehouse"
-                                    (openedChange)="onOpenSelect($event, i)"
+                                <mat-select #selectRef
+                                    [disabled]="element.hasBatches || oldDataFormulaDetail.onSplitProcess"
+                                    [(ngModel)]="element.warehouse" (openedChange)="onOpenSelect($event, i)"
                                     (ngModelChange)="onSelectWareHouseChange($event, i)">
-                                    <mat-option *ngFor="let item of element.availableWarehouses"
-                                        [value]="item">{{item}}
+                                    <mat-option *ngFor="let item of element.availableWarehouses" [value]="item">{{item}}
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>

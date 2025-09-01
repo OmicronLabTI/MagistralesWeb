@@ -25,6 +25,7 @@ export class IOrdersReq {
     isWithErrorBatch?: boolean;
     hasMissingStock?: boolean;
     batch: string;
+    onSplitProcess: boolean;
 }
 
 export class ParamsOrders {

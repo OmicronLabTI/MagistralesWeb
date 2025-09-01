@@ -38,7 +38,7 @@ describe('PedidosComponent', () => {
   let dateServiceSpy: jasmine.SpyObj<DateService>;
   let filtersServiceSpy: jasmine.SpyObj<FiltersService>;
   let errorServiceSpy;
-  const routerSpy = {navigate: jasmine.createSpy('navigate')};
+  const routerSpy = { navigate: jasmine.createSpy('navigate') };
 
   const paramsPedidos = new ParamsPedidos();
   const iRecipesRes = new IRecipesRes();
@@ -92,7 +92,7 @@ describe('PedidosComponent', () => {
     pedidosServiceSpy.getPedidos.and.callFake(() => {
       return of(PedidosListMock);
     });
-    pedidosServiceSpy.getRecipesByOrder .and.callFake(() => {
+    pedidosServiceSpy.getRecipesByOrder.and.callFake(() => {
       return of(iRecipesRes);
     });
     pedidosServiceSpy.createPdfOrders.and.callFake(() => {
@@ -284,7 +284,8 @@ describe('PedidosComponent', () => {
       labelType: 'string',
       finishedLabel: 2,
       orderType: 'string',
-      clientType: 'general'
+      clientType: 'general',
+      onSplitProcess: false,
     }];
     component.cancelOrders();
     component.dataSource.data = PedidosListMock.response;
@@ -307,7 +308,8 @@ describe('PedidosComponent', () => {
       labelType: 'string',
       finishedLabel: 2,
       orderType: 'string',
-      clientType: 'general'
+      clientType: 'general',
+      onSplitProcess: false,
     }];
     component.finalizeOrders();
     component.dataSource.data = PedidosListMock.response;
@@ -385,7 +387,8 @@ describe('PedidosComponent', () => {
       labelType: 'string',
       finishedLabel: 2,
       orderType: 'string',
-      clientType: 'general'
+      clientType: 'general',
+      onSplitProcess: false,
     }];
     filtersServiceSpy.getItemOnDateWithFilter(component.dataSource.data, FromToFilter.fromOrdersReassign, ConstStatus.liberado);
     component.reassignOrders();
@@ -447,7 +450,8 @@ describe('PedidosComponent', () => {
       labelType: 'string',
       finishedLabel: 2,
       orderType: 'string',
-      clientType: 'general'
+      clientType: 'general',
+      onSplitProcess: false,
     }];
     messagesServiceSpy.presentToastCustom.and.callFake(() => {
       return Promise.resolve({

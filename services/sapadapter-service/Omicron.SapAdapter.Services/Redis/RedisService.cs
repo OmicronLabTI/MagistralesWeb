@@ -9,6 +9,8 @@
 namespace Omicron.SapAdapter.Services.Redis
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using StackExchange.Redis;
 
@@ -45,6 +47,15 @@ namespace Omicron.SapAdapter.Services.Redis
             await this.database.KeyDeleteAsync(key);
             await this.database.StringSetAsync(key, value, timeToLive);
             return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<string>> GetRedisKeys(List<string> keys)
+        {
+            // Convertir las keys a RedisKey[]
+            var redisKeys = keys.Select(k => (RedisKey)k).ToArray();
+            var results = await this.database.StringGetAsync(redisKeys);
+            return results.Select(r => r.HasValue ? r.ToString() : string.Empty).ToList();
         }
 
         /// <inheritdoc/>
