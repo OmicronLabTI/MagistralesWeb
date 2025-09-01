@@ -306,6 +306,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var userOrders = new List<UserOrderModel>();
             var ordersParent = new List<ProductionOrderSeparationModel>();
+            var onSplitProcess = false;
 
             if (returnDetails)
             {
@@ -313,6 +314,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var response = JsonConvert.DeserializeObject<UserOrderSeparationModel>(result.Response.ToString());
                 userOrders = response.UserOrders;
                 ordersParent = response.ProductionOrderSeparations;
+                onSplitProcess = await this.GetRedisSeparateKey(listIds.FirstOrDefault()) || response.OnSplitProcess;
             }
 
             var detailsFormula = !returnDetails ? (await this.sapDao.GetDetalleFormulaByProdOrdId(ordenFab.Select(x => x.OrdenId).Distinct().ToList())).ToList() : new List<DetalleFormulaModel>();
@@ -396,7 +398,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     ShopTransaction = pedidoLocal.DocNumDxp,
                     OrderRelationType = o.OrderRelationType != null ? ServiceShared.GetDictionaryValueString(ServiceConstants.OrderRelation, o.OrderRelationType, ServiceConstants.Complete) : ServiceConstants.Complete,
                     AvailablePieces = ordersParent.FirstOrDefault(x => x.OrderId == o.OrdenId)?.AvailablePieces ?? (int)o.Quantity,
-                    OnSplitProcess = await this.GetRedisSeparateKey(o.OrdenId),
+                    OnSplitProcess = onSplitProcess,
                 };
 
                 listToReturn.Add(formulaDetalle);

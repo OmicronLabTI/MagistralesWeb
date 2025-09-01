@@ -292,7 +292,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                     null);
             }
 
-            await this.redisService.WriteToRedis(redisKey, JsonConvert.SerializeObject(request), new TimeSpan(12, 0, 0));
+            await this.redisService.WriteToRedis(redisKey, JsonConvert.SerializeObject(request));
             await this.SeparateProductionOrderProcessAsync(
                 request.ProductionOrderId,
                 request.Pieces,

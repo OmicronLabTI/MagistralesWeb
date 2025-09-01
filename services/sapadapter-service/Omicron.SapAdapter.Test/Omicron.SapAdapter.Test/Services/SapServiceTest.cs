@@ -553,6 +553,7 @@ namespace Omicron.SapAdapter.Test.Services
             Assert.That((int)response.PlannedQuantity, Is.Not.EqualTo(response.AvailablePieces));
             Assert.That(response.OrderRelationType, Is.EqualTo("Padre"));
             Assert.That(response.HasBatches);
+            Assert.That(response.OnSplitProcess, Is.True);
         }
 
         /// <summary>

@@ -112,10 +112,13 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var ordersParent = await this.pedidosDao.GetProductionOrderSeparationByOrderId(listIds);
 
+            var existsProccesWithError = await this.pedidosDao.GetProductionOrderSeparationDetailLogByParentOrderId(listIds.FirstOrDefault());
+
             var listToReturn = new UserOrderSeparationModel
             {
                 UserOrders = orders.ToList(),
                 ProductionOrderSeparations = ordersParent,
+                OnSplitProcess = existsProccesWithError != null,
             };
 
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null);

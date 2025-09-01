@@ -172,7 +172,8 @@ namespace Omicron.SapAdapter.Entities.Model
         /// </summary>
         /// <value>The OnSplitProcess.</value>
         public bool OnSplitProcess { get; set; }
-        
+
+        /// <summary>
         /// Gets or sets OrderRelationType.
         /// </summary>
         /// <value>

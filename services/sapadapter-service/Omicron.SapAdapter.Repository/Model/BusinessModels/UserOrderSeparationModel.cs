@@ -31,5 +31,13 @@ namespace Omicron.SapAdapter.Entities.Model.BusinessModels
         /// Datetime userid.
         /// </value>
         public List<ProductionOrderSeparationModel> ProductionOrderSeparations { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets OnSplitProcess.
+        /// </summary>
+        /// <value>
+        /// bool OnSplitProcess.
+        /// </value>
+        public bool OnSplitProcess { get; set; }
     }
 }
