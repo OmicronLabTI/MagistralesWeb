@@ -1007,6 +1007,48 @@ namespace Omicron.Pedidos.Test
         }
 
         /// <summary>
+        /// GetProductionOrderProcessingStatusModel.
+        /// </summary>
+        /// <returns>List ProductionOrderProcessingStatusModel.</returns>
+        public IEnumerable<ProductionOrderSeparationDetailLogsModel> GetProductionOrderSeparationDetailLogsModel()
+        {
+            return new List<ProductionOrderSeparationDetailLogsModel>
+            {
+                // GetFailedProductionOrders test
+                new ProductionOrderSeparationDetailLogsModel
+                {
+                    Id = "fe6e0eea-c279-4a07-b0fb-923dce1b5e31",
+                    ParentProductionOrderId = 123,
+                    LastStep = "CancelPostgres",
+                    IsSuccessful = false,
+                    Payload = "{\"FinalizeProductionOrder\":{\"UserId\":\"5c9700ba-92e1-40ae-91ab-d6d833eb03de\",\"ProductionOrderId\":123,\"SourceProcess\":null,\"Batches\":null}}",
+                    CreatedAt = DateTime.Now.AddDays(-1),
+                    LastUpdated = DateTime.Now,
+                },
+                new ProductionOrderSeparationDetailLogsModel
+                {
+                    Id = "b02abfd6-7c31-420d-bcf5-db99aef35a65",
+                    ParentProductionOrderId = 456,
+                    LastStep = "CancelPostgres",
+                    IsSuccessful = false,
+                    Payload = "{\"FinalizeProductionOrder\":{\"UserId\":\"5c9700ba-92e1-40ae-91ab-d6d833eb03de\",\"ProductionOrderId\":456,\"SourceProcess\":null,\"Batches\":null}}",
+                    CreatedAt = DateTime.Now.AddDays(-1),
+                    LastUpdated = DateTime.Now,
+                },
+                new ProductionOrderSeparationDetailLogsModel
+                {
+                    Id = "7773b512-9eb2-495d-abcf-16de3ac616db",
+                    ParentProductionOrderId = 789,
+                    LastStep = "StartCancelParentOrderProcess",
+                    IsSuccessful = false,
+                    Payload = "{\"FinalizeProductionOrder\":{\"UserId\":\"5c9700ba-92e1-40ae-91ab-d6d833eb03de\",\"ProductionOrderId\":789,\"SourceProcess\":null,\"Batches\":null}}",
+                    CreatedAt = DateTime.Now.AddDays(-1),
+                    LastUpdated = DateTime.Now,
+                },
+            };
+        }
+
+        /// <summary>
         /// Gets user Dto.
         /// </summary>
         /// <returns>the user.</returns>

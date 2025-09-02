@@ -786,5 +786,195 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 Assert.That(response.UserError.Equals("La orden de fabricación seleccionada ya tiene un proceso de división en curso. Por favor espera a que finalice antes de intentar dividirla nuevamente."));
             }
         }
+
+        /// <summary>
+        /// GetFailedProductionOrders.
+        /// </summary>
+        /// <returns>Test.</returns>
+        [Test]
+        public async Task GetFailedDivisionOrders()
+        {
+            var mockRedisService = new Mock<IRedisService>();
+
+            var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
+
+            var mockSapAdapter = new Mock<ISapAdapter>();
+
+            var mockSapFile = new Mock<ISapFileService>();
+
+            var mockUsers = new Mock<IUsersService>();
+
+            var mockDao = new Mock<IPedidosDao>();
+            mockDao
+                .Setup(x => x.GetAllFailedDivisionOrders())
+                .Returns(Task.FromResult(this.GetProductionOrderSeparationDetailLogsModel()));
+
+            var mockMediator = new Mock<IMediator>();
+
+            var mockProductionOrdersService = new ProductionOrdersService(
+                mockDao.Object,
+                mockServiceLayerAdapterService.Object,
+                mockRedisService.Object,
+                this.mockKafkaConnector.Object,
+                mockSapAdapter.Object,
+                mockUsers.Object,
+                mockSapFile.Object,
+                this.logger.Object,
+                this.mapper,
+                mockMediator.Object);
+
+            var response = await mockProductionOrdersService.GetFailedDivisionOrders();
+
+            // Assert
+            Assert.That(response.Success, Is.True);
+            Assert.That(response.Code.Equals((int)HttpStatusCode.OK));
+            Assert.That(response.Response, Is.EqualTo(3));
+        }
+
+        /// <summary>
+        /// SeparateOrder.
+        /// </summary>
+        /// <param name="existRedisValue">Exist redis value.</param>
+        /// <returns>Test.</returns>
+        [Test]
+        public async Task RetryFailedProductionOrderDivision()
+        {
+            var mockRedisService = new Mock<IRedisService>();
+            var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
+            var mockSapAdapter = new Mock<ISapAdapter>();
+            var mockSapFile = new Mock<ISapFileService>();
+            var mockUsers = new Mock<IUsersService>();
+            var mockDao = new Mock<IPedidosDao>();
+            var mockMediator = new Mock<IMediator>();
+
+            var payload = new SeparateProductionOrderDto
+            {
+                ProductionOrderId = 227160,
+                Pieces = 1,
+                UserId = "1a663b91-fffa-4298-80c3-aaae35586dc6",
+                DxpOrder = "7ee41bbc-6ee9-4ccd-a3ed-7bf74d8013dc",
+                SapOrder = 176575,
+                TotalPieces = 3,
+            };
+
+            var list = new List<ProductionOrderSeparationDetailLogsDto>
+            {
+                new ProductionOrderSeparationDetailLogsDto
+                {
+                    Id = "eeacc0b4-0837-461c-b0ac-8d00b026069d",
+                    ParentProductionOrderId = 227160,
+                    LastStep = "StartCancelParentOrderProcess",
+                    IsSuccessful = false,
+                    ErrorMessage = "Production Order Not Found",
+                    ChildProductionOrderId = null,
+                    Payload = JsonConvert.SerializeObject(payload),
+                    CreatedAt = DateTime.Now,
+                    LastUpdated = DateTime.Now,
+                },
+            };
+
+            var request = new RetryFailedProductionOrderDivisionDto
+            {
+                BatchProcessId = "12345",
+                ProductionOrderProcessingPayload = list,
+            };
+
+            mockRedisService.Setup(m => m.WriteToRedis(It.IsAny<string>(), It.IsAny<string>()));
+
+            var mockProductionOrdersService = new ProductionOrdersService(
+                mockDao.Object,
+                mockServiceLayerAdapterService.Object,
+                mockRedisService.Object,
+                this.mockKafkaConnector.Object,
+                mockSapAdapter.Object,
+                mockUsers.Object,
+                mockSapFile.Object,
+                this.logger.Object,
+                this.mapper,
+                mockMediator.Object);
+
+            var response = await mockProductionOrdersService.RetryFailedProductionOrderDivision(request);
+
+            // Assert
+            Assert.That(response.Success, Is.True);
+            Assert.That(response.Code.Equals((int)HttpStatusCode.OK));
+            Assert.That(response.Response, Is.Null);
+            Assert.That(response.Comments, Is.Null);
+            Assert.That(response.ExceptionMessage, Is.Null);
+            Assert.That(response.UserError, Is.Null);
+        }
+
+        /// <summary>
+        /// SeparateOrder.
+        /// </summary>
+        /// <param name="existRedisValue">Exist redis value.</param>
+        /// <returns>Test.</returns>
+        [Test]
+        public async Task RetryFailedProductionOrderDivisionWithError()
+        {
+            var mockRedisService = new Mock<IRedisService>();
+            var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
+            var mockSapAdapter = new Mock<ISapAdapter>();
+            var mockSapFile = new Mock<ISapFileService>();
+            var mockUsers = new Mock<IUsersService>();
+            var mockDao = new Mock<IPedidosDao>();
+            var mockMediator = new Mock<IMediator>();
+
+            var payload = new SeparateProductionOrderDto
+            {
+                ProductionOrderId = 227160,
+                Pieces = 1,
+                UserId = "1a663b91-fffa-4298-80c3-aaae35586dc6",
+                DxpOrder = "7ee41bbc-6ee9-4ccd-a3ed-7bf74d8013dc",
+                SapOrder = 176575,
+                TotalPieces = 3,
+            };
+
+            var list = new List<ProductionOrderSeparationDetailLogsDto>
+            {
+                new ProductionOrderSeparationDetailLogsDto
+                {
+                    Id = "eeacc0b4-0837-461c-b0ac-8d00b026069d",
+                    ParentProductionOrderId = 227160,
+                    LastStep = "error",
+                    IsSuccessful = false,
+                    ErrorMessage = "Production Order Not Found",
+                    ChildProductionOrderId = null,
+                    Payload = JsonConvert.SerializeObject(payload),
+                    CreatedAt = DateTime.Now,
+                    LastUpdated = DateTime.Now,
+                },
+            };
+
+            var request = new RetryFailedProductionOrderDivisionDto
+            {
+                BatchProcessId = "12345",
+                ProductionOrderProcessingPayload = list,
+            };
+
+            mockRedisService.Setup(m => m.WriteToRedis(It.IsAny<string>(), It.IsAny<string>()));
+
+            var mockProductionOrdersService = new ProductionOrdersService(
+                mockDao.Object,
+                mockServiceLayerAdapterService.Object,
+                mockRedisService.Object,
+                this.mockKafkaConnector.Object,
+                mockSapAdapter.Object,
+                mockUsers.Object,
+                mockSapFile.Object,
+                this.logger.Object,
+                this.mapper,
+                mockMediator.Object);
+
+            var response = await mockProductionOrdersService.RetryFailedProductionOrderDivision(request);
+
+            // Assert
+            Assert.That(response.Success, Is.True);
+            Assert.That(response.Code.Equals((int)HttpStatusCode.OK));
+            Assert.That(response.Response, Is.Null);
+            Assert.That(response.Comments, Is.Null);
+            Assert.That(response.ExceptionMessage, Is.Null);
+            Assert.That(response.UserError, Is.Null);
+        }
     }
 }

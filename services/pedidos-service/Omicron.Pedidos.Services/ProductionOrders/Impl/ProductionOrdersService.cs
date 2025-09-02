@@ -324,8 +324,6 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
         {
             var logBase = string.Format(LogsConstants.RetryFailedDivisionOrder, payloadRetry.BatchProcessId);
 
-            await this.InsertOnRedisKeysToDivisionOrdersToRetry(payloadRetry.ProductionOrderProcessingPayload);
-
             foreach (var item in payloadRetry.ProductionOrderProcessingPayload.OrderBy(x => x.LastUpdated))
             {
                 var model = this.mapper.Map<ProductionOrderSeparationDetailLogsModel>(item);
@@ -438,7 +436,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
         private async Task RetryFailedProductionOrderDivisionProcess(ProductionOrderSeparationDetailLogsModel payload, string logBase)
         {
             var redisKey = string.Format(ServiceConstants.ProductionOrderSeparationProcessKey, payload.ParentProductionOrderId);
-            await this.redisService.WriteToRedis(redisKey, JsonConvert.SerializeObject(payload), new TimeSpan(12, 0, 0));
+            await this.redisService.WriteToRedis(redisKey, JsonConvert.SerializeObject(payload));
 
             try
             {
@@ -494,7 +492,6 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
 
                     default:
                         this.logger.Error(LogsConstants.StepNotRecognized, logBase, payload.Id, payload.ParentProductionOrderId, last);
-                        await this.redisService.DeleteKey(redisKey);
                         break;
                 }
             }
@@ -835,18 +832,6 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             var salesOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { salesOrdersId })).Where(x => x.Status != ServiceConstants.Cancelled).ToList();
 
             return (salesOrders, productionOrder);
-        }
-
-        private async Task InsertOnRedisKeysToDivisionOrdersToRetry(List<ProductionOrderSeparationDetailLogsDto> divisionOrders)
-        {
-            foreach (var po in divisionOrders)
-            {
-                var redisKey = string.Format(ServiceConstants.ProductionOrderSeparationProcessKey, po.ParentProductionOrderId);
-                await this.redisService.WriteToRedis(
-                    redisKey,
-                    JsonConvert.SerializeObject(po),
-                    ServiceConstants.DefaultRedisValueTimeToLive);
-            }
         }
     }
 }
