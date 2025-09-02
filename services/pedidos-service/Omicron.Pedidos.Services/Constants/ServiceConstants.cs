@@ -1276,6 +1276,22 @@ namespace Omicron.Pedidos.Services.Constants
         public static string ProductionOrderSeparationProcessMessage => "La orden de fabricación seleccionada ya tiene un proceso de división en curso. Por favor espera a que finalice antes de intentar dividirla nuevamente.";
 
         /// <summary>
+        /// Gets DivisionOrdersToProcessKey.
+        /// </summary>
+        /// <value>
+        /// DivisionOrdersToProcessKey.
+        /// </value>
+        public static string DivisionOrdersToProcessKey => "DivisionOrders:ToProcess";
+
+        /// <summary>
+        /// Gets DivisionProcessingKey.
+        /// </summary>
+        /// <value>
+        /// DivisionProcessingKey.
+        /// </value>
+        public static string DivisionProcessingKey => "DivisionProcessing:{0}:{1}";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

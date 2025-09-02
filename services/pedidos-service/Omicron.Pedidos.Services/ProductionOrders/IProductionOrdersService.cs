@@ -66,5 +66,18 @@ namespace Omicron.Pedidos.Services.ProductionOrders
         /// <param name="request">SeparateProductionOrderDto.</param>
         /// <returns>Process Result.</returns>
         Task<ResultModel> SeparateOrder(SeparateProductionOrderDto request);
+
+        /// <summary>
+        /// Get Failed Division Production Orders.
+        /// </summary>
+        /// <returns>Failed Division Production Orders.</returns>
+        Task<ResultModel> GetFailedDivisionOrders();
+
+        /// <summary>
+        /// RetryFailedProductionOrderDivision.
+        /// </summary>
+        /// <param name="payloadRetry">RetryFailedProductionOrderDivisionDto.</param>
+        /// <returns>Process Result.</returns>
+        Task<ResultModel> RetryFailedProductionOrderDivision(RetryFailedProductionOrderDivisionDto payloadRetry);
     }
 }

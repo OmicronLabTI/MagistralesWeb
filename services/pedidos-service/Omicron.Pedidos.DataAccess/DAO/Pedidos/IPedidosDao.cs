@@ -576,5 +576,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="parentId">Parent id</param>
         /// <returns>the model</returns>
         Task<ProductionOrderSeparationDetailLogsModel> GetProductionOrderSeparationDetailLogByParentOrderId(int parentId);
+
+        /// <summary>
+        /// GetAllFailedDivisionOrders.
+        /// </summary>
+        /// <param>status.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<IEnumerable<ProductionOrderSeparationDetailLogsModel>> GetAllFailedDivisionOrders();
     }
 }

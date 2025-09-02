@@ -366,6 +366,14 @@ namespace Omicron.Pedidos.Services.Constants
         public static string RetryFailedProductionOrderFinalization => "{0} - Retry Failed Production Order Finalization";
 
         /// <summary>
+        /// Gets RetryFailedDivisionOrder.
+        /// </summary>
+        /// <value>
+        /// RetryFailedDivisionOrder.
+        /// </value>
+        public static string RetryFailedDivisionOrder => "{0} - Retry Failed Production Order Division";
+
+        /// <summary>
         /// Gets UpdateTaskAddedToQueue.
         /// </summary>
         /// <value>
