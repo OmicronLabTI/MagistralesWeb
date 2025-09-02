@@ -342,5 +342,18 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="request"> the request. </param>
         /// <returns> A result containing the matching user production orders. </returns>
         Task<ResultDto> SeparateOrder(SeparateProductionOrderDto request);
+
+        /// <summary>
+        /// Get Failed Divison Production Orders.
+        /// </summary>
+        /// <returns>Failed Division Production Orders.</returns>urns>
+        Task<ResultDto> GetFailedDivisionOrdersWithError();
+
+        /// <summary>
+        /// Retry Failed Production Order Division.
+        /// </summary>
+        /// <param name="payloadRetry">payloadRetry.</param>
+        /// <returns>Process Result.</returns>urns>
+        Task<ResultDto> RetryFailedProductionOrderDivision(RetryFailedProductionOrderDivisionDto payloadRetry);
     }
 }

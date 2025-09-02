@@ -303,6 +303,36 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetFailedDivisionOrders()
+        {
+            var allFailedDivisionOrders = (await this.pedidosDao.GetAllFailedDivisionOrders()).ToList();
+
+            if (allFailedDivisionOrders.Count != 0)
+            {
+                await this.redisService.StoreListAsync(
+                    ServiceConstants.DivisionOrdersToProcessKey,
+                    allFailedDivisionOrders.OrderBy(x => x.LastUpdated),
+                    ServiceConstants.DefaultRedisValueTimeToLive);
+            }
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, allFailedDivisionOrders.Count, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> RetryFailedProductionOrderDivision(RetryFailedProductionOrderDivisionDto payloadRetry)
+        {
+            var logBase = string.Format(LogsConstants.RetryFailedDivisionOrder, payloadRetry.BatchProcessId);
+
+            foreach (var item in payloadRetry.ProductionOrderProcessingPayload.OrderBy(x => x.LastUpdated))
+            {
+                var model = this.mapper.Map<ProductionOrderSeparationDetailLogsModel>(item);
+                await this.RetryFailedProductionOrderDivisionProcess(model, logBase);
+            }
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
+        }
+
         private static ProductionOrderFailedResultModel CreateFinalizedFailedResponse(FinalizeProductionOrderModel orderToFinish, string reason)
         {
             return new ProductionOrderFailedResultModel
@@ -400,6 +430,74 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                 var logBase = string.Format(LogsConstants.FinalizeProductionOrdersAsync, productionOrderProcessing.Id);
                 this.logger.Information(LogsConstants.SendKafkaMessageFinalizeProductionOrderSap, logBase, JsonConvert.SerializeObject(productionOrderProcessing));
                 await this.kafkaConnector.PushMessage(productionOrderProcessing, ServiceConstants.KafkaFinalizeProductionOrderSapConfigName, logBase);
+            }
+        }
+
+        private async Task RetryFailedProductionOrderDivisionProcess(ProductionOrderSeparationDetailLogsModel payload, string logBase)
+        {
+            var redisKey = string.Format(ServiceConstants.ProductionOrderSeparationProcessKey, payload.ParentProductionOrderId);
+            await this.redisService.WriteToRedis(redisKey, JsonConvert.SerializeObject(payload));
+
+            try
+            {
+                var p = new SeparateProductionOrderDto { ProductionOrderId = payload.ParentProductionOrderId };
+                if (!string.IsNullOrWhiteSpace(payload.Payload))
+                {
+                    var orderSeparation = JsonConvert.DeserializeObject<SeparateProductionOrderDto>(payload.Payload);
+                    if (orderSeparation != null)
+                    {
+                        p = orderSeparation;
+
+                        p.ProductionOrderId = p.ProductionOrderId == 0
+                        ? payload.ParentProductionOrderId
+                        : p.ProductionOrderId;
+                    }
+                }
+
+                var last = payload.LastStep?.Trim();
+                switch (last)
+                {
+                    case null:
+                    case ServiceConstants.EmptyValue:
+                    case ServiceConstants.StartStep:
+                    case ServiceConstants.UpdateCancelParentOrderStep:
+                    case ServiceConstants.CancelSapStep:
+                    case ServiceConstants.CancelPostgresStep:
+                        {
+                            var cmd = new CancelProductionOrderCommand(
+                                p.ProductionOrderId, p.Pieces, payload.Id, p.UserId, p.DxpOrder, p.SapOrder, p.TotalPieces)
+                            { LastStep = last };
+
+                            await this.mediator.Send(cmd);
+                            break;
+                        }
+
+                    case ServiceConstants.SaveHistoryStep:
+                    case ServiceConstants.StepCreateChildOrderSap:
+                    case ServiceConstants.StepCreateChildOrderWithComponentsSap:
+                    case ServiceConstants.StepCreateChildOrderPostgres:
+                    case ServiceConstants.StepSaveChildOrderHistory:
+                        {
+                            var cmd = new CreateChildOrdersSapCommand(
+                                p.ProductionOrderId, p.Pieces, payload.Id, p.UserId, p.DxpOrder, p.SapOrder, p.TotalPieces, last);
+
+                            if (payload.ChildProductionOrderId.HasValue)
+                            {
+                                cmd.ProductionOrderChildId = payload.ChildProductionOrderId.Value;
+                            }
+
+                            await this.mediator.Send(cmd);
+                            break;
+                        }
+
+                    default:
+                        this.logger.Error(LogsConstants.StepNotRecognized, logBase, payload.Id, payload.ParentProductionOrderId, last);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                this.logger.Error(ex, $"{logBase} - Error reintentando división - Id={payload.Id}, Parent={payload.ParentProductionOrderId}, Step={payload.LastStep}");
             }
         }
 
