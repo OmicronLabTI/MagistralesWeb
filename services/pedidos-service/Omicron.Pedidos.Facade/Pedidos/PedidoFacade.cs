@@ -386,7 +386,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
         }
 
         /// <inheritdoc/>
-        public async Task<ResultDto> RetryFailedProductionOrderDivision(RetryFailedProductionOrderFinalizationDto payloadRetry)
+        public async Task<ResultDto> RetryFailedProductionOrderDivision(RetryFailedProductionOrderDivisionDto payloadRetry)
         {
             return this.mapper.Map<ResultDto>(await this.productionOrdersService.RetryFailedProductionOrderDivision(payloadRetry));
         }

@@ -656,7 +656,7 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <returns>Process Result.</returns>
         [Route("/retry/division/failed/productionorders")]
         [HttpPost]
-        public async Task<IActionResult> RetryFailedProductionOrderDivision(RetryFailedProductionOrderFinalizationDto payloadRetry)
+        public async Task<IActionResult> RetryFailedProductionOrderDivision(RetryFailedProductionOrderDivisionDto payloadRetry)
         {
             var response = await this.pedidoFacade.RetryFailedProductionOrderDivision(payloadRetry);
             return this.Ok(response);

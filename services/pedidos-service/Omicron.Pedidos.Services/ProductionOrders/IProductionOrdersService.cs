@@ -78,6 +78,6 @@ namespace Omicron.Pedidos.Services.ProductionOrders
         /// </summary>
         /// <param name="payloadRetry">RetryFailedProductionOrderDivisionDto.</param>
         /// <returns>Process Result.</returns>
-        Task<ResultModel> RetryFailedProductionOrderDivision(RetryFailedProductionOrderFinalizationDto payloadRetry);
+        Task<ResultModel> RetryFailedProductionOrderDivision(RetryFailedProductionOrderDivisionDto payloadRetry);
     }
 }
