@@ -121,6 +121,12 @@ namespace Omicron.OrderDivisionProcess.Batch.Handlers.Impl
                 offset,
                 limit);
 
+            if (paginatedList == null || paginatedList.Count == 0)
+            {
+                this.logger.Warning("{LogBase} - Skipping empty batch (offset={Offset}, limit={Limit})", logBase, offset, limit);
+                return;
+            }
+
             this.logger.Information(BatchConstants.StartDivisionOrdersAreSentForRetry, logBase, JsonConvert.SerializeObject(paginatedList));
 
             var requestPedidos = new RetryFailedOrderDivisionModel
