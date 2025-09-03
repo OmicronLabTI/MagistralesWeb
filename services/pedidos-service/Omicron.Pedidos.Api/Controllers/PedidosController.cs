@@ -638,6 +638,31 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// GetFailedDivisionOrdersWithError.
+        /// </summary>
+        /// <returns>Failed Division Orders.</returns>
+        [Route("/failed/divisionorders")]
+        [HttpGet]
+        public async Task<IActionResult> GetDetailOrdersWithError()
+        {
+            var response = await this.pedidoFacade.GetFailedDivisionOrdersWithError();
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// RetryFailedProductionOrderDivision.
+        /// </summary>
+        /// <param name="payloadRetry">payloadRetry.</param>
+        /// <returns>Process Result.</returns>
+        [Route("/retry/division/failed/productionorders")]
+        [HttpPost]
+        public async Task<IActionResult> RetryFailedProductionOrderDivision(RetryFailedProductionOrderDivisionDto payloadRetry)
+        {
+            var response = await this.pedidoFacade.RetryFailedProductionOrderDivision(payloadRetry);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>
