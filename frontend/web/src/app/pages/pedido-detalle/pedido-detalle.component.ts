@@ -188,10 +188,11 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
       && order.ordenFabricacionId === CONST_NUMBER.zero);
   }
 
-  updateAllComplete() {
+  updateAllComplete(event: boolean) {
     this.OrderToGenerateQR = false;
     this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t.isChecked);
     this.OrderToGenerateQR = this.dataSource.data != null && this.dataSource.data.some(t => t.isChecked);
+    this.showOnSplitProcessMessage(event);
     this.getButtonsToUnLooked();
   }
 
@@ -208,7 +209,11 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
       return;
     }
     this.dataSource.data.forEach(t => t.isChecked = completed);
-    this.OrderToGenerateQR = this.dataSource.data != null && this.dataSource.data.some(t => t.isChecked);
+    this.OrderToGenerateQR = this.dataService.calculateAndValueList([
+      this.dataSource.data != null,
+      this.dataSource.data.some(t => t.isChecked)
+    ]);
+    this.showOnSplitProcessMessage(completed);
     this.getButtonsToUnLooked();
   }
 
@@ -238,6 +243,22 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.isThereOrdersDetailToReassign = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.reasingado,
       FromToFilter.fromOrderIsolatedReassign);
   }
+
+  showOnSplitProcessMessage(check: boolean) {
+    const dataChecked = this.dataSource.data.filter(t => t.isChecked);
+    const someOnSplitProcess = dataChecked.some(order => order.onSplitProcess);
+    const showMessage = this.dataService.calculateAndValueList([someOnSplitProcess, check]);
+    if (showMessage) {
+      const orders = this.dataSource.data.filter(order =>
+        this.dataService.calculateAndValueList([
+          order.isChecked,
+          order.onSplitProcess
+        ])).map(t => t.ordenFabricacionId);
+      const mssg = `No es posible modificar el estatus de órdenes en proceso de división: ${orders.join(', ')}.`;
+      this.messagesService.presentToastCustom('', 'error', mssg, false, false);
+    }
+  }
+
   ngOnDestroy() {
     this.subscriptionCallHttpDetail.unsubscribe();
   }

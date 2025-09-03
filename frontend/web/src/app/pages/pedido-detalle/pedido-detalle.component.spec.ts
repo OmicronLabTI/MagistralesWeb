@@ -90,13 +90,18 @@ describe('PedidoDetalleComponent', () => {
       'openNewTapByUrl',
       'getItemOnDataOnlyIds',
       'getFullStringForCarousel',
-      'changeRouterForFormula'
+      'changeRouterForFormula',
+      'calculateAndValueList',
     ]);
     localStorageServiceSpy.getProductNoLabel.and.returnValue(catalogs);
     localStorageServiceSpy.getUserRole.and.returnValue('4');
     localStorageServiceSpy.getFiltersActives.and.returnValue(JSON.stringify(parametrosPedidos));
     localStorageServiceSpy.getCurrentDetailOrder.and.returnValue('');
     dataServiceSpy.getItemOnDataOnlyIds.and.returnValue([]);
+    dataServiceSpy.calculateAndValueList.and.callFake((list: boolean[]) => {
+      const res = list.every((value) => value === true);
+      return res;
+    });
     downloadImagesServiceSpy = jasmine.createSpyObj<DownloadImagesService>('DownloadImagesService', ['downloadImageFromUrl']);
     pedidosServiceSpy.qrByEachOrder.and.callFake(() => {
       return of(UrlsOfQrEachOrderMock);
@@ -210,11 +215,10 @@ describe('PedidoDetalleComponent', () => {
   });
   it('should updateAllComplete', () => {
     component.dataSource.data = DetailOrderMock.response;
-    component.updateAllComplete();
-    // expect(component.allComplete).toBeTruthy();
+    component.updateAllComplete(false);
     component.dataSource.data.forEach(detail => detail.isChecked = true);
     expect(component.OrderToGenerateQR = component.dataSource.data.some(detail => detail.isChecked)).toBeTruthy();
-    component.updateAllComplete();
+    component.updateAllComplete(false);
     expect(component.OrderToGenerateQR = component.dataSource.data.some(detail => detail.isChecked)).toBeTruthy();
     expect(component.allComplete).toBeTruthy();
   });
