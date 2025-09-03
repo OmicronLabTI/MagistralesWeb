@@ -76,7 +76,7 @@ extension InboxViewController: CardCellDelegate {
     }
     
     func orderTypeImage(_ imageView: UIImageView, _ type: String) {
-        let hideIcon = type == OrderRelationTypes.completa || self.title == StatusNameConstants.assignedStatus
+        let hideIcon = type == OrderRelationTypes.completa
         imageView.isHidden = hideIcon
         
         if !hideIcon {
