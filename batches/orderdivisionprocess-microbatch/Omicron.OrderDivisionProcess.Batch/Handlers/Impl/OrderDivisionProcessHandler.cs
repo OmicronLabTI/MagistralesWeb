@@ -132,7 +132,7 @@ namespace Omicron.OrderDivisionProcess.Batch.Handlers.Impl
             var requestPedidos = new RetryFailedOrderDivisionModel
             {
                 BatchProcessId = batchProcessId,
-                DivisionOrdersPayload = paginatedList,
+                ProductionOrderProcessingPayload = paginatedList,
             };
 
             this.SendPedidosRequestInBackgroundAsync(requestPedidos, logBase);
@@ -158,6 +158,13 @@ namespace Omicron.OrderDivisionProcess.Batch.Handlers.Impl
                 catch (Exception ex)
                 {
                     var error = string.Format(BatchConstants.ErrorSendPedidosRequestInBackgroundAsync, logBase, ex.Message, ex.InnerException);
+
+                    this.logger.Error(
+                        ex,
+                        "{LogBase} - Error sending retry batch to Pedidos. Batch={BatchId} Items={Count}",
+                        logBase,
+                        requestPedidos.BatchProcessId,
+                        requestPedidos.ProductionOrderProcessingPayload?.Count ?? 0);
                 }
             });
         }
