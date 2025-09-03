@@ -58,7 +58,7 @@ namespace Omicron.Pedidos.Test.Services
 
             this.kafkaConnector = new Mock<IKafkaConnector>();
             this.kafkaConnector
-                .Setup(m => m.PushMessage(It.IsAny<object>()))
+                .Setup(m => m.PushMessage(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(true));
 
             var serviceLayer = new Mock<ISapServiceLayerAdapterService>();

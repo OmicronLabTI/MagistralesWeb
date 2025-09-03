@@ -515,6 +515,20 @@ namespace Omicron.SapAdapter.Test.Facade
         }
 
         /// <summary>
+        /// Gets the classification data based on the provided parameters.
+        /// </summary>
+        /// <returns> containing the classification data. </returns>
+        [Test]
+        public async Task GetClassificationsByDescription()
+        {
+            // act
+            var response = await this.sapFacade.GetClassificationsByDescription(new List<string>());
+
+            // assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
         /// Gets the possible active orders for the dxp project.
         /// </summary>
         /// <returns> The detail of the available warehouses. </returns>
@@ -523,6 +537,20 @@ namespace Omicron.SapAdapter.Test.Facade
         {
             // act
             var response = await this.sapFacade.GetUnitProducts(new List<string>());
+
+            // assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
+        /// Gets the possible active orders for the dxp project.
+        /// </summary>
+        /// <returns> The detail of the available warehouses. </returns>
+        [Test]
+        public async Task GetProductFirmName()
+        {
+            // act
+            var response = await this.sapFacade.GetProductFirmName(string.Empty);
 
             // assert
             this.AssertResponse(response);

@@ -106,12 +106,13 @@ namespace Omicron.SapServiceLayerAdapter.Test
             new BaseBatchProductionOrderDto(),
             new BaseCreateProductionOrderLineDto(),
             new UpdateProductionOrderDto(),
+            new ValidationsToFinalizeProductionOrdersResultDto(),
         };
 
         /// <summary>
         /// The fixture.
         /// </summary>
-        private readonly Fixture fixture = new ();
+        private readonly Fixture fixture = new Fixture();
 
         /// <summary>
         /// Validate instance for type.

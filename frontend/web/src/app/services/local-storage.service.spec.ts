@@ -4,6 +4,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Catalogs } from '../model/http/pedidos';
 
 import { LocalStorageService } from './local-storage.service';
+import { ClasificationColorList } from 'src/mocks/userListMock';
 
 describe('LocalStorageService', () => {
   const catalogs = new Catalogs();
@@ -116,5 +117,20 @@ describe('LocalStorageService', () => {
     const service: LocalStorageService = TestBed.get(LocalStorageService);
     service.removeOrderIsolated();
     expect(service.removeOrderIsolated).toBeTruthy();
+  });
+  it('should getUserClasification', () => {
+    const service: LocalStorageService = TestBed.get(LocalStorageService);
+    service.setUserClasification('MN');
+    expect(service.getUserClasification).toBeTruthy('MN');
+  });
+  it('should getClasificationList', () => {
+    const service: LocalStorageService = TestBed.get(LocalStorageService);
+    service.setClasificationList(ClasificationColorList);
+    expect(service.getClasificationList).toBeTruthy();
+  });
+  it('should getClasificationColors', () => {
+    const service: LocalStorageService = TestBed.get(LocalStorageService);
+    service.setClasificationColors(ClasificationColorList);
+    expect(service.getClasificationColors).toBeTruthy();
   });
 });

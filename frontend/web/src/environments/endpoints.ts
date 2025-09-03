@@ -14,6 +14,7 @@ export const Endpoints = {
     qfbs: `${environment.baseUrl}/api/usuarios/role`,
     qfbsWithOrders: `${environment.baseUrl}/api/usuarios/qfb/countOrders`,
     getClasifications: `${environment.baseUrl}/api/catalogos/getclassificationqfb`,
+    getColors: `${environment.baseUrl}/api/catalogos/getallclassificationqfb`,
     getTechnical: `${environment.baseUrl}/api/usuarios/getUsers/tecnics`,
     workTeam: `${environment.baseUrl}/api/usuarios/getUsers/inforelation`
   },
@@ -43,6 +44,7 @@ export const Endpoints = {
     rangeDateInit:
     `${environment.baseUrl}/api/catalogos/params/contains/field?MagistralesDaysToLook=MagistralesDaysToLook&ProductNoLabel=ProductNoLabel`,
     refuseOrdersService: `${environment.baseUrl}/api/pedidos/salesOrder/reject`,
+    productWarehouses: `${environment.baseUrl}/api/catalogos/product/warehouses`
   },
   inventoryBatches: {
     getInventoryBatches: `${environment.baseUrl}/api/sapadapter/componentes/lotes/`,

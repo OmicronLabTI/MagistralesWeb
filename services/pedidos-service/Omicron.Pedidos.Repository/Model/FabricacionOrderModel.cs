@@ -88,5 +88,11 @@ namespace Omicron.Pedidos.Entities.Model
         /// <value>
         /// Bool IsOmigenomics.
         public bool IsOmigenomics { get; set; }
+
+        /// <summary>
+        /// Gets or sets measurement of unit.
+        /// </summary>
+        /// <value>The measurement of unit.</value>
+        public string OrderType { get; set; }
     }
 }

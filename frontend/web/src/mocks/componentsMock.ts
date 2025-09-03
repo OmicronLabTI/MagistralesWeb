@@ -20,7 +20,8 @@ export const ComponentSearchMock = {
             pendingQuantity: 0,
             stock: 0.000000,
             warehouseQuantity: 0.000000,
-            hasBatches: false
+            hasBatches: false,
+            availableWarehouses: []
         },
         {
             orderFabId: 0,
@@ -35,7 +36,8 @@ export const ComponentSearchMock = {
             pendingQuantity: 0,
             stock: 0.000000,
             warehouseQuantity: 0.000000,
-            hasBatches: false
+            hasBatches: false,
+            availableWarehouses: []
         },
         {
             orderFabId: 0,
@@ -50,7 +52,8 @@ export const ComponentSearchMock = {
             pendingQuantity: 0,
             stock: 0.000000,
             warehouseQuantity: 0.000000,
-            hasBatches: false
+            hasBatches: false,
+            availableWarehouses: []
         }
     ]
 };

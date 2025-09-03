@@ -86,6 +86,8 @@ class LotsViewController: LotsBaseViewController, ChangeInputValueDelegate {
             .observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] item in
             self?.lotsViewModel.updateInfoSelectedBatch(lot: item)
         }).disposed(by: self.disposeBag)
+        // Detecta el item de la tabla linea de documentos que fué seleccionado
+        self.lineDocTable.rx.itemSelected.bind(to: lotsViewModel.indexProductSelected).disposed(by: disposeBag)
         // Detecta que item de la tabla lotes disponibles fue selecionado
         Observable.combineLatest(self.lotsAvailablesTable.rx.itemSelected,
                                  self.lastResponder, resultSelector: { [weak self] index, responder in
@@ -105,8 +107,6 @@ class LotsViewController: LotsBaseViewController, ChangeInputValueDelegate {
             .observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] item in
             self?.lotsViewModel.itemLotSelected = item
         }).disposed(by: self.disposeBag)
-        // Detecta el item de la tabla linea de documentos que fué seleccionado
-        self.lineDocTable.rx.itemSelected.bind(to: lotsViewModel.indexProductSelected).disposed(by: disposeBag)
         // Muestra u oculta el loading
         self.lotsViewModel.loading.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
             if showLoading {
@@ -147,6 +147,7 @@ class LotsViewController: LotsBaseViewController, ChangeInputValueDelegate {
         }).disposed(by: self.disposeBag)
         // Muestra el componente de firma
         self.lotsViewModel.showSignatureView.subscribe(onNext: { [weak self] titleView in
+            guard let self = self else { return }
             let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
             let signatureVC = storyboard.instantiateViewController(
                 identifier: ViewControllerIdentifiers.signaturePadViewController) as? SignaturePadViewController
@@ -154,7 +155,8 @@ class LotsViewController: LotsBaseViewController, ChangeInputValueDelegate {
             signatureVC?.originView = ViewControllerIdentifiers.lotsViewController
             signatureVC?.modalPresentationStyle = .overCurrentContext
             signatureVC?.modalTransitionStyle = .crossDissolve
-            self?.present(signatureVC!, animated: true, completion: nil)
+            signatureVC?.signaturePadViewModel.lotsViewModel = self.lotsViewModel
+            self.present(signatureVC!, animated: true, completion: nil)
         }).disposed(by: self.disposeBag)
         self.initObs()
     }

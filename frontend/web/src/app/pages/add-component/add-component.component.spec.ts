@@ -19,7 +19,8 @@ import { DetalleFormulaMock } from 'src/mocks/pedidosListMock';
 import { IFormulaDetalleReq, IFormulaReq } from 'src/app/model/http/detalleformula';
 import {
   mockIFormulaDetalleReq, lotesComponentMock, mockIFormulaReqResponse,
-  ILotesFormulaReqMock, dataSourceComponentsMock
+  ILotesFormulaReqMock, dataSourceComponentsMock,
+  lotesAsignadosReqMock
 } from 'src/mocks/componentsLotesMock';
 
 describe('AddComponentComponent', () => {
@@ -57,12 +58,14 @@ describe('AddComponentComponent', () => {
       'setGeneralNotificationMessage',
       'setUrlActive',
       'setPathUrl',
-      'setIsLoading'
+      'setIsLoading',
+      'setMessageGeneralCallHttp'
     ]);
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
       'calculateTernary',
       'calculateOrValueList',
-      'setIsToSaveAnything'
+      'setIsToSaveAnything',
+      'validateValidString'
     ]);
     batchesServiceSpy = jasmine.createSpyObj<BatchesService>('BatchesService', [
       'getInventoryBatches',
@@ -86,6 +89,10 @@ describe('AddComponentComponent', () => {
     dataServiceSpy.calculateOrValueList.and.callFake((list: boolean[]) => {
       const res = list.some((value) => value === true);
       return res;
+    });
+    dataServiceSpy.validateValidString.and.callFake((text: string) => {
+      const res = [text !== '', text !== undefined, text !== null];
+      return res.every( item => item);
     });
     batchesServiceSpy.getInventoryBatches.and.callFake(() => {
       return of(iLotesFormulaRes);
@@ -154,8 +161,9 @@ describe('AddComponentComponent', () => {
     expect(component.isReadyToSave).toBe(true);
   });
   it('should call deleteLotes', () => {
+    const lotes = lotesAsignadosReqMock;
     component.dataSourceComponents.data = dataSourceComponentsMock;
-    component.deleteLotes(dataSourceComponentsMock[0].lotesAsignados[0]);
+    component.deleteLotes(lotes);
     expect(component.isReadyToSave).toBe(true);
   });
   it('should call buildObjectToSap', () => {

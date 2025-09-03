@@ -11,16 +11,18 @@ namespace Omicron.Pedidos.Services.Utils
     using System;
     using System.Collections.Generic;
     using System.Globalization;
-    using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
+    using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Enums;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Services.Constants;
+    using Omicron.Pedidos.Services.Redis;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.User;
+    using Serilog;
 
     /// <summary>
     /// the class for utils.
@@ -296,7 +298,7 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="sapAdapter">the sapAdapter.</param>
         /// <param name="salesOrdersId">the "Pedido" id.</param>
         /// <returns>the data.</returns>
-        public static async Task<List<OrderWithDetailModel>> GetOrdersWithFabOrders(ISapAdapter sapAdapter, List<int> salesOrdersId)
+        public static async Task<List<OrderWithDetailModel>> GetOrdersDetailsForMagistral(ISapAdapter sapAdapter, List<int> salesOrdersId)
         {
             var sapResponse = await sapAdapter.PostSapAdapter(salesOrdersId, ServiceConstants.GetOrderWithDetail);
             return JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(sapResponse.Response));
@@ -312,18 +314,6 @@ namespace Omicron.Pedidos.Services.Utils
         {
             var sapResults = await GetSalesOrdersFromSapBySaleId(new List<int> { int.Parse(salesOrder.Salesorderid) }, sapAdapter);
             return sapResults.PreProductionOrders;
-        }
-
-        /// <summary>
-        /// check if the folder exist and created is if not.
-        /// </summary>
-        /// <param name="salesOrderId">Sales order id.</param>
-        /// <param name="sapAdapter">The sap adapter.</param>
-        /// <returns>Sales order.</returns>
-        public static async Task<List<OrderWithDetailModel>> GetSalesOrdersFromSap(List<int> salesOrderId, ISapAdapter sapAdapter)
-        {
-            var orders = await sapAdapter.PostSapAdapter(salesOrderId, ServiceConstants.GetOrderWithDetail);
-            return JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
         }
 
         /// <summary>
@@ -365,8 +355,7 @@ namespace Omicron.Pedidos.Services.Utils
         /// <returns>Sales order.</returns>
         public static async Task<(List<OrderWithDetailModel> SapOrder, List<CompleteDetailOrderModel> ProductionOrders, List<CompleteDetailOrderModel> PreProductionOrders)> GetSalesOrdersFromSapBySaleId(List<int> salesOrderId, ISapAdapter sapAdapter)
         {
-            var orders = await sapAdapter.PostSapAdapter(salesOrderId, ServiceConstants.GetOrderWithDetail);
-            var sapOrders = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
+            var sapOrders = await GetOrdersDetailsForMagistral(sapAdapter, salesOrderId);
             var preProductionOrders = new List<CompleteDetailOrderModel>();
             var productionOrders = new List<CompleteDetailOrderModel>();
 
@@ -400,6 +389,58 @@ namespace Omicron.Pedidos.Services.Utils
         {
             var resultUsers = await userService.PostSimpleUsers(qfbIds, ServiceConstants.GetQfbInfoById);
             return JsonConvert.DeserializeObject<List<QfbTecnicInfoDto>>(JsonConvert.SerializeObject(resultUsers.Response));
+        }
+
+        /// <summary>
+        /// Calculates the "or´s" conditions.
+        /// </summary>
+        /// <param name="productionOrders">list of FinalizeProductionOrderModel.</param>
+        /// <param name="failed">list of failed.</param>
+        /// <param name="pedidosDao">value to save on redis.</param>
+        /// <param name="redisService">redis service.</param>
+        /// <param name="logger">log service.</param>
+        /// <returns>the data.</returns>
+        public static async Task<List<FinalizeProductionOrderModel>> IsProductionOrderBeingProcessed(List<FinalizeProductionOrderModel> productionOrders, List<ProductionOrderFailedResultModel> failed, IPedidosDao pedidosDao, IRedisService redisService, ILogger logger)
+        {
+            var productionOrdersBd = await pedidosDao.GetProductionOrderProcessingStatusByProductionOrderIds(productionOrders.Select(x => x.ProductionOrderId));
+            var validProductionOrders = new List<FinalizeProductionOrderModel>();
+
+            foreach (var productionOrder in productionOrders)
+            {
+                var redisKey = string.Format(ServiceConstants.ProductionOrderFinalizingKey, productionOrder.ProductionOrderId);
+                var productionOrderInBD = productionOrdersBd.FirstOrDefault(x => x.ProductionOrderId == productionOrder.ProductionOrderId);
+                var existingValue = await redisService.GetRedisKey(redisKey);
+                var existsInRedis = !string.IsNullOrEmpty(existingValue);
+
+                if (!existsInRedis)
+                {
+                    await redisService.WriteToRedis(redisKey, JsonConvert.SerializeObject(productionOrder), new TimeSpan(12, 0, 0));
+                }
+
+                var productionOrderExistsInDatabase = productionOrderInBD != null;
+                var isProductionOrderFinalizing = ServiceShared.CalculateOr(existsInRedis, productionOrderExistsInDatabase);
+
+                if (!isProductionOrderFinalizing)
+                {
+                    validProductionOrders.Add(productionOrder);
+                    continue;
+                }
+
+                logger.Error(LogsConstants.ProductionOrderIsAlreadyBeignProcessed, productionOrderInBD.Id, productionOrder.ProductionOrderId);
+                failed.Add(CreateFinalizedFailedResponse(productionOrder, ServiceConstants.ProductionOrderIsAlreadyBeignProcessed));
+            }
+
+            return validProductionOrders;
+        }
+
+        /// <summary>
+        /// Calculates the "or´s" conditions.
+        /// </summary>
+        /// <param name="list">list of bools to evaluate.</param>
+        /// <returns>the data.</returns>
+        public static bool CalculateOr(params bool[] list)
+        {
+            return list.Any(element => element);
         }
 
         /// <summary>
@@ -495,6 +536,16 @@ namespace Omicron.Pedidos.Services.Utils
 
             orders.Orders = ordersDetail.OrderByDescending(x => x.AreBatchesComplete).ThenBy(y => y.ProductionOrderId).ToList();
             result.Status.Add(orders);
+        }
+
+        private static ProductionOrderFailedResultModel CreateFinalizedFailedResponse(FinalizeProductionOrderModel orderToFinish, string reason)
+        {
+            return new ProductionOrderFailedResultModel
+            {
+                OrderId = orderToFinish.ProductionOrderId,
+                UserId = orderToFinish.UserId,
+                Reason = reason,
+            };
         }
     }
 }

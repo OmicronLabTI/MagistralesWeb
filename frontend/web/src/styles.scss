@@ -475,6 +475,7 @@ input[type="number"] {
 /* width */
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
 /* Track */
@@ -516,7 +517,7 @@ table .mat-form-field-wrapper {
 }
 
 .mat-form-field-appearance-outline .mat-form-field-outline-thick {
-  color: rgba(0, 129, 194, 1) !important;;
+  color: rgba(0, 129, 194, 1);
 }
 
 .mat-input-element {

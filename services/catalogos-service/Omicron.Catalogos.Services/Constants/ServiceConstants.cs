@@ -34,14 +34,34 @@ namespace Omicron.Catalogos.Services.Constants
         public const string WarehousesFileUrl = "WarehousesFileUrl";
 
         /// <summary>
+        /// the container file.
+        /// </summary>
+        public const string ManufacturersFileUrl = "ManufacturersFileUrl";
+
+        /// <summary>
         /// Is active.
         /// </summary>
         public const string IsActive = "activo";
 
         /// <summary>
+        /// Is active excel.
+        /// </summary>
+        public const string IsActiveProduct = "1";
+
+        /// <summary>
+        /// Is magistrales.
+        /// </summary>
+        public const string Magistrales = "MAG";
+
+        /// <summary>
         /// Constant for Limit.
         /// </summary>
         public const string Warehouses = "warehouses";
+
+        /// <summary>
+        /// Constant for Limit.
+        /// </summary>
+        public const string PostProductInfo = "product/firmname";
 
         /// <summary>
         /// NoMatching.
@@ -61,12 +81,57 @@ namespace Omicron.Catalogos.Services.Constants
         /// <summary>
         /// AzureAdEnvDataKey.
         /// </summary>
+        public const string WarehousesData = "get/configwarehouses";
+
+        /// <summary>
+        /// AzureAdEnvDataKey.
+        /// </summary>
         public const string Products = "products";
 
         /// <summary>
         /// Error request.
         /// </summary>
         public const string ErrorRequest = "Catalogos - Error peticion catalogs dxp service";
+
+        /// <summary>
+        /// the container file.
+        /// </summary>
+        public const string GetClassificationsByDescription = "classifications";
+
+        /// <summary>
+        /// the container file.
+        /// </summary>
+        public const string HexColor = @"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$";
+
+        /// <summary>
+        /// the container file.
+        /// </summary>
+        public const string ConfigRoutesRedisKey = "configroute-valids";
+
+        /// <summary>
+        /// NoMatching.
+        /// </summary>
+        public const string InvalidsSortingRoutes = "Los siguientes productos o clasificaciones {0} tienen una configuración incorrecta: no están registrados en SAP, presentan duplicidad en su registro o son inexistentes.";
+
+        /// <summary>
+        /// NoMatching.
+        /// </summary>
+        public const string DefaultColor = "#FBC115";
+
+        /// <summary>
+        /// the container file.
+        /// </summary>
+        public const string ProductTypeColorsFileUrl = "ProductTypeColorsFileUrl";
+
+        /// <summary>
+        /// the container file.
+        /// </summary>
+        public const string ProductTypeColors = "ProductTypeColors";
+
+        /// <summary>
+        /// the container file.
+        /// </summary>
+        public const string ConfigWarehouses = "ConfigWarehouses";
 
         /// <summary>
         /// Gets the order.
@@ -78,6 +143,18 @@ namespace Omicron.Catalogos.Services.Constants
         {
             "MX",
             "MQ",
+        };
+
+        /// <summary>
+        /// Gets the order.
+        /// </summary>
+        /// <value>
+        /// the order.
+        /// </value>
+        public static List<string> Routes { get; } = new List<string>
+        {
+            "MAG",
+            "ALM",
         };
     }
 }

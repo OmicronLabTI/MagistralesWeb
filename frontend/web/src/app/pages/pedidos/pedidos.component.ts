@@ -3,12 +3,14 @@ import { MatTableDataSource } from '@angular/material';
 import { PedidosService } from '../../services/pedidos.service';
 import { DataService } from '../../services/data.service';
 import {
+  ClasificationMUConstant,
   ClassCssOrderType,
   ClassNames,
   CONST_NUMBER,
   CONST_STRING,
   ConstOrders,
   ConstStatus,
+  defaultClasificationColor,
   FromToFilter,
   HttpServiceTOCall,
   HttpStatus,
@@ -40,6 +42,7 @@ import { ObservableService } from '../../services/observable.service';
 import { DateService } from '../../services/date.service';
 import { MessagesService } from 'src/app/services/messages.service';
 import { FiltersService } from '../../services/filters.service';
+import { Clasification } from 'src/app/model/http/users';
 
 @Component({
   selector: 'app-pedidos',
@@ -57,6 +60,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   lengthPaginator = CONST_NUMBER.zero;
   offset = CONST_NUMBER.zero;
   limit = CONST_NUMBER.ten;
+  userClasification = CONST_STRING.empty;
   queryString = CONST_STRING.empty;
   fullQueryString = CONST_STRING.empty;
   isDateInit = true;
@@ -73,6 +77,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   isThereOrdersToRequest = false;
   isOnInit = true;
   isTherePedidosToViewPdf = false;
+  clasificationList: Clasification[] = [];
   constructor(
     private pedidosService: PedidosService,
     public dataService: DataService,
@@ -91,6 +96,8 @@ export class PedidosComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.titleService.setTitle('OmicronLab - Pedidos');
     this.dataSource.paginator = this.paginator;
+    this.userClasification = this.localStorageService.getUserClasification();
+    this.clasificationList = [...this.localStorageService.getClasificationColors()];
     if (this.localStorageService.getFiltersActives()) {
       this.onSuccessSearchOrderModal(this.localStorageService.getFiltersActivesAsModel());
     } else {
@@ -167,6 +174,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
               break;
           }
           element.classClasification = this.getClassClasification(element.orderType);
+          element.color = this.getClasificationColor(element.orderType);
         });
         this.isTherePedidosToViewPdf = false;
         this.isCheckedOrders = false;
@@ -184,6 +192,12 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.dataSource.data = [];
       }
     );
+  }
+
+  getClasificationColor(clasification: string): string {
+    const color = this.clasificationList.find(clas => clas.value === clasification) !== undefined
+      ? this.clasificationList.find(clas => clas.value === clasification).color : defaultClasificationColor;
+    return clasification !== ClasificationMUConstant.value ? color : ClasificationMUConstant.color;
   }
 
   updateAllComplete() {
@@ -272,7 +286,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
 
   }
   getFullQueryString() {
-    this.fullQueryString = `${this.queryString}&offset=${this.offset}&limit=${this.limit}`;
+    this.fullQueryString = `${this.queryString}&offset=${this.offset}&limit=${this.limit}&classifications=${this.userClasification}`;
   }
 
   ngOnDestroy() {

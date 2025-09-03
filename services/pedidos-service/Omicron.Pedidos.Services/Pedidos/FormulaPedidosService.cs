@@ -12,7 +12,6 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore.Internal;
     using Newtonsoft.Json;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Dtos.Models;
@@ -147,7 +146,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var customLists = await this.pedidosDao.GetCustomComponentListByProductAndName(productId, name);
             if (customLists.Any())
             {
-               return customLists.FirstOrDefault();
+                return customLists.FirstOrDefault();
             }
 
             return new CustomComponentListModel

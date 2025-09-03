@@ -178,7 +178,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var userError = listErrorId.Any() ? ServiceConstants.ErroAlAsignar : null;
 
             await this.pedidosDao.UpdateUserOrders(userOrdersToUpdate);
-            _ = this.kafkaConnector.PushMessage(listOrderLogToInsert);
+            _ = this.kafkaConnector.PushMessage(listOrderLogToInsert, ServiceConstants.KafkaInsertLogsConfigName);
 
             if (userSaleOrder.Item2.Any())
             {
@@ -251,7 +251,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             if (orders.Any())
             {
                 await this.pedidosDao.UpdateUserOrders(orders);
-                _ = this.kafkaConnector.PushMessage(listOrderLogToInsert);
+                _ = this.kafkaConnector.PushMessage(listOrderLogToInsert, ServiceConstants.KafkaInsertLogsConfigName);
             }
 
             return ServiceUtils.CreateResult(true, 200, null, null, null);
@@ -271,7 +271,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var userOrdersBySale = (await this.pedidosDao.GetUserOrderBySaleOrder(listSales)).ToList();
 
             var listSalesNumber = listSales.Where(y => !string.IsNullOrEmpty(y)).Select(x => int.Parse(x)).ToList();
-            var sapOrders = ServiceShared.CalculateTernary(listSalesNumber.Any(), await ServiceUtils.GetOrdersWithFabOrders(this.sapAdapter, listSalesNumber), new List<OrderWithDetailModel>());
+            var sapOrders = ServiceShared.CalculateTernary(listSalesNumber.Any(), await ServiceUtils.GetOrdersDetailsForMagistral(this.sapAdapter, listSalesNumber), new List<OrderWithDetailModel>());
 
             var getUpdateUserOrderModel = AsignarLogic.GetUpdateUserOrderModel(orders, userOrdersBySale, sapOrders, assignModel.UserId, ServiceConstants.Reasignado, assignModel.UserLogistic, false, qfbInfoValidated);
             var ordersToUpdate = getUpdateUserOrderModel.Item1;
@@ -279,7 +279,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             await this.pedidosDao.UpdateUserOrders(ordersToUpdate);
             await this.UpdateOrderSignedByReassignment(orders.Select(x => x.Id).Distinct().ToList());
-            _ = this.kafkaConnector.PushMessage(listOrderLogToInsert);
+            _ = this.kafkaConnector.PushMessage(listOrderLogToInsert, ServiceConstants.KafkaInsertLogsConfigName);
             return ServiceUtils.CreateResult(true, 200, null, null, null);
         }
 

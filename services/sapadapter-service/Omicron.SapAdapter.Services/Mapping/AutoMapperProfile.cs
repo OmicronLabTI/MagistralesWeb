@@ -30,6 +30,7 @@ namespace Omicron.SapAdapter.Services.Mapping
             this.CreateMap<GetOrderFabDto, GetOrderFabModel>();
             this.CreateMap<InvoicePackageSapLookDto, InvoicePackageSapLookModel>();
             this.CreateMap<UserOrderDto, UserOrderModel>();
+            this.CreateMap<ConfigWareshousesDto, ConfigWareshousesModel>();
         }
     }
 }

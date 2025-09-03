@@ -58,3 +58,7 @@ struct LotsByProductRequest: Encodable {
     var itemcode: String
     var warehouse: String
 }
+
+struct WarehouseByProductRequest: Encodable {
+    var itemCode: String
+}

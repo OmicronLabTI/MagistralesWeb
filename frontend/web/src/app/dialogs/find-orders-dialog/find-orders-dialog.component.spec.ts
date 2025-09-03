@@ -11,13 +11,14 @@ import { ConstOrders, MODAL_FIND_ORDERS } from '../../constants/const';
 import { UsersService } from '../../services/users.service';
 import { PedidosService } from '../../services/pedidos.service';
 import { of, throwError } from 'rxjs';
-import { UserListMock } from '../../../mocks/userListMock';
+import { ClasificationColorList, UserListMock } from '../../../mocks/userListMock';
 import { RolesMock } from '../../../mocks/rolesMock';
 import { QfbWithNumberMock } from '../../../mocks/qfbWithNumberMock';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ErrorService } from '../../services/error.service';
 import { ParamsPedidos } from 'src/app/model/http/pedidos';
 import { DataService } from 'src/app/services/data.service';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
 
 describe('FindOrdersDialogComponent', () => {
   let component: FindOrdersDialogComponent;
@@ -26,6 +27,7 @@ describe('FindOrdersDialogComponent', () => {
   let ordersServiceSpy;
   let errorServiceSpy;
   let dataServiceSpy: jasmine.SpyObj<DataService>;
+  let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
   const filterData = {
     modalType: ConstOrders.modalOrders,
     filterOrdersData: {
@@ -64,6 +66,12 @@ describe('FindOrdersDialogComponent', () => {
       'calculateAndValueList',
       'calculateOrValueList']);
 
+    localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
+      'getUserClasification',
+      'getUserRole',
+      'getClasificationList'
+    ]);
+
     dataServiceSpy.calculateAndValueList.and.callFake((list: boolean[]) => {
       const res = list.every((value) => value === true);
       return res;
@@ -90,6 +98,9 @@ describe('FindOrdersDialogComponent', () => {
     dataServiceSpy.calculateTernary.and.callFake(<T, U>(validation: boolean, firstValue: T, secondaValue: U): T | U => {
       return validation ? firstValue : secondaValue;
     });
+    localStorageServiceSpy.getUserClasification.and.returnValue('MN,MG');
+    localStorageServiceSpy.getUserRole.and.returnValue('3');
+    localStorageServiceSpy.getClasificationList.and.returnValue(ClasificationColorList);
     TestBed.configureTestingModule({
       imports: [
         BrowserAnimationsModule,
@@ -107,6 +118,7 @@ describe('FindOrdersDialogComponent', () => {
         { provide: PedidosService, useValue: ordersServiceSpy },
         { provide: UsersService, useValue: userServiceSpy },
         { provide: DataService, useValue: dataServiceSpy },
+        { provide: LocalStorageService, useValue: localStorageServiceSpy },
         DatePipe,
       ]
     })

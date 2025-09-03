@@ -165,4 +165,8 @@ describe('PedidosService', () => {
       const service: PedidosService = TestBed.get(PedidosService);
       expect(service.getInitRangeDate() instanceof Observable).toBeTruthy();
   });
+  it('should getProductWarehouses', () => {
+      const service: PedidosService = TestBed.get(PedidosService);
+      expect(service.getProductWarehouses('EN-001') instanceof Observable).toBeTruthy();
+  });
 });

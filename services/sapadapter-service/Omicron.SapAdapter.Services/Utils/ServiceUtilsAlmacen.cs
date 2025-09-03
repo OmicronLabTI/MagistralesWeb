@@ -73,6 +73,8 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <param name="endDate">endDate.</param>
         /// <param name="lineProductTuple">line produc tuple.</param>
         /// <param name="needOnlyDxp">if the query only needs the dxp order.</param>
+        /// <param name="catalogsService">the catalogs service.</param>
+        /// <param name="redisService">the redis service.</param>
         /// <returns>the orders.</returns>
         public static async Task<List<CompleteAlmacenOrderModel>> GetSapOrderForRecepcionPedidos(
             ISapDao sapDao,
@@ -82,29 +84,34 @@ namespace Omicron.SapAdapter.Services.Utils
             DateTime startDate,
             DateTime endDate,
             Tuple<List<LineProductsModel>, List<int>> lineProductTuple,
-            bool needOnlyDxp)
+            bool needOnlyDxp,
+            ICatalogsService catalogsService,
+            IRedisService redisService)
         {
             var idsMagistrales = userOrders.Select(x => int.Parse(x.Salesorderid)).Distinct();
             var sapOrders = await GetSapInformation(sapDao, sapOrdersByTransactionId, hasChips, startDate, endDate, needOnlyDxp);
             sapOrders = sapOrders.Where(x => x.Detalles != null).ToList();
             var arrayOfSaleToProcess = new List<CompleteAlmacenOrderModel>();
 
-            sapOrders.Where(o => o.Canceled == "N").GroupBy(x => x.DocNum).ToList().ForEach(x =>
+            var sapOrdersConfiguration = await ServiceUtils.GetRouteConfigurationsForProducts(catalogsService, redisService, ServiceConstants.AlmacenDbValue);
+            sapOrdersConfiguration.ClassificationCodes.AddRange(new List<string> { ServiceConstants.OrderTypeMQ, ServiceConstants.OrderTypeMU, ServiceConstants.OrderTypePackage });
+
+            sapOrders.Where(o => o.Canceled == "N").GroupBy(x => x.DocNum).ToList().ForEach(orders =>
             {
-                if (ServiceShared.CalculateAnd(x.All(y => y.IsMagistral == "Y"), idsMagistrales.Contains(x.Key)))
+                var hasProductsWithValidConfig = orders
+                    .Where(x => ((sapOrdersConfiguration.ClassificationCodes.Contains(x.TypeOrder) &&
+                                !sapOrdersConfiguration.ItemCodesExcludedByException.Contains(x.Detalles.ProductoId)) ||
+                                sapOrdersConfiguration.ItemCodesIncludedByConfigRules.Contains(x.Detalles.ProductoId)) && x.ProductionOrderId == 0).Count() > 0;
+                if (lineProductTuple.Item2.Contains(orders.Key) || hasProductsWithValidConfig)
                 {
-                    arrayOfSaleToProcess.AddRange(x.ToList());
+                    arrayOfSaleToProcess.AddRange(orders.ToList());
                 }
-                else if (ServiceShared.CalculateAnd(x.All(y => y.IsLine == "Y"), !lineProductTuple.Item2.Contains(x.Key)))
+
+                if (idsMagistrales.Contains(orders.Key))
                 {
-                    arrayOfSaleToProcess.AddRange(x.ToList());
-                }
-                else if (ServiceShared.CalculateAnd(x.Any(y => y.IsLine == "Y"), x.Any(y => y.IsMagistral == "Y"), idsMagistrales.Contains(x.Key)))
-                {
-                    arrayOfSaleToProcess.AddRange(x.ToList());
+                    arrayOfSaleToProcess.AddRange(orders.ToList());
                 }
             });
-
             arrayOfSaleToProcess.AddRange(sapOrders.Where(o => o.Canceled == "Y"));
             var orderToAppear = userOrders.Select(x => int.Parse(x.Salesorderid));
 
@@ -195,7 +202,7 @@ namespace Omicron.SapAdapter.Services.Utils
 
             foreach (var p in groups)
             {
-                if (p.All(g => g.IsMagistral == "Y"))
+                if (p.All(g => g.ProductionOrderId != 0))
                 {
                     var saleOrder = userOrders.GetSaleOrderHeader(p.Key.ToString());
                     var familyByOrder = GetFamilyUserOrders(userOrders, p.Key.ToString());
@@ -204,7 +211,7 @@ namespace Omicron.SapAdapter.Services.Utils
                     continue;
                 }
 
-                if (p.All(g => g.IsLine == "Y"))
+                if (p.All(g => g.ProductionOrderId == 0))
                 {
                     var saleOrderLn = lineProductsModel.GetLineProductOrderHeader(p.Key);
                     var userFabLineOrder = GetFamilyLineProducts(lineProductsModel, p.Key);
@@ -233,8 +240,9 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <param name="localNeighbors">the local neighboors.</param>
         /// <param name="usersOrders">user order.</param>
         /// <param name="payments">the payments.</param>
+        /// <param name="classifications">the classifications.</param>
         /// <returns>the data.</returns>
-        public static List<OrderListByDoctorModel> GetTotalOrdersForDoctorAndDxp(List<CompleteRecepcionPedidoDetailModel> sapOrders, List<string> localNeighbors, List<UserOrderModel> usersOrders, List<PaymentsDto> payments)
+        public static List<OrderListByDoctorModel> GetTotalOrdersForDoctorAndDxp(List<CompleteRecepcionPedidoDetailModel> sapOrders, List<string> localNeighbors, List<UserOrderModel> usersOrders, List<PaymentsDto> payments, List<ClassificationsModel> classifications)
         {
             var listOrders = new List<OrderListByDoctorModel>();
             var salesIds = sapOrders.Select(x => x.DocNum).Distinct().OrderByDescending(x => x);
@@ -244,12 +252,9 @@ namespace Omicron.SapAdapter.Services.Utils
                 var orders = sapOrders.Where(x => x.DocNum == so).DistinctBy(y => y.Detalles.ProductoId).ToList();
                 var order = orders.FirstOrDefault();
 
-                var productType = ServiceShared.CalculateTernary(orders.All(x => ServiceShared.CalculateAnd(x.Detalles != null, x.Producto.IsMagistral == "Y")), ServiceConstants.Magistral, ServiceConstants.Mixto);
-                productType = ServiceShared.CalculateTernary(orders.All(x => ServiceShared.CalculateAnd(x.Detalles != null, x.Producto.IsLine == "Y")), ServiceConstants.Linea, productType);
-
                 var payment = payments.GetPaymentBydocNumDxp(order.DocNumDxp);
                 var userOrder = usersOrders.GetSaleOrderHeader(so.ToString());
-
+                var typeOrder = ServiceUtils.GetOrderTypeDescription(orders.Select(x => x.TypeOrder).Distinct().ToList(), classifications);
                 listOrders.Add(new OrderListByDoctorModel
                 {
                     DocNum = so,
@@ -257,7 +262,7 @@ namespace Omicron.SapAdapter.Services.Utils
                     Status = ServiceShared.CalculateTernary(order.Canceled == "Y", ServiceConstants.Cancelado, ServiceConstants.PorRecibir),
                     TotalItems = orders.Count,
                     TotalPieces = orders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity),
-                    TypeSaleOrder = $"Pedido {productType}",
+                    TypeSaleOrder = $"Pedido {typeOrder}",
                     InvoiceType = ServiceUtils.CalculateTypeShip(ServiceConstants.NuevoLeon, localNeighbors, order.Address, payment),
                     Comments = userOrder?.Comments ?? string.Empty,
                     OrderType = order.TypeOrder,
@@ -269,6 +274,42 @@ namespace Omicron.SapAdapter.Services.Utils
             }
 
             return listOrders;
+        }
+
+        /// <summary>
+        /// filter orders by config.
+        /// </summary>
+        /// <param name="sapOrders">the saporders.</param>
+        /// <param name="userOrders">user order.</param>
+        /// <param name="lineOrders">the lineOrders.</param>
+        /// <param name="catalogsService">the catalogsService.</param>
+        /// <param name="redisService">the redisService.</param>
+        /// <returns>the data.</returns>
+        public static async Task<List<CompleteRecepcionPedidoDetailModel>> GetFilterSapOrdersByConfig(List<CompleteRecepcionPedidoDetailModel> sapOrders, List<UserOrderModel> userOrders, List<LineProductsModel> lineOrders, ICatalogsService catalogsService, IRedisService redisService)
+        {
+            var sapOrdersConfiguration = await ServiceUtils.GetRouteConfigurationsForProducts(catalogsService, redisService, ServiceConstants.AlmacenDbValue);
+            sapOrdersConfiguration.ClassificationCodes.AddRange(new List<string> { ServiceConstants.OrderTypeMQ, ServiceConstants.OrderTypeMU, ServiceConstants.OrderTypePackage });
+            var usersOrdersIds = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(x => int.Parse(x.Productionorderid));
+            var sapOrdersFiltered = new List<CompleteRecepcionPedidoDetailModel>();
+            sapOrders.ForEach(order =>
+            {
+                var hasProductsWithValidConfig = ServiceShared.CalculateAnd(sapOrdersConfiguration.ClassificationCodes.Contains(order.TypeOrder), !sapOrdersConfiguration.ItemCodesExcludedByException.Contains(order.Detalles.ProductoId));
+                var second = ServiceShared.CalculateAnd(sapOrdersConfiguration.ItemCodesIncludedByConfigRules.Contains(order.Detalles.ProductoId), string.IsNullOrEmpty(order.FabricationOrder));
+                var isInLineOrders = lineOrders.Any(x => ServiceShared.CalculateAnd(x.SaleOrderId == order.DocNum, x.ItemCode == order.Detalles.ProductoId));
+
+                if (ServiceShared.CalculateOr(isInLineOrders || hasProductsWithValidConfig || second))
+                {
+                    sapOrdersFiltered.Add(order);
+                }
+
+                var validFabOrder = int.TryParse(order.FabricationOrder, out int fabOrderId);
+                if (validFabOrder && usersOrdersIds.Contains(fabOrderId))
+                {
+                    sapOrdersFiltered.Add(order);
+                }
+            });
+
+            return sapOrdersFiltered.DistinctBy(x => new { x.DocNum, x.Detalles.ProductoId }).ToList();
         }
 
         /// <summary>

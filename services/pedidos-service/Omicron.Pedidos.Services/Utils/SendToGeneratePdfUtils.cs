@@ -37,7 +37,7 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="usersService">the user service.</param>
         /// <param name="onlyFinalized">if only applies to finalized.</param>
         /// <returns>the data.</returns>
-        public static async Task<Task<ResultModel>> CreateModelGeneratePdf(
+        public static async Task<ResultModel> CreateModelGeneratePdf(
             List<int> ordersId,
             List<int> fabOrdersId,
             ISapAdapter sapAdapter,
@@ -54,7 +54,7 @@ namespace Omicron.Pedidos.Services.Utils
 
             if (ordersId.Any())
             {
-                listOrdersWithDetail = await GetDetails(ordersId, sapAdapter, ServiceConstants.GetOrderWithDetail);
+                listOrdersWithDetail = await ServiceUtils.GetOrdersDetailsForMagistral(sapAdapter, ordersId);
                 var listIdString = ordersId.Select(x => x.ToString()).ToList();
                 var userSaleOrders = (await pedidosDao.GetUserOrderBySaleOrder(listIdString)).Where(x => x.Status != ServiceConstants.Cancelled).ToList();
                 userSaleOrders = ServiceShared.CalculateTernary(onlyFinalized, userSaleOrders.Where(x => x.Status == ServiceConstants.Finalizado).ToList(), userSaleOrders);
@@ -85,7 +85,7 @@ namespace Omicron.Pedidos.Services.Utils
             listToSend.AddRange(GetModelsBySaleOrders(listOrdersWithDetail, recipes, users, orderSignature, listUserOrders));
             listToSend.AddRange(GetModelByOrder(listFabOrders, users, orderSignature, listUserOrders));
 
-            return sapFileService.PostSimple(listToSend, ServiceConstants.CreatePdf);
+            return await sapFileService.PostSimple(listToSend, ServiceConstants.CreatePdf);
         }
 
         /// <summary>
@@ -251,18 +251,6 @@ namespace Omicron.Pedidos.Services.Utils
         {
             var sapResponse = await sapAdapter.PostSapAdapter(orderIds, route);
             return JsonConvert.DeserializeObject<List<OrderRecipeModel>>(JsonConvert.SerializeObject(sapResponse.Response));
-        }
-
-        /// <summary>
-        /// Gets The recipes.
-        /// </summary>
-        /// <param name="orderIds">the orders id.</param>
-        /// <param name="sapAdapter">the sap adapter.</param>
-        /// <returns>the data.</returns>
-        private static async Task<List<OrderWithDetailModel>> GetDetails(List<int> orderIds, ISapAdapter sapAdapter, string route)
-        {
-            var sapResponse = await sapAdapter.PostSapAdapter(orderIds, route);
-            return JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(sapResponse.Response));
         }
 
         /// <summary>

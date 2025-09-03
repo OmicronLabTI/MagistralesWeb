@@ -11,7 +11,8 @@ import RxSwift
 import RxCocoa
 import Resolver
 // swiftlint:disable type_body_length
-class OrderDetailViewController: UIViewController {
+class OrderDetailViewController: UIViewController, SelectedPickerInput {
+    
     // Outlets
     @IBOutlet weak var deleteManyButton: UIButton!
     @IBOutlet weak var processButton: UIButton!
@@ -32,6 +33,7 @@ class OrderDetailViewController: UIViewController {
     @IBOutlet weak var productDescritionLabel: UILabel!
     @IBOutlet weak var infoView: UIView!
     @IBOutlet weak var hashtagLabel: UILabel!
+    @IBOutlet weak var saveWarehousesChangesButton: UIButton!
     // MARK: Outlets from table header
     @IBOutlet weak var htCode: UILabel!
     @IBOutlet weak var htDescription: UILabel!
@@ -50,6 +52,8 @@ class OrderDetailViewController: UIViewController {
     @Injected var orderDetailViewModel: OrderDetailViewModel
     @Injected var rootViewModel: RootViewModel
     @Injected var lottieManager: LottieManager
+    @Injected var inboxViewModel: InboxViewModel
+    
 
     var disposeBag: DisposeBag = DisposeBag()
     var orderId: Int = -1
@@ -61,6 +65,8 @@ class OrderDetailViewController: UIViewController {
     var destiny = String()
     var isolatedOrder = false
     var emptyStockProductId: [String] = []
+    var componentsToUpdate: [Component] = []
+    
     // MARK: Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -68,25 +74,76 @@ class OrderDetailViewController: UIViewController {
         self.quantityTextField.delegate = self
         self.title = CommonStrings.formulaDetail
         self.showButtonsByStatusType(statusType: statusType)
+        saveWarehousesChangesButton.isEnabled = false
         self.tableView.allowsMultipleSelectionDuringEditing = false
         tableView.setEditing(false, animated: true)
         self.orderDetailViewModel.orderId = self.orderId
         infoView.layer.cornerRadius = 10
+        setupDismissPickerOnTap()
+        initNavigationBar()
     }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        self.disposeBag = DisposeBag()
+        cleanLabels()
         self.initComponents()
         self.viewModelBinding()
         quantityButtonBindind()
         self.orderDetailViewModel.getOrdenDetail()
         self.refreshViewControl()
+        self.componentsToUpdate = []
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         disposeBag = DisposeBag()
+        cleanLabels()
+        orderDetailViewModel.tableData.onNext([])
+        saveWarehousesChangesButton.isEnabled = false
+        self.componentsToUpdate = []
     }
+
     // MARK: - Functions
+    func initNavigationBar() {
+        let title = inboxViewModel.currentSection.statusName
+        let backButton = UIButton(type: .system)
+        backButton.setTitle("  \(title)", for: .normal)
+        backButton.setImage(UIImage(systemName: "chevron.left"), for: .normal)
+        backButton.tintColor = .systemBlue
+        backButton.titleLabel?.font = UIFont.systemFont(ofSize: 19, weight: .medium)
+
+        backButton.addTarget(self, action: #selector(backBtnAction(_:)), for: .touchUpInside)
+
+        let barButton = UIBarButtonItem(customView: backButton)
+        navigationItem.leftBarButtonItem = barButton
+    }
+
+    @objc func backBtnAction(_ sender: UIBarButtonItem) {
+        if componentsToUpdate.isEmpty {
+            returnBack()
+            return
+        }
+        self.presentConfirmDialog()
+    }
+
+    func presentConfirmDialog() {
+        let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: nil)
+        let okAction = UIAlertAction(title: CommonStrings.OKConst,
+                                     style: .default, handler: { [weak self] _ in self?.resetValues()})
+        AlertManager.shared.showAlert(title: CommonStrings.warehousesChangesConfirm,
+                                      message: String(),
+                                      actions: [cancelAction, okAction],
+                                      view: self)
+    }
+    
+    func resetValues() {
+        componentsToUpdate = []
+        returnBack()
+    }
+
+    func returnBack() {
+        self.navigationController?.popViewController(animated: true)
+    }
+    
     @objc func goToCommentsViewController() {
         let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
         let commentsVC = storyboard.instantiateViewController(
@@ -108,6 +165,12 @@ class OrderDetailViewController: UIViewController {
         self.orderDetailViewModel.getOrdenDetail(isRefresh: true)
     }
     func viewModelBinding() {
+        self.orderDetailViewModel.disableSaveButton.subscribe(onNext: { [weak self] _ in
+            self?.saveWarehousesChangesButton.isEnabled = false
+        }).disposed(by: disposeBag)
+        self.orderDetailViewModel.clearComponentsToUpdate.subscribe(onNext: { [weak self] _ in
+            self?.componentsToUpdate = []
+        }).disposed(by: disposeBag)
         self.viewModelBinding1()
         self.viewModelBinding2()
         self.viewModelBinding3()
@@ -155,7 +218,8 @@ class OrderDetailViewController: UIViewController {
         self.orderDetailViewModel.goToSeeLotsViewController.observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
                 guard let self = self else { return }
-                self.goToPage(identifier: ViewControllerIdentifiers.lotsViewController,
+                
+                self.validateNavigation(identifier: ViewControllerIdentifiers.lotsViewController,
                                                   controllerType: LotsViewController.self)
             }).disposed(by: self.disposeBag)
         self.processButton.rx.tap.bind(to: orderDetailViewModel.processButtonDidTap).disposed(by: self.disposeBag)
@@ -168,15 +232,33 @@ class OrderDetailViewController: UIViewController {
         }).disposed(by: self.disposeBag)
         self.addComponentButton.rx.tap.subscribe(onNext: { [weak self] _ in
             guard let self = self else { return }
-            self.goToPage(identifier: ViewControllerIdentifiers.addComponentViewController,
+            if (orderDetailViewModel.warehousesOptions.count == 0) {
+                AlertManager.shared.showAlert(message:"\(Constants.Errors.nowarehouses.rawValue) \(orderDetailViewModel.itemCode)",
+                                              view: self)
+                return
+            }
+            self.validateNavigation(identifier: ViewControllerIdentifiers.addComponentViewController,
                           controllerType: AddComponentViewController.self)
-            // self.goToComponentsViewController()
         }).disposed(by: disposeBag)
     }
     func getDecimalPartOfDouble(number: Double) -> Double {
         return number.truncatingRemainder(dividingBy: 1)
     }
-    
+    func validateNavigation<T: LotsBaseViewController>(identifier: String, controllerType: T.Type) {
+        if (!componentsToUpdate.isEmpty) {
+            let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: nil)
+            let okAction = UIAlertAction(title: CommonStrings.OKConst,
+                                         style: .default, handler: { [weak self] _ in self?.goToPage(identifier: identifier,controllerType: controllerType)})
+            AlertManager.shared.showAlert(title: CommonStrings.warehousesChangesConfirm,
+                                          message: String(),
+                                          actions: [cancelAction, okAction],
+                                          view: self)
+            return
+        }
+
+        self.goToPage(identifier: identifier,controllerType: controllerType)
+    }
+
     func goToPage<T: LotsBaseViewController>(identifier: String, controllerType: T.Type) {
         let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
         
@@ -199,7 +281,8 @@ class OrderDetailViewController: UIViewController {
                     "\(order.code ?? String())  \(order.productDescription ?? String())"
                 }
             }
-            
+            viewController.warehousesOptions = self.orderDetailViewModel.warehousesOptions
+            self.componentsToUpdate = []
             self.navigationController?.pushViewController(viewController, animated: true)
         }
     }
@@ -226,6 +309,9 @@ class OrderDetailViewController: UIViewController {
                                                  color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
         UtilsManager.shared.setStyleButtonStatus(button: self.seeLotsButton, title: StatusNameConstants.seeLots,
                                                  color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
+        UtilsManager.shared.setStyleButtonStatus(button: self.saveWarehousesChangesButton, title: StatusNameConstants.save,
+                                                 color: OmicronColors.blue,
+                                                 titleColor: OmicronColors.blue)
         UtilsManager.shared.labelsStyle(label: self.titleLabel, text: CommonStrings.components, fontSize: 22)
         UtilsManager.shared.labelsStyle(label: self.htCode, text: CommonStrings.code, fontSize: 19,
                                         typeFont: CommonStrings.bold)
@@ -241,6 +327,16 @@ class OrderDetailViewController: UIViewController {
                                         typeFont: CommonStrings.bold)
         UtilsManager.shared.labelsStyle(label: self.htDescription, text: CommonStrings.description, fontSize: 19,
                                         typeFont: CommonStrings.bold)
+    }
+    
+    func setupDismissPickerOnTap() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissPicker))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
+    }
+
+    @objc func dismissPicker() {
+        view.endEditing(true)
     }
 
     func initComponents2() {
@@ -277,23 +373,23 @@ class OrderDetailViewController: UIViewController {
     }
     func showButtonsByStatusType(statusType: String) {
         var hideBtn = HideButtons(
-            process: true, finished: true, pending: true, addComp: true, save: true, seeBatches: true)
+            process: true, finished: true, pending: true, addComp: true, save: true, seeBatches: true, saveChanges: true)
         switch statusType {
         case StatusNameConstants.assignedStatus:
             hideBtn = HideButtons(process: false, finished: true, pending: false,
-                                  addComp: true, save: true, seeBatches: true)
+                                  addComp: true, save: true, seeBatches: true, saveChanges: true)
         case StatusNameConstants.inProcessStatus:
             hideBtn = HideButtons(process: true, finished: false, pending: false,
-                                  addComp: false, save: true, seeBatches: false)
+                                  addComp: false, save: true, seeBatches: false, saveChanges: false)
         case StatusNameConstants.penddingStatus:
             hideBtn = HideButtons(process: false, finished: true, pending: true,
-                                  addComp: true, save: true, seeBatches: false)
+                                  addComp: true, save: true, seeBatches: false, saveChanges: true)
         case StatusNameConstants.finishedStatus:
             hideBtn = HideButtons(process: true, finished: true, pending: true,
-                                  addComp: false, save: true, seeBatches: false)
+                                  addComp: false, save: true, seeBatches: false, saveChanges: true)
         case StatusNameConstants.reassignedStatus:
             hideBtn = HideButtons(process: true, finished: false, pending: false,
-                                  addComp: false, save: true, seeBatches: false)
+                                  addComp: false, save: true, seeBatches: false, saveChanges: false)
         default: break
         }
         self.changeHidePropertyOfButtons(hideBtn)
@@ -306,6 +402,7 @@ class OrderDetailViewController: UIViewController {
         self.addComponentButton.isHidden = hideBtns.addComp
         self.saveButton.isHidden = hideBtns.save
         self.seeLotsButton.isHidden = hideBtns.seeBatches
+        self.saveWarehousesChangesButton.isHidden = hideBtns.saveChanges
     }
     func sendIndexToDelete(index: Int) {
         orderDetailViewModel.deleteItemFromTable(indexs: [index])
@@ -339,5 +436,75 @@ class OrderDetailViewController: UIViewController {
         alert.addAction(cancelAction)
         alert.addAction(okAction)
         self.present(alert, animated: true, completion: nil)
+    }
+    
+    func okAction(selectedOption: String, productId: String) {
+        saveWarehousesChangesButton.isEnabled = true
+        let index = orderDetail[0].details?.firstIndex(where: ({$0.productID == productId})) ?? 0
+        orderDetail[0].details?[index].warehouse = selectedOption
+        
+        let orderFabId = orderDetail[0].productionOrderID ?? 0
+        let component = orderDetail[0].details?[index]
+        
+        let existsIndex = componentsToUpdate.firstIndex(where: ({$0.productId == productId})) ?? -1
+        if (existsIndex != -1) {
+            componentsToUpdate.remove(at: existsIndex)
+        }
+        
+        let componentToUpdate: Component = Component(
+            orderFabID: orderFabId, productId: productId, componentDescription: component?.detailDescription ?? "",
+            baseQuantity: component?.baseQuantity ?? 0, requiredQuantity: component?.requiredQuantity ?? 0, consumed: component?.consumed ?? 0,
+            available: component?.available ?? 0, unit: component?.unit ?? "", warehouse: component?.warehouse ?? "",
+            pendingQuantity: component?.pendingQuantity ?? 0, stock: component?.stock ?? 0, warehouseQuantity: component?.warehouseQuantity ?? 0,
+            action: Actions.update.rawValue, assignedBatches: [])
+        
+        componentsToUpdate.append(componentToUpdate)
+    }
+    
+    @IBAction func saveChangesComponents(_ sender: Any) {
+        orderDetailViewModel.updateObjectToSend.components = componentsToUpdate
+        let alert = UIAlertController(
+            title: "Se actualizará el almacén en la orden de fabricación ¿quieres continuar?",
+            message: nil,
+            preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive, handler: nil)
+        let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: { [weak self] _ in
+            guard let self = self else { return }
+            orderDetailViewModel.updateComponents()
+        })
+        alert.addAction(cancelAction)
+        alert.addAction(okAction)
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func cleanLabels() {
+        titleLabel.text = ""
+        codeDescriptionLabel.text = ""
+        documentBaseDescriptionLabel.text = ""
+        containerDescriptionLabel.text = ""
+        tagDescriptionLabel.text = ""
+        sumFormulaDescriptionLabel.text = ""
+        quantityPlannedDescriptionLabel.text = ""
+        startDateDescriptionLabel.text = ""
+        finishedDateDescriptionLabel.text = ""
+        productDescritionLabel.text = ""
+        hashtagLabel.text = ""
+        htCode.text = ""
+        htDescription.text = ""
+        htBaseQuantity.text = ""
+        htrequiredQuantity.text = ""
+        htUnit.text = ""
+        htWerehouse.text = ""
+        destinyLabel.text = ""
+        labelSpaceQuantity.text = ""
+    }
+    
+    func emptyOptions() {
+        AlertManager.shared.showAlert(message:"\(Constants.Errors.nowarehouses.rawValue) \(orderDetailViewModel.itemCode)",
+                                                     view: self)
+    }
+    
+    func hassBatches() {
+        AlertManager.shared.showAlert(message:Constants.Errors.hasBatches.rawValue, view: self)
     }
 }

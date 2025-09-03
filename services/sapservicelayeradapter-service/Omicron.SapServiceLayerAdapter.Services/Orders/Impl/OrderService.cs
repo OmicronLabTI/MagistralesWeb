@@ -113,6 +113,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
                     Container = x.Container,
                     Label = x.Label,
                     Prescription = ServiceUtils.CalculateTernary(x.NeedRecipe == "Y", "Si", "No"),
+                    PromotionalCode = x.PromotionalCode,
                 }).ToList();
 
                 var propertyMappings = new Dictionary<string, string>
@@ -173,12 +174,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
         {
             var batchNumbers = new List<BatchNumbersDto>();
             var product = itemsList.FirstOrDefault(x => x.ItemCode.Equals(orderLine.ItemCode));
-            product ??= new CreateDeliveryDto { OrderType = ServiceConstants.Magistral };
-            if (product.OrderType == ServiceConstants.Magistral)
-            {
-                return batchNumbers;
-            }
-
+            product ??= new CreateDeliveryDto { OrderType = ServiceConstants.Magistral, Batches = new List<AlmacenBatchDto>() };
             var batchNumber = new BatchNumbersDto();
             foreach (var b in product.Batches)
             {

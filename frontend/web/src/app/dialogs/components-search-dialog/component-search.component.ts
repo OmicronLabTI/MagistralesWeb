@@ -1,14 +1,14 @@
-import { ChangeDetectorRef, Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
-import { MatTableDataSource} from '@angular/material';
-import {IFormulaDetalleReq} from '../../model/http/detalleformula';
-import {MatPaginator, PageEvent} from '@angular/material/paginator';
-import {ComponentSearch, CONST_NUMBER} from '../../constants/const';
-import {MatChipInputEvent} from '@angular/material/chips';
-import {COMMA, ENTER} from '@angular/cdk/keycodes';
-import {PedidosService} from '../../services/pedidos.service';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {ErrorService} from '../../services/error.service';
-import {DataService} from '../../services/data.service';
+import { ChangeDetectorRef, Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { MatTableDataSource } from '@angular/material';
+import { IFormulaDetalleReq } from '../../model/http/detalleformula';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { ComponentSearch, CONST_NUMBER } from '../../constants/const';
+import { MatChipInputEvent } from '@angular/material/chips';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { PedidosService } from '../../services/pedidos.service';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ErrorService } from '../../services/error.service';
+import { DataService } from '../../services/data.service';
 import { Messages } from 'src/app/constants/messages';
 import { MessagesService } from 'src/app/services/messages.service';
 
@@ -25,8 +25,8 @@ export class ComponentSearchComponent implements OnInit {
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
   keywords: string[] = [];
   allComplete = false;
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  @ViewChild('chipsInput', {static: false}) chipsInput: ElementRef;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild('chipsInput', { static: false }) chipsInput: ElementRef;
   pageSize = CONST_NUMBER.ten;
   dataSource = new MatTableDataSource<IFormulaDetalleReq>();
   displayedColumns: string[] = ['numero', 'descripcion'];
@@ -41,22 +41,24 @@ export class ComponentSearchComponent implements OnInit {
   count = 0;
   isFromSearchComponent = true;
   catalogGroupName = '';
-  constructor(private ordersService: PedidosService,
-              private dialogRef: MatDialogRef<ComponentSearchComponent>,
-              private errorService: ErrorService,
-              @Inject(MAT_DIALOG_DATA) public data: any,
-              private dataService: DataService,
-              private changeDetector: ChangeDetectorRef,
-              private messagesService: MessagesService) {
+  constructor(
+    private ordersService: PedidosService,
+    private dialogRef: MatDialogRef<ComponentSearchComponent>,
+    private errorService: ErrorService,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private dataService: DataService,
+    private changeDetector: ChangeDetectorRef,
+    private messagesService: MessagesService,
+  ) {
     this.isFromSearchComponent = this.data.modalType === ComponentSearch.searchComponent
-                || this.data.modalType === ComponentSearch.addComponent;
+      || this.data.modalType === ComponentSearch.addComponent;
     this.keywords = this.data.chips && this.data.chips.length > 0 ? this.data.chips : [];
     this.getCatalogGroupName();
   }
 
   ngOnInit() {
     this.dataSource.paginator = this.paginator;
-    if (this.keywords.length > 0 ) {
+    if (this.keywords.length > 0) {
       this.getQueryString();
       this.getComponentsAction();
     }
@@ -70,23 +72,23 @@ export class ComponentSearchComponent implements OnInit {
   getComponentsAction() {
     this.isDisableSearch = true;
     this.ordersService.getComponents(this.queryStringComponents, this.isFromSearchComponent).subscribe(resComponents => {
-          resComponents.response.forEach( component => {
-            if (this.isFromSearchComponent ) {
-              component.description = component.description.toUpperCase();
-            } else {
-              component.productoName = component.productoName.toUpperCase();
-            }
-          });
-          this.dataSource.data = resComponents.response;
-          this.lengthPaginator = resComponents.comments;
-          this.isDisableSearch = false;
-          this.setFocusToChipsInput();
+      resComponents.response.forEach(component => {
+        if (this.isFromSearchComponent) {
+          component.description = component.description.toUpperCase();
+        } else {
+          component.productoName = component.productoName.toUpperCase();
         }
-        , error => {
-          this.errorService.httpError(error);
-          this.dialogRef.close();
-          this.setFocusToChipsInput();
-        });
+      });
+      this.dataSource.data = resComponents.response;
+      this.lengthPaginator = resComponents.comments;
+      this.isDisableSearch = false;
+      this.setFocusToChipsInput();
+    }
+      , error => {
+        this.errorService.httpError(error);
+        this.dialogRef.close();
+        this.setFocusToChipsInput();
+      });
   }
 
   changeDataEvent(event: PageEvent) {
@@ -123,8 +125,8 @@ export class ComponentSearchComponent implements OnInit {
   }
   getQueryString() {
     this.queryStringComponents =
-        // tslint:disable-next-line:max-line-length
-        `?offset=${this.offset}&limit=${this.limit}&chips=${this.keywords.toString() !== '' ? this.keywords.toString() : '$$' }&catalogGroup=${this.catalogGroupName}`;
+      // tslint:disable-next-line:max-line-length
+      `?offset=${this.offset}&limit=${this.limit}&chips=${this.keywords.toString() !== '' ? this.keywords.toString() : '$$'}&catalogGroup=${this.catalogGroupName}`;
   }
 
   selectComponent(row: any) {
@@ -135,9 +137,9 @@ export class ComponentSearchComponent implements OnInit {
         this.checkIsPrevious(row);
       } else {
         this.messagesService.presentToastCustom(
-          `${Messages.repeatedComponent_a }  ${row.productId} ${
-               this.data.modalType !== ComponentSearch.addComponent ? Messages.repeatedComponent_b :
-                   Messages.repeatedComponent_b_request }`,
+          `${Messages.repeatedComponent_a}` +
+          ` ${row.productId} ${this.data.modalType !== ComponentSearch.addComponent
+            ? Messages.repeatedComponent_b : Messages.repeatedComponent_b_request}`,
           'info',
           '',
           true,
@@ -155,7 +157,17 @@ export class ComponentSearchComponent implements OnInit {
       row.chips = this.keywords;
       this.dialogRef.close(row);
     } else {
+      const index = this.dataSource.data.indexOf(row);
+      this.dataSource.data[index].availableWarehouses = [];
       this.rowPrevious = row;
+    }
+  }
+
+  getProductWarehouses(index: number, productId: string): void {
+    if (this.dataSource.data[index].availableWarehouses.length < 1) {
+      this.ordersService.getProductWarehouses(productId).subscribe(response =>
+        this.dataSource.data[index].availableWarehouses = response.response
+      );
     }
   }
 

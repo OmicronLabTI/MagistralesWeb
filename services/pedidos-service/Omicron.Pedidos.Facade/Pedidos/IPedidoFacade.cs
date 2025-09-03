@@ -11,6 +11,8 @@ namespace Omicron.Pedidos.Facade.Pedidos
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Omicron.Pedidos.Dtos.Models;
+    using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Entities.Model.Db;
     using Omicron.Pedidos.Resources.Enums;
 
     /// <summary>
@@ -292,5 +294,46 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="type"> List of production order types to include in the search. </param>
         /// <returns> A result containing the matching user production orders. </returns>
         Task<ResultDto> GetUserOrdersByInvoiceId(List<int> invoicesid, string type);
+
+        /// <summary>
+        /// Finalize Production Orders Async.
+        /// </summary>
+        /// <param name="productionOrdersToFinalize">Production Orders To Finalize.</param>
+        /// <returns>Process Result.</returns>urns>
+        Task<ResultDto> FinalizeProductionOrdersAsync(List<FinalizeProductionOrderModel> productionOrdersToFinalize);
+
+        /// <summary>
+        /// Finalize Production Orders On Sap Async.
+        /// </summary>
+        /// <param name="productionOrderProcessingPayload">Payload With info.</param>
+        /// <returns>Process Result.</returns>urns>
+        Task<ResultDto> FinalizeProductionOrdersOnSapAsync(ProductionOrderProcessingStatusDto productionOrderProcessingPayload);
+
+        /// <summary>
+        /// Finalize Production Orders On Postgresql Async.
+        /// </summary>
+        /// <param name="productionOrderProcessingPayload">Payload With info.</param>
+        /// <returns>Process Result.</returns>urns>
+        Task<ResultDto> FinalizeProductionOrdersOnPostgresqlAsync(ProductionOrderProcessingStatusDto productionOrderProcessingPayload);
+
+        /// <summary>
+        /// Production Order Pdf Generation Async.
+        /// </summary>
+        /// <param name="productionOrderProcessingPayload">Payload With info.</param>
+        /// <returns>Process Result.</returns>urns>
+        Task<ResultDto> ProductionOrderPdfGenerationAsync(ProductionOrderProcessingStatusDto productionOrderProcessingPayload);
+
+        /// <summary>
+        /// Get Failed Production Orders.
+        /// </summary>
+        /// <returns>Failed Production Orders.</returns>urns>
+        Task<ResultDto> GetFailedProductionOrders();
+
+        /// <summary>
+        /// Retry Failed Production Order Finalization.
+        /// </summary>
+        /// <param name="payloadRetry">payloadRetry.</param>
+        /// <returns>Process Result.</returns>urns>
+        Task<ResultDto> RetryFailedProductionOrderFinalization(RetryFailedProductionOrderFinalizationDto payloadRetry);
     }
 }

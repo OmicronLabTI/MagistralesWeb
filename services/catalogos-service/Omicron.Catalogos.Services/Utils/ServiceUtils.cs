@@ -113,5 +113,57 @@ namespace Omicron.Catalogos.Services.Utils
 
             return JsonConvert.DeserializeObject<ResultDto>(await response.Content.ReadAsStringAsync());
         }
+
+        /// <summary>
+        /// Deserilize redis info.
+        /// </summary>
+        /// <typeparam name="T">List.</typeparam>
+        /// <param name="list">Default list.</param>
+        /// <param name="redisKey">Redis key.</param>
+        /// <param name="redisService">Redis service interface.</param>
+        /// <returns>Deserialized object.</returns>
+        public static async Task<List<T>> DeserializeRedisValue<T>(List<T> list, string redisKey, IRedisService redisService)
+        {
+            if (redisService.IsConnectedRedis())
+            {
+                var redisValues = await redisService.GetRedisKey(redisKey);
+                return !string.IsNullOrEmpty(redisValues) ? JsonConvert.DeserializeObject<List<T>>(redisValues) : list;
+            }
+
+            return list;
+        }
+
+        /// <summary>
+        /// Calculate string value.
+        /// </summary>
+        /// <typeparam name="T">The value.</typeparam>
+        /// <param name="validation">Validation.</param>
+        /// <param name="firstValue">First Value.</param>
+        /// <param name="defaultValue">Default Value.</param>
+        /// <returns>result.</returns>
+        public static T CalculateTernary<T>(bool validation, T firstValue, T defaultValue)
+        {
+            return validation ? firstValue : defaultValue;
+        }
+
+        /// <summary>
+        /// Normalizes input string by removing accents, converting to uppercase.
+        /// </summary>
+        /// <param name="input">Input string to normalize.</param>
+        /// <returns>Normalized string with only letters, numbers and hyphens in uppercase format.</returns>
+        public static string NormalizeComplete(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return input;
+            }
+
+            string normalized = new string(input.Normalize(NormalizationForm.FormD)
+                .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                .ToArray())
+                .ToUpper();
+
+            return Regex.Replace(normalized, @"[^A-Z0-9\-]+", string.Empty).Trim('-');
+        }
     }
 }

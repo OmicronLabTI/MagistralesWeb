@@ -78,7 +78,7 @@ class UtilsManager {
     }
     func formatterDoublesTo6Decimals() -> NumberFormatter {
         let formatter = NumberFormatter()
-        formatter.minimumFractionDigits = 6
+        formatter.maximumFractionDigits = 6
         formatter.numberStyle = .decimal
         return formatter
     }
@@ -125,6 +125,24 @@ class UtilsManager {
         return false
     }
     
+    func getResponseErrors(jsonString: String) -> String {
+        guard let data = jsonString.data(using: .utf8) else {
+                return ""
+        }
+        
+        do {
+            if let dictionary = try JSONSerialization.jsonObject(with: data, options: []) as? [String: String] {
+                // Ordena las keys alfabéticamente y extrae los valores
+                let valores = dictionary.keys.sorted().compactMap { dictionary[$0] }
+                return valores.joined(separator: ", ")
+            } else {
+                return ""
+            }
+        } catch {
+            return ""
+        }
+    }
+
     func doubleToDecimal(value: Double) -> Decimal {
         var value = Decimal(value)
         var roundedValue = Decimal()

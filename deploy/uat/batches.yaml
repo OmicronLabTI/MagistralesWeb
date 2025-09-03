@@ -1,0 +1,40 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: finalize-productionorders-cronjob
+  namespace: default
+spec:
+  schedule: "0 */2 * * *"
+  timeZone: America/Mexico_City
+  suspend: false # suspende el cron
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      # automountServiceAccountToken: false
+      template:
+        spec:
+          # automountServiceAccountToken: false
+          containers:
+            - name: finalize-productionorders-container
+              image: omicron.azurecr.io/omicronuat/finalizeproductionordersmagistrales:latest
+              imagePullPolicy: Always
+              resources:
+                limits:
+                  memory: "100Mi"
+                  cpu: "10m"
+                requests:
+                  memory: "100Mi"
+                  cpu: "2m"
+              env:
+                - name: DOTNET_ENVIRONMENT
+                  value: Uat
+                - name: REDIS_CONNECTION_STRING
+                  valueFrom:
+                    secretKeyRef:
+                      name: omicron-uat
+                      key: redis
+          restartPolicy: OnFailure
+          imagePullSecrets:
+            - name: pullsecret

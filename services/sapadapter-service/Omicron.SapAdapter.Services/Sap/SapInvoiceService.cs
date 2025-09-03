@@ -272,6 +272,9 @@ namespace Omicron.SapAdapter.Services.Sap
             var productType = ServiceShared.CalculateTernary(itemCode.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
 
             var sapData = await this.GetSaleOrderInvoiceDataByItemCode(saleOrder, itemCode.ProductoId);
+            var themesResponse = await this.catalogsService.PostCatalogs(new List<string> { itemCode.ThemeId }, ServiceConstants.GetThemes);
+            var themes = JsonConvert.DeserializeObject<List<ProductColorsDto>>(themesResponse.Response.ToString());
+            var selectedTheme = ServiceShared.GetSelectedTheme(itemCode.ThemeId, themes);
 
             var product = new MagistralScannerModel
             {
@@ -283,6 +286,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 ProductType = $"Producto {productType}",
                 DeliveryId = sapData.Item1.BaseEntry.Value,
                 InvoiceId = sapData.Item2.DocNum,
+                BackgroundColor = selectedTheme.BackgroundColor,
+                LabelText = selectedTheme.LabelText,
+                LabelColor = selectedTheme.TextColor,
             };
 
             return ServiceUtils.CreateResult(true, 200, null, product, null, null);
@@ -310,6 +316,9 @@ namespace Omicron.SapAdapter.Services.Sap
             lineProduct ??= new LineProductsModel { BatchName = JsonConvert.SerializeObject(new List<AlmacenBatchModel>()) };
             var batchModel = JsonConvert.DeserializeObject<List<AlmacenBatchModel>>(lineProduct.BatchName);
             var batches = await this.GetBatchesForInvoice(itemCode, batchModel);
+            var themesResponse = await this.catalogsService.PostCatalogs(new List<string> { itemCode.ThemeId }, ServiceConstants.GetThemes);
+            var themes = JsonConvert.DeserializeObject<List<ProductColorsDto>>(themesResponse.Response.ToString());
+            var selectedTheme = ServiceShared.GetSelectedTheme(itemCode.ThemeId, themes);
 
             var lineData = new LineScannerModel
             {
@@ -320,6 +329,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 InvoiceId = sapData.Item2.DocNum,
                 DeliveryId = sapData.Item1.BaseEntry.Value,
                 NeedsCooling = itemCode.NeedsCooling,
+                BackgroundColor = selectedTheme.BackgroundColor,
+                LabelText = selectedTheme.LabelText,
+                LabelColor = selectedTheme.TextColor,
             };
 
             return ServiceUtils.CreateResult(true, 200, null, lineData, null, null);
@@ -848,6 +860,9 @@ namespace Omicron.SapAdapter.Services.Sap
             invoices = invoices.Where(x => x.BaseEntry.HasValue).ToList();
             var usedDeliveries = new List<DeliveryDetailModel>();
             var items = (await this.sapDao.GetProductByIds(invoices.Select(x => x.ProductoId).ToList())).ToList();
+            var themeIds = items.Select(x => x.ThemeId).Distinct().ToList();
+            var themesResponse = await this.catalogsService.PostCatalogs(themeIds, ServiceConstants.GetThemes);
+            var themes = JsonConvert.DeserializeObject<List<ProductColorsDto>>(themesResponse.Response.ToString());
             foreach (var invoice in invoices)
             {
                 var listBatches = new List<string>();
@@ -858,6 +873,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     .FirstOrDefault(x => ServiceShared.CalculateAnd(x.DeliveryId == invoice.BaseEntry.Value, x.ProductoId == invoice.ProductoId, x.LineNum == invoice.BaseLineNum));
                 var saleId = deliveriesDetail?.BaseEntry ?? 0;
                 var prodId = deliveriesDetail?.ProductoId ?? string.Empty;
+                var selectedTheme = ServiceShared.GetSelectedTheme(item.ThemeId, themes);
 
                 if (deliveriesDetail != null)
                 {
@@ -865,8 +881,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 }
 
                 var productType = ServiceShared.CalculateTernary(item.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
+                var product = this.GetProductStatus(deliveryDetails, userOrders, lineProducts, orders, invoice, saleId);
 
-                if (item.IsMagistral.Equals("N"))
+                if (product.Item2 == 0)
                 {
                     var lineProduct = lineProducts.FirstOrDefault(x => ServiceShared.CalculateAnd(x.SaleOrderId == saleId, x.ItemCode == invoice.ProductoId, x.DeliveryId == invoice.BaseEntry.Value));
                     lineProduct ??= new LineProductsModel();
@@ -875,9 +892,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     listBatches = await this.GetBatchesByDelivery(invoice.BaseEntry.Value, invoice.ProductoId, batchName);
                 }
 
-                var product = this.GetProductStatus(deliveryDetails, userOrders, lineProducts, orders, invoice, saleId);
-
-                var canCancel = this.DetermineCanCancel(isMagistral: item.IsMagistral.Equals("Y"), invoice.BaseEntry.Value, saleOrderId: saleId, productId: invoice.ProductoId, userOrders: userOrders, lineProducts: lineProducts);
+                var canCancel = this.DetermineCanCancel(isMagistral: product.Item2 != 0, invoice.BaseEntry.Value, saleOrderId: saleId, productId: invoice.ProductoId, userOrders: userOrders, lineProducts: lineProducts);
 
                 var incidentdb = incidents.FirstOrDefault(x => ServiceShared.CalculateAnd(x.SaleOrderId == product.Item3, x.ItemCode == item.ProductoId));
                 incidentdb ??= new IncidentsModel();
@@ -895,17 +910,20 @@ namespace Omicron.SapAdapter.Services.Sap
                     Batches = listBatches,
                     Container = invoice.Container,
                     Description = item.LargeDescription.ToUpper(),
-                    ItemCode = ServiceShared.CalculateTernary(item.IsMagistral.Equals("Y"), $"{item.ProductoId} - {product.Item2}", item.ProductoId),
+                    ItemCode = ServiceShared.CalculateTernary(product.Item2 != 0, $"{item.ProductoId} - {product.Item2}", item.ProductoId),
                     NeedsCooling = item.NeedsCooling.Equals("Y"),
                     ProductType = $"Producto {productType}",
                     Quantity = invoice.Quantity,
                     Status = product.Item1,
-                    IsMagistral = item.IsMagistral.Equals("Y"),
+                    IsMagistral = product.Item2 != 0,
                     DeliveryId = invoice.BaseEntry.Value,
                     OrderId = product.Item2,
                     SaleOrderId = product.Item3,
                     Incident = ServiceShared.CalculateTernary(string.IsNullOrEmpty(localIncident.Status), null, localIncident),
                     CanCancel = canCancel,
+                    BackgroundColor = selectedTheme.BackgroundColor,
+                    LabelText = selectedTheme.LabelText,
+                    LabelColor = selectedTheme.TextColor,
                 });
             }
 

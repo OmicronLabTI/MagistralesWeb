@@ -59,10 +59,32 @@ namespace Omicron.SapAdapter.Test.Services
             // arrange
             var salesOrderId = 84515;
             var mockAlmacen = new Mock<IAlmacenService>();
+            var mockRedis = new Mock<IRedisService>();
+            var mockCatalogos = new Mock<ICatalogsService>();
+            var colorsResponse = new List<ProductColorsDto>
+            {
+                new ProductColorsDto() { BackgroundColor = "#f3f3f3", TemaId = string.Empty, LabelText = "tema 1", TextColor = "#ffffff" },
+                new ProductColorsDto() { BackgroundColor = "#f3f3f3", TemaId = "tema1", LabelText = "tema 1", TextColor = "#ffffff" },
+            };
+
+            mockCatalogos
+                .Setup(m => m.PostCatalogs(It.IsAny<object>(), ServiceConstants.GetThemes))
+                .Returns(Task.FromResult(this.GetResultDto(colorsResponse)));
+            mockCatalogos
+                .Setup(m => m.GetParams(ServiceConstants.GetActiveRouteConfigurationsEndPoint))
+                .Returns(Task.FromResult(this.GetResultDto(this.GetConfigs(new List<string> { "LN", "BQ", "MQ", "MG", "MN", "BE", "mixto" }))));
             mockAlmacen
                 .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
                 .Returns(Task.FromResult(this.GetIncidents()));
-            var localService = new AlmacenOrderDoctorService(this.sapDao, mockAlmacen.Object);
+            var mockPedidos = new Mock<IPedidosService>();
+            mockPedidos
+                .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserOrderModelAlmacen()));
+
+            mockPedidos
+                .Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserOrderModelAlmacen()));
+            var localService = new AlmacenOrderDoctorService(this.sapDao, mockAlmacen.Object, mockPedidos.Object, mockCatalogos.Object, mockRedis.Object);
 
             // act
             var response = await localService.GetOrderdetail(salesOrderId);

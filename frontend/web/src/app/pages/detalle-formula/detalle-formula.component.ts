@@ -1,5 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MatTableDataSource } from '@angular/material';
+import { Component, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { MatSelect, MatTableDataSource } from '@angular/material';
 import { PedidosService } from '../../services/pedidos.service';
 import { IComponentsSaveReq, IFormulaDetalleReq, IFormulaReq } from '../../model/http/detalleformula';
 import { ActivatedRoute } from '@angular/router';
@@ -28,6 +28,7 @@ import { DateService } from '../../services/date.service';
 import { MessagesService } from 'src/app/services/messages.service';
 import { FiltersService } from '../../services/filters.service';
 import { FormControl } from '@angular/forms';
+import { UsersService } from 'src/app/services/users.service';
 
 @Component({
   selector: 'app-detalle-formula',
@@ -36,6 +37,7 @@ import { FormControl } from '@angular/forms';
 })
 
 export class DetalleFormulaComponent implements OnInit, OnDestroy {
+  @ViewChildren('selectRef') selectRefs!: QueryList<MatSelect>;
   allComplete = false;
   oldDataFormulaDetail = new IFormulaReq();
   ordenFabricacionId: string;
@@ -73,6 +75,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   filterDataOrdersForOrderIsolated = new ParamsPedidos();
   catalogGroupName = CONST_STRING.empty;
   sumFormula: string = CONST_STRING.empty;
+  productWarehouses: string[] = [];
   constructor(
     private pedidosService: PedidosService,
     private route: ActivatedRoute,
@@ -84,7 +87,8 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     public localStorageService: LocalStorageService,
     private dateService: DateService,
     private messagesService: MessagesService,
-    private filtersService: FiltersService
+    private filtersService: FiltersService,
+    private userService: UsersService
   ) {
   }
 
@@ -116,9 +120,18 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   getDetalleFormula() {
     this.pedidosService.getFormulaDetail(this.ordenFabricacionId).subscribe(
       ({ response }) => {
-        this.onSuccessDetailFormula(response);
+        this.getProductWarehouses(response);
       }, error => this.errorService.httpError(error));
   }
+
+  getProductWarehouses(response: IFormulaReq) {
+    const itemCode = response.code;
+    this.pedidosService.getProductWarehouses(itemCode).subscribe(res => {
+      this.productWarehouses = res.response;
+      this.onSuccessDetailFormula(response);
+    });
+  }
+
   onSuccessDetailFormula(response: IFormulaReq) {
     this.currentOrdenFabricacionId = response.productionOrderId;
     this.oldDataFormulaDetail = response;
@@ -139,12 +152,22 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
       detail.stock = stockSplit.length === 1 ? stockSplit[0] :
         `${new Intl.NumberFormat().format(Number(stockSplit[0]))}.${stockSplit[1]}`;
       detail.isContainer = this.validateIsContainer(detail.productId);
+      detail.warehouse = this.dataService.calculateTernary(
+        this.validateWarehouse(detail.warehouse),
+        detail.warehouse,
+        ''
+      );
+      detail.availableWarehouses = this.productWarehouses;
     });
     this.isReadyToSave = false;
     this.componentsToDelete = [];
     this.dataService.setIsToSaveAnything(false);
     this.catalogGroupName = response.catalogGroupName || '';
     this.sumFormulaAction();
+  }
+
+  validateWarehouse(warehouse: string): boolean {
+    return this.productWarehouses.includes(warehouse);
   }
 
   sumFormulaAction = (): void => {
@@ -246,6 +269,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   checkISComponentsToDelete() {
     this.isComponentsToDelete = this.dataSource.data.filter(t => t.isChecked).length > 0;
   }
+
   deleteComponents() {
     this.messagesService.presentToastCustom(Messages.deleteComponents, 'warning', '', true, true)
       .then((resultDeleteMessage: any) => {
@@ -253,7 +277,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
           const detailComponentsToDelete = this.createDetailTOSave();
           const componentsToDeleteOnSave = [...this.dataSource.data.filter(component => component.isChecked &&
             this.dataService.calculateOrValueList([component.action === CONST_DETAIL_FORMULA.update,
-              !component.action, component.action === CONST_DETAIL_FORMULA.delete]))];
+            !component.action, component.action === CONST_DETAIL_FORMULA.delete]))];
           componentsToDeleteOnSave.forEach(component => {
             component.stock = component.stock || CONST_NUMBER.zero;
             component.action = CONST_DETAIL_FORMULA.delete;
@@ -312,7 +336,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     this.getIsReadyTOSave();
   }
   getIsReadyTOSave() {
-    this.isReadyToSave = true;
+    this.isReadyToSave = this.dataSource.data.every(detail => this.dataService.validateValidString(detail.warehouse));
     this.dataService.setIsToSaveAnything(true);
   }
   createMessageOkHttp() {
@@ -331,12 +355,30 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     this.getIsReadyTOSave();
   }
 
+  onOpenSelect(value: boolean, index: number): void {
+    if (!value) {
+      const select = this.selectRefs.toArray()[index];
+      const valueSelect = select.ngControl.value;
+      this.dataSource.data[index].warehouse = valueSelect;
+      this.getIsReadyTOSave();
+    }
+  }
+
   ngOnDestroy() {
     this.dataService.setIsToSaveAnything(false);
   }
 
   goToOrders(urlPath: string[]) {
     this.setPathUrlService(urlPath);
+  }
+
+  goToAddComponent(route: (string | number)[]) {
+    if (this.productWarehouses.length === 0) {
+      const mssg = `${Messages.invalidWarehouses} ${this.oldDataFormulaDetail.code}`;
+      this.messagesService.presentToastCustom(mssg, 'error', CONST_STRING.empty, true, false);
+    } else {
+      this.setPathUrlService(route);
+    }
   }
 
   goToDetailOrder(urlPath: (string | number)[]) {

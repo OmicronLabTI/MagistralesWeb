@@ -11,6 +11,7 @@ import RxSwift
 import RxCocoa
 import Resolver
 
+
 class OrderDetailViewModel {
     // MARK: - Variables
     var disposeBag: DisposeBag = DisposeBag()
@@ -19,7 +20,7 @@ class OrderDetailViewModel {
     var tableData: BehaviorSubject<[Detail]> = BehaviorSubject<[Detail]>(value: [])
     var showAlert: PublishSubject<String> = PublishSubject()
     var showAlertConfirmation = PublishSubject<MessageToChangeStatus>()
-    var loading: BehaviorSubject<Bool> = BehaviorSubject<Bool>(value: false)
+    var loading: PublishSubject<Bool> = PublishSubject()
     var sumFormula: BehaviorRelay<Double> = BehaviorRelay<Double>(value: -1)
     var auxTabledata: [Detail] = []
     var processButtonDidTap = PublishSubject<Void>()
@@ -43,6 +44,14 @@ class OrderDetailViewModel {
     var catalogGroup = String()
     var itemSelectedDetail: [Int] = []
     var showTwoModals = false
+    var dataError = PublishSubject<String>()
+    var disableSaveButton = PublishSubject<Void>()
+    var clearComponentsToUpdate = PublishSubject<Void>()
+    var updateObjectToSend: OrderDetailRequest = OrderDetailRequest(
+        fabOrderID: 0, plannedQuantity: 0, fechaFin: "", comments: "", warehouse: "", components: []
+    )
+    var warehousesOptions: [String] = []
+    var itemCode = String()
     @Injected var rootViewModel: RootViewModel
     @Injected var inboxViewModel: InboxViewModel
     @Injected var networkManager: NetworkManager
@@ -53,7 +62,7 @@ class OrderDetailViewModel {
         pendingBtnbinding()
         seeLotsBtnBinding()
     }
-
+    
     // MARK: - Functions Binding
     // MARK: - FINISH BINDINGACTION
     func finishBtnActionBinding() {
@@ -66,7 +75,7 @@ class OrderDetailViewModel {
     func deleteItemsFromTableDidTap() {
         self.deleteItemFromTable(indexs: self.itemSelectedDetail)
     }
-
+    
     func processBtnBinding() {
         self.processButtonDidTap.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             guard let self = self else { return }
@@ -76,7 +85,7 @@ class OrderDetailViewModel {
             self.showAlertConfirmation.onNext(message)
         }).disposed(by: disposeBag)
     }
-
+    
     func pendingBtnbinding() {
         self.pendingButtonDidTap.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             guard let self = self else { return }
@@ -85,14 +94,14 @@ class OrderDetailViewModel {
             self.showAlertConfirmation.onNext(message)
         }).disposed(by: self.disposeBag)
     }
-
+    
     func seeLotsBtnBinding() {
         self.seeLotsButtonDidTap.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self]  _ in
             guard let self = self else { return }
             self.goToSeeLotsViewController.onNext(())
         }).disposed(by: self.disposeBag)
     }
-
+    
     func getOrdenDetail(isRefresh: Bool = false) {
         itemSelectedDetail = []
         deleteManyButtonIsEnable.onNext(false)
@@ -101,13 +110,13 @@ class OrderDetailViewModel {
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: {[weak self] res in
                 guard let self = self else { return }
-                self.onSuccessOrderDetail(response: res, isRefresh)
+                self.getComponentWarehouses(response: res, isRefresh: isRefresh)
             }, onError: { [weak self] _ in
                 guard let self = self else { return }
                 self.onFaliedOrderDetail(isRefresh)
             }).disposed(by: self.disposeBag)
     }
-
+    
     func onSuccessOrderDetail(response: OrderDetailResponse, _ isRefresh: Bool) {
         if let order = response.response, let details = order.details {
             orderDetailData.accept([order])
@@ -122,27 +131,69 @@ class OrderDetailViewModel {
             catalogGroup = order.catalogGroupName ?? String()
         }
     }
-
+    
     func onFaliedOrderDetail(_ isRefresh: Bool) {
         self.needsRefresh(self.needsRefresh)
         self.endRefreshingAction(isRefresh)
         self.showAlert.onNext(CommonStrings.formulaDetailCouldNotBeLoaded)
     }
-
+    
     func needsRefresh(_ needsRefresh: Bool) {
         if needsRefresh {
             self.loading.onNext(false)
             self.needsRefresh.toggle()
         }
     }
-
+    
     func endRefreshingAction(_ isRefresh: Bool) {
         if isRefresh {
             self.endRefreshing.onNext(())
         }
     }
-
+    
     func getCatalogGroup() -> String {
-        return catalogGroup
+        return warehousesOptions.first ?? catalogGroup
+    }
+    
+    func updateComponents() {
+        let request = updateObjectToSend
+        self.loading.onNext(true)
+        networkManager.updateDeleteItemOfTableInOrderDetail(request).subscribe(onNext: {[weak self] res in
+            guard let self = self else { return }
+            guard let response = res.response else { return }
+            self.loading.onNext(false)
+            if (res.code == 200) {
+                self.showAlert.onNext(CommonStrings.processSuccess)
+                clearComponentsToUpdate.onNext(())
+                disableSaveButton.onNext(())
+                updateObjectToSend.components = []
+                return
+            }
+            let errorMessage = UtilsManager.shared.getResponseErrors(jsonString: response)
+            self.showAlert.onNext(errorMessage)
+        }, onError: { [weak self] _ in
+            guard let self = self else { return }
+            self.loading.onNext(false)
+            self.showAlert.onNext(CommonStrings.errorSaveLots)
+        }).disposed(by: disposeBag)
+    }
+    
+    func getComponentWarehouses(response: OrderDetailResponse, isRefresh: Bool = false) {
+        loading.onNext(true)
+        let itemcode = response.response?.code ?? String()
+        self.itemCode = itemcode
+        networkManager.getWarehouses(itemcode).subscribe(onNext: {
+            [weak self] res in
+            guard let self = self else { return }
+            self.loading.onNext(false)
+            self.warehousesOptions = res.response
+            self.clearComponentsToUpdate.onNext(())
+            self.onSuccessOrderDetail(response: response, isRefresh)
+        }, onError: { [weak self] _ in
+            guard let self = self else { return }
+            self.onSuccessOrderDetail(response: response, isRefresh)
+            self.loading.onNext(false)
+            self.dataError.onNext(Constants.Errors.errorData.rawValue)
+        }).disposed(by: disposeBag)
     }
 }

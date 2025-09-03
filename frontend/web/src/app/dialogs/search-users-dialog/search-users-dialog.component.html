@@ -39,7 +39,7 @@
                     <div class="form-field">
                         <mat-form-field appearance="outline" class="custom-field magin-top-field">
                             <mat-label>Selecciona clasificación</mat-label>
-                            <mat-select formControlName="classificationQFBSe"> 
+                            <mat-select formControlName="classificationQFBSe" multiple> 
                                 <ng-container *ngFor="let clasification of clasifications">
                                     <mat-option [value]="clasification.value">
                                         {{ clasification.description}}

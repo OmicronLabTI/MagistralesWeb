@@ -27,6 +27,8 @@ import { ErrorService } from 'src/app/services/error.service';
 import { AppDateAdapter } from 'src/app/utils/date.adapter';
 import { Platform } from '@angular/cdk/platform';
 import { DestinationStore } from 'src/app/model/http/materialReques';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { ClasificationColorList } from 'src/mocks/userListMock';
 
 describe('PlaceOrderDialogComponent', () => {
   let component: PlaceOrderDialogComponent;
@@ -36,6 +38,7 @@ describe('PlaceOrderDialogComponent', () => {
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
   let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
   let errorServiceSpy: jasmine.SpyObj<ErrorService>;
+  let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
 
   const getQfbsWithOrdersMock = CountOrdersMock;
 
@@ -54,6 +57,10 @@ describe('PlaceOrderDialogComponent', () => {
     pedidosServiceSpy.getQfbsWithOrders.and.callFake(() => {
       return of(getQfbsWithOrdersMock);
     });
+    localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
+      'getClasificationList'
+    ]);
+    localStorageServiceSpy.getClasificationList.and.returnValue(ClasificationColorList);
     // --- Observable Service
     observableServiceSpy = jasmine.createSpyObj<ObservableService>(
       'ObservableService',
@@ -93,6 +100,7 @@ describe('PlaceOrderDialogComponent', () => {
         { provide: MessagesService, useValue: messagesServiceSpy },
         { provide: PedidosService, useValue: pedidosServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
+        { provide: LocalStorageService, useValue: localStorageServiceSpy}
       ],
     }).compileComponents();
   }));
@@ -121,7 +129,7 @@ describe('PlaceOrderDialogComponent', () => {
       assignType: MODAL_NAMES.assignManual,
       isFromOrderIsolated: undefined,
       isFromReassign: undefined,
-      clasification: 'mg',
+      clasification: 'MG',
     });
   });
   it('should call placeOrderAutomatic()', () => {

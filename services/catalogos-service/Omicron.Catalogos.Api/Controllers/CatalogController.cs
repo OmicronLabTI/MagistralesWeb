@@ -75,6 +75,18 @@ namespace Omicron.Catalogos.Api.Controllers
         /// Get classification qfb.
         /// </summary>
         /// <returns>Classification qfb.</returns>
+        [Route("/getallclassificationqfb")]
+        [HttpGet]
+        public async Task<IActionResult> GetActiveAllClassificationQfb()
+        {
+            var response = await this.catalogFacade.GetActiveAllClassificationQfb();
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Get classification qfb.
+        /// </summary>
+        /// <returns>Classification qfb.</returns>
         [Route("/upload/warehouses")]
         [HttpPost]
         public async Task<IActionResult> UploadWarehouseFromExcel()
@@ -105,6 +117,81 @@ namespace Omicron.Catalogos.Api.Controllers
         public async Task<IActionResult> GetClassifications()
         {
             var response = await this.catalogFacade.GetClassifications();
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Import of valid classifications through the Excel file.
+        /// </summary>
+        /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
+        [Route("/upload/config/routes")]
+        [HttpPost]
+        public async Task<IActionResult> UploadConfigRouteFromExcel()
+        {
+            var response = await this.catalogFacade.UploadConfigRouteFromExcel();
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Asynchronously retrieves classification data based on the provided parameters.
+        /// </summary>
+        /// <returns>A <see cref="Task{ResultDto}"/> containing the classification data.</returns>
+        [Route("/active/route/confgurations")]
+        [HttpGet]
+        public async Task<IActionResult> GetActiveRouteConfigurationsForProducts()
+        {
+            var response = await this.catalogFacade.GetActiveRouteConfigurationsForProducts();
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Asynchronously retrieves classification data based on the provided parameters.
+        /// </summary>
+        /// <returns>A <see cref="Task{ResultDto}"/> contains color configurations by product type. </returns>
+        [Route("/product/type/colors")]
+        [HttpPost]
+        public async Task<IActionResult> UploadProductTypeColorsFromExcel()
+        {
+            var response = await this.catalogFacade.UploadProductTypeColorsFromExcel();
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Asynchronously retrieves classification data based on the provided parameters.
+        /// </summary>
+        /// <param name="themesIds">the parameters.</param>
+        /// <returns>A <see cref="Task{ResultDto}"/> contains color configurations by product type. </returns>
+        [Route("/products/themes")]
+        [HttpPost]
+        public async Task<IActionResult> GetProductsColors([FromBody] List<string> themesIds)
+        {
+            var response = await this.catalogFacade.GetProductsColors(themesIds);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Asynchronously retrieves classification data based on the provided parameters.
+        /// </summary>
+        /// <returns>A <see cref="Task{ResultDto}"/> contains configurations the warehouses magistral. </returns>
+        [Route("/config/warehouses")]
+        [HttpPost]
+        public async Task<IActionResult> PostConfigWarehouses()
+        {
+            var response = await this.catalogFacade.PostConfigWarehouses();
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Asynchronously retrieves classification data based on the provided parameters.
+        /// </summary>
+        /// <param name="itemCode">The code scanned.</param>
+        /// <returns>A <see cref="Task{ResultDto}"/> contains configurations the warehouses magistral. </returns>
+        [Route("/product/warehouses")]
+        [HttpGet]
+        public async Task<IActionResult> GetWarehouses([FromQuery] string itemCode)
+        {
+            var response = await this.catalogFacade.GetWarehouses(itemCode);
+
             return this.Ok(response);
         }
     }

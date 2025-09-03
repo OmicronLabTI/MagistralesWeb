@@ -1,61 +1,53 @@
-<div class="find-orders-container" 
-    [ngClass]="[filterData.filterOrdersData.isFromIncidents ? 'find-orders-container-custom' : '',
+<div class="find-orders-container" [ngClass]="[filterData.filterOrdersData.isFromIncidents ? 'find-orders-container-custom' : '',
                 !isFromSearchOrders ? 'find-order-build-content': '']">
     <mat-card class="orders-card">
         <mat-card-header class="card-header-container">
             <mat-card-title>
                 <span *ngIf="isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents">Buscar pedidos</span>
-                <span *ngIf="!isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents">Buscar órdenes de fabricación</span>
+                <span *ngIf="!isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents">Buscar órdenes de
+                    fabricación</span>
                 <span *ngIf="filterData.filterOrdersData.isFromIncidents">Buscar incidencias</span>
             </mat-card-title>
             <mat-icon mat-dialog-close class="cursor-pointer">clear</mat-icon>
         </mat-card-header>
-        <mat-card-content class="content-card-container" [ngClass]="filterData.filterOrdersData.isFromIncidents ? 'content-card-container-custom': ''">
-            <form [ngClass]="isFromSearchOrders ? 'orderContainer': 'orderBuildContainer' " [formGroup]="findOrdersForm"  class="form-orders" autocomplete="off" (keydown)="keyDownFunction($event)">
+        <mat-card-content class="content-card-container"
+            [ngClass]="filterData.filterOrdersData.isFromIncidents ? 'content-card-container-custom': ''">
+            <form [ngClass]="isFromSearchOrders ? 'orderContainer': 'orderBuildContainer' " [formGroup]="findOrdersForm"
+                class="form-orders" autocomplete="off" (keydown)="keyDownFunction($event)">
                 <div class="row-form-order row-form-order-custom" *ngIf="!filterData.filterOrdersData.isFromIncidents"
                     [ngClass]="!isFromSearchOrders ? 'border-bottom-custom' : '' ">
                     <div class="form-field-left form-field-left-custom ">
                         <mat-form-field class="custom-field-full">
                             <input matInput [placeholder]="isFromSearchOrders ? 'Pedido SAP (desde)' : 'Orden (desde)'"
-                                   type="number"
-                                   maxlength="20"
-                                   class="height-input"
-                                   formControlName="docNum"
-                                   (keydown)="changeDocNumber($event, false)">
+                                type="number" maxlength="20" class="height-input" formControlName="docNum"
+                                (keydown)="changeDocNumber($event, false)">
                             <mat-error *ngIf="findOrdersForm?.controls.docNum?.errors?.required">
                                 Pedido es <strong>requerido</strong>
                             </mat-error>
                         </mat-form-field>
                     </div>
                     <div class="form-field-left form-field-left-custom "
-                         [ngClass]="!isLessDocNumUntil ? 'error-on-range-order' : ''">
+                        [ngClass]="!isLessDocNumUntil ? 'error-on-range-order' : ''">
                         <mat-form-field class="custom-field-full">
                             <input matInput [placeholder]="isFromSearchOrders ? 'Pedido SAP (hasta)' : 'Orden (hasta)'"
-                                   type="number"
-                                   maxlength="20"
-                                   class="height-input"
-                                   formControlName="docNumUntil"
-                                   (keydown)="changeDocNumber($event, true)">
+                                type="number" maxlength="20" class="height-input" formControlName="docNumUntil"
+                                (keydown)="changeDocNumber($event, true)">
                             <mat-error *ngIf="findOrdersForm?.controls.docNum?.errors?.required">
                                 Pedido es <strong>requerido</strong>
                             </mat-error>
                         </mat-form-field>
                     </div>
-                    <span class="material-icons icon-range-info color-omicron"
-                          matTooltip="{{ isFromSearchOrders ? 'El pedido (hasta) debe ser mayor a pedido (desde)' :
+                    <span class="material-icons icon-range-info color-omicron" matTooltip="{{ isFromSearchOrders ? 'El pedido (hasta) debe ser mayor a pedido (desde)' :
                           'La orden (hasta) debe ser mayor a orden (desde)'}}">
-                       help_outline
+                        help_outline
                     </span>
                 </div>
-                <div class="row-form-order row-form-order-custom border-bottom-custom" *ngIf="!filterData.filterOrdersData.isFromIncidents && isFromSearchOrders ">
+                <div class="row-form-order row-form-order-custom border-bottom-custom"
+                    *ngIf="!filterData.filterOrdersData.isFromIncidents && isFromSearchOrders ">
                     <div class="form-field-left form-field-left-custom ">
                         <mat-form-field class="custom-field-full field-not-margin">
-                            <input matInput placeholder="Transacción Shop"
-                                   type="text"
-                                   maxlength="8"
-                                   class="height-input"
-                                   formControlName="docNumDxp"
-                            >
+                            <input matInput placeholder="Transacción Shop" type="text" maxlength="8"
+                                class="height-input" formControlName="docNumDxp">
                         </mat-form-field>
                     </div>
                 </div>
@@ -63,11 +55,8 @@
                     <div class="form-field-left">
                         <mat-form-field appearance="outline" class="custom-field">
                             <mat-label>Fecha</mat-label>
-                            <input matInput
-                                   *ngIf="filterData.filterOrdersData.isFromIncidents"
-                                   type="text"
-                                   value="Fecha creación"
-                                    readonly>
+                            <input matInput *ngIf="filterData.filterOrdersData.isFromIncidents" type="text"
+                                value="Fecha creación" readonly>
                             <mat-select formControlName="dateType" *ngIf="!filterData.filterOrdersData.isFromIncidents">
                                 <mat-option *ngIf="isFromSearchOrders" value="0">Inicio</mat-option>
                                 <mat-option *ngIf="isFromSearchOrders" value="1">Finalización</mat-option>
@@ -80,76 +69,93 @@
                         </mat-form-field>
                     </div>
                     <div class="form-field-right">
-                        <div class="dates-container" [ngClass]=" findOrdersForm.invalid && findOrdersForm.get('docNum').value !== null ? 'error-on-range-date' : ''"
-                             matTooltip="El rango de fechas debe ser menor a 15 días" [matTooltipDisabled]="!findOrdersForm.invalid">
+                        <div class="dates-container"
+                            [ngClass]=" findOrdersForm.invalid && findOrdersForm.get('docNum').value !== null ? 'error-on-range-date' : ''"
+                            matTooltip="El rango de fechas debe ser menor a 15 días"
+                            [matTooltipDisabled]="!findOrdersForm.invalid">
                             <div class="date-init">
-                                <mat-form-field class="date-picker-custom" appearance="outline" >
+                                <mat-form-field class="date-picker-custom" appearance="outline">
                                     <mat-label>fecha de</mat-label>
-                                    <input matInput [matDatepicker]="dp3"
-                                           formControlName="fini"
-                                           [max]="dateFin" readonly>
+                                    <input matInput [matDatepicker]="dp3" formControlName="fini" [max]="dateFin"
+                                        readonly>
                                     <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
-                                    <mat-datepicker #dp3 [disabled]="withValue(findOrdersForm.get('docNum').value)"></mat-datepicker>
+                                    <mat-datepicker #dp3
+                                        [disabled]="withValue(findOrdersForm.get('docNum').value)"></mat-datepicker>
                                 </mat-form-field>
                             </div>
                             <div class="date-init">
                                 <mat-form-field class="date-picker-custom" appearance="outline">
                                     <mat-label>fecha hasta</mat-label>
                                     <input matInput [matDatepicker]="dp2" formControlName="ffin" readonly
-                                           [min]="findOrdersForm.get('fini').value" [max]="maxDate">
+                                        [min]="findOrdersForm.get('fini').value" [max]="maxDate">
                                     <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
-                                    <mat-datepicker #dp2 [disabled]="withValue(findOrdersForm.get('docNum').value)"></mat-datepicker>
+                                    <mat-datepicker #dp2
+                                        [disabled]="withValue(findOrdersForm.get('docNum').value)"></mat-datepicker>
                                 </mat-form-field>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="row-form-order">
-                    <div class="form-field-left margin-top-status" [ngClass]="filterData.filterOrdersData.isFromIncidents ? 'status-custom-incidents' : ''">
+                    <div class="form-field-left margin-top-status"
+                        [ngClass]="filterData.filterOrdersData.isFromIncidents ? 'status-custom-incidents' : ''">
                         <mat-form-field appearance="outline" class="custom-field custom-style-status">
                             <mat-label>Estatus</mat-label>
                             <mat-select formControlName="status">
-                                <mat-option *ngIf="isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents" value="Abierto">Abierto</mat-option>
-                                <mat-option *ngIf="!isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents" value="Asignado">Asignado</mat-option>
-                                <mat-option *ngIf="!isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents" value="En proceso">En proceso</mat-option>
-                                <mat-option *ngIf="!isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents" value="Pendiente">Pendiente</mat-option>
-                                <mat-option *ngIf="!isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents" value="Reasignado">Reasignado</mat-option>
-                                <mat-option value="Planificado" *ngIf="!filterData.filterOrdersData.isFromIncidents">Planificado</mat-option>
-                                <mat-option *ngIf="isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents" value="Liberado">Liberado</mat-option>
-                                <mat-option value="Terminado" *ngIf="!filterData.filterOrdersData.isFromIncidents">Terminado</mat-option>
-                                <mat-option value="Finalizado" *ngIf="!filterData.filterOrdersData.isFromIncidents">Finalizado</mat-option>
-                                <mat-option value="Almacenado" *ngIf="!filterData.filterOrdersData.isFromIncidents">Almacenado</mat-option>
-                                <mat-option value="Cancelado" *ngIf="!filterData.filterOrdersData.isFromIncidents">Cancelado</mat-option>
+                                <mat-option *ngIf="isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents"
+                                    value="Abierto">Abierto</mat-option>
+                                <mat-option *ngIf="!isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents"
+                                    value="Asignado">Asignado</mat-option>
+                                <mat-option *ngIf="!isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents"
+                                    value="En proceso">En proceso</mat-option>
+                                <mat-option *ngIf="!isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents"
+                                    value="Pendiente">Pendiente</mat-option>
+                                <mat-option *ngIf="!isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents"
+                                    value="Reasignado">Reasignado</mat-option>
+                                <mat-option value="Planificado"
+                                    *ngIf="!filterData.filterOrdersData.isFromIncidents">Planificado</mat-option>
+                                <mat-option *ngIf="isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents"
+                                    value="Liberado">Liberado</mat-option>
+                                <mat-option value="Terminado"
+                                    *ngIf="!filterData.filterOrdersData.isFromIncidents">Terminado</mat-option>
+                                <mat-option value="Finalizado"
+                                    *ngIf="!filterData.filterOrdersData.isFromIncidents">Finalizado</mat-option>
+                                <mat-option value="Almacenado"
+                                    *ngIf="!filterData.filterOrdersData.isFromIncidents">Almacenado</mat-option>
+                                <mat-option value="Cancelado"
+                                    *ngIf="!filterData.filterOrdersData.isFromIncidents">Cancelado</mat-option>
                                 <mat-option *ngIf="isFromSearchOrders" value="Rechazado">Rechazado</mat-option>
-                                <mat-option value="Entregado" *ngIf="!filterData.filterOrdersData.isFromIncidents">Entregado</mat-option>
+                                <mat-option value="Entregado"
+                                    *ngIf="!filterData.filterOrdersData.isFromIncidents">Entregado</mat-option>
 
 
-                                <mat-option value="Abierta" *ngIf="filterData.filterOrdersData.isFromIncidents">Abierta</mat-option>
-                                <mat-option value="Atendiendo" *ngIf="filterData.filterOrdersData.isFromIncidents">Atendiendo</mat-option>
-                                <mat-option value="Cerrada" *ngIf="filterData.filterOrdersData.isFromIncidents">Cerrada</mat-option>
-                                
+                                <mat-option value="Abierta"
+                                    *ngIf="filterData.filterOrdersData.isFromIncidents">Abierta</mat-option>
+                                <mat-option value="Atendiendo"
+                                    *ngIf="filterData.filterOrdersData.isFromIncidents">Atendiendo</mat-option>
+                                <mat-option value="Cerrada"
+                                    *ngIf="filterData.filterOrdersData.isFromIncidents">Cerrada</mat-option>
+
 
                             </mat-select>
                         </mat-form-field>
                     </div>
-                    <div class="form-field-right" >
-                        <mat-form-field class="custom-field-full custom-order" [ngClass]="filterData.filterOrdersData.isFromIncidents ? 'order-custom-incidents' : ''"
-                                        *ngIf="localStorageService.getUserRole() === '7' && filterData.filterOrdersData.isFromIncidents">
-                            <input matInput placeholder="Número de pedido"
-                                   type="text"
-                                   maxlength="10"
-                                   class="height-input"
-                                   formControlName="orderIncidents"
-                                   (keydown)="changeDocNumber($event, false)">
+                    <div class="form-field-right">
+                        <mat-form-field class="custom-field-full custom-order"
+                            [ngClass]="filterData.filterOrdersData.isFromIncidents ? 'order-custom-incidents' : ''"
+                            *ngIf="localStorageService.getUserRole() === '7' && filterData.filterOrdersData.isFromIncidents">
+                            <input matInput placeholder="Número de pedido" type="text" maxlength="10"
+                                class="height-input" formControlName="orderIncidents"
+                                (keydown)="changeDocNumber($event, false)">
                             <mat-error *ngIf="!findOrdersForm?.controls.orderIncidents?.errors?.maxLength">
                                 Solo 7 caracteres
                             </mat-error>
                         </mat-form-field>
 
                         <mat-form-field appearance="outline" class="custom-field"
-                                        *ngIf="(localStorageService.getUserRole() === '3' || localStorageService.getUserRole() === '4') && isFromSearchOrders">
+                            *ngIf="(localStorageService.getUserRole() === '3' || localStorageService.getUserRole() === '4') && isFromSearchOrders">
                             <mat-label>Tipo de etiqueta</mat-label>
-                            <mat-select formControlName="label" >
+                            <mat-select formControlName="label">
                                 <mat-option value="G">Genérica</mat-option>
                                 <mat-option value="P">Personalizada</mat-option>
                             </mat-select>
@@ -159,60 +165,59 @@
                         </mat-form-field>
 
                         <mat-form-field appearance="outline" class="custom-field-full"
-                                        *ngIf="localStorageService.getUserRole() === '5' || (!isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents )">
+                            *ngIf="localStorageService.getUserRole() === '5' || (!isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents )">
                             <mat-label>QFB asignado</mat-label>
                             <mat-select formControlName="qfb">
-                                <mat-option value="{{qfb.qfbId}}" *ngFor="let qfb of qfbsSelect">{{qfb.qfbName}}</mat-option>
+                                <mat-option value="{{qfb.qfbId}}"
+                                    *ngFor="let qfb of qfbsSelect">{{qfb.qfbName}}</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
                 </div>
                 <div class="row-form-order">
                     <div class="form-field-left">
-                        <mat-form-field appearance="outline" class="custom-field" *ngIf="(localStorageService.getUserRole() === '3' || localStorageService.getUserRole() === '4') && isFromSearchOrders">
+                        <mat-form-field appearance="outline" class="custom-field"
+                            *ngIf="(localStorageService.getUserRole() === '3' || localStorageService.getUserRole() === '4') && isFromSearchOrders">
                             <mat-label>Etiqueta terminada</mat-label>
-                            <mat-select formControlName="finlabel" >
+                            <mat-select formControlName="finlabel">
                                 <mat-option value="1">Si</mat-option>
                                 <mat-option value="0">No</mat-option>
                             </mat-select>
                         </mat-form-field>
 
-                        <mat-form-field class="custom-field-full" *ngIf="localStorageService.getUserRole() === '5' && isFromSearchOrders">
-                            <input matInput placeholder="Nombre del cliente" type="text"
-                                   maxlength="80"
-                                   class="height-input"
-                                   formControlName="clientName"
-                                   (focusout)="trimFilterValues()">
+                        <mat-form-field class="custom-field-full"
+                            *ngIf="localStorageService.getUserRole() === '5' && isFromSearchOrders">
+                            <input matInput placeholder="Nombre del cliente" type="text" maxlength="80"
+                                class="height-input" formControlName="clientName" (focusout)="trimFilterValues()">
                             <mat-error *ngIf="!findOrdersForm?.controls.clientName?.errors?.maxLength">
                                 Solo 80 caracteres
                             </mat-error>
                         </mat-form-field>
-                        <mat-form-field class="custom-field-full" *ngIf="(localStorageService.getUserRole() === '5' || localStorageService.getUserRole() === '3') && !isFromSearchOrders">
-                            <input matInput placeholder="Código del producto" type="text"
-                                   maxlength="40"
-                                   class="height-input"
-                                   formControlName="productCode"
-                                   (focusout)="trimFilterValues()">
+                        <mat-form-field class="custom-field-full"
+                            *ngIf="(localStorageService.getUserRole() === '5' || localStorageService.getUserRole() === '3') && !isFromSearchOrders">
+                            <input matInput placeholder="Código del producto" type="text" maxlength="40"
+                                class="height-input" formControlName="productCode" (focusout)="trimFilterValues()">
                             <mat-error *ngIf="!findOrdersForm?.controls.productCode?.errors?.maxLength">
                                 Solo 40 caracteres
                             </mat-error>
                         </mat-form-field>
                     </div>
 
-                    <div [ngClass]="localStorageService.getUserRole() === '4' && isFromSearchOrders ? 'form-field-right-no-padding' : 'form-field-right' ">
-                        <mat-form-field appearance="outline" class="custom-field-full" *ngIf="localStorageService.getUserRole() === '3' && isFromSearchOrders">
+                    <div
+                        [ngClass]="localStorageService.getUserRole() === '4' && isFromSearchOrders ? 'form-field-right-no-padding' : 'form-field-right' ">
+                        <mat-form-field appearance="outline" class="custom-field-full"
+                            *ngIf="localStorageService.getUserRole() === '3' && isFromSearchOrders">
                             <mat-label>QFB asignado</mat-label>
                             <mat-select formControlName="qfb">
-                                <mat-option value="{{qfb.qfbId}}" *ngFor="let qfb of qfbsSelect">{{qfb.qfbName}}</mat-option>
+                                <mat-option value="{{qfb.qfbId}}"
+                                    *ngFor="let qfb of qfbsSelect">{{qfb.qfbName}}</mat-option>
                             </mat-select>
                         </mat-form-field>
 
-                        <mat-form-field class="custom-field-full no-padding-custom" *ngIf="localStorageService.getUserRole() === '4' && isFromSearchOrders">
-                            <input matInput placeholder="Nombre del cliente" type="text"
-                                   maxlength="80"
-                                   class="height-input"
-                                   formControlName="clientName"
-                                   (focusout)="trimFilterValues()">
+                        <mat-form-field class="custom-field-full no-padding-custom"
+                            *ngIf="localStorageService.getUserRole() === '4' && isFromSearchOrders">
+                            <input matInput placeholder="Nombre del cliente" type="text" maxlength="80"
+                                class="height-input" formControlName="clientName" (focusout)="trimFilterValues()">
                             <mat-error *ngIf="!findOrdersForm?.controls.clientName?.errors?.maxLength">
                                 Solo 80 caracteres
                             </mat-error>
@@ -222,25 +227,23 @@
                 <div class="row-form-order">
                     <div class="form-field-left" *ngIf="isFromSearchOrders">
                         <mat-form-field class="custom-field-full" *ngIf="localStorageService.getUserRole() === '3' ">
-                            <input matInput placeholder="Nombre del cliente" type="text"
-                                   maxlength="80"
-                                   class="height-input"
-                                   formControlName="clientName"
-                                   (focusout)="trimFilterValues()">
+                            <input matInput placeholder="Nombre del cliente" type="text" maxlength="80"
+                                class="height-input" formControlName="clientName" (focusout)="trimFilterValues()">
                             <mat-error *ngIf="!findOrdersForm?.controls.clientName?.errors?.maxLength">
                                 Solo 80 caracteres
                             </mat-error>
                         </mat-form-field>
                     </div>
                     <div class="form-field-right padding-tp" *ngIf="isFromSearchOrders">
-                        <mat-form-field appearance="outline" class="custom-field-full" *ngIf="localStorageService.getUserRole() === '3' && isFromSearchOrders">
+                        <mat-form-field appearance="outline" class="custom-field-full"
+                            *ngIf="localStorageService.getUserRole() === '3' && isFromSearchOrders">
                             <mat-label>Clasificación</mat-label>
                             <mat-select formControlName="clasification">
-                                <mat-option value="MN">Bioelite (MN) </mat-option>
-                                <mat-option value="BE">Bioequal (BE)</mat-option>
-                                <mat-option value="MG">Magistral (MG)</mat-option>
-                                <mat-option value="MX">Mixto (MX)</mat-option>
-                                <mat-option value="MQ">Maquila (MQ)</mat-option>
+                                <ng-container *ngFor="let clasification of clasifications">
+                                    <mat-option [value]="clasification.value">
+                                        {{ clasification.description}}
+                                    </mat-option>
+                                </ng-container>
                             </mat-select>
                         </mat-form-field>
                     </div>
@@ -248,11 +251,14 @@
             </form>
         </mat-card-content>
         <mat-card-actions class="options-footer">
-            <button mat-button class="btn-cancel-modal with-button-reset" *ngIf="isToResetData" (click)="resetSearchParams()">Reiniciar parámetros</button>
+            <button mat-button class="btn-cancel-modal with-button-reset" *ngIf="isToResetData"
+                (click)="resetSearchParams()">Reiniciar parámetros</button>
             <div class="only-margin">
             </div>
-            <button mat-button mat-dialog-close class="btn-cancel-modal btn&#45;&#45;modal with-button-cancel">Cancelar</button>
-            <button mat-button class="btn-add-modal btn&#45;&#45;modal" [disabled]="findOrdersForm.invalid"  (click)="searchOrders()">
+            <button mat-button mat-dialog-close
+                class="btn-cancel-modal btn&#45;&#45;modal with-button-cancel">Cancelar</button>
+            <button mat-button class="btn-add-modal btn&#45;&#45;modal" [disabled]="findOrdersForm.invalid"
+                (click)="searchOrders()">
                 <span>Buscar</span>
             </button>
         </mat-card-actions>

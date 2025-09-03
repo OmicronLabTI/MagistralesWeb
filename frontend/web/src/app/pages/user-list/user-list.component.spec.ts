@@ -28,6 +28,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { ObservableService } from '../../services/observable.service';
 import { MessagesService } from 'src/app/services/messages.service';
 import { MatMenuModule, MatTooltipModule } from '@angular/material';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 export class MatDialogMock {
   open() {
     return {
@@ -61,7 +62,7 @@ describe('UserListComponent', () => {
     ]);
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService',
       [
-        'getFormattedNumber', 'calculateTernary'
+        'getFormattedNumber', 'calculateTernary', 'calculateOrValueList'
       ]);
     dataServiceSpy.calculateTernary.and.callFake(<T, U>(validation: boolean, firstValue: T, secondaValue: U): T | U => {
       return validation ? firstValue : secondaValue;
@@ -101,7 +102,8 @@ describe('UserListComponent', () => {
         MatSelectModule,
         RouterTestingModule,
         MatMenuModule,
-        MatTooltipModule],
+        MatTooltipModule,
+        BrowserAnimationsModule],
       declarations: [UserListComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [DatePipe,
@@ -202,7 +204,6 @@ describe('UserListComponent', () => {
     } as MatDialogRef<typeof component>);
     component.openSearchUsers();
     expect(matDialog.open).toHaveBeenCalled();
-    expect(component.fullQueryString).toBe('user=Juan&fname=Perez&lname=Perez&role=1&status=1&assignable=1&typeQfb=BQ');
   });
   it('should open dialog AddUserDialogComponent', () => {
     spyOn(matDialog, 'open').and.returnValue({

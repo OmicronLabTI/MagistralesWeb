@@ -166,7 +166,13 @@ namespace Omicron.Pedidos.Test
                 new UserOrderModel { Id = 142, Productionorderid = "224211", Salesorderid = "903", Status = "Asignado", Userid = "abcquimicocd",  TecnicId = "tecnicoqfb2", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 1, StatusForTecnic = "Asignado" },
                 new UserOrderModel { Id = 143, Productionorderid = "224159", Salesorderid = "903", Status = "Asignado", Userid = "abcquimicocd",  TecnicId = "tecnicoqfb2", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 1, StatusForTecnic = "Asignado" },
 
-                new UserOrderModel { Id = 144, Salesorderid = "104", Status = "Finalizado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29), FinishedLabel = 1, FinalizedDate = DateTime.Now, MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), Quantity = 24, InvoiceId = 1, InvoiceLineNum = 1 },
+                new UserOrderModel { Id = 144, Salesorderid = "104", Productionorderid = "5599", Status = "Finalizado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29), FinishedLabel = 1, FinalizedDate = DateTime.Now, MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), Quantity = 24, InvoiceId = 1, InvoiceLineNum = 1 },
+
+                // UserOrderModel for fabOrders
+                new UserOrderModel { Id = 145, Userid = "8df154e0-5061-4749-b06e-6bd3a1aebef8", Salesorderid = "175623", Productionorderid = "226274",  Status = "Proceso", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1, FinalizedDate = new DateTime(2025, 5, 28), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), Quantity = 24, InvoiceId = 1, InvoiceLineNum = 1 },
+                new UserOrderModel { Id = 146, Userid = "8df154e0-5061-4749-b06e-6bd3a1aebef8", Salesorderid = "175624", Productionorderid = "226275",  Status = "Proceso", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1, FinalizedDate = new DateTime(2025, 5, 28), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), Quantity = 24, InvoiceId = 1, InvoiceLineNum = 1 },
+                new UserOrderModel { Id = 147, Userid = "8df154e0-5061-4749-b06e-6bd3a1aebef8", Salesorderid = "175625", Productionorderid = "226276",  Status = "Proceso", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1, FinalizedDate = new DateTime(2025, 5, 28), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), Quantity = 24, InvoiceId = 1, InvoiceLineNum = 1 },
+                new UserOrderModel { Id = 148, Userid = "8df154e0-5061-4749-b06e-6bd3a1aebef8", Salesorderid = "175626", Productionorderid = "226277",  Status = "Proceso", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1, FinalizedDate = new DateTime(2025, 5, 28), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), Quantity = 24, InvoiceId = 1, InvoiceLineNum = 1 },
             };
         }
 
@@ -487,6 +493,34 @@ namespace Omicron.Pedidos.Test
         /// <summary>
         /// Gets user Dto.
         /// </summary>
+        /// <returns>the user.</returns>
+        public ResultModel GetResultFinalizeProductionOrdersAsync()
+        {
+            var listResult = new FinalizeProductionOrdersResult
+            {
+                Successful = new List<FinalizeProductionOrderModel>
+                {
+                    new FinalizeProductionOrderModel { UserId = "Prueba", ProductionOrderId = 123, SourceProcess = "pruebas", Batches = new List<BatchesConfigurationModel>() },
+                },
+                Failed = new List<ProductionOrderFailedResultModel>
+                {
+                    new ProductionOrderFailedResultModel { UserId = "Prueba", OrderId = 123, Reason = "prueba falla" },
+                },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = listResult,
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
         /// <param name="isTecnic">Is tecnic.</param>
         /// <returns>the user.</returns>
         public ResultModel GetResultUserModel(bool isTecnic = false)
@@ -506,6 +540,28 @@ namespace Omicron.Pedidos.Test
                     new UserModel { Activo = 1, FirstName = "Sutano", Id = "abc", LastName = "Lope", Password = "as", Role = 1, UserName = "sutan", Piezas = 1000, Asignable = 1, TechnicalRequire = true },
                 };
             }
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listUsers),
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <param name="isTecnic">Is tecnic.</param>
+        /// <returns>the user.</returns>
+        public ResultModel GetUserModel()
+        {
+            var listUsers = new List<UserModel>
+            {
+                new UserModel { Activo = 1, FirstName = "Sutano", Id = "8df154e0-5061-4749-b06e-6bd3a1aebef8", LastName = "Lope", Password = "as", Role = 1, UserName = "sutan", Piezas = 1000, Asignable = 1, TechnicalRequire = true },
+            };
 
             return new ResultModel
             {
@@ -560,6 +616,30 @@ namespace Omicron.Pedidos.Test
                 Code = 200,
                 ExceptionMessage = string.Empty,
                 Response = JsonConvert.SerializeObject(listOrders),
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
+        public ResultModel GetFabricacionOrderModelClassifications()
+        {
+            var listData = new List<FabricacionOrderModel>
+            {
+                new FabricacionOrderModel { OrdenId = 226274, PedidoId = 175623, Quantity = 20, ProductoId = "567   30 ML", OrderType = "MG" },
+                new FabricacionOrderModel { OrdenId = 226275, PedidoId = 175624, Quantity = 20, ProductoId = "567   30 ML", OrderType = "MN" },
+                new FabricacionOrderModel { OrdenId = 226276, PedidoId = 175625, Quantity = 20, ProductoId = "567   30 ML", OrderType = "BE" },
+                new FabricacionOrderModel { OrdenId = 226277, PedidoId = null, Quantity = 20, ProductoId = "567   30 ML", OrderType = null },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listData),
                 Success = true,
                 UserError = string.Empty,
             };
@@ -761,6 +841,142 @@ namespace Omicron.Pedidos.Test
                 Response = qfbValidatedInfo,
                 Success = true,
                 UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// GetProductionOrderProcessingStatusModel.
+        /// </summary>
+        /// <returns>List ProductionOrderProcessingStatusModel.</returns>
+        public List<ProductionOrderProcessingStatusModel> GetProductionOrderProcessingStatusModel()
+        {
+            return new List<ProductionOrderProcessingStatusModel>
+            {
+                new ProductionOrderProcessingStatusModel
+                {
+                    Id = "9e7ea1ba-5950-4a94-a34e-5b7a5db112a4",
+                    ProductionOrderId = 100001,
+                    LastStep = "Primary Validations",
+                    Status = "In Progress",
+                    Payload = "{\"FinalizeProductionOrder\":{\"UserId\":\"35642b3a-9471-4b89-9862-8bee6d98c361\",\"ProductionOrderId\":226357,\"SourceProcess\":null,\"Batches\":null}}",
+                    CreatedAt = DateTime.Now.AddDays(-1),
+                    LastUpdated = DateTime.Now,
+                },
+                new ProductionOrderProcessingStatusModel
+                {
+                    Id = "778e6a6a-fa1d-4767-95fa-47f3c0cb2377",
+                    ProductionOrderId = 223580,
+                    LastStep = "Update UsersOrders in postgres",
+                    Status = "In Progress",
+                    Payload = "{\"FinalizeProductionOrder\":{\"UserId\":\"7ac2db83-3c31-4042-9d1b-5531753694b4\",\"ProductionOrderId\":223580,\"SourceProcess\":null,\"Batches\":null}}",
+                    CreatedAt = DateTime.Now.AddDays(-1),
+                    LastUpdated = DateTime.Now,
+                },
+                new ProductionOrderProcessingStatusModel
+                {
+                    Id = "741baf58-b87a-4235-b724-35f966229fd8",
+                    ProductionOrderId = 224896,
+                    LastStep = "Update UsersOrders in postgres",
+                    Status = "In Progress",
+                    Payload = "{\"FinalizeProductionOrder\":{\"UserId\":\"7ac2db83-3c31-4042-9d1b-5531753694b4\",\"ProductionOrderId\":224896,\"SourceProcess\":null,\"Batches\":null}}",
+                    CreatedAt = DateTime.Now.AddDays(-1),
+                    LastUpdated = DateTime.Now,
+                },
+            };
+        }
+
+        /// <summary>
+        /// GetProductionOrderProcessingStatusModel.
+        /// </summary>
+        /// <returns>List ProductionOrderProcessingStatusModel.</returns>
+        public IEnumerable<ProductionOrderProcessingStatusModel> GetProductionOrderProcessingStatusModelForGetFailedProductionOrders()
+        {
+            return new List<ProductionOrderProcessingStatusModel>
+            {
+                // GetFailedProductionOrders test
+                new ProductionOrderProcessingStatusModel
+                {
+                    Id = "fe6e0eea-c279-4a07-b0fb-923dce1b5e31",
+                    ProductionOrderId = 123,
+                    LastStep = "Primary Validations",
+                    Status = "Failed",
+                    Payload = "{\"FinalizeProductionOrder\":{\"UserId\":\"5c9700ba-92e1-40ae-91ab-d6d833eb03de\",\"ProductionOrderId\":123,\"SourceProcess\":null,\"Batches\":null}}",
+                    CreatedAt = DateTime.Now.AddDays(-1),
+                    LastUpdated = DateTime.Now,
+                },
+                new ProductionOrderProcessingStatusModel
+                {
+                    Id = "b02abfd6-7c31-420d-bcf5-db99aef35a65",
+                    ProductionOrderId = 456,
+                    LastStep = "Update UsersOrders in postgres",
+                    Status = "Failed",
+                    Payload = "{\"FinalizeProductionOrder\":{\"UserId\":\"5c9700ba-92e1-40ae-91ab-d6d833eb03de\",\"ProductionOrderId\":456,\"SourceProcess\":null,\"Batches\":null}}",
+                    CreatedAt = DateTime.Now.AddDays(-1),
+                    LastUpdated = DateTime.Now,
+                },
+                new ProductionOrderProcessingStatusModel
+                {
+                    Id = "7773b512-9eb2-495d-abcf-16de3ac616db",
+                    ProductionOrderId = 789,
+                    LastStep = "PDF Creation",
+                    Status = "Failed",
+                    Payload = "{\"FinalizeProductionOrder\":{\"UserId\":\"5c9700ba-92e1-40ae-91ab-d6d833eb03de\",\"ProductionOrderId\":789,\"SourceProcess\":null,\"Batches\":null}}",
+                    CreatedAt = DateTime.Now.AddDays(-1),
+                    LastUpdated = DateTime.Now,
+                },
+            };
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
+        public List<UserOrderModel> GetUserModelsForFinalizeProductionOrdersOnPostgresqlAsync()
+        {
+            return new List<UserOrderModel>
+            {
+                // UPDATE POSTGRES
+                new UserOrderModel { Id = 50, Productionorderid = null, Salesorderid = "165062", Status = "Terminado", Userid = "abc", FinishDate = new DateTime(2025, 4, 22), Quantity = 0 },
+                new UserOrderModel { Id = 51, Productionorderid = "223580", Salesorderid = "165062", Status = "Terminado", Userid = "abc", FinishDate = new DateTime(2025, 4, 22), Quantity = 1 },
+                new UserOrderModel { Id = 52, Productionorderid = "223581", Salesorderid = "165062", Status = "Terminado", Userid = "abc", FinishDate = new DateTime(2025, 4, 22), Quantity = 1 },
+                new UserOrderModel { Id = 53, Productionorderid = "223582", Salesorderid = "165062", Status = "Terminado", Userid = "abc", FinishDate = new DateTime(2025, 4, 22), Quantity = 1 },
+
+                // CREATE PDF
+                new UserOrderModel { Id = 55, Productionorderid = "224896", Salesorderid = null, Status = "Finalizado", Userid = "abc", FinishDate = new DateTime(2025, 4, 22), Quantity = 1 },
+            };
+        }
+
+        /// <summary>
+        /// GetRedisFinalizeProductionOrderString.
+        /// </summary>
+        /// <param name="hasRedisValue">Has Redis Value.</param>
+        /// <returns>the user.</returns>
+        public string GetRedisFinalizeProductionOrderString(bool hasRedisValue)
+        {
+            var redisValue = new List<FinalizeProductionOrderModel>();
+            if (hasRedisValue)
+            {
+                redisValue.Add(new FinalizeProductionOrderModel { ProductionOrderId = 100002, UserId = "2b8211b7-30a0-4841-ad79-d01c5d3ff71e", SourceProcess = "SaleOrder" });
+            }
+
+            return JsonConvert.SerializeObject(redisValue);
+        }
+
+        /// <summary>
+        /// Creates a resultModle.
+        /// </summary>
+        /// <param name="response">the object to send.</param>
+        /// <param name="isOk">flag to define if the service returns an error.</param>
+        /// <param name="comments">the comments.</param>
+        /// <returns>the data.</returns>
+        public ResultModel GetResultModelCompl(object response, bool isOk = true, string comments = "")
+        {
+            return new ResultModel
+            {
+                Code = isOk ? 200 : 400,
+                Response = JsonConvert.SerializeObject(response),
+                Success = isOk,
+                Comments = string.Empty,
             };
         }
 

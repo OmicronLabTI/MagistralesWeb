@@ -8,6 +8,7 @@
 
 namespace Omicron.Pedidos.Services.Constants
 {
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -29,6 +30,16 @@ namespace Omicron.Pedidos.Services.Constants
         /// Cancelled status.
         /// </summary>
         public const string Cancelled = "Cancelado";
+
+        /// <summary>
+        /// close salesOrders.
+        /// </summary>
+        public const string SalesOrders = "SalesOrders";
+
+        /// <summary>
+        /// close fabOrders.
+        /// </summary>
+        public const string FabOrders = "FabOrders";
 
         /// <summary>
         /// Completed status.
@@ -429,6 +440,16 @@ namespace Omicron.Pedidos.Services.Constants
         /// the id for qfb role.
         /// </summary>
         public const int QfbRoleId = 2;
+
+        /// <summary>
+        /// Const for the all classifications.
+        /// </summary>
+        public const string AllClassifications = "Todas";
+
+        /// <summary>
+        /// Const for the classifications.
+        /// </summary>
+        public const string Classifications = "classifications";
 
         /// <summary>
         /// Reason not found.
@@ -984,6 +1005,167 @@ namespace Omicron.Pedidos.Services.Constants
         /// Get the value for format.
         /// </summary>
         public const string QrPng = "qr.png";
+
+        /// <summary>
+        /// const for OrdersToExcludeKey.
+        /// </summary>
+        public const string OrdersToExcludeKey = "OrdersToExclude";
+
+        /// <summary>
+        /// StepPrimaryValidations.
+        /// </summary>
+        public const string StepPrimaryValidations = "Primary Validations";
+
+        /// <summary>
+        /// StepCreateInventoryStep.
+        /// </summary>
+        public const string StepCreateInventoryStep = "Create Inventory";
+
+        /// <summary>
+        /// StepCreateReceiptStep.
+        /// </summary>
+        public const string StepCreateReceiptStep = "Create Receipt";
+
+        /// <summary>
+        /// StepSuccessfullyClosedInSapStep.
+        /// </summary>
+        public const string StepSuccessfullyClosedInSapStep = "Successfully Closed In SAP";
+
+        /// <summary>
+        /// Gets StepPrimaryValidations.
+        /// </summary>
+        /// <value>
+        /// StepPrimaryValidations.
+        /// </value>
+        public const string StepUpdatePostgres = "Successfully Closed In Postgresql";
+
+        /// <summary>
+        /// Gets StepPrimaryValidations.
+        /// </summary>
+        /// <value>
+        /// StepPrimaryValidations.
+        /// </value>
+        public const string StepCreatePdf = "PDF Created";
+
+        /// <summary>
+        /// Gets DefaultRedisValueTimeToLive.
+        /// </summary>
+        /// <value>
+        /// DefaultRedisValueTimeToLive.
+        /// </value>
+        public static TimeSpan DefaultRedisValueTimeToLive => new TimeSpan(8, 0, 0);
+
+        /// <summary>
+        /// Gets ProductionOrderIsAlreadyBeignProcessed.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderIsAlreadyBeignProcessed.
+        /// </value>
+        public static string ProductionOrderIsAlreadyBeignProcessed => "La orden de producción ya está siendo procesada.";
+
+        /// <summary>
+        /// Gets SapValidationFinalizationEndpoint.
+        /// </summary>
+        /// <value>
+        /// SapValidationFinalizationEndpoint.
+        /// </value>
+        public static string SapValidationFinalizationEndpoint => "validation/productionorders/finalization";
+
+        /// <summary>
+        /// Gets SapFinalizeProductionOrdersEndpoint.
+        /// </summary>
+        /// <value>
+        /// SapFinalizeProductionOrdersEndpoint.
+        /// </value>
+        public static string SapFinalizeProductionOrdersEndpoint => "finalize/productionorders";
+
+        /// <summary>
+        /// Gets FinalizeProcessInProgressStatus.
+        /// </summary>
+        /// <value>
+        /// FinalizeProcessInProgressStatus.
+        /// </value>
+        public static string FinalizeProcessInProgressStatus => "In Progress";
+
+        /// <summary>
+        /// Gets FinalizeProcessFailedStatus.
+        /// </summary>
+        /// <value>
+        /// FinalizeProcessFailedStatus.
+        /// </value>
+        public static string FinalizeProcessFailedStatus => "Failed";
+
+        /// <summary>
+        /// Gets FinalizeProcessInSuccessStatus.
+        /// </summary>
+        /// <value>
+        /// FinalizeProcessInSuccessStatus.
+        /// </value>
+        public static string FinalizeProcessInSuccessStatus => "Success";
+
+        /// <summary>
+        /// Gets ProductionOrderFinalizingKey.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderFinalizingKey.
+        /// </value>
+        public static string ProductionOrderFinalizingKey => "production-order-finalizing:{0}";
+
+        /// <summary>
+        /// Gets ProductionOrderFinalizingToProcessKey.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderFinalizingToProcessKey.
+        /// </value>
+        public static string ProductionOrderFinalizingToProcessKey => "production-order-finalizing-to-process";
+
+        /// <summary>
+        /// Gets ProductionOrderFinalizingRetryCronjob.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderFinalizingRetryCronjob.
+        /// </value>
+        public static string ProductionOrderFinalizingRetryCronjob => "production-order-finalizing-retry-cronjob";
+
+        /// <summary>
+        /// Gets KafkaInsertLogsConfigName.
+        /// </summary>
+        /// <value>
+        /// KafkaInsertLogsConfigName.
+        /// </value>
+        public static string KafkaInsertLogsConfigName => "insertlogs";
+
+        /// <summary>
+        /// Gets KafkaFinalizeProductionOrderSapConfigName.
+        /// </summary>
+        /// <value>
+        /// KafkaFinalizeProductionOrderSapConfigName.
+        /// </value>
+        public static string KafkaFinalizeProductionOrderSapConfigName => "finalizeproductionordersap";
+
+        /// <summary>
+        /// Gets KafkaFinalizeProductionOrderPostgresqlConfigName.
+        /// </summary>
+        /// <value>
+        /// KafkaFinalizeProductionOrderPostgresqlConfigName.
+        /// </value>
+        public static string KafkaFinalizeProductionOrderPostgresqlConfigName => "finalizeproductionorderpostgresql";
+
+        /// <summary>
+        /// Gets KafkaProductionOrderPdfGenerationConfigName.
+        /// </summary>
+        /// <value>
+        /// KafkaProductionOrderPdfGenerationConfigName.
+        /// </value>
+        public static string KafkaProductionOrderPdfGenerationConfigName => "productionorderpdfgeneration";
+
+        /// <summary>
+        /// Gets ErrorOccurredWhileCommunicatingWithServiceLayerAdapter.
+        /// </summary>
+        /// <value>
+        /// ErrorOccurredWhileCommunicatingWithServiceLayerAdapter.
+        /// </value>
+        public static string ErrorOccurredWhileCommunicatingWithServiceLayerAdapter => "An error occurred while communicating with the Service Layer Adapter.";
 
         /// <summary>
         /// Gets the status of the order.

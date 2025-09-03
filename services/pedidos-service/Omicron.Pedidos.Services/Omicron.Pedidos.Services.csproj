@@ -4,6 +4,12 @@
     <TargetFramework>net8</TargetFramework>
     <CodeAnalysisRuleSet>$(SolutionDir)\StyleCop\StyleCopeRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="SapOrderAdapterService\**" />
+    <EmbeddedResource Remove="SapOrderAdapterService\**" />
+    <None Remove="SapOrderAdapterService\**" />
+  </ItemGroup>
   <ItemGroup>
     <AdditionalFiles Include="$(SolutionDir)\StyleCop\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
@@ -37,7 +43,6 @@
     <None Remove="SapDiApi\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="SapOrderAdapterService\" />
     <Folder Include="SapDiApi\" />
   </ItemGroup>
 </Project>

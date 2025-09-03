@@ -190,7 +190,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 .Select(id =>
                 {
                     var parts = id.Split('-');
-                    return parts.Length == 2
+                    return parts.Length >= 2
                         ? (Id: int.Parse(parts[0]), Suffix: int.Parse(parts[1]))
                         : (Id: int.Parse(parts[0]), Suffix: (int?)null);
                 })
@@ -223,10 +223,16 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             var saleOrders = await this.pedidosDao.GetUserOrdersByInvoiceId(invoiceIds);
+            saleOrders = saleOrders
+                .Where(x => separated.Exists(s => s.Id == x.InvoiceId &&
+                (s.Suffix == null || s.Suffix == x.InvoiceLineNum)))
+                .DistinctBy(x => (x.InvoiceId, x.InvoiceLineNum))
+                .ToList();
 
             if (!saleOrders.Any())
             {
                 var lineProducts = await this.GetOrdersFromAlmacenDict(ServiceConstants.AlmacenGetOrderByInvoice, invoiceIds);
+                lineProducts = lineProducts.Where(product => separated.Any(sepa => sepa.Id == product.InvoiceId && (sepa.Suffix == null || sepa.Suffix == product.InvoiceLineNum))).ToList();
                 lineProducts.ForEach(y =>
                 {
                     var newOrder = new UserOrderModel
@@ -241,19 +247,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 });
             }
 
-            var count = saleOrders
-                .GroupBy(x => x.InvoiceId)
-                .ToDictionary(g => g.Key, g => g.Select(x => x.InvoiceLineNum)
-                .Distinct()
-                .Count());
-
-            saleOrders = saleOrders
-                .Where(x => separated.Exists(s => s.Id == x.InvoiceId &&
-                (s.Suffix == null || s.Suffix == x.InvoiceLineNum)))
-                .DistinctBy(x => (x.InvoiceId, x.InvoiceLineNum))
-                .ToList();
-
-            var urls = await this.GetUrlQrFactura(saleOrders, dimensionsQr, savedQrRoutes, azureAccount, azureKey, azureqrContainer, count);
+            var urls = await this.GetUrlQrFactura(saleOrders, dimensionsQr, savedQrRoutes, azureAccount, azureKey, azureqrContainer);
             urls.AddRange(savedQrRoutes);
             urls = urls.Distinct().ToList();
 
@@ -463,7 +457,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             return listUrls;
         }
 
-        private async Task<List<string>> GetUrlQrFactura(List<UserOrderModel> saleOrders, QrDimensionsModel parameters, List<string> existingUrls, string azureAccount, string azureKey, string container, Dictionary<int, int> count)
+        private async Task<List<string>> GetUrlQrFactura(List<UserOrderModel> saleOrders, QrDimensionsModel parameters, List<string> existingUrls, string azureAccount, string azureKey, string container)
         {
             var listUrls = new List<string>();
             var listToSave = new List<ProductionFacturaQrModel>();
@@ -474,8 +468,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var modelQr = JsonConvert.DeserializeObject<InvoiceQrModel>(so.InvoiceQr);
                 using var surface = this.CreateSKQrCode(parameters, JsonConvert.SerializeObject(modelQr));
 
-                int val = count.Where(x => x.Key == modelQr.InvoiceId).Select(x => x.Value).FirstOrDefault();
-                string num = val > 1 ? $"{modelQr.InvoiceId}-{modelQr.InvoiceLineNum}" : $"{modelQr.InvoiceId}";
+                string num = $"{modelQr.InvoiceId}-{modelQr.InvoiceLineNum}";
 
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{num}qr.png");
                 dataQrBuffer = this.AddTextToSKQr(surface, modelQr.NeedsCooling, ServiceConstants.QrBottomTextFactura, num, parameters, false);

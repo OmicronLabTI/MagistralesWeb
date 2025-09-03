@@ -23,6 +23,8 @@ struct Constants {
         case assignedBatches = "Hubo un error al asignar los siguientes lotes"
         case assignedBatchesTryAgain = "Hubo un error al asignar los lotes, por favor intentar de nuevo"
         case loadOrdersDetail = "Hubo un error al cargar el detalle de la orden de fabricación, intentar de nuevo"
+        case nowarehouses = "No se tienen almacenes configurados para"
+        case hasBatches = "Se debe desasignar los lotes para poder editar el almacén"
     }
     enum Tags: Int {
         case loading = 101
@@ -221,6 +223,7 @@ struct CommonStrings {
     static let selectFilter = "Selecciona un filtro"
     static let errorGetLotsByProduct = "Error al obtener los lotes"
     static let errorSaveLots = "Error al guardar los nuevos componentes"
+    static let warehousesChangesConfirm = "Existen cambios sin guardar, ¿Deseas cambiar de Fórmula sin guardar los cambios?"
 }
 struct FontsNames {
     static let SFProDisplayBold = "SFProDisplay-Bold"
@@ -250,6 +253,7 @@ struct StatusNameConstants {
     static let sendToStore = "Enviar a almacén"
     static let getSupplies = "Solicitar insumos"
     static let createBulk = "Crear granel"
+    static let addComponentAndLots = "Agregar componente y asignar lotes"
 }
 struct ImageButtonNames {
     static let assigned = "showAssignedDetailButton.png"

@@ -12,12 +12,17 @@ namespace Omicron.Catalogos.Services.Catalogs
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
+    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
+    using AutoMapper;
+    using DocumentFormat.OpenXml.Wordprocessing;
     using Microsoft.IdentityModel.Tokens;
     using Omicron.Catalogos.DataAccess.DAO.Catalog;
     using Omicron.Catalogos.Dtos.User;
     using Omicron.Catalogos.Entities.Model;
+    using Omicron.Catalogos.Services.Redis;
     using Omicron.Catalogos.Services.Utils;
+    using Serilog.Formatting.Json;
 
     /// <summary>
     /// The class for the catalog service.
@@ -29,6 +34,9 @@ namespace Omicron.Catalogos.Services.Catalogs
         private readonly IConfiguration configuration;
         private readonly ISapAdapterService sapAdapter;
         private readonly ICatalogsDxpService catalogsdxp;
+        private readonly IRedisService redisService;
+
+        private readonly IMapper mapper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CatalogService"/> class.
@@ -38,13 +46,17 @@ namespace Omicron.Catalogos.Services.Catalogs
         /// <param name="azureService"> the azure service. </param>
         /// <param name="sapAdapter"> the sap service. </param>
         /// <param name="catalogsdxp"> the catalogs dxp. </param>
-        public CatalogService(ICatalogDao catalogDao, IConfiguration configuration, IAzureService azureService, ISapAdapterService sapAdapter, ICatalogsDxpService catalogsdxp)
+        /// <param name="redisService"> Redis Service. </param>
+        /// <param name="mapper"> Mapper Service. </param>
+        public CatalogService(ICatalogDao catalogDao, IConfiguration configuration, IAzureService azureService, ISapAdapterService sapAdapter, ICatalogsDxpService catalogsdxp, IRedisService redisService, IMapper mapper)
         {
             this.catalogDao = catalogDao ?? throw new ArgumentNullException(nameof(catalogDao));
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             this.azureService = azureService ?? throw new ArgumentNullException(nameof(azureService));
             this.sapAdapter = sapAdapter ?? throw new ArgumentNullException(nameof(sapAdapter));
             this.catalogsdxp = catalogsdxp ?? throw new ArgumentNullException(nameof(catalogsdxp));
+            this.redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
+            this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         /// <summary>
@@ -73,7 +85,30 @@ namespace Omicron.Catalogos.Services.Catalogs
         /// <inheritdoc/>
         public async Task<ResultModel> GetActiveClassificationQfb()
         {
-            var classifications = (await this.catalogDao.GetActiveClassificationQfb()).Select(x => new { x.Value, x.Description }).ToList();
+            var textInfo = CultureInfo.CurrentCulture.TextInfo;
+            var classifications = (await this.catalogDao.GetActiveClassificationColorsByRoutes([ServiceConstants.Magistrales]))
+                .Select(x => new ClassificationMagistralModel
+                {
+                    Value = x.ClassificationCode,
+                    Description = $"{textInfo.ToTitleCase(x.Classification.ToLower())} ({x.ClassificationCode})",
+                    Color = ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(x.Color), x.Color, ServiceConstants.DefaultColor),
+                }).OrderBy(x => x.Description).ToList();
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, classifications, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetActiveAllClassificationQfb()
+        {
+            var textInfo = CultureInfo.CurrentCulture.TextInfo;
+            var classifications = (await this.catalogDao.GetActiveClassificationColorsByRoutes(ServiceConstants.Routes))
+                .Select(x => new ClassificationMagistralModel
+                {
+                    Value = x.ClassificationCode,
+                    Description = $"{textInfo.ToTitleCase(x.Classification.ToLower())} ({x.ClassificationCode})",
+                    Color = ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(x.Color), x.Color, ServiceConstants.DefaultColor),
+                }).OrderBy(x => x.Description).ToList();
+
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, classifications, null);
         }
 
@@ -122,21 +157,190 @@ namespace Omicron.Catalogos.Services.Catalogs
         /// <inheritdoc/>
         public async Task<ResultModel> GetClassifications()
         {
-            var response = await this.catalogsdxp.Get(ServiceConstants.Manufacturers);
+            List<ClassificationDto> byfilter = await this.FilterClasifications();
+            List<ColorsDto> colors = await this.ClassificationColors();
 
-            var data = JsonConvert.DeserializeObject<List<ManufacturersDto>>(response.Response.ToString());
-
-            var result = data
-                .GroupBy(x => new { x.Classification, x.ClassificationCode })
-                .Select(g => new ClassificationDto
-                {
-                    Classification = g.Key.Classification,
-                    ClassificationCode = g.Key.ClassificationCode,
-                })
-                .Where(x => !ServiceConstants.Exlusions.Contains(x.ClassificationCode))
-                .ToList();
+            ClassificationGroupDto result = new ()
+            {
+                Filters = byfilter,
+                Colors = colors,
+            };
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, result, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> UploadConfigurationRouteFromExcel()
+        {
+            List<ConfigRoutesModel> valids = new ();
+            List<ConfigRoutesModel> invalids = new ();
+
+            var configroute = await this.GetConfigurationRoutesFromExcel();
+
+            ValidConfigRoutes(configroute, valids, invalids);
+
+            await this.ClassificationValidation(valids, invalids);
+            await this.ItemCodeValidation(valids, invalids);
+            await this.ExceptionValidation(valids, invalids);
+            ColorValidation(valids, invalids);
+            RouteValidation(valids, invalids);
+
+            await this.InsertConfigRoutes(valids);
+
+            var values = invalids.SelectMany(x => new[] { x.ItemCode, x.Classification, x.Exceptions, x.Route }).Where(s => !string.IsNullOrWhiteSpace(s))
+                .Distinct().ToList();
+
+            var comments = values.Count > 0 ? string.Format(ServiceConstants.InvalidsSortingRoutes, JsonConvert.SerializeObject(values)) : null;
+
+            return ServiceUtils.CreateResult(true, 200, null, null, comments);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetActiveRouteConfigurationsForProducts()
+        {
+            var routeConfiguration = await ServiceUtils.DeserializeRedisValue(
+                new List<ConfigRoutesModel>(),
+                ServiceConstants.ConfigRoutesRedisKey,
+                this.redisService);
+
+            if (routeConfiguration.Count == 0)
+            {
+                routeConfiguration = await this.catalogDao.GetConfigRoutesModel();
+                await this.SaveValidsToRedis(routeConfiguration);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, routeConfiguration.Where(x => x.IsActive).ToList(), null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> UploadProductTypeColorsFromExcel()
+        {
+            var productTypeColors = await this.GetProductTypeColorsFromExcel();
+
+            foreach (var item in productTypeColors)
+            {
+                item.TemaId = ServiceUtils.NormalizeComplete(item.TemaId);
+            }
+
+            productTypeColors = productTypeColors
+                .GroupBy(p => p.TemaId)
+                .Select(g => g.First())
+                .ToList();
+
+            var temaIds = productTypeColors.Select(x => x.TemaId).ToList();
+            var existingTemaIds = await this.catalogDao.GetExistingTemaIds(temaIds);
+            var recordsToUpdate = productTypeColors.Where(x => existingTemaIds.Contains(x.TemaId)).ToList();
+            var recordsToInsert = productTypeColors.Where(x => !existingTemaIds.Contains(x.TemaId)).ToList();
+
+            if (recordsToUpdate.Any())
+            {
+                await this.catalogDao.UpdateProductTypecolors(recordsToUpdate);
+            }
+
+            if (recordsToInsert.Any())
+            {
+                await this.catalogDao.InsertProductTypecolors(recordsToInsert);
+            }
+
+            await this.redisService.WriteToRedis(
+            ServiceConstants.ProductTypeColors,
+            JsonConvert.SerializeObject(productTypeColors),
+            TimeSpan.FromHours(12));
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetProductsColors(List<string> themesIds)
+        {
+            var colors = await ServiceUtils.DeserializeRedisValue(
+                new List<ProductTypeColorsModel>(),
+                ServiceConstants.ProductTypeColors,
+                this.redisService);
+
+            colors = colors.Where(x => x.IsActive).ToList();
+            if (colors.Count == 0)
+            {
+                colors = (await this.catalogDao.GetProductsColors()).ToList();
+            }
+
+            var filterColors = colors.ToList().Where(x => themesIds.Any(theme => ServiceUtils.NormalizeComplete(theme) == ServiceUtils.NormalizeComplete(x.TemaId)));
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, this.mapper.Map<List<ProductColorsDto>>(filterColors.ToList()), null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> PostConfigWarehouses()
+        {
+            var configWarehousesFile = await this.GetConfigWarehousesFromExcel();
+
+            this.NormalizeConfigWarehousesData(configWarehousesFile);
+
+            var duplicateValidationResult = this.ValidateDuplicateManufacturerWarehouses(configWarehousesFile);
+            if (!duplicateValidationResult.IsValid)
+            {
+                return duplicateValidationResult.Result;
+            }
+
+            var uniqueConfigWarehouses = this.RemoveDuplicateManufacturers(configWarehousesFile);
+            var configWarehousesDto = this.CreateConfigWarehousesDto(uniqueConfigWarehouses);
+            var sapData = await this.GetWarehousesData(configWarehousesDto);
+
+            var existingManufacturers = await this.GetExistingManufacturersSet(uniqueConfigWarehouses);
+            var validationResult = this.ValidateConfigWarehouses(uniqueConfigWarehouses, sapData);
+
+            await this.ProcessValidConfigurations(validationResult.ValidConfigs, existingManufacturers);
+            await this.CacheValidConfigurations(validationResult.ValidConfigs);
+
+            return this.CreateFinalResult(validationResult.InvalidWarehouses);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetWarehouses(string itemCode)
+        {
+            var sapResponse = await this.sapAdapter.Post(itemCode, ServiceConstants.PostProductInfo);
+            var productInfo = JsonConvert.DeserializeObject<ProductDataDto>(sapResponse.Response.ToString());
+
+            var configs = await ServiceUtils.DeserializeRedisValue(
+                new List<ConfigWarehouseModel>(),
+                ServiceConstants.ConfigWarehouses,
+                this.redisService);
+
+            if (!configs.Any())
+            {
+                configs = (await this.catalogDao.GetActiveConfigWarehouses()).ToList();
+                await this.CacheValidConfigurations(configs.ToList());
+            }
+
+            configs = configs.Where(x => x.IsActive).ToList();
+            var validWarehouses = configs.Where(x =>
+                ValidateItemcode(x.Products, itemCode.ToUpper()) ||
+                ValidateFirmNames(x.Manufacturers, productInfo.ProductFirmName.ToUpper(), x.Exceptions, itemCode.ToUpper()))
+                .OrderByDescending(x => x.Products).ToList();
+
+            var selectedConfig = validWarehouses.FirstOrDefault();
+            var warehouses = new List<string>();
+
+            if (selectedConfig != null)
+            {
+                if (!string.IsNullOrEmpty(selectedConfig.Mainwarehouse))
+                {
+                    warehouses.Add(selectedConfig.Mainwarehouse);
+                }
+
+                warehouses.AddRange(GetValidStringList(selectedConfig.Alternativewarehouses).Order());
+            }
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, warehouses, null);
+        }
+
+        private static bool ValidateFirmNames(string manufactures, string productFirmName, string itemCodeExceptions, string itemCode)
+        {
+            return GetValidStringList(manufactures).Contains(productFirmName) && !GetValidStringList(itemCodeExceptions).Contains(itemCode);
+        }
+
+        private static bool ValidateItemcode(string products, string itemCode)
+        {
+            return GetValidStringList(products).Contains(itemCode);
         }
 
         private static List<string> GetValidStringList(string value)
@@ -150,6 +354,526 @@ namespace Omicron.Catalogos.Services.Catalogs
                 .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
                 .ToArray())
                 .ToUpper();
+        }
+
+        private static void ValidateClassificationsFound(HashSet<(string Classification, string Code)> found, List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
+        {
+            var cleanedValids = new List<ConfigRoutesModel>();
+
+            var withClassification = valids.Where(x => !string.IsNullOrWhiteSpace(x.Classification)).ToList();
+            var withoutClassification = valids.Where(x => string.IsNullOrWhiteSpace(x.Classification)).ToList();
+
+            var grouped = withClassification
+                .GroupBy(w => NormalizeAndToUpper(w.Classification))
+                .Select(g => g.First())
+                .ToList();
+
+            var duplicates = withClassification
+                .Except(grouped)
+                .ToList();
+
+            invalids.AddRange(duplicates);
+
+            foreach (var item in grouped)
+            {
+                var match = found.FirstOrDefault(x => x.Classification == item.Classification);
+
+                if (match != default)
+                {
+                    item.ClassificationCode = match.Code;
+                    cleanedValids.Add(item);
+                }
+                else
+                {
+                    invalids.Add(item);
+                }
+            }
+
+            cleanedValids.AddRange(withoutClassification);
+
+            valids.Clear();
+            valids.AddRange(cleanedValids);
+        }
+
+        private static void ValidateItemCodesFound(HashSet<string> found, List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
+        {
+            var seenCodes = new HashSet<string>();
+            var cleanedValids = new List<ConfigRoutesModel>();
+
+            var withItemCode = valids.Where(x => !string.IsNullOrWhiteSpace(x.ItemCode)).ToList();
+            var withoutItemCode = valids.Where(x => string.IsNullOrWhiteSpace(x.ItemCode)).ToList();
+
+            foreach (var item in withItemCode)
+            {
+                var itemCodes = item.ItemCode
+                    .Split(',')
+                    .Select(code => NormalizeAndToUpper(code.Trim()))
+                    .ToList();
+
+                if (itemCodes.Exists(code => seenCodes.Contains(code)))
+                {
+                    invalids.Add(item);
+                    continue;
+                }
+
+                itemCodes.ForEach(code => seenCodes.Add(code));
+
+                if (itemCodes.TrueForAll(code => found.Contains(code)))
+                {
+                    cleanedValids.Add(item);
+                }
+                else
+                {
+                    invalids.Add(item);
+                }
+            }
+
+            cleanedValids.AddRange(withoutItemCode);
+
+            valids.Clear();
+            valids.AddRange(cleanedValids);
+        }
+
+        private static void ValidateExceptionFound(HashSet<string> found, List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
+        {
+            var seenExceptions = new HashSet<string>();
+            var cleanedValids = new List<ConfigRoutesModel>();
+
+            var withException = valids.Where(x => !string.IsNullOrWhiteSpace(x.Exceptions)).ToList();
+            var withoutException = valids.Where(x => string.IsNullOrWhiteSpace(x.Exceptions)).ToList();
+
+            foreach (var item in withException)
+            {
+                var exceptions = item.Exceptions
+                    .Split(',')
+                    .Select(code => NormalizeAndToUpper(code.Trim()))
+                    .ToList();
+
+                if (exceptions.Exists(code => seenExceptions.Contains(code)))
+                {
+                    invalids.Add(item);
+                    continue;
+                }
+
+                exceptions.ForEach(code => seenExceptions.Add(code));
+
+                if (exceptions.TrueForAll(code => found.Contains(code)))
+                {
+                    cleanedValids.Add(item);
+                }
+                else
+                {
+                    invalids.Add(item);
+                }
+            }
+
+            cleanedValids.AddRange(withoutException);
+
+            valids.Clear();
+            valids.AddRange(cleanedValids);
+        }
+
+        private static void ValidConfigRoutes(List<ConfigRoutesModel> confingroute, List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
+        {
+            if (confingroute == null || confingroute.Count == 0)
+            {
+                return;
+            }
+
+            NormalizeSortingRoutes(confingroute);
+
+            foreach (var route in confingroute)
+            {
+                if (IsValidRoute(route))
+                {
+                    valids.Add(route);
+                }
+                else
+                {
+                    invalids.Add(route);
+                }
+            }
+        }
+
+        private static void NormalizeSortingRoutes(List<ConfigRoutesModel> sortingRoutes)
+        {
+            sortingRoutes.ForEach(x =>
+            {
+                if (!string.IsNullOrEmpty(x.Classification))
+                {
+                    x.Classification = NormalizeAndToUpper(x.Classification);
+                }
+
+                if (!string.IsNullOrEmpty(x.ItemCode))
+                {
+                    x.ItemCode = NormalizeAndToUpper(x.ItemCode);
+                }
+
+                if (!string.IsNullOrEmpty(x.Route))
+                {
+                    x.Route = NormalizeAndToUpper(x.Route);
+                }
+            });
+        }
+
+        private static bool IsValidRoute(ConfigRoutesModel route)
+        {
+            return !string.IsNullOrWhiteSpace(route.Classification) ||
+                   !string.IsNullOrWhiteSpace(route.ItemCode);
+        }
+
+        private static void ColorValidation(List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
+        {
+            var hexColorRegex = new Regex(ServiceConstants.HexColor);
+
+            var invalidColorItems = valids
+                .Where(x => !string.IsNullOrWhiteSpace(x.Color))
+                .Where(x => !hexColorRegex.IsMatch(x.Color))
+                .ToList();
+
+            invalids.AddRange(invalidColorItems);
+
+            valids.RemoveAll(x => invalidColorItems.Contains(x));
+        }
+
+        private static void RouteValidation(List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
+        {
+            var notallowed = valids.Where(x => !ServiceConstants.Routes.Contains(x.Route)).ToList();
+
+            invalids.AddRange(notallowed);
+            valids.RemoveAll(x => notallowed.Contains(x));
+        }
+
+        private void NormalizeConfigWarehousesData(List<ConfigWarehouseModel> configWarehouses)
+        {
+            configWarehouses.ForEach(x =>
+            {
+                x.Mainwarehouse = NormalizeAndToUpper(x.Mainwarehouse);
+                x.Alternativewarehouses = NormalizeAndToUpper(x.Alternativewarehouses);
+                x.Manufacturers = NormalizeAndToUpper(x.Manufacturers);
+                x.Products = NormalizeAndToUpper(x.Products);
+                x.Exceptions = NormalizeAndToUpper(x.Exceptions);
+            });
+        }
+
+        private (bool IsValid, ResultModel Result) ValidateDuplicateManufacturerWarehouses(List<ConfigWarehouseModel> configWarehouses)
+        {
+            var fabricantsWithMultipleWarehouses = configWarehouses
+                .Where(x => !string.IsNullOrEmpty(x.Manufacturers))
+                .GroupBy(w => w.Manufacturers)
+                .Where(g => g.Select(x => x.Mainwarehouse).Distinct().Count() > 1)
+                .ToList();
+
+            if (!fabricantsWithMultipleWarehouses.Any())
+            {
+                return (true, null);
+            }
+
+            var duplicateWarehousesList = fabricantsWithMultipleWarehouses
+                .SelectMany(group => group.Select(x => x.Mainwarehouse).Distinct())
+                .Distinct()
+                .ToList();
+
+            var duplicateErrorComments = string.Format(ServiceConstants.NoMatching, JsonConvert.SerializeObject(duplicateWarehousesList));
+            var result = ServiceUtils.CreateResult(false, (int)HttpStatusCode.BadRequest, null, null, duplicateErrorComments);
+
+            return (false, result);
+        }
+
+        private List<ConfigWarehouseModel> RemoveDuplicateManufacturers(List<ConfigWarehouseModel> configWarehouses)
+        {
+            return configWarehouses
+                .GroupBy(w => w.Manufacturers)
+                .Select(g => g.First())
+                .ToList();
+        }
+
+        private ConfigWareshousesDto CreateConfigWarehousesDto(List<ConfigWarehouseModel> configWarehouses)
+        {
+            return new ConfigWareshousesDto
+            {
+                Products = this.GetAllProducts(configWarehouses),
+                Manufacturers = configWarehouses.Select(x => x.Manufacturers).Distinct().ToList(),
+                Warehouses = this.GetAllWarehouses(configWarehouses),
+            };
+        }
+
+        private List<string> GetAllProducts(List<ConfigWarehouseModel> configWarehouses)
+        {
+            var products = configWarehouses.Select(x => x.Products);
+            var exceptionProducts = configWarehouses
+                .SelectMany(x => this.SplitAndTrimString(x.Exceptions));
+
+            return products.Union(exceptionProducts)
+                .Where(p => !string.IsNullOrEmpty(p))
+                .Distinct()
+                .ToList();
+        }
+
+        private IEnumerable<string> SplitAndTrimString(string input)
+        {
+            return (input ?? string.Empty)
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(item => item.Trim());
+        }
+
+        private List<string> GetAllWarehouses(List<ConfigWarehouseModel> configWarehouses)
+        {
+            var mainWarehouses = configWarehouses.Select(x => x.Mainwarehouse);
+            var alternativeWarehouses = configWarehouses
+                .SelectMany(x => this.SplitAndTrimString(x.Alternativewarehouses));
+
+            return mainWarehouses.Union(alternativeWarehouses)
+                .Where(w => !string.IsNullOrEmpty(w))
+                .Distinct()
+                .ToList();
+        }
+
+        private async Task<HashSet<string>> GetExistingManufacturersSet(List<ConfigWarehouseModel> configWarehouses)
+        {
+            var manufacturersToCheck = configWarehouses
+                .Where(x => !string.IsNullOrEmpty(x.Manufacturers))
+                .Select(x => x.Manufacturers)
+                .Distinct()
+                .ToList();
+
+            var existingManufacturers = await this.catalogDao.GetExistingManufacturers(manufacturersToCheck);
+            return existingManufacturers.ToHashSet();
+        }
+
+        private (List<ConfigWarehouseModel> ValidConfigs, List<string> InvalidWarehouses) ValidateConfigWarehouses(
+            List<ConfigWarehouseModel> configWarehouses,
+            ConfigWareshousesDto sapData)
+        {
+            var validConfigs = new List<ConfigWarehouseModel>();
+            var invalidWarehouses = new List<string>();
+
+            foreach (var config in configWarehouses)
+            {
+                if (this.IsConfigurationValid(config, sapData))
+                {
+                    validConfigs.Add(config);
+                }
+                else
+                {
+                    invalidWarehouses.Add(config.Mainwarehouse);
+                }
+            }
+
+            return (validConfigs, invalidWarehouses);
+        }
+
+        private bool IsConfigurationValid(ConfigWarehouseModel config, ConfigWareshousesDto sapData)
+        {
+            return this.IsMainWarehouseValid(config, sapData) &&
+                   this.IsAlternativeWarehousesValid(config, sapData) &&
+                   this.IsManufacturerValid(config, sapData) &&
+                   this.IsProductValid(config, sapData) &&
+                   this.IsExceptionsValid(config, sapData) &&
+                   this.HasRequiredFields(config);
+        }
+
+        private bool IsMainWarehouseValid(ConfigWarehouseModel config, ConfigWareshousesDto sapData)
+        {
+            return sapData.Warehouses.Contains(config.Mainwarehouse);
+        }
+
+        private bool IsAlternativeWarehousesValid(ConfigWarehouseModel config, ConfigWareshousesDto sapData)
+        {
+            if (string.IsNullOrEmpty(config.Alternativewarehouses))
+            {
+                return true;
+            }
+
+            var alternativeWarehouses = this.SplitAndTrimString(config.Alternativewarehouses)
+                .Where(w => !string.IsNullOrEmpty(w));
+
+            return alternativeWarehouses.All(w => sapData.Warehouses.Contains(w));
+        }
+
+        private bool IsManufacturerValid(ConfigWarehouseModel config, ConfigWareshousesDto sapData)
+        {
+            if (string.IsNullOrEmpty(config.Manufacturers))
+            {
+                return true;
+            }
+
+            return sapData.Manufacturers.Contains(config.Manufacturers);
+        }
+
+        private bool IsProductValid(ConfigWarehouseModel config, ConfigWareshousesDto sapData)
+        {
+            if (string.IsNullOrEmpty(config.Products))
+            {
+                return true;
+            }
+
+            return sapData.Products.Contains(config.Products);
+        }
+
+        private bool IsExceptionsValid(ConfigWarehouseModel config, ConfigWareshousesDto sapData)
+        {
+            if (string.IsNullOrEmpty(config.Exceptions))
+            {
+                return true;
+            }
+
+            var exceptionProducts = this.SplitAndTrimString(config.Exceptions)
+                .Where(p => !string.IsNullOrEmpty(p));
+
+            return exceptionProducts.All(p => sapData.Products.Contains(p));
+        }
+
+        private bool HasRequiredFields(ConfigWarehouseModel config)
+        {
+            var hasManufacturer = !string.IsNullOrEmpty(config.Manufacturers);
+            var hasProduct = !string.IsNullOrEmpty(config.Products);
+
+            return hasManufacturer || hasProduct;
+        }
+
+        private async Task ProcessValidConfigurations(List<ConfigWarehouseModel> validConfigs, HashSet<string> existingManufacturers)
+        {
+            var newConfigs = validConfigs.Where(x => !existingManufacturers.Contains(x.Manufacturers)).ToList();
+            var updateConfigs = validConfigs.Where(x => existingManufacturers.Contains(x.Manufacturers)).ToList();
+
+            if (newConfigs.Any())
+            {
+                await this.catalogDao.InsertConfigWarehouses(newConfigs);
+            }
+
+            if (updateConfigs.Any())
+            {
+                await this.catalogDao.UpdateConfigWarehouses(updateConfigs);
+            }
+        }
+
+        private async Task CacheValidConfigurations(List<ConfigWarehouseModel> validConfigs)
+        {
+            await this.redisService.WriteToRedis(
+                ServiceConstants.ConfigWarehouses,
+                JsonConvert.SerializeObject(validConfigs),
+                TimeSpan.FromHours(12));
+        }
+
+        private ResultModel CreateFinalResult(List<string> invalidWarehouses)
+        {
+            string comments = null;
+            if (invalidWarehouses.Count > 0)
+            {
+                comments = string.Format(ServiceConstants.NoMatching, JsonConvert.SerializeObject(invalidWarehouses.Distinct().ToList()));
+            }
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, comments);
+        }
+
+        private async Task<List<ColorsDto>> ClassificationColors()
+        {
+            var rules = await ServiceUtils.DeserializeRedisValue(new List<ConfigRoutesModel>(), ServiceConstants.ConfigRoutesRedisKey, this.redisService);
+
+            if (rules.Count == 0)
+            {
+                rules = await this.catalogDao.GetConfigurationRoute();
+            }
+
+            return rules.Select(x => new ColorsDto
+            {
+                Classification = x.Classification,
+                ClassificationCode = x.ClassificationCode,
+                ClassificationColor = string.IsNullOrWhiteSpace(x.Color)
+                    ? ServiceConstants.DefaultColor
+                    : x.Color,
+            }).ToList();
+        }
+
+        private async Task<List<ClassificationDto>> FilterClasifications()
+        {
+            var response = await this.catalogsdxp.Get(ServiceConstants.Manufacturers);
+            var data = JsonConvert.DeserializeObject<List<ManufacturersDto>>(response.Response.ToString());
+
+            var classifications = data
+                .GroupBy(x => new { x.Classification, x.ClassificationCode })
+                .Select(g => new ClassificationDto
+                {
+                    Classification = g.Key.Classification,
+                    ClassificationCode = g.Key.ClassificationCode,
+                })
+                .Where(x => !ServiceConstants.Exlusions.Contains(x.ClassificationCode))
+                .ToList();
+
+            return classifications;
+        }
+
+        private async Task InsertConfigRoutes(List<ConfigRoutesModel> valids)
+        {
+            var updates = await this.catalogDao.GetSortingRoutes(valids.Select(x => x.Classification).ToList());
+            var dictionary = updates.ToDictionary(u => u.Classification, u => u.Id);
+
+            valids.ForEach(m => m.Id = dictionary.GetValueOrDefault(m.Classification));
+
+            await this.catalogDao.InsertSortingRoute(valids);
+
+            await this.SaveValidsToRedis(valids);
+        }
+
+        private async Task SaveValidsToRedis(List<ConfigRoutesModel> valids)
+        {
+            var serialized = JsonConvert.SerializeObject(valids);
+            await this.redisService.WriteToRedis(ServiceConstants.ConfigRoutesRedisKey, serialized, new TimeSpan(8, 0, 0));
+        }
+
+        private async Task ClassificationValidation(List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
+        {
+            List<string> classifications = valids.Where(c => !string.IsNullOrWhiteSpace(c.Classification))
+                .Select(c => c.Classification)
+                .Distinct().ToList();
+
+            ResultDto response = await this.sapAdapter.Post(classifications, ServiceConstants.GetClassificationsByDescription);
+            List<ClassificationsDto> classificationsfound = JsonConvert.DeserializeObject<List<ClassificationsDto>>(response.Response.ToString());
+
+            HashSet<(string Classification, string Code)> found = classificationsfound.Select(x => (NormalizeAndToUpper(x.Description), NormalizeAndToUpper(x.Value))).ToHashSet();
+
+            ValidateClassificationsFound(found, valids, invalids);
+        }
+
+        private async Task ItemCodeValidation(List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
+        {
+            var products = valids
+                .Where(x => !string.IsNullOrEmpty(x.ItemCode))
+                .Select(x => x.ItemCode.Split(',').Select(s => s.Trim()).ToList())
+                .ToList();
+
+            var names = products.SelectMany(x => x)
+                .Where(name => !string.IsNullOrEmpty(name)).Distinct().ToList();
+            if (names.Any())
+            {
+                var response = await this.catalogsdxp.Post(names, ServiceConstants.Products);
+                var data = JsonConvert.DeserializeObject<List<string>>(response.Response.ToString());
+
+                var found = new HashSet<string>(data.Select(NormalizeAndToUpper));
+
+                ValidateItemCodesFound(found, valids, invalids);
+            }
+        }
+
+        private async Task ExceptionValidation(List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
+        {
+            var products = valids
+                .Where(x => !string.IsNullOrEmpty(x.Exceptions))
+                .Select(x => x.Exceptions.Split(',').Select(s => s.Trim()).ToList())
+                .ToList();
+
+            var names = products.SelectMany(x => x)
+                .Where(name => !string.IsNullOrEmpty(name)).Distinct().ToList();
+            if (names.Any())
+            {
+                var response = await this.catalogsdxp.Post(names, ServiceConstants.Products);
+                var data = JsonConvert.DeserializeObject<List<string>>(response.Response.ToString());
+
+                var found = new HashSet<string>(data.Select(NormalizeAndToUpper));
+
+                ValidateExceptionFound(found, valids, invalids);
+            }
         }
 
         private List<WarehouseModel> CompareProductsExceptions(List<WarehouseModel> exceptions)
@@ -260,9 +984,34 @@ namespace Omicron.Catalogos.Services.Catalogs
             return valids;
         }
 
+        private async Task<List<ProductTypeColorsModel>> GetProductTypeColorsFromExcel()
+        {
+            var table = await this.ObtainDataFromExcel(ServiceConstants.ProductTypeColorsFileUrl, 1);
+
+            var columns = table.Columns.Cast<DataColumn>().Select(x => x.ColumnName).ToList();
+
+            var temaId = columns[0];
+            var backgroundColor = columns[1];
+            var labelText = columns[2];
+            var textColor = columns[3];
+            var isActive = columns[4];
+
+            var typeColors = table.AsEnumerable()
+            .Select(row => new ProductTypeColorsModel
+            {
+                TemaId = row[temaId].ToString().Trim(),
+                BackgroundColor = row[backgroundColor].ToString(),
+                LabelText = row[labelText].ToString(),
+                TextColor = row[textColor].ToString(),
+                IsActive = row[isActive].ToString().Trim().Equals(ServiceConstants.IsActiveProduct, StringComparison.OrdinalIgnoreCase),
+            }).ToList();
+
+            return typeColors;
+        }
+
         private async Task<List<WarehouseModel>> GetWarehousesFromExcel()
         {
-            var table = await this.ObtainDataFromExcel(ServiceConstants.WarehousesFileUrl);
+            var table = await this.ObtainDataFromExcel(ServiceConstants.WarehousesFileUrl, 1);
 
             var columns = table.Columns.Cast<DataColumn>().Select(x => x.ColumnName).ToList();
 
@@ -285,7 +1034,69 @@ namespace Omicron.Catalogos.Services.Catalogs
             return warehouses;
         }
 
-        private async Task<DataTable> ObtainDataFromExcel(string url)
+        private async Task<ConfigWareshousesDto> GetWarehousesData(ConfigWareshousesDto warehousesfile)
+        {
+            var response = await this.sapAdapter.Post(warehousesfile, ServiceConstants.WarehousesData);
+            var data = JsonConvert.DeserializeObject<ConfigWareshousesDto>(response.Response.ToString());
+
+            return data;
+        }
+
+        private async Task<List<ConfigRoutesModel>> GetConfigurationRoutesFromExcel()
+        {
+            var table = await this.ObtainDataFromExcel(ServiceConstants.ManufacturersFileUrl, 2);
+
+            var columns = table.Columns.Cast<DataColumn>().Select(x => x.ColumnName).ToList();
+
+            var classification = columns[0];
+            var exception = columns[1];
+            var itemcode = columns[2];
+            var color = columns[3];
+            var isactive = columns[4];
+            var route = columns[5];
+
+            var sortingroute = table.AsEnumerable()
+            .Select(row => new ConfigRoutesModel
+            {
+                Classification = row[classification].ToString(),
+                Exceptions = row[exception].ToString(),
+                ItemCode = row[itemcode].ToString(),
+                Color = row[color].ToString(),
+                Route = row[route].ToString(),
+                IsActive = row[isactive].ToString().Equals("1"),
+            }).ToList();
+
+            return sortingroute;
+        }
+
+        private async Task<List<ConfigWarehouseModel>> GetConfigWarehousesFromExcel()
+        {
+            var table = await this.ObtainDataFromExcel(ServiceConstants.WarehousesFileUrl, 2);
+
+            var columns = table.Columns.Cast<DataColumn>().Select(x => x.ColumnName).ToList();
+
+            var mainWarehouse = columns[0];
+            var manufacturers = columns[1];
+            var products = columns[2];
+            var active = columns[3];
+            var excepetions = columns[4];
+            var alternativesWarehouse = columns[5];
+
+            var configWarehouses = table.AsEnumerable()
+            .Select(row => new ConfigWarehouseModel
+            {
+                Mainwarehouse = row[mainWarehouse].ToString().Trim(),
+                Manufacturers = row[manufacturers].ToString(),
+                Products = row[products].ToString(),
+                IsActive = row[active].ToString().Trim().Equals(ServiceConstants.IsActiveProduct, StringComparison.OrdinalIgnoreCase),
+                Exceptions = row[excepetions].ToString(),
+                Alternativewarehouses = row[alternativesWarehouse].ToString(),
+            }).ToList();
+
+            return configWarehouses;
+        }
+
+        private async Task<DataTable> ObtainDataFromExcel(string url, int sheet)
         {
             var key = this.configuration[ServiceConstants.AzureAccountKey];
             var account = this.configuration[ServiceConstants.AzureAccountName];
@@ -296,7 +1107,7 @@ namespace Omicron.Catalogos.Services.Catalogs
             await this.azureService.GetElementsFromAzure(account, key, file, streamWoorkbook);
             using var workbook = new XLWorkbook(streamWoorkbook);
 
-            DataTable table = ServiceUtils.ReadSheet(workbook, 1);
+            DataTable table = ServiceUtils.ReadSheet(workbook, sheet);
 
             return table;
         }

@@ -55,6 +55,7 @@ class LotsBaseViewController: UIViewController {
     var comments = CommonStrings.empty
     var orderDetail: [OrderDetail] = []
     var emptyStockProductId: [String] = []
+    var warehousesOptions: [String] = []
     
     func changeTextColorOfLabels(color: UIColor) {
         self.titleLabel.textColor = color

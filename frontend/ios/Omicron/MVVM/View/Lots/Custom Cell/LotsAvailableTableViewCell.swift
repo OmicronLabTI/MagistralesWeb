@@ -22,7 +22,6 @@ class LotsAvailableTableViewCell: UITableViewCell {
     @IBOutlet weak var quantitySelected: UITextField!
     @IBOutlet weak var quantityAssignedLabel: UILabel!
     // MARK: - VARIABLES
-    @Injected var lotsViewModel: LotsViewModel
     var disposeBag = DisposeBag()
     var row: Int?
     weak var itemModel: LotsAvailable?

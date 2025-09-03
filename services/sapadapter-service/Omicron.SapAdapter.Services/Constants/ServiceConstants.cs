@@ -86,6 +86,16 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Limit = "limit";
 
         /// <summary>
+        /// Const for the all classifications.
+        /// </summary>
+        public const string AllClassifications = "Todas";
+
+        /// <summary>
+        /// Const for the classifications.
+        /// </summary>
+        public const string Classifications = "classifications";
+
+        /// <summary>
         /// the filter for orders.
         /// </summary>
         public const string ItemCode = "code";
@@ -184,6 +194,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// route to get the users sales orders.
         /// </summary>
         public const string GetUserSalesOrder = "getUserOrder/salesOrder";
+
+        /// <summary>
+        /// route to get the users sales orders.
+        /// </summary>
+        public const string GetThemes = "products/themes";
 
         /// <summary>
         /// route to get the user fab order.
@@ -603,6 +618,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// the insert value.
         /// </summary>
+        public const string OrderTypePackage = "PQ";
+
+        /// <summary>
+        /// the insert value.
+        /// </summary>
         public const string Maquila = "Maquila";
 
         /// <summary>
@@ -896,6 +916,38 @@ namespace Omicron.SapAdapter.Services.Constants
         /// String WarehouseParam.
         /// </value>
         public static string WarehouseParam => "warehouse";
+
+        /// <summary>
+        /// Gets ConfigRoutesRedisKey.
+        /// </summary>
+        /// <value>
+        /// String ConfigRoutesRedisKey.
+        /// </value>
+        public static string ConfigRoutesRedisKey => "configroute-valids";
+
+        /// <summary>
+        /// Gets GetActiveRouteConfigurationsEndPoint.
+        /// </summary>
+        /// <value>
+        /// String GetActiveRouteConfigurationsEndPoint.
+        /// </value>
+        public static string GetActiveRouteConfigurationsEndPoint => "active/route/confgurations";
+
+        /// <summary>
+        /// Gets MagistralesDbValue.
+        /// </summary>
+        /// <value>
+        /// String MagistralesDbValue.
+        /// </value>
+        public static string MagistralesDbValue => "MAG";
+
+        /// <summary>
+        /// Gets MagistralesDbValue.
+        /// </summary>
+        /// <value>
+        /// String MagistralesDbValue.
+        /// </value>
+        public static string AlmacenDbValue => "ALM";
 
         /// <summary>
         /// Gets the status of the order.
@@ -1194,5 +1246,17 @@ namespace Omicron.SapAdapter.Services.Constants
         {
             { ServiceConstants.Maquila.ToUpper(), "MQ" },
         };
+
+        /// <summary>
+        /// Gets the Default Filters.
+        /// </summary>
+        /// <value>
+        /// default filters.
+        /// </value>
+        public static List<string> InvalidCatalogsGroups { get; } =
+        [
+            "Envases",
+            "Paqueteria",
+        ];
     }
 }

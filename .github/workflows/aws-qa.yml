@@ -14,6 +14,7 @@ on:
       - frontend/**
       - services/**
       - database/**
+      - batches/**
 
 concurrency:
   group: ${{ github.ref }}
@@ -247,6 +248,19 @@ jobs:
           axity_aws_secret_access_key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
           axity_aws_region: ${{ secrets.AXITY_AWS_REGION }}
 
+      - name: Docker Build and Push Batch Finalize Production Orders
+        if: ${{ (contains(steps.changeset.outputs.changes, 'batches')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build-aws
+        with:
+          working_directory: ./batches/productionorder-microbatch
+          registry: ${{ env.AWS_ECR_REGISTRY }}
+          repository: finalizeproductionordersmagistrales
+          tag: ${{ github.sha }}
+          axity_aws_user: ${{ vars.AXITY_AWS_USER }}
+          axity_aws_access_key_id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
+          axity_aws_secret_access_key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
+          axity_aws_region: ${{ secrets.AXITY_AWS_REGION }}
+
       - name: Configure AWS credentials Omicron
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -264,6 +278,7 @@ jobs:
           kubectl apply -f ingress-services.yml
           kubectl apply -f ingress-oauth.yml
           kubectl apply -f secrets.yml
+          kubectl apply -f batches.yaml
 
       - name: Rollout catalogos-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'catalogos-service')) || (inputs.force_build) }}

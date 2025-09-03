@@ -69,6 +69,7 @@ class AddComponentViewController: LotsBaseViewController, ComponentsDelegate, Ch
             cell.warehouseCodeLabel.text = data.warehouse
             cell.totalNeededLabel.text =  self.formatter.string(from: data.totalNecesary as NSNumber)
             cell.totalSelectedLabel.text = self.formatter.string(from: data.selectedTotal as NSNumber)
+            cell.options = data.warehouses
             cell.selectedOption = data.warehouse
             cell.productId = data.productId
             cell.baseQuantityLabel.text = self.formatter.string(from: data.baseQuantity as NSNumber)
@@ -283,7 +284,7 @@ class AddComponentViewController: LotsBaseViewController, ComponentsDelegate, Ch
                                         fontSize: 15)
         
         UtilsManager.shared.setStyleButtonStatus(button: self.addComponentButton,
-                                                 title: StatusNameConstants.addComponent,
+                                                 title: StatusNameConstants.addComponentAndLots,
                                                  color: OmicronColors.primaryBlue,
                                                  titleColor: OmicronColors.primaryBlue)
         
@@ -340,6 +341,7 @@ class AddComponentViewController: LotsBaseViewController, ComponentsDelegate, Ch
         let navigationVC = UINavigationController(rootViewController: componentsVC ?? ComponentsViewController())
         navigationVC.modalPresentationStyle = .formSheet
         componentsVC?.delegate = self
+        componentsVC?.warehouses = warehousesOptions
         self.present(navigationVC, animated: true, completion: nil)
     }
     

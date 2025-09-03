@@ -1,23 +1,23 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { ComponentSearchComponent } from './component-search.component';
-import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {MatChipInputEvent, MatChipsModule} from '@angular/material/chips';
+import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import {
   MatTableModule,
   MatCheckboxModule,
   MatFormFieldModule,
   MatInputModule,
 } from '@angular/material';
-import {DatePipe} from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import {PedidosService} from '../../services/pedidos.service';
-import {of, throwError} from 'rxjs';
-import {ComponentSearchMock} from '../../../mocks/componentsMock';
-import {ErrorService} from '../../services/error.service';
-import {PageEvent} from '@angular/material/paginator';
-import {RouterTestingModule} from '@angular/router/testing';
+import { PedidosService } from '../../services/pedidos.service';
+import { of, throwError } from 'rxjs';
+import { ComponentSearchMock } from '../../../mocks/componentsMock';
+import { ErrorService } from '../../services/error.service';
+import { PageEvent } from '@angular/material/paginator';
+import { RouterTestingModule } from '@angular/router/testing';
 import { MessagesService } from 'src/app/services/messages.service';
 
 describe('ComponentSearchComponent', () => {
@@ -36,31 +36,39 @@ describe('ComponentSearchComponent', () => {
       'httpError'
     ]);
     ordersServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
-      'getComponents'
+      'getComponents',
+      'getProductWarehouses'
     ]);
     ordersServiceSpy.getComponents.and.callFake(() => {
       return of(ComponentSearchMock);
+    });
+    ordersServiceSpy.getProductWarehouses.and.callFake(() => {
+      return of(['MN', 'DZ', 'BQ', 'BE']);
     });
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, MatTableModule,
         MatDialogModule, RouterTestingModule,
         MatCheckboxModule, MatFormFieldModule, MatInputModule, BrowserAnimationsModule, MatChipsModule],
-      declarations: [ ComponentSearchComponent ],
+      declarations: [ComponentSearchComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [DatePipe,
         {
           provide: MatDialogRef,
-          useValue: {close: () => {}}
+          useValue: { close: () => { } }
         },
-        { provide: MAT_DIALOG_DATA, useValue: {modalType: 'searchComponent',
-                                                chips: ['crema'],
-                                                catalogGroupName: catalogGroup } },
+        {
+          provide: MAT_DIALOG_DATA, useValue: {
+            modalType: 'searchComponent',
+            chips: ['crema'],
+            catalogGroupName: catalogGroup
+          }
+        },
         { provide: PedidosService, useValue: ordersServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
         { provide: MessagesService, useValue: messagesServiceSpy },
       ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -92,17 +100,17 @@ describe('ComponentSearchComponent', () => {
 
   });
   it('should call changeDataEvent()', () => {
-    expect(component.changeDataEvent({pageSize: 10, pageIndex: 0} as PageEvent)).toEqual({pageSize: 10, pageIndex: 0} as PageEvent);
+    expect(component.changeDataEvent({ pageSize: 10, pageIndex: 0 } as PageEvent)).toEqual({ pageSize: 10, pageIndex: 0 } as PageEvent);
     expect(component.offset).toEqual(0);
     expect(component.limit).toEqual(10);
   });
   it('should call addChip()', () => {
     component.keywords = [];
-    component.addChip({ } as MatChipInputEvent);
+    component.addChip({} as MatChipInputEvent);
     expect(component.keywords.length).toEqual(0);
 
     component.keywords = [];
-    component.addChip({value: 'hola', input: { value: 'hola'} as HTMLInputElement } as MatChipInputEvent);
+    component.addChip({ value: 'hola', input: { value: 'hola' } as HTMLInputElement } as MatChipInputEvent);
     expect(component.keywords.length).toEqual(1);
   });
   it('should call removeChip()', () => {
@@ -122,12 +130,26 @@ describe('ComponentSearchComponent', () => {
     expect(component.queryStringComponents).toEqual(`?offset=${10}&limit=${20}&chips=crema&catalogGroup=${catalogGroup}`);
   });
   it('should call checkIsPrevious()', () => {
-     component.rowPrevious = {};
-     component.checkIsPrevious({componente: 'crema', chips: []});
-     expect(component.rowPrevious).toEqual({componente: 'crema', chips: []});
-     component.keywords = ['agua'];
-     component.checkIsPrevious({componente: 'crema', chips: []});
-
+    component.rowPrevious = {};
+    component.dataSource.data[0] = {
+      isChecked: false,
+      orderFabId: 89098,
+      productId: 'EN-075',
+      description: 'Pomadera 8 Oz c/ Tapa  R-89 Bonita',
+      baseQuantity: 210.000000,
+      requiredQuantity: 210.000000,
+      consumed: 0.000000,
+      available: 0.000000,
+      unit: 'Pieza',
+      warehouse: 'PROD',
+      pendingQuantity: 210.000000,
+      stock: 1606.000000,
+      warehouseQuantity: 0.000000,
+      hasBatches: false,
+      isItemSelected: false
+    };
+    component.checkIsPrevious(component.dataSource.data[0]);
+    expect(component.rowPrevious).toEqual(component.dataSource.data[0]);
   });
 
   it('should selectComponent', () => {
@@ -147,7 +169,8 @@ describe('ComponentSearchComponent', () => {
       stock: 1606.000000,
       warehouseQuantity: 0.000000,
       hasBatches: false,
-      isItemSelected: false
+      isItemSelected: false,
+      availableWarehouses: []
     };
     // component.selectComponent({componente: 'crema', chips: []});
     expect(component.selectComponent).toBeTruthy();
@@ -173,7 +196,7 @@ describe('ComponentSearchComponent', () => {
       isItemSelected: false
     };
     component.isFromSearchComponent = false;
-    component.selectComponent({componente: 'crema', chips: []});
+    component.selectComponent(component.dataSource.data[0]);
     expect(component.selectComponent).toBeTruthy();
   });
 });

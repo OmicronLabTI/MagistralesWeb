@@ -221,24 +221,52 @@ export class AppComponent implements AfterViewChecked, OnDestroy, OnInit {
             this.createPlaceOrderDialog(qfbToPlace);
         }
     }
-    createDialogHttpOhAboutTypePlace(modalType: string, isFromOrderIsolated: boolean, error = CONST_STRING.empty) {
+    createDialogHttpOhAboutTypePlace(modalType: string, isFromOrderIsolated: boolean, isFromFinalize: boolean, error = CONST_STRING.empty) {
         if (isFromOrderIsolated) {
             this.observableService.setCallHttpService(HttpServiceTOCall.ORDERS_ISOLATED);
             this.onSuccessGeneralMessage({ title: Messages.success, isButtonAccept: false, icon: 'success' });
         } else {
-            if (modalType === MODAL_NAMES.placeOrders) {
-                this.observableService.setCallHttpService(HttpServiceTOCall.ORDERS);
-                this.onSuccessGeneralMessage({
-                    title: this.dataService.calculateTernary(error === CONST_STRING.empty, Messages.success, error),
-                    isButtonAccept: this.dataService.calculateTernary(error === CONST_STRING.empty, false, true),
-                    icon: this.dataService.calculateTernary(error === CONST_STRING.empty, 'success', 'error')
-                });
+            if (isFromFinalize) {
+                this.generateOKMessageForFinalizeHttp(modalType, error);
             } else {
-                this.observableService.setCallHttpService(HttpServiceTOCall.DETAIL_ORDERS);
-                this.onSuccessGeneralMessage({ title: Messages.success, isButtonAccept: false, icon: 'success' });
+                this.generateOKMessageForPlaceOrders(modalType, error);
             }
         }
     }
+
+    generateOKMessageForFinalizeHttp(modalType: string, error = CONST_STRING.empty) {
+        if (modalType === MODAL_NAMES.placeOrders) {
+            this.observableService.setCallHttpService(HttpServiceTOCall.ORDERS);
+            this.onSuccessGeneralMessage({
+                title: this.dataService.calculateTernary(error === CONST_STRING.empty, Messages.weAreFinalizingYourOrders.title, error),
+                isButtonAccept: this.dataService.calculateTernary(error === CONST_STRING.empty, false, true),
+                icon: this.dataService.calculateTernary(error === CONST_STRING.empty, 'success', 'error'),
+                extraMessage: Messages.weAreFinalizingYourOrders.message
+            });
+        } else {
+            this.observableService.setCallHttpService(HttpServiceTOCall.DETAIL_ORDERS);
+            this.onSuccessGeneralMessage({
+                title: Messages.weAreFinalizingYourOrders.title,
+                isButtonAccept: false,
+                icon: 'success',
+                extraMessage: Messages.weAreFinalizingYourOrders.message
+            });
+        }
+    }
+    generateOKMessageForPlaceOrders(modalType: string, error = CONST_STRING.empty) {
+        if (modalType === MODAL_NAMES.placeOrders) {
+            this.observableService.setCallHttpService(HttpServiceTOCall.ORDERS);
+            this.onSuccessGeneralMessage({
+                title: this.dataService.calculateTernary(error === CONST_STRING.empty, Messages.success, error),
+                isButtonAccept: this.dataService.calculateTernary(error === CONST_STRING.empty, false, true),
+                icon: this.dataService.calculateTernary(error === CONST_STRING.empty, 'success', 'error')
+            });
+        } else {
+            this.observableService.setCallHttpService(HttpServiceTOCall.DETAIL_ORDERS);
+            this.onSuccessGeneralMessage({ title: Messages.success, isButtonAccept: false, icon: 'success' });
+        }
+    }
+
     createPlaceOrderDialog(placeOrdersData: any) {
         this.dialog.open(PlaceOrderDialogComponent, {
             panelClass: 'custom-dialog-container',
@@ -259,8 +287,17 @@ export class AppComponent implements AfterViewChecked, OnDestroy, OnInit {
         this.localStorageService.removeFiltersActive();
     }
     onSuccessGeneralMessage(generalMessage: GeneralMessage) {
-        this.messagesService.presentToastCustom(generalMessage.title,
-            generalMessage.icon, CONST_STRING.empty, generalMessage.isButtonAccept, false);
+        this.messagesService.presentToastCustom(
+            generalMessage.title,
+            generalMessage.icon,
+            this.dataService.calculateTernary(
+                this.dataService.validateValidString(generalMessage.extraMessage),
+                generalMessage.extraMessage,
+                CONST_STRING.empty
+            ),
+            generalMessage.isButtonAccept,
+            false
+        );
 
     }
     onSuccessPlaceOrdersHttp(resPlaceOrders: IPlaceOrdersAutomaticRes, modalType: string, isFromOrderIsolated: boolean) {
@@ -274,7 +311,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy, OnInit {
             this.messagesService.presentToastCustom(titleItemsWithError, 'error',
                 Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
         } else {
-            this.createDialogHttpOhAboutTypePlace(modalType, isFromOrderIsolated);
+            this.createDialogHttpOhAboutTypePlace(modalType, isFromOrderIsolated, false);
         }
     }
 
@@ -288,7 +325,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy, OnInit {
                     cancelOrders.forEach(order => order.userId = this.localStorageService.getUserId());
                     this.pedidosService.putCancelOrders(cancelOrders, resultCancel.cancelType === MODAL_NAMES.placeOrders)
                         .subscribe(resultCancelHttp => {
-                            this.onSuccessFinalizeHttp(resultCancelHttp, resultCancel.cancelType, resultCancel.isFromCancelIsolated);
+                            this.onSuccessFinalizeHttp(resultCancelHttp, resultCancel.cancelType, resultCancel.isFromCancelIsolated, false);
                         }, error => this.errorService.httpError(error));
                 }
             });
@@ -316,12 +353,16 @@ export class AppComponent implements AfterViewChecked, OnDestroy, OnInit {
                     finalizeOrders.forEach(order => order.userId = userId);
                     this.pedidosService.putFinalizeOrders(finalizeOrders, resultFinalize.cancelType === MODAL_NAMES.placeOrders)
                         .subscribe(resultFinalizeHttp => {
-                            this.onSuccessFinalizeHttp(resultFinalizeHttp, resultFinalize.cancelType, resultFinalize.isFromCancelIsolated);
+                            this.onSuccessFinalizeHttp(
+                                resultFinalizeHttp,
+                                resultFinalize.cancelType,
+                                resultFinalize.isFromCancelIsolated,
+                                true);
                         }, error => this.errorService.httpError(error));
                 }
             });
     }
-    onSuccessFinalizeHttp(resultCancelHttp: ICancelOrdersRes, fromCall: string, isFromOrderIsolated: boolean) {
+    onSuccessFinalizeHttp(resultCancelHttp: ICancelOrdersRes, fromCall: string, isFromOrderIsolated: boolean, isFromFinalize: boolean) {
         if (resultCancelHttp.success && resultCancelHttp.response.failed.length > 0) {
             const titleFinalizeWithError = this.messagesService.getMessageTitle(
                 resultCancelHttp.response.failed, MessageType.finalizeOrder, true);
@@ -329,7 +370,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy, OnInit {
             this.messagesService.presentToastCustom(titleFinalizeWithError, 'error',
                 Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
         } else {
-            this.createDialogHttpOhAboutTypePlace(fromCall, isFromOrderIsolated);
+            this.createDialogHttpOhAboutTypePlace(fromCall, isFromOrderIsolated, isFromFinalize);
         }
     }
 

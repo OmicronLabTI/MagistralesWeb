@@ -2,10 +2,12 @@
   width: 48rem;
   height: 30rem;
 }
+
 .place-order-container-no-data {
   width: 35rem;
   height: 10rem;
 }
+
 .card-header-container-custom {
   width: 100%;
   display: flex;
@@ -13,36 +15,44 @@
   justify-content: space-between;
   border-bottom: #3b3f5c solid 1px;
 }
+
 .height-with-data {
   height: 10%;
 }
+
 .height-no-data {
   height: 20%;
 }
+
 .place-order-card {
   width: 100%;
   height: 100%;
 }
+
 .classification-filter-qfb {
   width: 70% !important;
   display: flex;
   flex-direction: row;
 }
-.options-footer{
+
+.options-footer {
   width: 100%;
   height: 11%;
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
 }
+
 .options-content {
   width: 100%;
   height: 15%;
+  min-height: 85px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   padding: 2%;
 }
+
 .qfbs-container {
   width: 100%;
   height: 85%;
@@ -51,60 +61,72 @@
   flex-direction: column;
   background-color: #fff;
   background-clip: border-box;
-  border: 1px solid rgba(0,0,0,.125);
+  border: 1px solid rgba(0, 0, 0, .125);
   border-radius: .25rem;
   padding: 3%;
 }
-.btn-manual-place{
+
+.btn-manual-place {
   width: 6rem;
   height: 2rem;
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .with-qfb-classification {
   width: 3rem !important;
   height: 2rem !important;
   margin-left: 0 !important;
 }
-.margin-right-button{
-  margin-right: 15px ;
+
+.margin-right-button {
+  margin-right: 15px;
 }
+
 .qfb-name {
   width: 49%;
   height: 100%;
   display: flex;
   align-items: center;
 }
-.orders-number{
+
+.orders-number {
   width: 17%;
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .numbers-qfb-container {
   width: 75%;
   text-align: center;
   padding: 5px;
 }
+
 .style-number-custom {
   font-weight: 800;
   border-radius: 10px;
 }
+
 .color-like-table {
   color: #3e6993 !important;
   font-weight: 800;
 }
+
 .color-pedidos {
-  background-color: #BEB7B7 ;
+  background-color: #BEB7B7;
 }
+
 .color-orders {
   background-color: #ADA1A1;
 }
+
 .color-piezas {
   background-color: #968e8e;
 }
+
 .mat-card-custom {
   cursor: pointer;
   width: 100%;
@@ -116,17 +138,30 @@
   align-items: center;
   font-family: omicron-medium, Arial, Helvetica, sans-serif !important;
 }
-.fab-orders-number{
+
+.fab-orders-number {
   width: 80%;
   height: 80%;
 }
+
 .qfb-selected {
   background-color: #e0e5e9;
 }
+
 .content-card-container-custom {
   width: 100%;
   height: 90%;
 }
-.mat-card{
+
+.mat-card {
   border-radius: 0;
+}
+
+.scroll-x-visible {
+  overflow-x: auto;
+}
+
+.button-clasification {
+  color: white;
+  font-weight: 700 !important;
 }

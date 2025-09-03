@@ -55,5 +55,29 @@ namespace Omicron.Catalogos.Entities.Context
         /// Object warehouses model.
         /// </value>
         DbSet<WarehouseModel> WarehousesModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets sortingroute model.
+        /// </summary>
+        /// <value>
+        /// Object sortingroute model.
+        /// </value>
+        DbSet<ConfigRoutesModel> ConfigRoutesModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets producttypecolors model.
+        /// </summary>
+        /// <value>
+        /// Object producttypecolors model.
+        /// </value>
+        DbSet<ProductTypeColorsModel> ProductTypeColorsModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets ConfigWarehouses model.
+        /// </summary>
+        /// <value>
+        /// Object ConfigWarehouses model.
+        /// </value>
+        DbSet<ConfigWarehouseModel> ConfigWarehousesModel { get; set; }
     }
 }

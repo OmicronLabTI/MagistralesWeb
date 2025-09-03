@@ -77,7 +77,7 @@ namespace Omicron.Pedidos.Services.Utils
             });
 
             await pedidosDao.UpdateUserOrders(userOrders);
-            _ = kafkaConnector.PushMessage(listOrderLogToInsert);
+            _ = kafkaConnector.PushMessage(listOrderLogToInsert, ServiceConstants.KafkaInsertLogsConfigName);
 
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
         }
@@ -117,14 +117,14 @@ namespace Omicron.Pedidos.Services.Utils
             var userOrderBySales = (await pedidosDao.GetUserOrderBySaleOrder(listSales)).ToList();
 
             var listSalesNumber = listSales.Where(y => !string.IsNullOrEmpty(y)).Select(x => int.Parse(x)).ToList();
-            var sapOrders = listSalesNumber.Any() ? await ServiceUtils.GetOrdersWithFabOrders(sapAdapter, listSalesNumber) : new List<OrderWithDetailModel>();
+            var sapOrders = listSalesNumber.Any() ? await ServiceUtils.GetOrdersDetailsForMagistral(sapAdapter, listSalesNumber) : new List<OrderWithDetailModel>();
 
             var getUpdateUserOrderModel = GetUpdateUserOrderModel(userOrdersByProd, userOrderBySales, sapOrders, assignModel.UserId, ServiceConstants.Asignado, assignModel.UserLogistic, true, qfbInfoValidated);
             userOrdersByProd = getUpdateUserOrderModel.Item1;
             var listOrderLogToInsert = getUpdateUserOrderModel.Item2;
 
             await pedidosDao.UpdateUserOrders(userOrdersByProd);
-            _ = kafkaConnector.PushMessage(listOrderLogToInsert);
+            _ = kafkaConnector.PushMessage(listOrderLogToInsert, ServiceConstants.KafkaInsertLogsConfigName);
 
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
         }

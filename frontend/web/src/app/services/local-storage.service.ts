@@ -4,6 +4,7 @@ import {
 } from '../constants/const';
 import { Catalogs, ParamsPedidos } from '../model/http/pedidos';
 import { MaterialComponent, MaterialHistoryQuery, MaterialRequestData } from '../model/http/materialReques';
+import { Clasification } from '../model/http/users';
 
 @Injectable({
   providedIn: 'root'
@@ -72,6 +73,13 @@ export class LocalStorageService {
   getUserRole() {
     return localStorage.getItem(ConstToken.userRole);
   }
+  setUserClasification(clasification: string) {
+    localStorage.setItem(ConstToken.clasification, clasification);
+  }
+
+  getUserClasification() {
+    return localStorage.getItem(ConstToken.clasification);
+  }
   getOrderIsolated() {
     return localStorage.getItem(ConstToken.isolatedOrder);
   }
@@ -128,6 +136,22 @@ export class LocalStorageService {
 
   getMaterialHistoryQuery = (): MaterialHistoryQuery => {
     return JSON.parse(localStorage.getItem(ConstToken.historyQuery)) || new MaterialHistoryQuery();
+  }
+
+  setClasificationList(clasificationList: Clasification[]) {
+    localStorage.setItem(ConstToken.clasificationList, JSON.stringify(clasificationList));
+  }
+
+  getClasificationList(): Clasification[] {
+    return JSON.parse(localStorage.getItem(ConstToken.clasificationList));
+  }
+
+  setClasificationColors(clasificationList: Clasification[]) {
+    localStorage.setItem(ConstToken.clasificationColors, JSON.stringify(clasificationList));
+  }
+
+  getClasificationColors(): Clasification[] {
+    return JSON.parse(localStorage.getItem(ConstToken.clasificationColors));
   }
 
 }

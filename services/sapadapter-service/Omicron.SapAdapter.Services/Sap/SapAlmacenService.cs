@@ -96,7 +96,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             if (parameters.ContainsKey(ServiceConstants.Chips) &&
                 int.TryParse(parameters[ServiceConstants.Chips], out int pedidoId) &&
-                !this.ValidateOrdersById(userOrders, sapOrders, lineProducts.Item1))
+                !await this.ValidateOrdersById(userOrders, sapOrders, lineProducts.Item1))
             {
                 var emptyData = new AlmacenOrdersModel { SalesOrders = new List<SalesModel>() };
                 return ServiceUtils.CreateResult(true, 200, null, emptyData, null, "0-0");
@@ -128,7 +128,10 @@ namespace Omicron.SapAdapter.Services.Sap
             var batches = (await this.sapDao.GetBatchesByProdcuts(lineOrders.Select(x => x.ItemCode).ToList())).ToList();
             var transactionsIds = sapOrders.Where(o => !string.IsNullOrEmpty(o.DocNumDxp)).Select(o => o.DocNumDxp).Distinct().ToList();
             var payments = await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds);
-            var listToReturn = await this.GetDetailRecpcionToReturn(orderId, pedidos, lineOrders, incidences, localNeigbors, sapOrders, batches, payments, doctorPrescriptionData);
+            var themeIds = sapOrders.Select(x => x.ThemeId ?? string.Empty).Distinct().ToList();
+            var themesResponse = await this.catalogsService.PostCatalogs(themeIds, ServiceConstants.GetThemes);
+            var themes = JsonConvert.DeserializeObject<List<ProductColorsDto>>(themesResponse.Response.ToString());
+            var listToReturn = await this.GetDetailRecpcionToReturn(orderId, pedidos, lineOrders, incidences, localNeigbors, sapOrders, batches, payments, doctorPrescriptionData, themes);
 
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, null);
         }
@@ -146,6 +149,9 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var itemCode = (await this.sapDao.GetProductById(order.CodigoProducto)).FirstOrDefault();
             var productType = ServiceShared.CalculateTernary(itemCode.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
+            var themesResponse = await this.catalogsService.PostCatalogs(new List<string> { itemCode.ThemeId }, ServiceConstants.GetThemes);
+            var themes = JsonConvert.DeserializeObject<List<ProductColorsDto>>(themesResponse.Response.ToString());
+            var selectedTheme = ServiceShared.GetSelectedTheme(itemCode.ThemeId, themes);
 
             var magistralData = new MagistralScannerModel
             {
@@ -155,6 +161,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 NeedsCooling = itemCode.NeedsCooling,
                 Pieces = order.QtyPlanned.Value,
                 ProductType = $"Producto {productType}",
+                BackgroundColor = selectedTheme.BackgroundColor,
+                LabelText = selectedTheme.LabelText,
+                LabelColor = selectedTheme.TextColor,
             };
 
             return ServiceUtils.CreateResult(true, 200, null, magistralData, null, null);
@@ -198,6 +207,9 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             var remissionPieces = await this.CalculateRemissionPieces(orderId, product.ProductoId);
+            var themesResponse = await this.catalogsService.PostCatalogs(new List<string> { product.ThemeId }, ServiceConstants.GetThemes);
+            var themes = JsonConvert.DeserializeObject<List<ProductColorsDto>>(themesResponse.Response.ToString());
+            var selectedTheme = ServiceShared.GetSelectedTheme(product.ThemeId, themes);
 
             var lineData = new LineScannerModel
             {
@@ -207,6 +219,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 ProductType = $"Producto {productType}",
                 NeedsCooling = product.NeedsCooling,
                 Pieces = remissionPieces,
+                BackgroundColor = selectedTheme.BackgroundColor,
+                LabelText = selectedTheme.LabelText,
+                LabelColor = selectedTheme.TextColor,
             };
 
             return ServiceUtils.CreateResult(true, 200, null, lineData, null, null);
@@ -346,19 +361,27 @@ namespace Omicron.SapAdapter.Services.Sap
             return JsonConvert.DeserializeObject<List<LineProductsModel>>(almacenResponse.Response.ToString());
         }
 
-        private bool ValidateOrdersById(List<UserOrderModel> userOrderModels, List<CompleteAlmacenOrderModel> sapOrders, List<LineProductsModel> lineProducts)
+        private async Task<bool> ValidateOrdersById(List<UserOrderModel> userOrderModels, List<CompleteAlmacenOrderModel> sapOrders, List<LineProductsModel> lineProducts)
         {
             if (lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode)).Any(x => x.StatusAlmacen == ServiceConstants.Cancelado))
             {
                 return false;
             }
 
-            if (!sapOrders.Any(x => x.IsMagistral == "Y"))
+            var sapOrdersConfiguration = await ServiceUtils.GetRouteConfigurationsForProducts(this.catalogsService, this.redisService, ServiceConstants.AlmacenDbValue);
+            sapOrdersConfiguration.ClassificationCodes.AddRange(new List<string> { ServiceConstants.OrderTypeMQ, ServiceConstants.OrderTypeMU, ServiceConstants.OrderTypePackage });
+
+            var hasProductsWithValidConfig = sapOrders
+                    .Where(x => ((sapOrdersConfiguration.ClassificationCodes.Contains(x.TypeOrder) &&
+                                !sapOrdersConfiguration.ItemCodesExcludedByException.Contains(x.Detalles.ProductoId)) ||
+                                sapOrdersConfiguration.ItemCodesIncludedByConfigRules.Contains(x.Detalles.ProductoId)) && x.ProductionOrderId == 0).Count() > 0;
+
+            if (hasProductsWithValidConfig)
             {
                 return true;
             }
 
-            var magistralProducts = sapOrders.Count(x => x.IsMagistral == "Y");
+            var magistralProducts = sapOrders.Count(x => x.ProductionOrderId != 0);
             if (!userOrderModels.Any() || magistralProducts != userOrderModels.Count(x => !string.IsNullOrEmpty(x.Productionorderid)))
             {
                 return false;
@@ -392,14 +415,16 @@ namespace Omicron.SapAdapter.Services.Sap
             List<CompleteRecepcionPedidoDetailModel> sapOrders,
             List<Batches> batches,
             List<PaymentsDto> payments,
-            List<DoctorDeliveryAddressModel> doctorData)
+            List<DoctorDeliveryAddressModel> doctorData,
+            List<ProductColorsDto> themes)
         {
             var userOrder = pedidos.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid));
-            var order = sapOrders.FirstOrDefault();
+            var sapOrdersFiltered = await ServiceUtilsAlmacen.GetFilterSapOrdersByConfig(sapOrders, pedidos, lineOrders, this.catalogsService, this.redisService);
+            var order = sapOrdersFiltered.FirstOrDefault();
             var payment = payments.FirstOrDefault(p => ServiceShared.ValidateShopTransaction(p.TransactionId, order.DocNumDxp));
             payment ??= new PaymentsDto { ShippingCostAccepted = 1 };
             var invoiceType = ServiceUtils.CalculateTypeShip(ServiceConstants.NuevoLeon, localNeigbors, order.Address, payment);
-            var productList = this.GetProductListModel(pedidos, sapOrders, lineOrders, incidences, batches);
+            var productList = this.GetProductListModel(pedidos, sapOrdersFiltered, lineOrders, incidences, batches, themes);
             var salesStatusMagistral = this.GetStatusSaleOrder(userOrder);
             salesStatusMagistral = ServiceShared.CalculateTernary(salesStatusMagistral == ServiceConstants.PorRecibir && productList.Any(y => y.Status == ServiceConstants.Pendiente), ServiceConstants.Pendiente, salesStatusMagistral);
             var salesStatusLinea = ServiceShared.CalculateTernary(lineOrders.Any(x => x.DeliveryId != 0 || x.CloseSampleOrderId != 0), ServiceConstants.BackOrder, ServiceConstants.PorRecibir);
@@ -420,8 +445,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 Doctor = order.Medico,
                 InitDate = order?.FechaInicio ?? DateTime.Now,
                 Status = ServiceShared.CalculateTernary(order.Canceled == "Y", ServiceConstants.Cancelado, salesStatus),
-                TotalItems = sapOrders.DistinctBy(x => x.Producto.ProductoId).Count(),
-                TotalPieces = sapOrders.DistinctBy(x => x.Producto.ProductoId).Sum(y => y.Detalles.Quantity),
+                TotalItems = sapOrdersFiltered.DistinctBy(x => x.Producto.ProductoId).Count(),
+                TotalPieces = sapOrdersFiltered.DistinctBy(x => x.Producto.ProductoId).Sum(y => y.Detalles.Quantity),
                 TypeSaleOrder = $"Pedido {productType}",
                 OrderCounter = $"{totalAlmacenados}/{productList.Count}",
                 InvoiceType = invoiceType,
@@ -492,15 +517,13 @@ namespace Omicron.SapAdapter.Services.Sap
                 startDate,
                 endDate,
                 lineProductTuple,
-                false);
+                false,
+                this.catalogsService,
+                this.redisService);
 
             var sapCancelled = sapOrders.Where(x => x.Canceled == "Y");
             sapOrders = sapOrders.Where(x => x.Canceled == "N").ToList();
             sapOrders = ServiceUtils.GetOrdersWithValidWareHouse(sapOrders, parametersWhs);
-            var possibleIdsToIgnore = sapOrders.Where(x => !userOrders.Any(y => y.Salesorderid == x.DocNum.ToString()));
-            var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
-            var idsToTake = possibleIdsToIgnore.GroupBy(x => x.DocNum).Where(y => !y.All(z => lineProducts.Contains(z.Detalles.ProductoId))).Select(a => a.Key);
-            sapOrders = sapOrders.Where(x => !idsToTake.Contains(x.DocNum)).ToList();
             sapOrders.AddRange(sapCancelled);
             return ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrders);
         }
@@ -675,7 +698,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="incidents">The incidents.</param>
         /// <param name="batchesDataBase">The batches.</param>
         /// <returns>the products.</returns>
-        private List<ProductListRecepcionModel> GetProductListModel(List<UserOrderModel> userOrders, List<CompleteRecepcionPedidoDetailModel> sapOrders, List<LineProductsModel> lineProductsModel, List<IncidentsModel> incidents, List<Batches> batchesDataBase)
+        private List<ProductListRecepcionModel> GetProductListModel(List<UserOrderModel> userOrders, List<CompleteRecepcionPedidoDetailModel> sapOrders, List<LineProductsModel> lineProductsModel, List<IncidentsModel> incidents, List<Batches> batchesDataBase, List<ProductColorsDto> themes)
         {
             var listToReturn = sapOrders.Select(order =>
             {
@@ -688,8 +711,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 var batches = new List<string>();
                 var remittedPieces = 0;
                 var pendingToStore = false;
+                var assigneddPieces = 0;
 
-                if (order.Producto.IsMagistral.Equals("Y"))
+                if (!string.IsNullOrEmpty(order.FabricationOrder))
                 {
                     var userFabOrder = userOrders.FirstOrDefault(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Productionorderid.Equals(order.FabricationOrder));
                     userFabOrder ??= new UserOrderModel { Status = ServiceConstants.Finalizado };
@@ -716,9 +740,11 @@ namespace Omicron.SapAdapter.Services.Sap
                     batches = allBatchModels
                         .Select(y => $"{y.BatchNumber} | {(int)y.BatchQty} pz | Cad: {this.GetExpirationDate(batchesDataBase, y.BatchNumber, order.Producto.ProductoId)}")
                         .ToList();
+                    assigneddPieces = (int)allBatchModels.Sum(x => x.BatchQty);
                     pendingToStore = lineProductsModel.Any(x => x.SaleOrderId == order.DocNum && !string.IsNullOrEmpty(x.ItemCode) && x.ItemCode == order.Producto.ProductoId && x.DeliveryId == 0 && x.CloseSampleOrderId == 0);
                 }
 
+                var selectedTheme = ServiceShared.GetSelectedTheme(order.Producto.ThemeId, themes);
                 var incidentdb = incidents.FirstOrDefault(x => ServiceShared.CalculateAnd(x.SaleOrderId == order.DocNum, x.ItemCode == order.Producto.ProductoId));
                 incidentdb ??= new IncidentsModel();
 
@@ -746,6 +772,10 @@ namespace Omicron.SapAdapter.Services.Sap
                     DeliveryId = deliveryIds,
                     RemittedPieces = remittedPieces,
                     HasPendingToStore = pendingToStore,
+                    BackgroundColor = selectedTheme.BackgroundColor,
+                    LabelText = selectedTheme.LabelText,
+                    LabelColor = selectedTheme.TextColor,
+                    AssignedPieces = assigneddPieces,
                 };
             }).ToList();
 
