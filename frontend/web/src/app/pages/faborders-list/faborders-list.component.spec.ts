@@ -54,8 +54,13 @@ describe('FabordersListComponent', () => {
 
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
       'getItemOnDataOnlyIds',
-      'changeRouterForFormula'
+      'changeRouterForFormula',
+      'calculateAndValueList',
     ]);
+    dataServiceSpy.calculateAndValueList.and.callFake((list: boolean[]) => {
+      const res = list.every((value) => value === true);
+      return res;
+    });
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
       'httpError'
     ]);
@@ -145,10 +150,10 @@ describe('FabordersListComponent', () => {
   it('should updateAllComplete', () => {
     component.dataSource.data = FabOrderListMock.response;
     component.dataSource.data.forEach(user => user.isChecked = false);
-    component.updateAllComplete();
+    component.updateAllComplete(false);
     expect(component.allComplete).toBeFalsy();
     component.dataSource.data.forEach(user => user.isChecked = true);
-    component.updateAllComplete();
+    component.updateAllComplete(false);
     expect(component.allComplete).toBeTruthy();
 
   });

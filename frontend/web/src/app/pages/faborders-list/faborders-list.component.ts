@@ -29,6 +29,7 @@ import { ObservableService } from '../../services/observable.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { DateService } from '../../services/date.service';
 import { FiltersService } from '../../services/filters.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 @Component({
   selector: 'app-faborders-list',
@@ -82,6 +83,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     private observableService: ObservableService,
     private dateService: DateService,
     private filtersService: FiltersService,
+    private messagesService: MessagesService,
   ) {
     this.observableService.setUrlActive(HttpServiceTOCall.ORDERS_ISOLATED);
   }
@@ -124,8 +126,9 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     this.getFullQueryString();
     this.getOrdersAction();
   }
-  updateAllComplete() {
+  updateAllComplete(event: boolean) {
     this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t.isChecked);
+    this.showOnSplitProcessMessage(event);
     this.getButtonsOrdersIsolatedToUnLooked();
   }
 
@@ -139,6 +142,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
       return;
     }
     this.dataSource.data.forEach(t => t.isChecked = completed);
+    this.showOnSplitProcessMessage(completed);
     this.getButtonsOrdersIsolatedToUnLooked();
   }
 
@@ -270,6 +274,21 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     this.isReAssignOrderIsolated = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.reasingado,
       FromToFilter.fromOrderIsolatedReassign);
   }
+
+  showOnSplitProcessMessage(check: boolean) {
+    const orders = this.dataSource.data.filter(order =>
+        this.dataService.calculateAndValueList([
+          order.isChecked,
+          order.onSplitProcess
+        ])).map(t => t.fabOrderId);
+    const someOnSplitProcess = orders.length > 0;
+    const showMessage = this.dataService.calculateAndValueList([someOnSplitProcess, check]);
+    if (showMessage) {
+      const mssg = `No es posible modificar el estatus de órdenes en proceso de división: ${orders.join(', ')}.`;
+      this.messagesService.presentToastCustom('', 'error', mssg, false, false);
+    }
+  }
+
   reAssignOrder() {
     this.observableService.setQbfToPlace({
       modalType: MODAL_NAMES.placeOrdersDetail,
