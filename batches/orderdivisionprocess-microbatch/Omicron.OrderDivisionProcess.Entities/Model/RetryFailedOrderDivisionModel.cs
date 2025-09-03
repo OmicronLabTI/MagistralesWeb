@@ -21,6 +21,6 @@ namespace Omicron.OrderDivisionProcess.Entities.Model
         /// <summary>
         /// Lote/página de órdenes a reintentar (provenientes de Redis).
         /// </summary>
-        public List<ProductionOrderSeparationDetailLogModel> DivisionOrdersPayload { get; set; } = new();
+        public List<ProductionOrderSeparationDetailLogModel> ProductionOrderProcessingPayload { get; set; } = new();
     }
 }
