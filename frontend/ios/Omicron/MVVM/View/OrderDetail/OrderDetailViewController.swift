@@ -529,6 +529,7 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, AcceptBu
                         detailCell.pickerContainerView.isUserInteractionEnabled = !value
                     }
                 }
+                self.disableButtonsForFatherOrder( String() ,onProcess: value)
             }
             self.present(navigationVC, animated: true, completion: nil)
         }
