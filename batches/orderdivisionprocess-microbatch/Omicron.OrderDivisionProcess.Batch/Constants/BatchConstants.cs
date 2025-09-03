@@ -25,7 +25,7 @@ namespace Omicron.OrderDivisionProcess.Batch.Constants
         /// <value>
         /// DivisionOrdersToProcessKey .
         /// </value>
-        public static string DivisionOrdersToProcessKey => "division-orders-to-process";
+        public static string DivisionOrdersToProcessKey => "DivisionOrders:ToProcess";
 
         /// <summary>
         /// Gets GetFailedDivisionOrdersEndpoint.
