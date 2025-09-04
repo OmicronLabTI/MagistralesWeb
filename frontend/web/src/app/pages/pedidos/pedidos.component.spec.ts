@@ -65,7 +65,12 @@ describe('PedidosComponent', () => {
       [
         'getItemOnDataOnlyIds',
         'openNewTapByUrl',
+        'calculateAndValueList',
       ]);
+    dataServiceSpy.calculateAndValueList.and.callFake((list: boolean[]) => {
+      const res = list.every((value) => value === true);
+      return res;
+    });
     dataServiceSpy.getItemOnDataOnlyIds.and.returnValue([]);
     messagesServiceSpy.presentToastCustom.and.returnValue(Promise.resolve(true));
     messagesServiceSpy.getMessageTitle.and.returnValue('');
@@ -227,10 +232,10 @@ describe('PedidosComponent', () => {
   it('should updateAllComplete', () => {
     component.dataSource.data = PedidosListMock.response;
     component.dataSource.data.forEach(user => user.isChecked = false);
-    component.updateAllComplete();
+    component.updateAllComplete(false);
     expect(component.allComplete).toBeFalsy();
     component.dataSource.data.forEach(user => user.isChecked = true);
-    component.updateAllComplete();
+    component.updateAllComplete(false);
     expect(component.allComplete).toBeTruthy();
 
   });

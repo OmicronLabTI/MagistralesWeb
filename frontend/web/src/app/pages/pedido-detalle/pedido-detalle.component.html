@@ -129,7 +129,7 @@
                         (change)="setAll($event.checked)"></mat-checkbox>
                 </th>
                 <td mat-cell *matCellDef="let element" class="seleccion">
-                    <mat-checkbox [(ngModel)]="element.isChecked" (ngModelChange)="updateAllComplete()"></mat-checkbox>
+                    <mat-checkbox [(ngModel)]="element.isChecked" (ngModelChange)="updateAllComplete($event)"></mat-checkbox>
                 </td>
             </ng-container>
 

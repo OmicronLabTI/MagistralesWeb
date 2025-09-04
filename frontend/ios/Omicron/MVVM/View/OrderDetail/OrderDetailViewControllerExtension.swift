@@ -223,8 +223,8 @@ extension OrderDetailViewController {
         .disposed(by: self.disposeBag)
     }
     
-    func disableButtonsForFatherOrder(_ typeOrder: String) {
-        if typeOrder == OrderRelationTypes.padre {
+    func disableButtonsForFatherOrder(_ typeOrder: String, onProcess: Bool = false) {
+        if typeOrder == OrderRelationTypes.padre || onProcess{
             self.processButton.isEnabled = false
             self.finishedButton.isEnabled = false
             self.penddingButton.isEnabled = false
