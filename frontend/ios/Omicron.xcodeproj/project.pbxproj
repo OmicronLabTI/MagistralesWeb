@@ -3001,7 +3001,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.27;
+				MARKETING_VERSION = 1.1.29;
 				PRODUCT_BUNDLE_IDENTIFIER = com.omicronlab.Formulas;
 				PRODUCT_NAME = Magistrales;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3394,7 +3394,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.27;
+				MARKETING_VERSION = 1.1.29;
 				PRODUCT_BUNDLE_IDENTIFIER = com.omicronlab.Formulas;
 				PRODUCT_NAME = Magistrales;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3635,7 +3635,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.27;
+				MARKETING_VERSION = 1.1.29;
 				PRODUCT_BUNDLE_IDENTIFIER = com.omicronlab.Formulas;
 				PRODUCT_NAME = Magistrales;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3659,7 +3659,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.27;
+				MARKETING_VERSION = 1.1.29;
 				PRODUCT_BUNDLE_IDENTIFIER = com.omicronlab.Formulas;
 				PRODUCT_NAME = Magistrales;
 				PROVISIONING_PROFILE_SPECIFIER = "";
