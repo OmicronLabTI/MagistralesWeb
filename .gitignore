@@ -156,3 +156,8 @@ services/sapfile-service/Omicron.SapFile.Api/logs/
 **/launchSettings.json
 
 deploy/**/secrets*.yml
+deploy/aws/qa/**
+deploy/dev/**
+deploy/prod/**
+deploy/qa/**
+deploy/uat/**
