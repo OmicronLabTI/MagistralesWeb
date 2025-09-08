@@ -89,6 +89,8 @@ export class AddComponentComponent implements OnInit, OnDestroy {
     'opciones'
   ];
 
+  totalPieces = CONST_NUMBER.zero;
+
   constructor(
     private titleService: Title,
     private route: ActivatedRoute,
@@ -114,6 +116,7 @@ export class AddComponentComponent implements OnInit, OnDestroy {
       this.isFromDetail = Number(params.get('isFromDetail')) === CONST_NUMBER.one;
       this.detailOrders = params.get('detailOrders');
       this.titleService.setTitle('OmicronLab - Componentes/Lotes ' + this.ordenFabricacionId);
+      this.totalPieces = Number(params.get('pieces'));
     });
     this.subscription.add(this.observableService.getNewFormulaComponent().subscribe(resultNewFormulaComponent => {
       if (resultNewFormulaComponent) {
@@ -373,6 +376,7 @@ export class AddComponentComponent implements OnInit, OnDestroy {
 
   buildObjectToSap(): void {
     this.objectDataToSave.components = [];
+    this.objectDataToSave.plannedQuantity = this.totalPieces;
     this.getInsertElementsToSave();
     this.dataService.setIsToSaveAnything(false);
     this.saveChanges();
