@@ -92,5 +92,13 @@ namespace Omicron.Pedidos.Entities.Model
         /// </summary>
         /// <value>The OnSplitProcess.</value>
         public bool OnSplitProcess { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderRelationType.
+        /// </summary>
+        /// <value>
+        /// string OrderRelationType.
+        /// </value>
+        public string OrderRelationType { get; set; }
     }
 }

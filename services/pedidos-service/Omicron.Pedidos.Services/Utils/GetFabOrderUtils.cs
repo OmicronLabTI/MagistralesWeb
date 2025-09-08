@@ -108,6 +108,7 @@ namespace Omicron.Pedidos.Services.Utils
                     HasMissingStock = x.HasMissingStock,
                     Batch = userOrder.BatchFinalized,
                     OnSplitProcess = redisLookup.TryGetValue(x.OrdenId, out var exists) && exists,
+                    OrderRelationType = x.OrderRelationType = x.OrderRelationType != null ? ServiceShared.GetDictionaryValueString(ServiceConstants.OrderRelation, x.OrderRelationType, ServiceConstants.Complete) : ServiceConstants.Complete,
                 };
 
                 listToReturn.Add(fabOrder);

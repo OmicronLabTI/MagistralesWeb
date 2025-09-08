@@ -1124,6 +1124,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const int ProductionDetailCount = 1;
 
         /// <summary>
+        /// the order Complete.
+        /// </summary>
+        public const string Complete = "Completa";
+
+        /// <summary>
         /// Gets DefaultRedisValueTimeToLive.
         /// </summary>
         /// <value>
@@ -1543,6 +1548,19 @@ namespace Omicron.Pedidos.Services.Constants
             { (false, "Padre"), 3 },
             { (false, "Completa"), 4 },
             { (false, "Hija"), 5 },
+        };
+
+        /// <summary>
+        /// Gets the Order Relation.
+        /// </summary>
+        /// <value>
+        /// the OrderRelation.
+        /// </value>
+        public static Dictionary<string, string> OrderRelation { get; } = new Dictionary<string, string>
+        {
+            { "Y", "Padre" },
+            { "N", "Hija" },
+            { "SA", "Completa" },
         };
     }
 }

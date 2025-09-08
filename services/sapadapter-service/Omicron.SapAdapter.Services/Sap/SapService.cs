@@ -204,6 +204,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.FinishedLabel = userOrder.FinishedLabel;
                 x.PedidoId = docId;
                 x.OnSplitProcess = await this.GetRedisSeparateKey(x.OrdenFabricacionId);
+                x.OrderRelationType = x.OrderRelationType != null ? ServiceShared.GetDictionaryValueString(ServiceConstants.OrderRelation, x.OrderRelationType, ServiceConstants.Complete) : ServiceConstants.Complete;
             }
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listToProcess, null, null);
