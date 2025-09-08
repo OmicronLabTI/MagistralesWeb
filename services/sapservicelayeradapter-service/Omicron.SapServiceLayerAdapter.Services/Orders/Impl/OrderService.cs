@@ -113,6 +113,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
                     Container = x.Container,
                     Label = x.Label,
                     Prescription = ServiceUtils.CalculateTernary(x.NeedRecipe == "Y", "Si", "No"),
+                    PromotionalCode = x.PromotionalCode,
                 }).ToList();
 
                 var propertyMappings = new Dictionary<string, string>
