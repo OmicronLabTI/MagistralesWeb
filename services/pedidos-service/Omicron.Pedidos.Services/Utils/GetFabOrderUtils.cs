@@ -127,8 +127,7 @@ namespace Omicron.Pedidos.Services.Utils
         private static async Task<List<UserOrderModel>> GetOrdersFilteredByDate(Dictionary<string, string> parameters, bool dataFiltered, List<UserOrderModel> listOrders, IPedidosDao pedidosDao)
         {
             var dateFilter = ServiceUtils.GetDateFilter(parameters);
-
-            var endDate = dateFilter[ServiceConstants.FechaFin].AddHours(23).AddMinutes(59);
+            var endDate = dateFilter[ServiceConstants.FechaFin];
 
             if (dataFiltered)
             {
