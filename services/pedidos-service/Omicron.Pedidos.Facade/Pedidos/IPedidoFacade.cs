@@ -355,5 +355,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="payloadRetry">payloadRetry.</param>
         /// <returns>Process Result.</returns>urns>
         Task<ResultDto> RetryFailedProductionOrderDivision(RetryFailedProductionOrderDivisionDto payloadRetry);
+
+        /// <summary>
+        /// Get Open Production Order.
+        /// </summary>
+        /// <param name="parameter">GetOpenOrderProdutions.</param>
+        /// <returns>Process Result.</returns>urns>
+        Task<ResultDto> GetOpenOrderProdutions(Dictionary<string, string> parameter);
     }
 }

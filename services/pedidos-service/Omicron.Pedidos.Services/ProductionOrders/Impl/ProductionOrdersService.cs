@@ -13,6 +13,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
     using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
+
     using AutoMapper;
     using global::MediatR;
     using Newtonsoft.Json;
@@ -330,6 +331,12 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                 await this.RetryFailedProductionOrderDivisionProcess(model, logBase);
             }
 
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetOpenOrderProdutions(Dictionary<string, string> parameter)
+        {
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
         }
 
