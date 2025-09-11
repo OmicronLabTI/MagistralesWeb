@@ -135,9 +135,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<CompleteDetailOrderModel>> GetAllDetailsByRoutesConfiguration(List<int?> ordersIds, OrderFiltersByConfigType orderFiltersByConfigType)
+        public async Task<IEnumerable<CompleteDetailOrderModel>> GetAllDetailsByRoutesConfiguration(List<int?> ordersIds, OrderFiltersByConfigType orderFiltersByConfigType, bool filterByOrderRelationType = false)
         {
-            var query = this.GetDetailOrderModelsQueryWrap(ordersIds)
+            var query = this.GetDetailOrderModelsQueryWrap(ordersIds, filterByOrderRelationType)
                 .Where(x =>
                       x.OrdenFabricacionModel.PedidoId.HasValue ||
                       (x.OrdenFabricacionModel == default &&
@@ -2043,7 +2043,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                     }).AsNoTracking();
         }
 
-        private IQueryable<DetailOrderJoinModelWrap> GetDetailOrderModelsQueryWrap(List<int?> ordersIds)
+        private IQueryable<DetailOrderJoinModelWrap> GetDetailOrderModelsQueryWrap(List<int?> ordersIds, bool filterByOrderRelationType = false)
         {
             return from d in this.databaseContext.DetallePedido
                    join o in this.databaseContext.OrdenFabricacionModel on
@@ -2055,7 +2055,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                    from fm in productFirm.DefaultIfEmpty()
                    join ped in this.databaseContext.OrderModel on d.PedidoId equals ped.PedidoId
                    join g in this.databaseContext.CatalogProductModel on p.ProductGroupId equals g.ProductGroupId
-                   where ordersIds.Contains(d.PedidoId)
+                   where ordersIds.Contains(d.PedidoId) && (filterByOrderRelationType ? (dp.OrderRelationType == null || dp.OrderRelationType == "Y" || dp.OrderRelationType == "SA") : true)
                    select new DetailOrderJoinModelWrap
                    {
                        DetallePedidoModel = d,

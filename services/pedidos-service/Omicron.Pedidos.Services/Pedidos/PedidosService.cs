@@ -105,6 +105,22 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <inheritdoc/>
+        public async Task<ResultModel> GetUserOrderBySalesOrderWithDetail(List<int> listIds)
+        {
+            var listIdString = listIds.Select(x => x.ToString()).ToList();
+            var orders = await this.pedidosDao.GetUserOrderBySaleOrder(listIdString);
+
+            var productionOrders = orders.Where(x => x.Productionorderid != null).Select(x => int.Parse(x.Productionorderid)).ToList();
+            var ordersParent = await this.pedidosDao.GetProductionOrderSeparationByOrderId(productionOrders);
+            var listToReturn = new UserOrderSeparationModel
+            {
+                UserOrders = orders.ToList(),
+                ProductionOrderSeparations = ordersParent,
+            };
+            return ServiceUtils.CreateResult(true, 200, null, listToReturn, null);
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultModel> GetUserOrderByFabOrder(List<int> listIds)
         {
             var listIdString = listIds.Select(x => x.ToString()).ToList();

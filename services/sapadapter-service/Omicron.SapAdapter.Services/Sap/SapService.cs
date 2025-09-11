@@ -172,10 +172,12 @@ namespace Omicron.SapAdapter.Services.Sap
                 this.redisService,
                 ServiceConstants.MagistralesDbValue);
 
-            var details = await this.sapDao.GetAllDetailsByRoutesConfiguration(new List<int?> { docId }, orderFiltersByConfigType);
+            var details = await this.sapDao.GetAllDetailsByRoutesConfiguration(new List<int?> { docId }, orderFiltersByConfigType, true);
 
-            var usersOrderModel = await this.pedidosService.PostPedidos(new List<int> { docId }, ServiceConstants.GetUserSalesOrder);
-            var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(usersOrderModel.Response.ToString());
+            var result = await this.pedidosService.PostPedidos(new List<int> { docId }, ServiceConstants.GetUserSalesOrderWithDetail);
+            var response = JsonConvert.DeserializeObject<UserOrderSeparationModel>(result.Response.ToString());
+            var userOrders = response.UserOrders;
+            var ordersParent = response.ProductionOrderSeparations;
 
             var listUsers = await this.GetUsers(userOrders);
 
@@ -187,6 +189,7 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 var pedido = userOrders.GetSaleOrderHeader(docId.ToString());
                 var userOrder = userOrders.FirstOrDefault(y => y.Productionorderid == x.OrdenFabricacionId.ToString());
+                var parentOrder = ordersParent.FirstOrDefault(y => y.OrderId == x.OrdenFabricacionId) ?? new ProductionOrderSeparationModel();
                 userOrder ??= new UserOrderModel { Userid = string.Empty, Status = string.Empty };
                 var userId = userOrder.Userid;
                 var user = listUsers.FirstOrDefault(y => y.Id.Equals(userId));
@@ -205,6 +208,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.PedidoId = docId;
                 x.OnSplitProcess = await this.GetRedisSeparateKey(x.OrdenFabricacionId);
                 x.OrderRelationType = x.OrderRelationType != null ? ServiceShared.GetDictionaryValueString(ServiceConstants.OrderRelation, x.OrderRelationType, ServiceConstants.Complete) : ServiceConstants.Complete;
+                x.AvailablePieces = parentOrder.AvailablePieces;
+                x.ChildOrders = parentOrder.ProductionDetailCount;
             }
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listToProcess, null, null);

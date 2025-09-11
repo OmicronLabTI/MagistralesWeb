@@ -307,11 +307,6 @@ namespace Omicron.Pedidos.Services.Constants
         public const string GetLastIsolatedProductionOrderId = "fabOrder/isolated/last";
 
         /// <summary>
-        /// the route to call the details for the details.
-        /// </summary>
-        public const string GetFabOrdersByPedidoId = "detail/{0}";
-
-        /// <summary>
         /// route to create orders.
         /// </summary>
         public const string CreateFabOrder = "createFabOrder";

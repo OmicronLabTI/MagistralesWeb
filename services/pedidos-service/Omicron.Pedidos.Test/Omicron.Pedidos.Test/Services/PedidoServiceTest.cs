@@ -121,6 +121,23 @@ namespace Omicron.Pedidos.Test.Services
         /// </summary>
         /// <returns>return nothing.</returns>
         [Test]
+        public async Task GetUserOrderBySalesOrderWithDetail()
+        {
+            // arrange
+            var listIds = new List<int> { 1, 2, 3 };
+
+            // act
+            var response = await this.pedidosService.GetUserOrderBySalesOrderWithDetail(listIds);
+
+            // assert
+            Assert.That(response, Is.Not.Null);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
         public async Task GetUserOrderByFabOrder()
         {
             // arrange

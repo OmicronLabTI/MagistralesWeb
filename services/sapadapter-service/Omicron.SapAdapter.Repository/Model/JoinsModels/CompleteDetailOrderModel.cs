@@ -180,5 +180,17 @@ namespace Omicron.SapAdapter.Entities.Model
         /// string OrderRelationType.
         /// </value>
         public string OrderRelationType { get; set; }
+
+        /// <summary>
+        /// Gets or sets ChildrenOrderPieces.
+        /// </summary>
+        /// <value>The ChildrenOrderPieces.</value>
+        public int AvailablePieces { get; set; }
+
+        /// <summary>
+        /// Gets or sets ChildrenOrderPieces.
+        /// </summary>
+        /// <value>The ChildrenOrderPieces.</value>
+        public int ChildOrders { get; set; }
     }
 }

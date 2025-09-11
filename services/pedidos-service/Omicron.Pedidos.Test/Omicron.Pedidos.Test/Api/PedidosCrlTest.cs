@@ -87,6 +87,22 @@ namespace Omicron.Pedidos.Test.Api
         /// Action tests.
         /// </summary>
         [Test]
+        public void GetUserOrderBySalesOrderWithDetail()
+        {
+            // Arrange.
+            var request = this.fixture.Create<List<int>>();
+
+            // Act
+            var result = this.controller.GetUserOrderBySalesOrderWithDetail(request).Result as OkObjectResult;
+
+            // Assert
+            Assert.That((result.Value as ResultDto).Success);
+        }
+
+        /// <summary>
+        /// Action tests.
+        /// </summary>
+        [Test]
         public void GetUserOrderByFabOrder()
         {
             // Arrange.

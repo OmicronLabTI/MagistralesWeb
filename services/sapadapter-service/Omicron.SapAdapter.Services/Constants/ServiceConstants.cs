@@ -198,6 +198,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// route to get the users sales orders.
         /// </summary>
+        public const string GetUserSalesOrderWithDetail = "getUserOrder/salesOrder/detail";
+
+        /// <summary>
+        /// route to get the users sales orders.
+        /// </summary>
         public const string GetThemes = "products/themes";
 
         /// <summary>

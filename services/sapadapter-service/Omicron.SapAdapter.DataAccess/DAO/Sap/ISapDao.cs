@@ -75,8 +75,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <param name="ordersIds">ordersIds</param>
         /// <param name="orderFiltersByConfigType">orderFiltersByConfigType.</param>
+        /// <param name="filterByOrderRelationType">filterByOrderRelationType.</param>
         /// <returns>the details.</returns>
-        Task<IEnumerable<CompleteDetailOrderModel>> GetAllDetailsByRoutesConfiguration(List<int?> ordersIds, OrderFiltersByConfigType orderFiltersByConfigType);
+        Task<IEnumerable<CompleteDetailOrderModel>> GetAllDetailsByRoutesConfiguration(List<int?> ordersIds, OrderFiltersByConfigType orderFiltersByConfigType, bool filterByOrderRelationType = false);
 
         /// <summary>
         /// gets the details.

@@ -87,6 +87,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         }
 
         /// <inheritdoc/>
+        public async Task<ResultDto> GetUserOrderBySalesOrderWithDetail(List<int> listIds)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.GetUserOrderBySalesOrderWithDetail(listIds));
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultDto> GetUserOrderByFabOrder(List<int> listIds)
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.GetUserOrderByFabOrder(listIds));
