@@ -426,7 +426,7 @@ namespace Omicron.Pedidos.Services.Utils
                     continue;
                 }
 
-                logger.Error(LogsConstants.ProductionOrderIsAlreadyBeignProcessed, productionOrderInBD.Id, productionOrder.ProductionOrderId);
+                logger.Error(LogsConstants.ProductionOrderIsAlreadyBeignProcessed, productionOrder.ProductionOrderId);
                 failed.Add(CreateFinalizedFailedResponse(productionOrder, ServiceConstants.ProductionOrderIsAlreadyBeignProcessed));
             }
 

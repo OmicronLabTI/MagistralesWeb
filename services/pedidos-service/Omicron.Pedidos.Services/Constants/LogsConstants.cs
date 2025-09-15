@@ -131,7 +131,7 @@ namespace Omicron.Pedidos.Services.Constants
         /// <value>
         /// ProductionOrderIsAlreadyBeignProcessed.
         /// </value>
-        public static string ProductionOrderIsAlreadyBeignProcessed => "{LogBase} - Production Order Is Already Beign Processed - {ProductionOrderId}";
+        public static string ProductionOrderIsAlreadyBeignProcessed => "Production Order Is Already Beign Processed - {ProductionOrderId}";
 
         /// <summary>
         /// Gets PostSapValidationFinalization.
