@@ -481,7 +481,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 if (!string.IsNullOrEmpty(orderId))
                 {
-                    var selectedProduct = userOrders.Where(x => x.DeliveryId == order.DeliveryId && x.Salesorderid == order.BaseEntry.ToString()).FirstOrDefault() ?? new UserOrderModel() { Productionorderid = "0" };
+                    var selectedProduct = userOrders.Where(x => x.DeliveryId == order.DeliveryId && x.Salesorderid == order.BaseEntry.ToString() && !string.IsNullOrEmpty(x.Productionorderid)).FirstOrDefault() ?? new UserOrderModel() { Productionorderid = "0" };
                     var productionOrder = prodOrders.Where(x => x.OrdenId == int.Parse(selectedProduct.Productionorderid)).FirstOrDefault();
                     itemcode = $"{item.ProductoId} - {selectedProduct.Productionorderid}";
                     isChild = productionOrder.OrderRelationType == "N";
