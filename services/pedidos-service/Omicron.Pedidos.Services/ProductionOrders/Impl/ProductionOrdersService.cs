@@ -344,10 +344,13 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                 var limit = int.Parse(parameters[ServiceConstants.Limit]);
 
                 parameters.TryGetValue(ServiceConstants.Orders, out var orders);
+                var logBase = string.Format(LogsConstants.GetOpenOrderProductions, orders ?? qfbId);
                 var listOrders = ServiceUtils.SeparateOrders(orders);
+                this.logger.Information(LogsConstants.GetOpenOrderProductionsStart, logBase, string.Join(",", listOrders), qfbId, listOrders.Count);
 
                 if (listOrders.Count == 0)
                 {
+                    this.logger.Information(LogsConstants.GetOpenOrderProductionsCallGetOpenParents, logBase, qfbId);
                     return await this.GetOpenParentsForQfb(qfbId, offset, limit, ServiceConstants.PartiallyDivided);
                 }
 
@@ -358,6 +361,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
 
                 if (allParentIds.Count == 0)
                 {
+                    this.logger.Information(LogsConstants.GetOpenOrderProductionsNoData, logBase, string.Join(",", listOrders));
                     return ServiceUtils.CreateResult(true, 200, null, new List<OpenOrderProductionModel>(), null, null);
                 }
 
@@ -365,6 +369,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
 
                 if (parents.Count == 0)
                 {
+                    this.logger.Information(LogsConstants.GetOpenOrderProductionsNoData, logBase, string.Join(",", listOrders));
                     return ServiceUtils.CreateResult(true, 200, null, new List<OpenOrderProductionModel>(), null, null);
                 }
 
@@ -416,12 +421,13 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                 var page = result.Skip(offset).Take(limit).ToList();
 
                 await this.FullName(page);
+                this.logger.Information(LogsConstants.GetOpenOrderProductionsSuccess, logBase, string.Join(",", result.Select(r => r.OrderProductionId)), total, page.Count);
 
                 return ServiceUtils.CreateResult(true, 200, null, page, null, $"{total}");
             }
             catch (Exception ex)
             {
-                this.logger.Error(ex, "GetOpenOrderProdutions - unexpected error");
+                this.logger.Error(ex, LogsConstants.GetOpenOrderProductionsError);
                 return ServiceUtils.CreateResult(false, (int)HttpStatusCode.InternalServerError, LogsConstants.AnUnexpectedErrorOccurred, null, null, null);
             }
         }
