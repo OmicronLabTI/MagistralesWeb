@@ -1015,7 +1015,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var userOrder = userOrders.FirstOrDefault(x => x.Productionorderid == order.OrdenId.ToString());
                 status = ServiceShared.CalculateTernary(userOrder == null, status, userOrder?.StatusAlmacen);
                 quantity = (int)order.Quantity;
-                isChild = order.OrderRelationType.Equals("N");
+                isChild = order.OrderRelationType == "N";
             }
             else
             {
