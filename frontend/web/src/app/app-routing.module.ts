@@ -69,7 +69,7 @@ const routes: Routes = [
     canActivate: [GuardService]
   },
   {
-    path: `${RouterPaths.addComponent}/:document/:ordenid/:code/:description/:hasMissingStock/:isFromDetail/:detailOrders`,
+    path: `${RouterPaths.addComponent}/:document/:ordenid/:code/:description/:hasMissingStock/:isFromDetail/:detailOrders/:pieces`,
     loadChildren: () => import('./pages/add-component/add-component.module').then(m => m.AddComponentModule),
     canActivate: [GuardService]
   },
