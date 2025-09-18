@@ -362,5 +362,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="payloadRetry">payloadRetry.</param>
         /// <returns>Process Result.</returns>urns>
         Task<ResultDto> RetryFailedProductionOrderDivision(RetryFailedProductionOrderDivisionDto payloadRetry);
+
+        /// <summary>
+        /// Get child orders for parent.
+        /// </summary>
+        /// <param name="parentOrder">parent order.</param>
+        /// <returns>Process Result.</returns>urns>
+        Task<ResultDto> GetParentOrderDetail(int parentOrder);
     }
 }

@@ -544,6 +544,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// the filter for orders.
         /// </summary>
+        public const string Parent = "parent";
+
+        /// <summary>
+        /// the filter for orders.
+        /// </summary>
         public const string Type = "type";
 
         /// <summary>

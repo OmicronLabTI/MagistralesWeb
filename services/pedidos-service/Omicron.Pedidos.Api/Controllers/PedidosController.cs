@@ -676,6 +676,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// GetFailedDivisionOrdersWithError.
+        /// </summary>
+        /// <param name="fabOrder">fabOrder.</param>
+        /// <returns>Failed Division Orders.</returns>
+        [Route("/parentOrderDetail/{fabOrder}")]
+        [HttpGet]
+        public async Task<IActionResult> GetParentOrderDetail(int fabOrder)
+        {
+            var response = await this.pedidoFacade.GetParentOrderDetail(fabOrder);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>

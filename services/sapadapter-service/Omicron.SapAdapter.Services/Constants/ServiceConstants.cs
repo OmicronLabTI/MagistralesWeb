@@ -71,6 +71,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string NeedsLargeDsc = "Ldsc";
 
         /// <summary>
+        /// the filter for orders.
+        /// </summary>
+        public const string Parent = "parent";
+
+        /// <summary>
         /// the key for cliente.
         /// </summary>
         public const string Cliente = "cliente";
@@ -1080,6 +1085,7 @@ namespace Omicron.SapAdapter.Services.Constants
             Advance,
             Current,
             NeedsLargeDsc,
+            Parent,
         };
 
         /// <summary>

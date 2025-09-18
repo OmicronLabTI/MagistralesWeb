@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="CompleteOrderModel.cs" company="Axity">
+// <copyright file="ParentOrderDetailModel.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -8,34 +8,24 @@
 
 namespace Omicron.Pedidos.Entities.Model
 {
+    using System;
+
     /// <summary>
     /// the class of the complete order model.
     /// </summary>
-    public class CompleteOrderModel
+    public class ParentOrderDetailModel
     {
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public int DocNum { get; set; }
+        public string DocNum { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
         public int FabOrderId { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        public string ItemCode { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        public string Description { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
@@ -48,6 +38,12 @@ namespace Omicron.Pedidos.Entities.Model
         /// </summary>
         /// <value>The code.</value>
         public string CreateDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string UserCreate { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
@@ -68,49 +64,10 @@ namespace Omicron.Pedidos.Entities.Model
         public string Status { get; set; }
 
         /// <summary>
-        /// Gets or sets measurement of unit.
-        /// </summary>
-        /// <value>The measurement of unit.</value>
-        public string Unit { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether gets.
-        /// </summary>
-        /// <value>
-        /// Bool is sales order.
-        public bool HasMissingStock { get; set; }
-
-        /// <summary>
         /// Gets or sets a value indicating whether gets.
         /// </summary>
         /// <value>
         /// Bool is sales order.
         public string Batch { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether the production order OnSplitProcess.
-        /// </summary>
-        /// <value>The OnSplitProcess.</value>
-        public bool OnSplitProcess { get; set; }
-
-        /// <summary>
-        /// Gets or sets OrderRelationType.
-        /// </summary>
-        /// <value>
-        /// string OrderRelationType.
-        /// </value>
-        public string OrderRelationType { get; set; }
-
-        /// <summary>
-        /// Gets or sets AvailablePieces.
-        /// </summary>
-        /// <value>The AvailablePieces.</value>
-        public int AvailablePieces { get; set; }
-
-        /// <summary>
-        /// Gets or sets ChildOrders.
-        /// </summary>
-        /// <value>The ChildOrders.</value>
-        public int ChildOrders { get; set; }
     }
 }

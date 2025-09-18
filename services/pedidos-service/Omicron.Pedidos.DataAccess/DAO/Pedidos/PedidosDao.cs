@@ -684,6 +684,15 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
                 .ToListAsync();
         }
 
+        /// <inheritdoc/>
+        public async Task<List<ProductionOrderSeparationDetailModel>> GetProductionOrderSeparationDetailByDetailOrderId(List<int> ordersIds)
+        {
+            return await this.databaseContext.ProductionOrderSeparationDetailModel
+                .Where(po => ordersIds.Contains(po.DetailOrderId))
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
         private async Task<List<UserOrderModel>> GetSaleOrderForAlmacenCommon(
             IQueryable<UserOrderModel> ordersQuery,
             List<string> statusPending,
@@ -844,6 +853,28 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
                 .Where(x => !x.IsSuccessful)
                 .AsNoTracking()
                 .ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<ParentOrderDetailModel>> GetParentOrderDetailByOrderId(int parentId)
+        {
+            var ordesrDetail = await (from detail in this.databaseContext.ProductionOrderSeparationDetailModel
+                                      join order in this.databaseContext.UserOrderModel
+                                      on detail.DetailOrderId equals Convert.ToInt32(order.Productionorderid)
+                                      where detail.OrderId == parentId
+                                      select new ParentOrderDetailModel
+                                      {
+                                          DocNum = order.Salesorderid,
+                                          FabOrderId = detail.DetailOrderId,
+                                          Quantity = detail.AssignedPieces,
+                                          CreateDate = detail.CreatedAt.HasValue ? detail.CreatedAt.Value.ToString("dd/MM/yyyy HH:mm:ss") : string.Empty,
+                                          UserCreate = detail.UserId,
+                                          FinishDate = order.FinishDate.HasValue ? order.FinishDate.Value.ToString("dd/MM/yyyy") : string.Empty,
+                                          Qfb = order.Userid,
+                                          Status = order.Status.Equals("Proceso") ? "En Proceso" : order.Status,
+                                          Batch = order.BatchFinalized,
+                                      }).ToListAsync();
+            return ordesrDetail;
         }
     }
 }
