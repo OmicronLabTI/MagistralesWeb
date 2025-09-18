@@ -863,11 +863,13 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
                     OrderProductionId = p.OrderId.ToString(),
                     TotalPieces = p.TotalPieces,
                     AvailablePieces = p.AvailablePieces,
-                    QfbWhoSplit =
-                        (from d in this.databaseContext.ProductionOrderSeparationDetailModel.AsNoTracking()
-                         where d.OrderId == p.OrderId
-                         orderby d.CreatedAt ascending, d.Id ascending
-                         select d.UserId).FirstOrDefault(),
+                    QfbWhoSplit = this.databaseContext.ProductionOrderSeparationDetailModel
+                        .AsNoTracking()
+                        .Where(d => d.OrderId == p.OrderId)
+                        .OrderBy(d => d.CreatedAt)
+                        .ThenBy(d => d.Id)
+                        .Select(d => d.UserId)
+                        .FirstOrDefault(),
                     DetailOrdersCount = p.ProductionDetailCount,
                     OrderProductionDetail = new List<OpenOrderProductionDetailModel>(),
                     AutoExpandOrderDetail = false
@@ -878,31 +880,28 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
 
         public async Task<List<DetailOrderProductionModel>> GetChildrenByParentIds(IEnumerable<int> parentIds, bool excludeCanceled = true)
         {
-            var ids = parentIds?.Distinct().ToList() ?? new List<int>();
-            if (ids.Count == 0)
-                return new List<DetailOrderProductionModel>();
-
-            var q = from d in this.databaseContext.ProductionOrderSeparationDetailModel.AsNoTracking()
-                    join uc in this.databaseContext.UserOrderModel.AsNoTracking()
-                        on d.DetailOrderId.ToString() equals uc.Productionorderid
-                    where ids.Contains(d.OrderId)
-                    select new DetailOrderProductionModel
-                    {
-                        OrderId = d.OrderId,
-                        DetailOrderId = d.DetailOrderId,
-                        AssignedPieces = d.AssignedPieces,
-                        AssignedQfb = uc.Userid,
-                        Status = uc.Status,
-                        CreatedAt = d.CreatedAt
-                    };
-
-            if (excludeCanceled)
+            var ids = parentIds?.Distinct().ToList();
+            if (ids == null || ids.Count == 0)
             {
-                q = q.Where(x => x.Status != "Cancelado");
+                return new List<DetailOrderProductionModel>();
             }
 
-            var result = await q.OrderBy(x => x.DetailOrderId).ToListAsync();
-            return result.Cast<DetailOrderProductionModel>().ToList();
+            var query = from d in this.databaseContext.ProductionOrderSeparationDetailModel.AsNoTracking()
+                        join uc in this.databaseContext.UserOrderModel.AsNoTracking()
+                            on d.DetailOrderId.ToString() equals uc.Productionorderid
+                        where ids.Contains(d.OrderId) && (!excludeCanceled || uc.Status != "Cancelado")
+                        orderby d.DetailOrderId
+                        select new DetailOrderProductionModel
+                        {
+                            OrderId = d.OrderId,
+                            DetailOrderId = d.DetailOrderId,
+                            AssignedPieces = d.AssignedPieces,
+                            AssignedQfb = uc.Userid,
+                            Status = uc.Status,
+                            CreatedAt = d.CreatedAt
+                        };
+
+            return await query.ToListAsync();
         }       
 
         public async Task<HashSet<int>> FindExistingParentIds(List<int> ids)
