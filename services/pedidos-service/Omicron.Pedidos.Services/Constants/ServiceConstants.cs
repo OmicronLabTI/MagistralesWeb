@@ -582,6 +582,21 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Limit = "limit";
 
         /// <summary>
+        /// Const for the qfbId.
+        /// </summary>
+        public const string QfbId = "qfbId";
+
+        /// <summary>
+        /// Const for the orders.
+        /// </summary>
+        public const string Orders = "orders";
+
+        /// <summary>
+        /// Const for the StatusCancelado.
+        /// </summary>
+        public const string StatusCancelado = "Cancelado";
+
+        /// <summary>
         /// delivery contants.
         /// </summary>
         public const string Delivery = "delivery";
