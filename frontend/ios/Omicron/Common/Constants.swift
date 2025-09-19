@@ -73,6 +73,8 @@ struct ViewControllerIdentifiers {
     static let historyTableViewCell = "HistoryTableViewCell"
     static let addComponentViewController = "AddComponentViewController"
     static let splitOrderViewController = "SplitOrderViewController"
+    static let historicViewController = "HistoricViewController"
+    static let HistoricHeaderView = "HistoricHeaderView"
 }
 struct OmicronColors {
     static let blue = UIColor.init(red: 16/255, green: 149/255, blue: 200/255, alpha: 1)

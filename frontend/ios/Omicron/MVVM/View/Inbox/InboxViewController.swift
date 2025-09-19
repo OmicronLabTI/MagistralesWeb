@@ -124,6 +124,10 @@ class InboxViewController: UIViewController {
         self.view.endEditing(true)
         self.performSegue(withIdentifier: ViewControllerIdentifiers.supplieViewController, sender: nil)
     }
+    func goToHistoric() {
+        self.view.endEditing(true)
+        self.performSegue(withIdentifier: ViewControllerIdentifiers.historicViewController, sender: nil)
+    }
     func tapBindingButtons() {
         [similarityViewButton.rx.tap.bind(to: inboxViewModel.similarityViewButtonDidTap),
          normalViewButton.rx.tap.bind(to: inboxViewModel.normalViewButtonDidTap),
@@ -200,6 +204,9 @@ class InboxViewController: UIViewController {
         }).disposed(by: disposeBag)
         inboxViewModel.goToSuppliesView.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             self?.goToSupplies()
+        }).disposed(by: self.disposeBag)
+        inboxViewModel.goToHistoricView.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            self?.goToHistoric()
         }).disposed(by: self.disposeBag)
         self.modelBindingGrouped()
         self.modelBindingExtension1()

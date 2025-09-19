@@ -152,6 +152,11 @@ class NetworkManager: SessionProtocol {
         let res: Observable<ComponentResponse> = makeRequest(request: req)
         return res
     }
+    func getHistoric(_ data: HistoricRequestModel) -> Observable<HistoricResponseModel>{
+        let req: ApiService = ApiService.getHistoric(data: data)
+        let res: Observable<HistoricResponseModel> = makeRequest(request: req)
+        return res
+    }
     // Obtiene el listado de componentes más comunes
     func getMostCommonComponents(_ data: CommonComponentRequest) -> Observable<ComponentResponse> {
         let req: ApiService = ApiService.getMostCommonComponents(data: data)
