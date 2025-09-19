@@ -9,6 +9,8 @@
 namespace Omicron.SapAdapter.Entities.Model
 {
     using System;
+    using System.Collections.Generic;
+    using Omicron.SapAdapter.Entities.Model.BusinessModels;
 
     /// <summary>
     /// model for the detail.
@@ -191,6 +193,12 @@ namespace Omicron.SapAdapter.Entities.Model
         /// Gets or sets ChildrenOrderPieces.
         /// </summary>
         /// <value>The ChildrenOrderPieces.</value>
-        public int ChildOrders { get; set; }
+        public int ChildOrdersCount { get; set; }
+
+        /// <summary>
+        /// Gets or sets ChildrenOrderPieces.
+        /// </summary>
+        /// <value>The ChildrenOrderPieces.</value>
+        public List<ChildOrderModel> ChildOrders { get; set; }
     }
 }

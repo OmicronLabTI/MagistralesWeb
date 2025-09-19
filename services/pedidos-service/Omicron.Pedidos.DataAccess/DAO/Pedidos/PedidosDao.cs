@@ -685,6 +685,15 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         }
 
         /// <inheritdoc/>
+        public async Task<List<ProductionOrderSeparationDetailModel>> GetProductionOrderSeparationDetailBySapOrderId(List<int> ordersIds)
+        {
+            return await this.databaseContext.ProductionOrderSeparationDetailModel
+                .Where(po => ordersIds.Contains((int)po.SapOrder))
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        /// <inheritdoc/>
         public async Task<List<ProductionOrderSeparationDetailModel>> GetProductionOrderSeparationDetailByDetailOrderId(List<int> ordersIds)
         {
             return await this.databaseContext.ProductionOrderSeparationDetailModel

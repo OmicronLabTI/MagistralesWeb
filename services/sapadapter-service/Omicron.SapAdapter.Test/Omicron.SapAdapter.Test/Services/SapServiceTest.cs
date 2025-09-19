@@ -371,7 +371,7 @@ namespace Omicron.SapAdapter.Test.Services
                 .Returns(Task.FromResult(this.GetResultGetUserPedidosForParentOrders()));
 
             mockDao
-                .Setup(dao => dao.GetAllDetailsByRoutesConfiguration(It.IsAny<List<int?>>(), It.IsAny<OrderFiltersByConfigType>(), It.IsAny<bool>()))
+                .Setup(dao => dao.GetAllDetailsByRoutesConfiguration(It.IsAny<List<int?>>(), It.IsAny<OrderFiltersByConfigType>()))
                 .ReturnsAsync(this.GetCompleteDetailOrderModelForParentOrders());
 
             var sapServiceMock = new SapService(mockDao.Object, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils, mockRedis.Object, mockDoctor.Object, mockCatalogs.Object);
@@ -386,7 +386,7 @@ namespace Omicron.SapAdapter.Test.Services
             var order2 = response.FirstOrDefault(o => o.OrdenFabricacionId == 227306);
             Assert.That(order1.AvailablePieces, Is.EqualTo(0));
             Assert.That(order1.OrderRelationType, Is.EqualTo("Padre"));
-            Assert.That(order1.ChildOrders, Is.EqualTo(2));
+            Assert.That(order1.ChildOrdersCount, Is.EqualTo(2));
         }
 
         /// <summary>
@@ -1409,7 +1409,7 @@ namespace Omicron.SapAdapter.Test.Services
                 .Returns(Task.FromResult(this.GetResultGetUserPedidosForParentOrders()));
 
             mockDao
-                .Setup(dao => dao.GetAllDetailsByRoutesConfiguration(It.IsAny<List<int?>>(), It.IsAny<OrderFiltersByConfigType>(), It.IsAny<bool>()))
+                .Setup(dao => dao.GetAllDetailsByRoutesConfiguration(It.IsAny<List<int?>>(), It.IsAny<OrderFiltersByConfigType>()))
                 .ReturnsAsync(this.GetCompleteDetailOrderModelForParentOrders());
 
             mockRedis

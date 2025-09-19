@@ -541,6 +541,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Complete = "Completa";
 
         /// <summary>
+        /// the order Complete.
+        /// </summary>
+        public const string Padre = "Padre";
+
+        /// <summary>
         /// foregin package error.
         /// </summary>
         public const string ForeingPackage = "El paquete es foráneo y no puede ser entregado por un repartidor local";
