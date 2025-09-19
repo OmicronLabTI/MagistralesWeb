@@ -845,6 +845,15 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
                 .AsNoTracking()
                 .ToListAsync();
         }
+
+        /// <inheritdoc/>
+        public async Task<List<ProductionOrderSeparationModel>> GetProductionOrderSeparationByOrderIdWithPendingPieces(List<int> ordersIds)
+        {
+            return await this.databaseContext.ProductionOrderSeparationModel
+                .Where(po => ordersIds.Contains(po.OrderId) && po.AvailablePieces > 0)
+                .AsNoTracking()
+                .ToListAsync();
+        }
     }
 }
 
