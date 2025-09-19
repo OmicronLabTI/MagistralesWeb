@@ -413,7 +413,16 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
 
                         return parent;
                     })
-                    .Where(p => p.OrderProductionDetail?.Count > 0)
+                    .Where(p =>
+                    {
+                        var hasChildren = (p.OrderProductionDetail?.Count ?? 0) > 0;
+                        if (!int.TryParse(p.OrderProductionId, out var pid))
+                        {
+                            return hasChildren;
+                        }
+
+                        return hasChildren || existsParents.Contains(pid);
+                    })
                     .OrderBy(p => int.TryParse(p.OrderProductionId, out var n) ? n : int.MaxValue)
                     .ToList();
 
