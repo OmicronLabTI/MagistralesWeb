@@ -271,7 +271,9 @@ namespace Omicron.SapAdapter.Services.Sap
             var itemCode = (await this.sapDao.GetProductById(order.CodigoProducto)).FirstOrDefault();
             var productType = ServiceShared.CalculateTernary(itemCode.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
 
-            var sapData = await this.GetSaleOrderInvoiceDataByItemCode(saleOrder, itemCode.ProductoId);
+            var userOrders = await this.GetUserOrders(ServiceConstants.GetUserSalesOrder, new List<int> { saleOrder });
+            var selectedOrder = userOrders.Where(x => x.Productionorderid == order.OrdenFabricacionId.ToString()).FirstOrDefault() ?? new UserOrderModel() { DeliveryId = 0 };
+            var sapData = await this.GetSaleOrderInvoiceDataByItemCode(saleOrder, itemCode.ProductoId, selectedOrder.DeliveryId);
             var themesResponse = await this.catalogsService.PostCatalogs(new List<string> { itemCode.ThemeId }, ServiceConstants.GetThemes);
             var themes = JsonConvert.DeserializeObject<List<ProductColorsDto>>(themesResponse.Response.ToString());
             var selectedTheme = ServiceShared.GetSelectedTheme(itemCode.ThemeId, themes);
@@ -844,6 +846,66 @@ namespace Omicron.SapAdapter.Services.Sap
             return listToReturn;
         }
 
+        private List<IStatusLookUpModel> GetLookUpData(IEnumerable<IStatusLookUpModel> userOrder, IEnumerable<IStatusLookUpModel> lineProducts)
+        {
+            return userOrder.Concat(lineProducts).ToList();
+        }
+
+        private async Task<InvoiceProductModel> GetInvoiceProductsByProductionOrders(List<DeliveryDetailModel> deliveryDetails, ProductColorsDto selectedTheme, DeliveryDetailModel deliveriesDetail, ProductoModel item, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<OrdenFabricacionModel> orders, List<IncidentsModel> incidents, InvoiceDetailModel invoice, List<string> selectedPO)
+        {
+            var listBatches = new List<string>();
+            var saleId = deliveriesDetail?.BaseEntry ?? 0;
+            var prodId = deliveriesDetail?.ProductoId ?? string.Empty;
+
+            var productType = ServiceShared.CalculateTernary(item.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
+            var product = this.GetProductStatus(deliveryDetails, userOrders, lineProducts, orders, invoice, saleId);
+            selectedPO.Add(product.Item2.ToString());
+
+            if (product.Item2 == 0)
+            {
+                var lineProduct = lineProducts.FirstOrDefault(x => ServiceShared.CalculateAnd(x.SaleOrderId == saleId, x.ItemCode == invoice.ProductoId, x.DeliveryId == invoice.BaseEntry.Value));
+                lineProduct ??= new LineProductsModel();
+                var batchName = ServiceShared.DeserializeObject(lineProduct.BatchName, new List<AlmacenBatchModel>());
+
+                listBatches = await this.GetBatchesByDelivery(invoice.BaseEntry.Value, invoice.ProductoId, batchName);
+            }
+
+            var canCancel = this.DetermineCanCancel(isMagistral: product.Item2 != 0, invoice.BaseEntry.Value, saleOrderId: saleId, productId: invoice.ProductoId, userOrders: userOrders, lineProducts: lineProducts);
+
+            var incidentdb = incidents.FirstOrDefault(x => ServiceShared.CalculateAnd(x.SaleOrderId == product.Item3, x.ItemCode == item.ProductoId));
+            incidentdb ??= new IncidentsModel();
+
+            var localIncident = new IncidentInfoModel
+            {
+                Batches = ServiceShared.DeserializeObject(incidentdb.Batches, new List<AlmacenBatchModel>()),
+                Comments = incidentdb.Comments,
+                Incidence = incidentdb.Incidence,
+                Status = incidentdb.Status,
+            };
+
+            return new InvoiceProductModel
+            {
+                Batches = listBatches,
+                Container = invoice.Container,
+                Description = item.LargeDescription.ToUpper(),
+                ItemCode = ServiceShared.CalculateTernary(product.Item2 != 0, $"{item.ProductoId} - {product.Item2}", item.ProductoId),
+                NeedsCooling = item.NeedsCooling.Equals("Y"),
+                ProductType = $"Producto {productType}",
+                Quantity = product.Item2 != 0 ? product.Item4 : invoice.Quantity,
+                Status = product.Item1,
+                IsMagistral = product.Item2 != 0,
+                DeliveryId = invoice.BaseEntry.Value,
+                OrderId = product.Item2,
+                SaleOrderId = product.Item3,
+                Incident = ServiceShared.CalculateTernary(string.IsNullOrEmpty(localIncident.Status), null, localIncident),
+                CanCancel = canCancel,
+                BackgroundColor = selectedTheme.BackgroundColor,
+                LabelText = selectedTheme.LabelText,
+                LabelColor = selectedTheme.TextColor,
+                IsChild = product.Item5,
+            };
+        }
+
         /// <summary>
         /// Gets the product list.
         /// </summary>
@@ -858,73 +920,30 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var listToReturn = new List<InvoiceProductModel>();
             invoices = invoices.Where(x => x.BaseEntry.HasValue).ToList();
-            var usedDeliveries = new List<DeliveryDetailModel>();
             var items = (await this.sapDao.GetProductByIds(invoices.Select(x => x.ProductoId).ToList())).ToList();
             var themeIds = items.Select(x => x.ThemeId).Distinct().ToList();
             var themesResponse = await this.catalogsService.PostCatalogs(themeIds, ServiceConstants.GetThemes);
             var themes = JsonConvert.DeserializeObject<List<ProductColorsDto>>(themesResponse.Response.ToString());
             foreach (var invoice in invoices)
             {
-                var listBatches = new List<string>();
                 var item = items.FirstOrDefault(x => x.ProductoId == invoice.ProductoId);
                 item ??= new ProductoModel { IsMagistral = "N", LargeDescription = string.Empty, ProductoId = string.Empty };
 
-                var deliveriesDetail = deliveryDetails
-                    .FirstOrDefault(x => ServiceShared.CalculateAnd(x.DeliveryId == invoice.BaseEntry.Value, x.ProductoId == invoice.ProductoId, x.LineNum == invoice.BaseLineNum));
-                var saleId = deliveriesDetail?.BaseEntry ?? 0;
-                var prodId = deliveriesDetail?.ProductoId ?? string.Empty;
+                var dataToSearch = this.GetLookUpData(userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)), lineProducts.Where(x => !string.IsNullOrEmpty(x.ItemCode)));
+                var filterDeliveryDetails = dataToSearch.Where(x => x.DeliveryId == invoice.BaseEntry.Value).ToList();
+                var deliveryIds = filterDeliveryDetails.Select(x => x.DeliveryId).ToList();
+                var deliveriesDetail = deliveryDetails.FirstOrDefault(x => ServiceShared.CalculateAnd(deliveryIds.Contains(x.DeliveryId), x.ProductoId == invoice.ProductoId));
                 var selectedTheme = ServiceShared.GetSelectedTheme(item.ThemeId, themes);
+                List<string> selectedPO = new List<string>();
 
-                if (deliveriesDetail != null)
+                foreach (var detail in filterDeliveryDetails)
                 {
-                    usedDeliveries.Add(new DeliveryDetailModel { BaseEntry = saleId, ProductoId = prodId });
+                    var productionOrdersIds = userOrders.Where(x => deliveryIds.Contains(x.DeliveryId) && !selectedPO.Contains(x.Productionorderid)).Select(x => x.Productionorderid ?? "0").ToList();
+                    var filterOrders = orders.Where(x => productionOrdersIds.Contains(x.OrdenId.ToString())).ToList();
+                    var filterUserOrders = userOrders.Where(x => productionOrdersIds.Contains(x.Productionorderid)).OrderBy(x => int.Parse(x.Productionorderid)).ToList();
+                    var product = await this.GetInvoiceProductsByProductionOrders(deliveryDetails, selectedTheme, deliveriesDetail, item, filterUserOrders, lineProducts, filterOrders, incidents, invoice, selectedPO);
+                    listToReturn.Add(product);
                 }
-
-                var productType = ServiceShared.CalculateTernary(item.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
-                var product = this.GetProductStatus(deliveryDetails, userOrders, lineProducts, orders, invoice, saleId);
-
-                if (product.Item2 == 0)
-                {
-                    var lineProduct = lineProducts.FirstOrDefault(x => ServiceShared.CalculateAnd(x.SaleOrderId == saleId, x.ItemCode == invoice.ProductoId, x.DeliveryId == invoice.BaseEntry.Value));
-                    lineProduct ??= new LineProductsModel();
-                    var batchName = ServiceShared.DeserializeObject(lineProduct.BatchName, new List<AlmacenBatchModel>());
-
-                    listBatches = await this.GetBatchesByDelivery(invoice.BaseEntry.Value, invoice.ProductoId, batchName);
-                }
-
-                var canCancel = this.DetermineCanCancel(isMagistral: product.Item2 != 0, invoice.BaseEntry.Value, saleOrderId: saleId, productId: invoice.ProductoId, userOrders: userOrders, lineProducts: lineProducts);
-
-                var incidentdb = incidents.FirstOrDefault(x => ServiceShared.CalculateAnd(x.SaleOrderId == product.Item3, x.ItemCode == item.ProductoId));
-                incidentdb ??= new IncidentsModel();
-
-                var localIncident = new IncidentInfoModel
-                {
-                    Batches = ServiceShared.DeserializeObject(incidentdb.Batches, new List<AlmacenBatchModel>()),
-                    Comments = incidentdb.Comments,
-                    Incidence = incidentdb.Incidence,
-                    Status = incidentdb.Status,
-                };
-
-                listToReturn.Add(new InvoiceProductModel
-                {
-                    Batches = listBatches,
-                    Container = invoice.Container,
-                    Description = item.LargeDescription.ToUpper(),
-                    ItemCode = ServiceShared.CalculateTernary(product.Item2 != 0, $"{item.ProductoId} - {product.Item2}", item.ProductoId),
-                    NeedsCooling = item.NeedsCooling.Equals("Y"),
-                    ProductType = $"Producto {productType}",
-                    Quantity = invoice.Quantity,
-                    Status = product.Item1,
-                    IsMagistral = product.Item2 != 0,
-                    DeliveryId = invoice.BaseEntry.Value,
-                    OrderId = product.Item2,
-                    SaleOrderId = product.Item3,
-                    Incident = ServiceShared.CalculateTernary(string.IsNullOrEmpty(localIncident.Status), null, localIncident),
-                    CanCancel = canCancel,
-                    BackgroundColor = selectedTheme.BackgroundColor,
-                    LabelText = selectedTheme.LabelText,
-                    LabelColor = selectedTheme.TextColor,
-                });
             }
 
             return listToReturn;
@@ -980,17 +999,23 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="invoice">the invoices.</param>
         /// <param name="saleIdLook">The sale id.</param>
         /// <returns>the data.</returns>
-        private Tuple<string, int, int> GetProductStatus(List<DeliveryDetailModel> deliveries, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<OrdenFabricacionModel> orders, InvoiceDetailModel invoice, int saleIdLook)
+        private Tuple<string, int, int, int, bool> GetProductStatus(List<DeliveryDetailModel> deliveries, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<OrdenFabricacionModel> orders, InvoiceDetailModel invoice, int saleIdLook)
         {
+            var quantity = 0;
             var status = ServiceConstants.Almacenado;
             var deliveriesDetail = deliveries.FirstOrDefault(x => x.DeliveryId == invoice.BaseEntry.Value && invoice.ProductoId == x.ProductoId && x.BaseEntry == saleIdLook);
             var saleId = deliveriesDetail?.BaseEntry ?? 0;
-            var order = orders.FirstOrDefault(x => ServiceShared.CalculateAnd(x.PedidoId == saleId, x.ProductoId == invoice.ProductoId));
+            var userOrderSelected = userOrders.Where(x => ServiceShared.CalculateAnd(x.Salesorderid == saleId.ToString(), deliveriesDetail?.DeliveryId == x.DeliveryId)).FirstOrDefault();
+            var productionOrderId = userOrderSelected?.Productionorderid ?? "0";
+            var order = orders.FirstOrDefault(x => ServiceShared.CalculateAnd(x.PedidoId == saleId, x.ProductoId == invoice.ProductoId, x.OrdenId.ToString() == productionOrderId));
+            var isChild = false;
 
             if (order != null)
             {
                 var userOrder = userOrders.FirstOrDefault(x => x.Productionorderid == order.OrdenId.ToString());
                 status = ServiceShared.CalculateTernary(userOrder == null, status, userOrder?.StatusAlmacen);
+                quantity = (int)order.Quantity;
+                isChild = order.OrderRelationType == "N";
             }
             else
             {
@@ -999,7 +1024,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 order = new OrdenFabricacionModel { OrdenId = 0 };
             }
 
-            return new Tuple<string, int, int>(status, order.OrdenId, saleId);
+            return new Tuple<string, int, int, int, bool>(status, order.OrdenId, saleId, quantity, isChild);
         }
 
         /// <summary>

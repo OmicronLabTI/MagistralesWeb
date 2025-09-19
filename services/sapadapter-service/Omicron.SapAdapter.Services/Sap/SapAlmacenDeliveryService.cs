@@ -472,12 +472,20 @@ namespace Omicron.SapAdapter.Services.Sap
                 order.BaseEntry ??= 0;
                 var item = products.FirstOrDefault(x => order.ProductoId == x.ProductoId);
                 item ??= new ProductoModel { IsMagistral = "N", LargeDescription = string.Empty, ProductoId = string.Empty };
-
-                var productType = ServiceShared.CalculateTernary(item.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
-
                 var saleDetail = prodOrders.FirstOrDefault(x => x.ProductoId == order.ProductoId);
                 var orderId = saleDetail?.OrdenId.ToString() ?? string.Empty;
-                var itemcode = ServiceShared.CalculateTernary(!string.IsNullOrEmpty(orderId), $"{item.ProductoId} - {orderId}", item.ProductoId);
+
+                var productType = ServiceShared.CalculateTernary(item.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
+                var itemcode = item.ProductoId;
+                var isChild = false;
+
+                if (!string.IsNullOrEmpty(orderId))
+                {
+                    var selectedProduct = userOrders.Where(x => x.DeliveryId == order.DeliveryId && x.Salesorderid == order.BaseEntry.ToString() && !string.IsNullOrEmpty(x.Productionorderid)).FirstOrDefault() ?? new UserOrderModel() { Productionorderid = "0" };
+                    var productionOrder = prodOrders.Where(x => x.OrdenId == int.Parse(selectedProduct.Productionorderid)).FirstOrDefault();
+                    itemcode = $"{item.ProductoId} - {selectedProduct.Productionorderid}";
+                    isChild = productionOrder.OrderRelationType == "N";
+                }
 
                 var listBatches = new List<string>();
 
@@ -522,6 +530,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     BackgroundColor = selectedTheme.BackgroundColor,
                     LabelText = selectedTheme.LabelText,
                     LabelColor = selectedTheme.TextColor,
+                    IsChild = isChild,
                 });
             }
 
