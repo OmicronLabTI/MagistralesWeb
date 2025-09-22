@@ -10,11 +10,13 @@ import UIKit
 import Resolver
 import RxSwift
 
+
 class HistoricViewController: UIViewController {
     @IBOutlet var tableView: UITableView!
     @IBOutlet var searchBar: UISearchBar!
     var disposeBag: DisposeBag? = DisposeBag()
     var isLoading = false
+    
     var ordersList: [ParentOrders] = [ParentOrders(
         orderProductionId: 201294,
         totalPieces: 10,
@@ -37,48 +39,57 @@ class HistoricViewController: UIViewController {
         ],
         autoExpandOrderDetail: false
     )]
+    
+    
     @Injected var historicViewModel: HistoricViewModel
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        getInitialData()
-        modelBinding()
-        self.tableView.delegate = self
-        self.tableView.dataSource = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        view.backgroundColor = .white
+        
+        // Configuración de la tabla
+        tableView.dataSource = self
+        tableView.delegate = self
+
+        // Opcional: altura automática para filas expandibles
+        tableView.estimatedRowHeight = 44
+        tableView.rowHeight = UITableView.automaticDimension
+        //getInitialData()
+        //modelBinding()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         disposeBag = DisposeBag()
-        tableView.reloadData()
-        historicViewModel.tableData.onNext([])
+        //tableView.reloadData()
+        //historicViewModel.tableData.onNext([])
     }
     
     func getInitialData() {
         //        historicViewModel.getHistoricData(orders: String(), offset: 0, limit: 10)
-        historicViewModel.getHistoryDataMock(orders: String(), offset: 0, limit: 10)
+        //historicViewModel.getHistoryDataMock(orders: String(), offset: 0, limit: 10)
     }
     
     func resetInfo() {
-        historicViewModel.orders = []
+        //historicViewModel.orders = []
     }
     
+    /*
     @objc func toggleSection(_ sender: UITapGestureRecognizer) {
         guard let section = sender.view?.tag else { return }
         ordersList[section].autoExpandOrderDetail.toggle()
         tableView.reloadSections(IndexSet(integer: section), with: .automatic)
-    }
+    }*/
     
     func modelBinding() {
         self.searchBar.rx.text.orEmpty.bind(to: historicViewModel.searchFilter).disposed(by: disposeBag!)
         self.searchBar.rx.searchButtonClicked.bind(to: historicViewModel.searchDidTap).disposed(by: disposeBag!)
-        historicViewModel.tableData.subscribe(onNext: { [weak self] list in
+        /*historicViewModel.tableData.subscribe(onNext: { [weak self] list in
             guard let self = self else { return }
             self.ordersList = list
             dump(self.ordersList)
             tableView.reloadData()
-        }).disposed(by: disposeBag!)
+        }).disposed(by: disposeBag!)*/
         
         //        self.historicViewModel.tableData.bind(to: tableView.rx.items(
         //            cellIdentifier: ViewControllerIdentifiers.historicTableViewCell, cellType: HistoricTableViewCell.self
@@ -99,7 +110,94 @@ class HistoricViewController: UIViewController {
     // MARK: - Navigation
     
 }
+extension HistoricViewController: UITableViewDataSource, UITableViewDelegate {
 
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+            // Contamos todas las filas visibles: 1 por cada ParentOrders + sus hijos si están expandidos
+            var count = 0
+            for order in ordersList {
+                count += 1 // fila del padre
+                if order.autoExpandOrderDetail {
+                    count += order.orderProductionDetail.count // filas hijas
+                }
+            }
+            return count
+        }
+
+        func orderAndChildIndex(for indexPath: IndexPath) -> (parentIndex: Int, childIndex: Int?)? {
+            var rowCounter = 0
+            for (pIndex, order) in ordersList.enumerated() {
+                if rowCounter == indexPath.row {
+                    return (pIndex, nil) // fila del padre
+                }
+                rowCounter += 1
+
+                if order.autoExpandOrderDetail {
+                    for (cIndex, _) in order.orderProductionDetail.enumerated() {
+                        if rowCounter == indexPath.row {
+                            return (pIndex, cIndex) // fila hija
+                        }
+                        rowCounter += 1
+                    }
+                }
+            }
+            return nil
+        }
+
+        func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+
+            guard let indices = orderAndChildIndex(for: indexPath) else {
+                return UITableViewCell()
+            }
+
+            if let childIndex = indices.childIndex {
+                // Fila hija o informacion expandida
+                let detail = ordersList[indices.parentIndex].orderProductionDetail[childIndex]
+                let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "ChildCell")
+                cell.textLabel?.text = "Detalle ID: \(detail.orderProductionDetailId)"
+                cell.detailTextLabel?.text = "Asignadas: \(detail.assignedPieces), QFB: \(detail.assignedQfb)"
+                cell.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
+                cell.textLabel?.font = UIFont.systemFont(ofSize: 14)
+                cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 12)
+                return cell
+            } else {
+                // Fila padre
+                let order = ordersList[indices.parentIndex]
+                let cell = tableView.dequeueReusableCell(withIdentifier: "HistoricTableViewCell", for: indexPath) as! HistoricTableViewCell
+                cell.parentOrderIdLabel.text = "Pedido #\(order.orderProductionId)"
+                cell.qfbLabel.text = order.qfbWhoSplit
+                cell.totalPiecesLabel.text = "Total: \(order.totalPieces)"
+                cell.availablePiecesLabel.text = "Disponibles: \(order.availablePieces)"
+                cell.childrenOrdersLabel.text = "Detalles: \(order.detailOrdersCount)"
+                return cell
+            }
+        }
+
+        func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+            guard let indices = orderAndChildIndex(for: indexPath), indices.childIndex == nil else { return }
+            
+            tableView.beginUpdates()
+            let parentIndex = indices.parentIndex
+            ordersList[parentIndex].autoExpandOrderDetail.toggle()
+
+            let startRow = indexPath.row + 1
+            let count = ordersList[parentIndex].orderProductionDetail.count
+            var indexPaths: [IndexPath] = []
+            for i in 0..<count {
+                indexPaths.append(IndexPath(row: startRow + i, section: 0))
+            }
+
+            if ordersList[parentIndex].autoExpandOrderDetail {
+                tableView.insertRows(at: indexPaths, with: .fade)
+            } else {
+                tableView.deleteRows(at: indexPaths, with: .fade)
+            }
+            tableView.endUpdates()
+        }
+}
+
+
+/*
 extension HistoricViewController: UITableViewDataSource, UITableViewDelegate {
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -115,7 +213,7 @@ extension HistoricViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let detail = ordersList[indexPath.section].orderProductionDetail[indexPath.row]
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "DetailCell", for: indexPath)
         cell.textLabel?.text = "\(detail.assignedQfb) - \(detail.assignedPieces)"
         return cell
     }
@@ -127,6 +225,7 @@ extension HistoricViewController: UITableViewDataSource, UITableViewDelegate {
             return nil
         }
         
+        header.gestureRecognizers?.forEach { header.removeGestureRecognizer($0) }
         let order = ordersList[section]
         header.parentOrderIdLabel.text = "Pedido #\(order.orderProductionId)"
         header.qfbLabel.text = "Pedido #\(order.orderProductionId)"
@@ -138,7 +237,7 @@ extension HistoricViewController: UITableViewDataSource, UITableViewDelegate {
         header.tag = section
         header.addGestureRecognizer(tapGesture)
         
-        return header.contentView
+        return header
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -174,3 +273,4 @@ extension HistoricViewController: UITableViewDataSource, UITableViewDelegate {
 //        }
 //    }
 //}
+*/

@@ -8,12 +8,11 @@
 
 import UIKit
 
-class HistoricTableViewCell: UITableViewHeaderFooterView {
+class HistoricTableViewCell: UITableViewCell {
     
     @IBOutlet weak var parentOrderIdLabel: UILabel!
     @IBOutlet weak var totalPiecesLabel: UILabel!
     @IBOutlet weak var availablePiecesLabel: UILabel!
     @IBOutlet weak var qfbLabel: UILabel!
     @IBOutlet weak var childrenOrdersLabel: UILabel!
-    
 }
