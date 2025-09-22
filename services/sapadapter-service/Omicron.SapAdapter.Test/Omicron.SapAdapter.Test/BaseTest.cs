@@ -905,6 +905,10 @@ namespace Omicron.SapAdapter.Test
                 new ProductionOrderSeparationModel { Id = 2, OrderId = 227307, ProductionDetailCount = 2, TotalPieces = 2, AvailablePieces = 0, Status = "Completamente dividida" },
                 },
                 OnSplitProcess = true,
+                ProductionOrderSeparationsDetail = new List<ProductionOrderSeparationDetailModel>
+                {
+                    new ProductionOrderSeparationDetailModel { DetailOrderId = 227308, OrderId = 227307, UserId = "123", CreatedAt = new DateTime(2020, 1, 20), AssignedPieces = 3 },
+                },
             };
 
             return new ResultDto
@@ -1138,6 +1142,7 @@ namespace Omicron.SapAdapter.Test
             {
                new CompleteDetailOrderModel { OrdenFabricacionId = 227306, CodigoProducto = "BQ 252", DescripcionProducto = "BiBiest",  QtyPlanned = 1, QtyPlannedDetalle = 1, PedidoId = 176687, OrderRelationType = null, Label = "Genérica", RealLabel = "NA" },
                new CompleteDetailOrderModel { OrdenFabricacionId = 227307, CodigoProducto = "BQ 250", DescripcionProducto = "BiBiest",  QtyPlanned = 2, QtyPlannedDetalle = 2, PedidoId = 176687, OrderRelationType = "Y", Label = "Genérica", RealLabel = "NA" },
+               new CompleteDetailOrderModel { OrdenFabricacionId = 227308, CodigoProducto = "BQ 250", DescripcionProducto = "BiBiest",  QtyPlanned = 1, QtyPlannedDetalle = 2, PedidoId = 176687, OrderRelationType = "N", Label = "Genérica", RealLabel = "NA" },
             };
         }
 
