@@ -99,6 +99,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var invoices = ServiceShared.CalculateTernary(invoicesId.Any(), (await this.sapDao.GetInvoiceHeaderByInvoiceId(invoicesId)).ToList(), new List<InvoiceHeaderModel>());
 
             var sapSaleOrders = await this.sapDao.GetOrdersById(saleOrders);
+            var hasAnyChildFabOrder = await this.sapDao.GetHasAnyChildProductionOrder(saleOrders);
             var details = await this.sapDao.GetDetails(saleOrders.Cast<int?>().ToList());
             var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
             var pedidosResponse = await this.pedidosService.PostPedidos(saleOrders, ServiceConstants.GetUserSalesOrder);
@@ -129,6 +130,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 IsPackage = deliveryDetails.FirstOrDefault().IsPackage == ServiceConstants.IsPackage,
                 IsOmigenomics = deliveryDetails.Exists(del => ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(del.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(del.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(del.IsSecondary))),
                 DxpId = ServiceShared.ValidateNull(deliveryDetails.FirstOrDefault().DocNumDxp.GetShortShopTransaction()).ToUpper(),
+                HasChildOrders = hasAnyChildFabOrder,
             };
 
             return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, null);
