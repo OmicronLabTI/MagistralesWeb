@@ -598,7 +598,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="workStatus">newWorkStatus.</param>
         /// <param name="userId">userId.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        Task<int> UpdateStatusWorkParent(int parentOrderId, string workStatus, string userId);
+        Task<int> UpdateStatusWorkParent(int parentOrderId, string workStatus);
 
         /// <summary>
         /// IsParentOrder.

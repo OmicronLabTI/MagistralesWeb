@@ -100,7 +100,7 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
 
                     if (!string.Equals(productionOrder.StatusWorkParent, newStatus, StringComparison.OrdinalIgnoreCase))
                     {
-                        await this.pedidosDao.UpdateStatusWorkParent(request.ProductionOrderId, newStatus, request.UserId);
+                        await this.pedidosDao.UpdateStatusWorkParent(request.ProductionOrderId, newStatus);
                     }
                 }
 

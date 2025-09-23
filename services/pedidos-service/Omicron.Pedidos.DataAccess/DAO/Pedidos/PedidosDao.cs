@@ -856,7 +856,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
                 .ToListAsync();
         }
 
-        public async Task<int> UpdateStatusWorkParent(int parentOrderId, string workStatus, string userId)
+        public async Task<int> UpdateStatusWorkParent(int parentOrderId, string workStatus)
         {
             var usersOrders = await this.databaseContext.UserOrderModel
                            .FirstOrDefaultAsync(x => x.Productionorderid == parentOrderId.ToString());
