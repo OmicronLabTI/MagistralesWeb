@@ -20,6 +20,10 @@
 		05B553892E39418100F2F0E5 /* SplitOrderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B553872E39417600F2F0E5 /* SplitOrderModel.swift */; };
 		05B5538A2E39418100F2F0E5 /* SplitOrderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B553872E39417600F2F0E5 /* SplitOrderModel.swift */; };
 		05B5538B2E39418100F2F0E5 /* SplitOrderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B553872E39417600F2F0E5 /* SplitOrderModel.swift */; };
+		05C7301D2E830DE90077AD9B /* ChildrenOrderRowViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C7301C2E830DC90077AD9B /* ChildrenOrderRowViewCell.swift */; };
+		05C7301E2E830DE90077AD9B /* ChildrenOrderRowViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C7301C2E830DC90077AD9B /* ChildrenOrderRowViewCell.swift */; };
+		05C7301F2E830DE90077AD9B /* ChildrenOrderRowViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C7301C2E830DC90077AD9B /* ChildrenOrderRowViewCell.swift */; };
+		05C730202E830DE90077AD9B /* ChildrenOrderRowViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C7301C2E830DC90077AD9B /* ChildrenOrderRowViewCell.swift */; };
 		05DD6A922E71D5460018197D /* HistoricModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DD6A912E71D5360018197D /* HistoricModel.swift */; };
 		05DD6A932E71D5460018197D /* HistoricModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DD6A912E71D5360018197D /* HistoricModel.swift */; };
 		05DD6A942E71D5460018197D /* HistoricModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DD6A912E71D5360018197D /* HistoricModel.swift */; };
@@ -659,6 +663,7 @@
 		051D89FC2E7B0B9300BAD568 /* HistoricTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricTableViewCell.swift; sourceTree = "<group>"; };
 		051D8A022E7B16FA00BAD568 /* historicResponseMock.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = historicResponseMock.json; sourceTree = "<group>"; };
 		05B553872E39417600F2F0E5 /* SplitOrderModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitOrderModel.swift; sourceTree = "<group>"; };
+		05C7301C2E830DC90077AD9B /* ChildrenOrderRowViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildrenOrderRowViewCell.swift; sourceTree = "<group>"; };
 		05DD6A912E71D5360018197D /* HistoricModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricModel.swift; sourceTree = "<group>"; };
 		05DD6ADC2E7329AB0018197D /* HistoricViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricViewModel.swift; sourceTree = "<group>"; };
 		05DD6AE12E7333B10018197D /* HistoricViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricViewController.swift; sourceTree = "<group>"; };
@@ -957,6 +962,7 @@
 		051D89FD2E7B0B9300BAD568 /* HistoricCustomCell */ = {
 			isa = PBXGroup;
 			children = (
+				05C7301C2E830DC90077AD9B /* ChildrenOrderRowViewCell.swift */,
 				051D89FC2E7B0B9300BAD568 /* HistoricTableViewCell.swift */,
 			);
 			path = HistoricCustomCell;
@@ -2513,6 +2519,7 @@
 				490B6987268E98ED00DBE9F1 /* LoginViewController.swift in Sources */,
 				490B6988268E98ED00DBE9F1 /* ApiService.swift in Sources */,
 				490B6989268E98ED00DBE9F1 /* ComponentFormViewController.swift in Sources */,
+				05C7301D2E830DE90077AD9B /* ChildrenOrderRowViewCell.swift in Sources */,
 				051D8A012E7B0B9300BAD568 /* HistoricTableViewCell.swift in Sources */,
 				490B698A268E98ED00DBE9F1 /* ComponentsTableViewCell.swift in Sources */,
 				11FD7B1F29C2331700F04747 /* DropdownViewController.swift in Sources */,
@@ -2626,6 +2633,7 @@
 				49CF65C825F2D4AB002CD598 /* LoginViewController.swift in Sources */,
 				49CF65C925F2D4AB002CD598 /* ApiService.swift in Sources */,
 				49CF65CA25F2D4AB002CD598 /* ComponentFormViewController.swift in Sources */,
+				05C7301F2E830DE90077AD9B /* ChildrenOrderRowViewCell.swift in Sources */,
 				051D8A002E7B0B9300BAD568 /* HistoricTableViewCell.swift in Sources */,
 				49CF65CB25F2D4AB002CD598 /* ComponentsTableViewCell.swift in Sources */,
 				11FD7B1D29C2331700F04747 /* DropdownViewController.swift in Sources */,
@@ -2739,6 +2747,7 @@
 				49CF664B25F2D821002CD598 /* LoginViewController.swift in Sources */,
 				49CF664C25F2D821002CD598 /* ApiService.swift in Sources */,
 				49CF664D25F2D821002CD598 /* ComponentFormViewController.swift in Sources */,
+				05C730202E830DE90077AD9B /* ChildrenOrderRowViewCell.swift in Sources */,
 				051D89FE2E7B0B9300BAD568 /* HistoricTableViewCell.swift in Sources */,
 				49CF664E25F2D821002CD598 /* ComponentsTableViewCell.swift in Sources */,
 				11FD7B1E29C2331700F04747 /* DropdownViewController.swift in Sources */,
@@ -2852,6 +2861,7 @@
 				98C8C03324AFBD4C00018A88 /* LoginViewController.swift in Sources */,
 				98C8C03924AFCBE300018A88 /* ApiService.swift in Sources */,
 				989391D9250AE174004750D8 /* ComponentFormViewController.swift in Sources */,
+				05C7301E2E830DE90077AD9B /* ChildrenOrderRowViewCell.swift in Sources */,
 				051D89FF2E7B0B9300BAD568 /* HistoricTableViewCell.swift in Sources */,
 				7C7DDC73251007760049B43C /* ComponentsTableViewCell.swift in Sources */,
 				11FD7B1C29C2331700F04747 /* DropdownViewController.swift in Sources */,

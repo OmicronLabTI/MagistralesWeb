@@ -156,6 +156,7 @@ class InboxViewModel {
 
     func initExtension() {
         viewKPIDidPressed.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            print("here")
             guard let self = self else { return }
             self.showKPIView.onNext(true)
             self.deselectRow.onNext(true)
