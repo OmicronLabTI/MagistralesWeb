@@ -623,6 +623,7 @@ namespace Omicron.SapAdapter.Test
             var userOrders = new List<UserOrderModel>
             {
                 new UserOrderModel { Salesorderid = "75000", Comments = "Comments", FinishedLabel = 1, Status = "Almacenado", DeliveryId = 46036 },
+                new UserOrderModel { Salesorderid = "75001", Comments = "Comments", FinishedLabel = 1, Status = "Almacenado", DeliveryId = 46037, Productionorderid = "1003" },
             };
 
             return new ResultDto
