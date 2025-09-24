@@ -621,5 +621,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<List<OpenOrderProductionModel>> GetParentsAssignedToQfbByIds(List<int> parentIds, string qfbId, string partiallyDivided );
 
+        /// <summary>
+        /// GetProductionOrderSeparationByOrderId.
+        /// </summary>
+        /// <param name="ordersIds">production order ids.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<List<ProductionOrderSeparationModel>> GetProductionOrderSeparationByOrderIdWithPendingPieces(List<int> ordersIds);
+
     }
 }
