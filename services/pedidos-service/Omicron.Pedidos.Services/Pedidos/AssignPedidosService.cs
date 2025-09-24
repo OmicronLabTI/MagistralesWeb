@@ -226,7 +226,6 @@ namespace Omicron.Pedidos.Services.Pedidos
             var orders = (await this.pedidosDao.GetUserOrderBySaleOrder(listSaleOrders)).Where(x => !ServiceConstants.StatusAvoidReasignar.Contains(x.Status)).ToList();
             orders = await this.RemoveCompletelySplitOrders(orders);
             var listOrderLogToInsert = new List<SalesLogs>();
-            Console.WriteLine(JsonConvert.SerializeObject(orders, Formatting.Indented));
             orders.ForEach(x =>
             {
                 var previousStatus = x.Status;
