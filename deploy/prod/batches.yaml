@@ -4,7 +4,7 @@ metadata:
   name: finalize-productionorders-cronjob
   namespace: default
 spec:
-  schedule: "*/30 * * * *"
+  schedule: "0 */2 * * *"
   timeZone: America/Mexico_City
   suspend: false # suspende el cron
   successfulJobsHistoryLimit: 1
