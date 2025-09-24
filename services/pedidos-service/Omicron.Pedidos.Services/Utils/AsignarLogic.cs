@@ -264,7 +264,7 @@ namespace Omicron.Pedidos.Services.Utils
                     currentOrdersBySale.ForEach(o =>
                     {
                         o.Userid = user;
-                        o.Status = statusOrder;
+                        o.Status = o.Status == ServiceConstants.Cancelled ? ServiceConstants.Cancelled : statusOrder;
                         o.StatusForTecnic = statusOrder;
                         o.ReassignmentDate = ServiceShared.CalculateTernary(isFromAssignOrder, o.ReassignmentDate, DateTime.Now);
                         o.AssignmentDate = ServiceShared.CalculateTernary(isFromAssignOrder, DateTime.Now, o.AssignmentDate);

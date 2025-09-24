@@ -307,6 +307,7 @@ namespace Omicron.Pedidos.Test
             {
                 new ProductionOrderSeparationModel { Id = 1,  OrderId = 225307, ProductionDetailCount = 2, TotalPieces = 10, AvailablePieces = 0, Status = "Completamente dividida" },
                 new ProductionOrderSeparationModel { Id = 2,  OrderId = 225308, ProductionDetailCount = 2, TotalPieces = 10, AvailablePieces = 0, Status = "Completamente dividida" },
+                new ProductionOrderSeparationModel { Id = 3,  OrderId = 225307, ProductionDetailCount = 1, TotalPieces = 10, AvailablePieces = 1, Status = "Parcialmente dividida" },
             };
         }
 

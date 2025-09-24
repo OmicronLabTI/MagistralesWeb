@@ -224,11 +224,13 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var listSaleOrders = assign.DocEntry.Select(x => x.ToString()).ToList();
             var orders = (await this.pedidosDao.GetUserOrderBySaleOrder(listSaleOrders)).Where(x => !ServiceConstants.StatusAvoidReasignar.Contains(x.Status)).ToList();
+            orders = await this.RemoveCompletelySplitOrders(orders);
             var listOrderLogToInsert = new List<SalesLogs>();
+            Console.WriteLine(JsonConvert.SerializeObject(orders, Formatting.Indented));
             orders.ForEach(x =>
             {
                 var previousStatus = x.Status;
-                x.Status = ServiceShared.CalculateTernary(string.IsNullOrEmpty(x.Productionorderid), ServiceConstants.Liberado, ServiceConstants.Reasignado);
+                x.Status = x.Status != ServiceConstants.Cancelled ? ServiceShared.CalculateTernary(string.IsNullOrEmpty(x.Productionorderid), ServiceConstants.Liberado, ServiceConstants.Reasignado) : ServiceConstants.Cancelled;
                 x.Userid = assign.UserId;
                 x.TecnicId = qfbInfoValidated.TecnicId;
                 x.StatusForTecnic = ServiceShared.CalculateTernary(string.IsNullOrEmpty(x.Productionorderid), ServiceConstants.Liberado, ServiceConstants.Reasignado);
@@ -266,6 +268,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var listOrdersId = assignModel.DocEntry.Select(x => x.ToString()).ToList();
             var orders = (await this.pedidosDao.GetUserOrderByProducionOrder(listOrdersId)).ToList();
+            orders = await this.RemoveCompletelySplitOrders(orders);
 
             var listSales = orders.Select(x => x.Salesorderid).Distinct().ToList();
             var userOrdersBySale = (await this.pedidosDao.GetUserOrderBySaleOrder(listSales)).ToList();
@@ -281,6 +284,23 @@ namespace Omicron.Pedidos.Services.Pedidos
             await this.UpdateOrderSignedByReassignment(orders.Select(x => x.Id).Distinct().ToList());
             _ = this.kafkaConnector.PushMessage(listOrderLogToInsert, ServiceConstants.KafkaInsertLogsConfigName);
             return ServiceUtils.CreateResult(true, 200, null, null, null);
+        }
+
+        private async Task<List<UserOrderModel>> RemoveCompletelySplitOrders(List<UserOrderModel> orders)
+        {
+            var parents = orders.Where(x => x.Status == ServiceConstants.Cancelled).ToList();
+            var validOrders = orders.Where(x => x.Status != ServiceConstants.Cancelled).ToList();
+            var parentIds = parents.Where(x => x.Productionorderid != null).Select(p => int.Parse(p.Productionorderid)).ToList();
+            var parentValids = await this.pedidosDao.GetProductionOrderSeparationByOrderId(parentIds);
+            parentValids.ForEach(x =>
+            {
+                if (x.Status == ServiceConstants.PartiallyDivided)
+                {
+                    var parentValid = parents.FirstOrDefault(o => o.Productionorderid == x.OrderId.ToString());
+                    validOrders.Add(parentValid);
+                }
+            });
+            return validOrders;
         }
 
         private string GetUserId(
