@@ -547,7 +547,7 @@ namespace Omicron.Pedidos.Services.Utils
             var sapOrdersDict = sapOrders.ToDictionary(s => s.ProductionOrderId, s => s);
 
             var filteredUserOrders = userOrders.Where(x => x.Status.Equals(status.ToString()) ||
-            (x.Status.Equals(ServiceConstants.Cancelled) && TryIncludeCancelledOrderInStatusGroup(x, sapOrdersDict, statusId))).ToList();
+            (x.Status.Equals(ServiceConstants.Cancelled) && TryIncludeCancelledOrderInStatusGroup(x, sapOrdersDict, statusId, status.ToString()))).ToList();
 
             filteredUserOrders.ForEach(o =>
                 {
@@ -599,7 +599,7 @@ namespace Omicron.Pedidos.Services.Utils
             };
         }
 
-        private static bool TryIncludeCancelledOrderInStatusGroup(UserOrderModel userOrder, Dictionary<int, CompleteFormulaWithDetalle> sapOrdersDict, int statusId)
+        private static bool TryIncludeCancelledOrderInStatusGroup(UserOrderModel userOrder, Dictionary<int, CompleteFormulaWithDetalle> sapOrdersDict, int statusId, string status)
         {
             int.TryParse(userOrder.Productionorderid, out int orderId);
 
@@ -611,8 +611,14 @@ namespace Omicron.Pedidos.Services.Utils
             var parentOrder = sapOrder.OrderRelationType == ServiceConstants.ParentOrder;
             var reassignmentDateExists = userOrder.ReassignmentDate.HasValue;
 
-            return (statusId == (int)ServiceEnums.Status.Proceso && parentOrder && !reassignmentDateExists)
-                || (statusId == (int)ServiceEnums.Status.Reasignado && parentOrder && reassignmentDateExists);
+            if (string.IsNullOrEmpty(userOrder.StatusWorkParent))
+            {
+                return (statusId == (int)ServiceEnums.Status.Proceso && parentOrder && !reassignmentDateExists)
+                    || (statusId == (int)ServiceEnums.Status.Reasignado && parentOrder && reassignmentDateExists);
+            }
+
+            var validStatusId = new List<int>() { (int)ServiceEnums.Status.Proceso, (int)ServiceEnums.Status.Reasignado, (int)ServiceEnums.Status.Pendiente };
+            return validStatusId.Contains(statusId) && parentOrder && userOrder.StatusWorkParent == status;
         }
     }
 }
