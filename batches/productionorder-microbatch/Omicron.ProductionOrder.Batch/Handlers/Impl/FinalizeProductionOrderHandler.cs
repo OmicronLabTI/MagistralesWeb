@@ -54,31 +54,24 @@ namespace Omicron.ProductionOrder.Batch.Handlers.Impl
             try
             {
                 this.logger.Information(BatchConstants.StartCronJobProcess, logBase);
-                var deleteRedisKey = await this.RetryFinalizeProductionOrder(batchProcessId, logBase);
-                if (deleteRedisKey)
-                {
-                    await this.redisService.DeleteKey(BatchConstants.ProductionOrderFinalizingRetryCronjob);
-                    await this.redisService.DeleteKey(BatchConstants.ProductionOrderFinalizingToProcessKey);
-                }
-
+                await this.RetryFinalizeProductionOrder(batchProcessId, logBase);
                 this.logger.Information(BatchConstants.EndCronJobProcess, logBase);
             }
             catch (Exception ex)
             {
                 var error = string.Format(BatchConstants.EndCronJobProcessWithError, logBase, ex.Message, ex.InnerException);
                 this.logger.Error(ex, error);
-                await this.redisService.DeleteKey(BatchConstants.ProductionOrderFinalizingRetryCronjob);
-                await this.redisService.DeleteKey(BatchConstants.ProductionOrderFinalizingToProcessKey);
+                await this.DeleteCronJobProcessRedisKeys();
             }
         }
 
-        private async Task<bool> RetryFinalizeProductionOrder(string batchProcessId, string logBase)
+        private async Task RetryFinalizeProductionOrder(string batchProcessId, string logBase)
         {
             var existingValue = await this.redisService.GetRedisKey(BatchConstants.ProductionOrderFinalizingRetryCronjob);
             if (!string.IsNullOrEmpty(existingValue))
             {
                 this.logger.Information(BatchConstants.CronJobProcessAlreadyRunning, logBase);
-                return false;
+                await this.DeleteCronJobProcessRedisKeys();
             }
 
             await this.redisService.WriteToRedis(
@@ -93,14 +86,14 @@ namespace Omicron.ProductionOrder.Batch.Handlers.Impl
             if (!result.Success)
             {
                 this.logger.Error(BatchConstants.ErrorRetrievingProductionOrders, logBase);
-                return true;
+                await this.DeleteCronJobProcessRedisKeys();
             }
 
             var ordersToProcess = Convert.ToInt32(result.Response);
             if (ordersToProcess == 0)
             {
                 this.logger.Information(BatchConstants.ThereAreNoProductionOrdersToProcess, logBase);
-                return true;
+                await this.DeleteCronJobProcessRedisKeys();
             }
 
             this.logger.Information(BatchConstants.NumberOfProductionOrdersToProcess, logBase, ordersToProcess);
@@ -112,7 +105,7 @@ namespace Omicron.ProductionOrder.Batch.Handlers.Impl
                 await this.SendToRetryProcess(batch.Offset, batch.Limit, batchProcessId, logBase);
             }
 
-            return true;
+            await this.DeleteCronJobProcessRedisKeys();
         }
 
         private async Task SendToRetryProcess(int offset, int limit, string batchProcessId, string logBase)
@@ -142,36 +135,33 @@ namespace Omicron.ProductionOrder.Batch.Handlers.Impl
                 RetryFailedProductionOrderFinalizationModel requestPedidos,
                 string logBase)
         {
-            _ = Task.Run(async () =>
+            try
             {
-                using var scope = this.serviceScopeFactory.CreateScope();
-                var scopedPedidosService = scope.ServiceProvider.GetRequiredService<IPedidosService>();
+                _ = this.pedidosService.PostAsync(
+                    BatchConstants.PostRetryFinalizeFailedProductionOrdersEndpoint,
+                    requestPedidos,
+                    logBase);
 
-                try
-                {
-                    await scopedPedidosService.PostAsync(
-                        BatchConstants.PostRetryFinalizeFailedProductionOrdersEndpoint,
-                        requestPedidos,
-                        logBase).ConfigureAwait(false);
-                }
-                catch (Exception ex)
-                {
-                    var error = string.Format(
-                        BatchConstants.ErrorSendPedidosRequestInBackgroundAsync, logBase, ex.Message, ex.InnerException);
-                }
-            });
+                this.logger.Information($"{logBase} - Send Batch To Retry - {JsonConvert.SerializeObject(requestPedidos)}");
+            }
+            catch (Exception ex)
+            {
+                var error = string.Format(
+                    BatchConstants.ErrorSendPedidosRequestInBackgroundAsync, logBase, ex.Message, ex.InnerException);
+                this.logger.Error(error);
+            }
         }
 
         private async Task<List<T>> GetValueFromRedisByKeyAndOffsetAndLimit<T>(string key, int offset, int limit)
         {
             List<T> paginatedList = await this.redisService.ReadListAsync<T>(key, offset, limit);
-
-            if (paginatedList.Count < limit)
-            {
-                await this.redisService.DeleteKey(key);
-            }
-
             return paginatedList;
+        }
+
+        private async Task DeleteCronJobProcessRedisKeys()
+        {
+            await this.redisService.DeleteKey(BatchConstants.ProductionOrderFinalizingRetryCronjob);
+            await this.redisService.DeleteKey(BatchConstants.ProductionOrderFinalizingToProcessKey);
         }
     }
 }
