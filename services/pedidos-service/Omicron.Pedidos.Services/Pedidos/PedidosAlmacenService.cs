@@ -240,7 +240,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> UpdateSentOrders(List<UserOrderModel> userToUpdate)
         {
-            var data = JsonConvert.SerializeObject(userToUpdate);
             var ids = userToUpdate.Select(x => x.InvoiceId).ToList();
             var tuple = userToUpdate.Select(x => new UserOrderByInvoiceAndLineNum() { InvoiceId = x.InvoiceId, InvoiceLineNum = x.InvoiceLineNum }).ToList();
             var orders = (await this.pedidosDao.GetUserOrdersByInvoiceId(ids)).ToList();
