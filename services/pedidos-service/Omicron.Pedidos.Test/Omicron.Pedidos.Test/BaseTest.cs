@@ -943,11 +943,21 @@ namespace Omicron.Pedidos.Test
                 },
                 new ProductionOrderProcessingStatusModel
                 {
-                    Id = "778e6a6a-fa1d-4767-95fa-47f3c0cb2377",
+                    Id = "656feb73-35ad-46ae-9e4c-4e708c05205d",
                     ProductionOrderId = 223580,
                     LastStep = "Update UsersOrders in postgres",
                     Status = "In Progress",
                     Payload = "{\"FinalizeProductionOrder\":{\"UserId\":\"7ac2db83-3c31-4042-9d1b-5531753694b4\",\"ProductionOrderId\":223580,\"SourceProcess\":null,\"Batches\":null}}",
+                    CreatedAt = DateTime.Now.AddDays(-1),
+                    LastUpdated = DateTime.Now,
+                },
+                new ProductionOrderProcessingStatusModel
+                {
+                    Id = "6fe84f79-c724-45a3-9588-f3cf947322de",
+                    ProductionOrderId = 223581,
+                    LastStep = "Update UsersOrders in postgres",
+                    Status = "In Progress",
+                    Payload = "{\"FinalizeProductionOrder\":{\"UserId\":\"7ac2db83-3c31-4042-9d1b-5531753694b4\",\"ProductionOrderId\":223581,\"SourceProcess\":null,\"Batches\":null}}",
                     CreatedAt = DateTime.Now.AddDays(-1),
                     LastUpdated = DateTime.Now,
                 },
