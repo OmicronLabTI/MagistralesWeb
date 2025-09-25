@@ -16,6 +16,7 @@ class HistoricViewController: UIViewController {
     @IBOutlet var searchBar: UISearchBar!
     var disposeBag: DisposeBag? = DisposeBag()
     var isLoading = false
+    var refreshControl = UIRefreshControl()
     
     var ordersList: [ParentOrders] = []
     
@@ -34,6 +35,9 @@ class HistoricViewController: UIViewController {
         tableView.estimatedRowHeight = 44
         tableView.rowHeight = UITableView.automaticDimension
         
+        refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
+        tableView.refreshControl = refreshControl
+        
         modelBinding()
         bindLoading()
         getInitialData()
@@ -47,38 +51,76 @@ class HistoricViewController: UIViewController {
     }
     
     func getInitialData() {
-        //        historicViewModel.getHistoricData(orders: String(), offset: 0, limit: 10)
-        historicViewModel.getHistoryDataMock(orders: String(), offset: 0, limit: 10)
+        historicViewModel.getHistoricData(orders: String(), offset: 0, limit: 10)
     }
     
     func resetInfo() {
-        //historicViewModel.orders = []
+        self.ordersList = []
+        self.tableView.reloadData()
     }
     
     func modelBinding() {
         self.searchBar.rx.text.orEmpty.bind(to: historicViewModel.searchFilter).disposed(by: disposeBag!)
         self.searchBar.rx.searchButtonClicked.bind(to: historicViewModel.searchDidTap).disposed(by: disposeBag!)
+        self.historicViewModel.restartTable.subscribe(onNext: {[weak self] restartTable in
+            if restartTable {
+                self?.resetInfo()
+            }
+        }).disposed(by: disposeBag!)
+        self.historicViewModel.endRefreshing.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self]  _ in
+            self?.refreshControl.endRefreshing()
+        }).disposed(by: self.disposeBag!)
         historicViewModel.tableData.subscribe(onNext: { [weak self] list in
             guard let self = self else { return }
             
             for order in list {
                 if order.detailOrdersCount > 0 {
                     if order.orderProductionDetail[0].orderProductionDetailId != 0 {
-                    let headerChildrenRow = ChildrenOrders(OrderProductionDetailId: 0, AssignedPieces: 0, AssignedQfb: String(), DateCreated:  String())
-                    order.orderProductionDetail.insert(headerChildrenRow, at: 0)
+                        let headerChildrenRow = ChildrenOrders(
+                            OrderProductionDetailId: 0,
+                            AssignedPieces: 0,
+                            AssignedQfb: "",
+                            DateCreated: ""
+                        )
+                        order.orderProductionDetail.insert(headerChildrenRow, at: 0)
+                    }
                 }
             }
+            
+            // Contar cuántas filas había antes
+            let oldCount = tableView.numberOfRows(inSection: 0)
+            
+            // Agregar las nuevas órdenes al modelo
             self.ordersList.append(contentsOf: list)
-//            tableView.reloadData()
+            
+            // Calcular los nuevos IndexPath (padres + hijos si están expandidos)
+            var newIndexPaths: [IndexPath] = []
+            var row = oldCount
+            for order in list {
+                // Padre
+                newIndexPaths.append(IndexPath(row: row, section: 0))
+                row += 1
+                
+                // Hijos visibles si está expandido
+                if order.autoExpandOrderDetail {
+                    for _ in order.orderProductionDetail {
+                        newIndexPaths.append(IndexPath(row: row, section: 0))
+                        row += 1
+                    }
+                }
+            }
+            
+            // Insertar las nuevas filas
             tableView.beginUpdates()
-//            tableView.insertRows(at: [IndexPath(row: newRowIndex, section: 0)], with: .automatic)
+            tableView.insertRows(at: newIndexPaths, with: .automatic)
             tableView.endUpdates()
         }).disposed(by: disposeBag!)
     }
     
-    func headersForChildrenRows() {
-        
+    @objc func refreshData() {
+        self.historicViewModel.updateData(isRefresh: true)
     }
+
     
     func bindLoading() {
         self.historicViewModel.loading.observe(on: MainScheduler.instance).subscribe(onNext: {loading in
@@ -164,7 +206,6 @@ extension HistoricViewController: UITableViewDataSource, UITableViewDelegate {
             // Fila padre
             
             let order = ordersList[indices.parentIndex]
-//            print(indices.parentIndex)
             let cell = tableView.dequeueReusableCell(withIdentifier: ViewControllerIdentifiers.historicTableViewCell, for: indexPath) as! HistoricTableViewCell
             if indices.parentIndex%2 == 0 {
                 cell.backgroundColor = OmicronColors.ligthGray
@@ -216,7 +257,7 @@ extension HistoricViewController: UITableViewDataSource, UITableViewDelegate {
         let lastSectionIndex = tableView.numberOfSections - 1
         let lastRowIndex = tableView.numberOfRows(inSection: lastSectionIndex) - 1
         
-//        print(indexPath.row , lastRowIndex)
+
         if indexPath.section == lastSectionIndex &&
             !isLoading &&
             indexPath.row == lastRowIndex &&
@@ -226,22 +267,6 @@ extension HistoricViewController: UITableViewDataSource, UITableViewDelegate {
                                   animated: false)
             historicViewModel.onScroll.onNext(())
         }
-        
-        
-        
-//        if indexPath.row%2 == 0 {
-//            if let childCell = cell as? ChildrenOrderRowViewCell {
-//                return
-//            } else {
-//                cell.backgroundColor = OmicronColors.ligthGray
-//            }
-//        } else {
-//            if let childCell = cell as? ChildrenOrderRowViewCell {
-//                return
-//            } else {
-//                cell.backgroundColor = .white
-//            }
-//        }
         
     }
 

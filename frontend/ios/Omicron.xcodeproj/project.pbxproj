@@ -12,10 +12,10 @@
 		051D89FF2E7B0B9300BAD568 /* HistoricTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 051D89FC2E7B0B9300BAD568 /* HistoricTableViewCell.swift */; };
 		051D8A002E7B0B9300BAD568 /* HistoricTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 051D89FC2E7B0B9300BAD568 /* HistoricTableViewCell.swift */; };
 		051D8A012E7B0B9300BAD568 /* HistoricTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 051D89FC2E7B0B9300BAD568 /* HistoricTableViewCell.swift */; };
-		051D8A032E7B170E00BAD568 /* historicResponseMock.json in Resources */ = {isa = PBXBuildFile; fileRef = 051D8A022E7B16FA00BAD568 /* historicResponseMock.json */; };
-		051D8A042E7B170E00BAD568 /* historicResponseMock.json in Resources */ = {isa = PBXBuildFile; fileRef = 051D8A022E7B16FA00BAD568 /* historicResponseMock.json */; };
-		051D8A052E7B170E00BAD568 /* historicResponseMock.json in Resources */ = {isa = PBXBuildFile; fileRef = 051D8A022E7B16FA00BAD568 /* historicResponseMock.json */; };
-		051D8A062E7B170E00BAD568 /* historicResponseMock.json in Resources */ = {isa = PBXBuildFile; fileRef = 051D8A022E7B16FA00BAD568 /* historicResponseMock.json */; };
+		051D8A032E7B170E00BAD568 /* getHistoric.json in Resources */ = {isa = PBXBuildFile; fileRef = 051D8A022E7B16FA00BAD568 /* getHistoric.json */; };
+		051D8A042E7B170E00BAD568 /* getHistoric.json in Resources */ = {isa = PBXBuildFile; fileRef = 051D8A022E7B16FA00BAD568 /* getHistoric.json */; };
+		051D8A052E7B170E00BAD568 /* getHistoric.json in Resources */ = {isa = PBXBuildFile; fileRef = 051D8A022E7B16FA00BAD568 /* getHistoric.json */; };
+		051D8A062E7B170E00BAD568 /* getHistoric.json in Resources */ = {isa = PBXBuildFile; fileRef = 051D8A022E7B16FA00BAD568 /* getHistoric.json */; };
 		05B553882E39418100F2F0E5 /* SplitOrderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B553872E39417600F2F0E5 /* SplitOrderModel.swift */; };
 		05B553892E39418100F2F0E5 /* SplitOrderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B553872E39417600F2F0E5 /* SplitOrderModel.swift */; };
 		05B5538A2E39418100F2F0E5 /* SplitOrderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B553872E39417600F2F0E5 /* SplitOrderModel.swift */; };
@@ -24,6 +24,7 @@
 		05C7301E2E830DE90077AD9B /* ChildrenOrderRowViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C7301C2E830DC90077AD9B /* ChildrenOrderRowViewCell.swift */; };
 		05C7301F2E830DE90077AD9B /* ChildrenOrderRowViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C7301C2E830DC90077AD9B /* ChildrenOrderRowViewCell.swift */; };
 		05C730202E830DE90077AD9B /* ChildrenOrderRowViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C7301C2E830DC90077AD9B /* ChildrenOrderRowViewCell.swift */; };
+		05C730542E8495C40077AD9B /* HistoricTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C730532E8495BA0077AD9B /* HistoricTest.swift */; };
 		05DD6A922E71D5460018197D /* HistoricModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DD6A912E71D5360018197D /* HistoricModel.swift */; };
 		05DD6A932E71D5460018197D /* HistoricModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DD6A912E71D5360018197D /* HistoricModel.swift */; };
 		05DD6A942E71D5460018197D /* HistoricModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DD6A912E71D5360018197D /* HistoricModel.swift */; };
@@ -661,9 +662,10 @@
 /* Begin PBXFileReference section */
 		0511BBAD2E4122F8002EC973 /* SplitOrderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitOrderTest.swift; sourceTree = "<group>"; };
 		051D89FC2E7B0B9300BAD568 /* HistoricTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricTableViewCell.swift; sourceTree = "<group>"; };
-		051D8A022E7B16FA00BAD568 /* historicResponseMock.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = historicResponseMock.json; sourceTree = "<group>"; };
+		051D8A022E7B16FA00BAD568 /* getHistoric.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = getHistoric.json; sourceTree = "<group>"; };
 		05B553872E39417600F2F0E5 /* SplitOrderModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitOrderModel.swift; sourceTree = "<group>"; };
 		05C7301C2E830DC90077AD9B /* ChildrenOrderRowViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildrenOrderRowViewCell.swift; sourceTree = "<group>"; };
+		05C730532E8495BA0077AD9B /* HistoricTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricTest.swift; sourceTree = "<group>"; };
 		05DD6A912E71D5360018197D /* HistoricModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricModel.swift; sourceTree = "<group>"; };
 		05DD6ADC2E7329AB0018197D /* HistoricViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricViewModel.swift; sourceTree = "<group>"; };
 		05DD6AE12E7333B10018197D /* HistoricViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricViewController.swift; sourceTree = "<group>"; };
@@ -1536,6 +1538,7 @@
 		98015CC524AFBC6D00E7772F /* OmicronTests */ = {
 			isa = PBXGroup;
 			children = (
+				05C730532E8495BA0077AD9B /* HistoricTest.swift */,
 				0511BBAD2E4122F8002EC973 /* SplitOrderTest.swift */,
 				111005E029D366DB0069BEDE /* History */,
 				11E7879A29B65A9000B888C6 /* Supplies */,
@@ -1568,7 +1571,7 @@
 		980F234124DA115E0073E2C8 /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
-				051D8A022E7B16FA00BAD568 /* historicResponseMock.json */,
+				051D8A022E7B16FA00BAD568 /* getHistoric.json */,
 				112ACAF02E271E5700AF41E9 /* warehouses.json */,
 				1EC2920A254B4C9F002FD4E3 /* connect.json */,
 				381B3BDB25E032460077F764 /* container.json */,
@@ -1918,7 +1921,7 @@
 				490B69BD268E98ED00DBE9F1 /* SF-Pro-Display-Semibold.ttf in Resources */,
 				490B69BE268E98ED00DBE9F1 /* finishedOrderResponse.json in Resources */,
 				490B69BF268E98ED00DBE9F1 /* connect.json in Resources */,
-				051D8A032E7B170E00BAD568 /* historicResponseMock.json in Resources */,
+				051D8A032E7B170E00BAD568 /* getHistoric.json in Resources */,
 				490B69C0268E98ED00DBE9F1 /* LaunchScreen.storyboard in Resources */,
 				112ACAF12E271E5B00AF41E9 /* warehouses.json in Resources */,
 				490B69C1268E98ED00DBE9F1 /* CardCollectionViewCell.xib in Resources */,
@@ -1967,7 +1970,7 @@
 				49CF65FE25F2D4AB002CD598 /* SF-Pro-Display-Semibold.ttf in Resources */,
 				49CF65FF25F2D4AB002CD598 /* finishedOrderResponse.json in Resources */,
 				49CF660025F2D4AB002CD598 /* connect.json in Resources */,
-				051D8A062E7B170E00BAD568 /* historicResponseMock.json in Resources */,
+				051D8A062E7B170E00BAD568 /* getHistoric.json in Resources */,
 				49CF660125F2D4AB002CD598 /* LaunchScreen.storyboard in Resources */,
 				112ACAF42E271E5B00AF41E9 /* warehouses.json in Resources */,
 				49CF660225F2D4AB002CD598 /* CardCollectionViewCell.xib in Resources */,
@@ -2016,7 +2019,7 @@
 				49CF668125F2D821002CD598 /* SF-Pro-Display-Semibold.ttf in Resources */,
 				49CF668225F2D821002CD598 /* finishedOrderResponse.json in Resources */,
 				49CF668325F2D821002CD598 /* connect.json in Resources */,
-				051D8A052E7B170E00BAD568 /* historicResponseMock.json in Resources */,
+				051D8A052E7B170E00BAD568 /* getHistoric.json in Resources */,
 				49CF668425F2D821002CD598 /* LaunchScreen.storyboard in Resources */,
 				112ACAF32E271E5B00AF41E9 /* warehouses.json in Resources */,
 				49CF668525F2D821002CD598 /* CardCollectionViewCell.xib in Resources */,
@@ -2075,7 +2078,7 @@
 				7CBA553D24CF8E9B00918C38 /* CardCollectionViewCell.xib in Resources */,
 				7C2401DE24D4970700E2D56C /* SF-Pro-Display-Bold.otf in Resources */,
 				49E4D87025F154E100E196F9 /* GoogleService-Info.plist in Resources */,
-				051D8A042E7B170E00BAD568 /* historicResponseMock.json in Resources */,
+				051D8A042E7B170E00BAD568 /* getHistoric.json in Resources */,
 				98015CB924AFBC6D00E7772F /* Assets.xcassets in Resources */,
 				1EF0321E251931B30040DC65 /* workload.json in Resources */,
 				98532B2F24B390A80015BBC6 /* loading.json in Resources */,
@@ -2945,6 +2948,7 @@
 			files = (
 				7C5DFB16251C82740041B2AC /* BatchTest.swift in Sources */,
 				0511BBAE2E412304002EC973 /* SplitOrderTest.swift in Sources */,
+				05C730542E8495C40077AD9B /* HistoricTest.swift in Sources */,
 				49005EB825DF1AC700EA4206 /* ExtensionInboxTest.swift in Sources */,
 				7C5DFB1A251D50920041B2AC /* OrderDetailFormTest.swift in Sources */,
 				49C2F71125DF1C8B00673471 /* ExtensionInbox2Test.swift in Sources */,

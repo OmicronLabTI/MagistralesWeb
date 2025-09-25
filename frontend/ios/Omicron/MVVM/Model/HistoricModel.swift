@@ -51,13 +51,13 @@ class HistoricResponseModel: HttpResponse {
 }
 
 class ParentOrders: Codable {
-    var orderProductionId: Int
-    var totalPieces: Int
-    var availablePieces: Int
-    var qfbWhoSplit: String
-    var detailOrdersCount: Int
-    var orderProductionDetail: [ChildrenOrders]
-    var autoExpandOrderDetail: Bool
+    var orderProductionId: Int = 0
+    var totalPieces: Int = 0
+    var availablePieces: Int = 0
+    var qfbWhoSplit: String = String()
+    var detailOrdersCount: Int = 0
+    var orderProductionDetail: [ChildrenOrders] = []
+    var autoExpandOrderDetail: Bool = false
     
     init(orderProductionId: Int, totalPieces: Int, availablePieces: Int,
          qfbWhoSplit: String, detailOrdersCount: Int, orderProductionDetail: [ChildrenOrders],
@@ -70,18 +70,43 @@ class ParentOrders: Codable {
         self.orderProductionDetail = orderProductionDetail
         self.autoExpandOrderDetail = autoExpandOrderDetail
     }
+    
+    required init?(map: Map) {}
+}
+
+extension ParentOrders: Mappable {
+    func mapping(map: Map) {
+        self.orderProductionId <- map["orderProductionId"]
+        self.totalPieces <- map["totalPieces"]
+        self.availablePieces <- map["availablePieces"]
+        self.qfbWhoSplit <- map["qfbWhoSplit"]
+        self.detailOrdersCount <- map["detailOrdersCount"]
+        self.orderProductionDetail <- map["orderProductionDetail"]
+        self.autoExpandOrderDetail <- map["autoExpandOrderDetail"]
+    }
 }
 
 class ChildrenOrders: Codable {
-    var orderProductionDetailId: Int
-    var assignedPieces: Int
-    var assignedQfb: String
-    var dateCreated: String
+    var orderProductionDetailId: Int = 0
+    var assignedPieces: Int = 0
+    var assignedQfb: String = String()
+    var dateCreated: String = String()
     
     init(OrderProductionDetailId: Int, AssignedPieces: Int, AssignedQfb: String, DateCreated: String) {
         self.orderProductionDetailId = OrderProductionDetailId
         self.assignedPieces = AssignedPieces
         self.assignedQfb = AssignedQfb
         self.dateCreated = DateCreated
+    }
+    
+    required init?(map: Map) {}
+}
+
+extension ChildrenOrders: Mappable {
+    func mapping(map: Map) {
+        self.orderProductionDetailId <- map["orderProductionDetailId"]
+        self.assignedPieces <- map["assignedPieces"]
+        self.assignedQfb <- map["assignedQfb"]
+        self.assignedPieces <- map["dateCreated"]
     }
 }
