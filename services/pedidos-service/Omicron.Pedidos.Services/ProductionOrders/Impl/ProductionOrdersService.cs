@@ -171,7 +171,6 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
 
             if (!isProcessSuccesfully)
             {
-                await this.DeleteRedisControlKeyToFinalizeProductionOrder(productionOrderUpdated.ProductionOrderId);
                 return ServiceUtils.CreateResult(false, (int)HttpStatusCode.InternalServerError, null, null, null);
             }
 
@@ -197,7 +196,6 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
 
             if (!isProcessSuccesfully)
             {
-                await this.DeleteRedisControlKeyToFinalizeProductionOrder(productionOrderUpdated.ProductionOrderId);
                 return ServiceUtils.CreateResult(false, (int)HttpStatusCode.InternalServerError, null, null, null);
             }
 
@@ -359,19 +357,6 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                 CreatedAt = createdAt,
                 LastUpdated = DateTime.Now,
             };
-        }
-
-        private static ProductionOrderProcessingStatusModel UpdateProcessingStatusAsync(
-            ProductionOrderProcessingStatusModel model,
-            string status,
-            string errorMessage = null,
-            string lastStep = null)
-        {
-            model.Status = status;
-            model.ErrorMessage = errorMessage;
-            model.LastStep = lastStep;
-            model.LastUpdated = DateTime.Now;
-            return model;
         }
 
         private async Task SeparateProductionOrderProcessAsync(
@@ -668,7 +653,6 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
 
         private async Task<(ProductionOrderProcessingStatusModel, bool)> UpdateProductionOrdersOnPostgresProcess(ProductionOrderProcessingStatusModel productionOrderProcessingPayload, string logBase)
         {
-            var productionOrderProcessingStatusInBD = await this.pedidosDao.GetFirstProductionOrderProcessingStatusByProductionOrderId(productionOrderProcessingPayload.ProductionOrderId);
             var payloadJson = JsonConvert.DeserializeObject<FinalizeProductionOrderPayload>(productionOrderProcessingPayload.Payload);
             try
             {
@@ -737,32 +721,30 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                 this.logger.Information(LogsConstants.ListToUpdate, JsonConvert.SerializeObject(userOrdersToUpdate));
                 await this.pedidosDao.UpdateUserOrders(userOrdersToUpdate);
 
-                productionOrderProcessingStatusInBD = UpdateProcessingStatusAsync(
-                    productionOrderProcessingStatusInBD,
+                productionOrderProcessingPayload = await this.UpdateProcessStatus(
+                    productionOrderProcessingPayload.Id,
                     ServiceConstants.FinalizeProcessInProgressStatus,
-                    productionOrderProcessingStatusInBD.ErrorMessage,
+                    productionOrderProcessingPayload.ErrorMessage,
                     ServiceConstants.StepUpdatePostgres);
 
-                return (productionOrderProcessingStatusInBD, true);
+                return (productionOrderProcessingPayload, true);
             }
             catch (Exception ex)
             {
                 var error = string.Format(LogsConstants.EndFinalizeProductionOrderOnPostgresWithError, ex.Message, ex.InnerException);
                 this.logger.Error(ex, error);
 
-                productionOrderProcessingStatusInBD = UpdateProcessingStatusAsync(
-                    productionOrderProcessingStatusInBD,
-                    ServiceConstants.FinalizeProcessFailedStatus,
-                    string.Format(LogsConstants.GenericErrorLog, ex.Message, ex.InnerException),
-                    productionOrderProcessingStatusInBD.LastStep);
-                await this.DeleteRedisControlKeyToFinalizeProductionOrder(productionOrderProcessingStatusInBD.ProductionOrderId);
-                return (productionOrderProcessingStatusInBD, false);
+                productionOrderProcessingPayload = await this.UpdateProcessStatus(
+                        productionOrderProcessingPayload.Id,
+                        ServiceConstants.FinalizeProcessFailedStatus,
+                        string.Format(LogsConstants.GenericErrorLog, ex.Message, ex.InnerException),
+                        productionOrderProcessingPayload.LastStep);
+                return (productionOrderProcessingPayload, false);
             }
         }
 
         private async Task<(ProductionOrderProcessingStatusModel, bool)> CreateProductionOrderPdf(ProductionOrderProcessingStatusModel productionOrderProcessingPayload, string logBase)
         {
-            var productionOrderProcessingStatusInBD = await this.pedidosDao.GetFirstProductionOrderProcessingStatusByProductionOrderId(productionOrderProcessingPayload.ProductionOrderId);
             var payloadJson = JsonConvert.DeserializeObject<FinalizeProductionOrderPayload>(productionOrderProcessingPayload.Payload);
             try
             {
@@ -787,25 +769,25 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
 
                 await SendToGeneratePdfUtils.CreateModelGeneratePdf(listSalesOrder, listIsolated, this.sapAdapter, this.pedidosDao, this.sapFileService, this.userService, true);
 
-                productionOrderProcessingStatusInBD = UpdateProcessingStatusAsync(
-                    productionOrderProcessingStatusInBD,
+                productionOrderProcessingPayload = await this.UpdateProcessStatus(
+                    productionOrderProcessingPayload.Id,
                     ServiceConstants.FinalizeProcessInSuccessStatus,
-                    productionOrderProcessingStatusInBD.ErrorMessage,
+                    productionOrderProcessingPayload.ErrorMessage,
                     ServiceConstants.StepCreatePdf);
 
-                return (productionOrderProcessingStatusInBD, true);
+                return (productionOrderProcessingPayload, true);
             }
             catch (Exception ex)
             {
                 var error = string.Format(LogsConstants.EndCreatePdfWithError, ex.Message, ex.InnerException);
                 this.logger.Error(ex, error);
 
-                productionOrderProcessingStatusInBD = UpdateProcessingStatusAsync(
-                    productionOrderProcessingStatusInBD,
+                productionOrderProcessingPayload = await this.UpdateProcessStatus(
+                    productionOrderProcessingPayload.Id,
                     ServiceConstants.FinalizeProcessFailedStatus,
                     string.Format(LogsConstants.GenericErrorLog, ex.Message, ex.InnerException),
-                    productionOrderProcessingStatusInBD.LastStep);
-                return (productionOrderProcessingStatusInBD, false);
+                    productionOrderProcessingPayload.LastStep);
+                return (productionOrderProcessingPayload, false);
             }
         }
 
