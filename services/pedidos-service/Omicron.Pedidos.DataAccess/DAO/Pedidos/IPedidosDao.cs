@@ -628,5 +628,20 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<List<ProductionOrderSeparationModel>> GetProductionOrderSeparationByOrderIdWithPendingPieces(List<int> ordersIds);
 
+        /// <summary>
+        /// GetProductionOrderSeparationByOrderId.
+        /// </summary>
+        /// <param name="parentOrderId">parentOrderId ids.</param>
+        /// <param name="workStatus">newWorkStatus.</param>
+        /// <param name="userId">userId.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<int> UpdateStatusWorkParent(int parentOrderId, string workStatus);
+
+        /// <summary>
+        /// IsParentOrder.
+        /// </summary>
+        /// <param name="productionOrderId">production order ids.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<bool> IsParentOrder(int productionOrderId);
     }
 }

@@ -225,9 +225,9 @@ extension OrderDetailViewController {
     
     func disableButtonsForFatherOrder(_ typeOrder: String, onProcess: Bool = false) {
         if typeOrder == OrderRelationTypes.padre || onProcess{
-            self.processButton.isEnabled = false
+            self.processButton.isEnabled = true
             self.finishedButton.isEnabled = false
-            self.penddingButton.isEnabled = false
+            self.penddingButton.isEnabled = true
             self.addComponentButton.isEnabled = false
             self.saveButton.isEnabled = false
             self.seeLotsButton.isEnabled = false

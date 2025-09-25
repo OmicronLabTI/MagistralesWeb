@@ -57,6 +57,7 @@ namespace Omicron.Pedidos.Test.MediatR
         public async Task HandleCancelProductionOrder(int productionOrderId, bool closeSapProductionSuccessfully, string exceptionMessage)
         {
             // Arrange
+            this.mockBackgroundTaskQueue.Invocations.Clear();
             var command = new CancelProductionOrderCommand(
                 productionOrderId,
                 5,
@@ -295,6 +296,143 @@ namespace Omicron.Pedidos.Test.MediatR
             Assert.That(result, Is.True);
             Assert.That(command.LastStep, Is.EqualTo("SaveHistory"));
             this.mockLogger.Verify(l => l.Information(It.Is<string>(msg => msg.Contains("End Proccess Successfuly")), It.Is<string>(logBase => logBase.Contains("220007"))), Times.Once);
+        }
+
+        /// <summary>
+        /// Test Handle.
+        /// </summary>
+        /// <returns>Test task.</returns>
+        [Test]
+        public async Task HandleCancelProductionOrder_NotDivisionInPending()
+        {
+            // Arrange
+            var parent = new UserOrderModel
+            {
+                Id = 99901,
+                Userid = "axity1",
+                Salesorderid = "SO-TEST-1",
+                Productionorderid = "330001",
+                Status = ServiceConstants.Cancelled,
+                StatusWorkParent = ServiceConstants.Pendiente,
+                ReassignmentDate = null,
+                TypeOrder = "FAB",
+                Quantity = 1,
+                StatusForTecnic = ServiceConstants.Asignado,
+            };
+            this.context.UserOrderModel.Add(parent);
+            this.context.SaveChanges();
+
+            var command = new CancelProductionOrderCommand(
+                productionOrderId: 330001,
+                pieces: 5,
+                separationId: Guid.NewGuid().ToString(),
+                userId: "axity1",
+                dxpOrder: "xxx-xxx-xxx",
+                sapOrder: 123,
+                totalPieces: 10);
+
+            var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
+            var mockRedisService = new Mock<IRedisService>();
+
+            var handler = new CancelProductionOrderHandler(
+                this.pedidosDao,
+                mockServiceLayerAdapterService.Object,
+                this.mockBackgroundTaskQueue.Object,
+                this.mockLogger.Object,
+                mockRedisService.Object,
+                this.mockOrderHistoryHelper.Object);
+
+            // Act
+            var result = await handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.False);
+            this.mockBackgroundTaskQueue.Verify(
+                q => q.QueueBackgroundWorkItem(It.IsAny<Func<IServiceProvider, CancellationToken, Task>>()),
+                Times.Never);
+        }
+
+        /// <summary>
+        /// Test Handle.
+        /// </summary>
+        /// <param name="hasReassignmentDate">exceptionMessage.</param>
+        /// <param name="expectedWorkStatus">expectedWorkStatus.</param>
+        /// <returns>Test task.</returns>
+        [Test]
+        [TestCase(false, ServiceConstants.Proceso)] // Proceso
+        [TestCase(true, ServiceConstants.Reasignado)] // Reasignado
+        public async Task Handle_StatusWorkParent_BasedOnReassignmentDate(bool hasReassignmentDate, string expectedWorkStatus)
+        {
+            // Arrange
+            var parentOrderId = 330100 + (hasReassignmentDate ? 1 : 0);
+            var productionOrderId = parentOrderId.ToString();
+
+            this.context.UserOrderModel.Add(new UserOrderModel
+            {
+                Id = 99001 + parentOrderId,
+                Userid = "axity1",
+                Salesorderid = "SO-X",
+                Productionorderid = productionOrderId,
+                Status = ServiceConstants.Cancelled,
+                StatusWorkParent = null,
+                ReassignmentDate = hasReassignmentDate ? DateTime.UtcNow : (DateTime?)null,
+                TypeOrder = "FAB",
+                Quantity = 1,
+                StatusForTecnic = ServiceConstants.Asignado,
+            });
+
+            // Marca como padre
+            this.context.Set<ProductionOrderSeparationModel>().Add(new ProductionOrderSeparationModel
+            {
+                OrderId = parentOrderId,
+                ProductionDetailCount = 0,
+                TotalPieces = 10,
+                AvailablePieces = 10,
+                Status = "Init",
+            });
+
+            await this.context.SaveChangesAsync();
+
+            var command = new CancelProductionOrderCommand(
+                productionOrderId: parentOrderId,
+                pieces: 5,
+                separationId: Guid.NewGuid().ToString(),
+                userId: "axity1",
+                dxpOrder: "xxx-xxx-xxx",
+                sapOrder: 123,
+                totalPieces: 10);
+
+            var sapOk1 = this.GetResultModelCompl(new object(), true, string.Empty, null);
+            var sapOk2 = this.GetResultModelCompl(909090, true, string.Empty, null);
+            var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
+            mockServiceLayerAdapterService
+                .SetupSequence(s => s.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(sapOk1))
+                .Returns(Task.FromResult(sapOk2));
+
+            var mockRedis = new Mock<IRedisService>();
+            mockRedis.Setup(m => m.DeleteKey(It.IsAny<string>()));
+
+            var handler = new CancelProductionOrderHandler(
+                this.pedidosDao,
+                mockServiceLayerAdapterService.Object,
+                this.mockBackgroundTaskQueue.Object,
+                this.mockLogger.Object,
+                mockRedis.Object,
+                this.mockOrderHistoryHelper.Object);
+
+            // Act
+            var ok = await handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            Assert.That(ok, Is.True);
+
+            var updated = await this.context.UserOrderModel.FirstAsync(u => u.Productionorderid == productionOrderId);
+            Assert.That(updated.StatusWorkParent, Is.EqualTo(expectedWorkStatus));
+
+            this.mockBackgroundTaskQueue.Verify(
+                q => q.QueueBackgroundWorkItem(It.IsAny<Func<IServiceProvider, CancellationToken, Task>>()),
+                Times.AtLeastOnce());
         }
     }
 }

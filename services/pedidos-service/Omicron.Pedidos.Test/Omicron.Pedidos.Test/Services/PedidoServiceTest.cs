@@ -1528,5 +1528,62 @@ namespace Omicron.Pedidos.Test.Services
             Assert.That(response.Success);
             Assert.That(response.Code.Equals(200));
         }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task UpdateStatusOrder_StatusWorkParent()
+        {
+            // Arrange
+            var parentOrderId = 880001;
+            var parentOrderIdStr = parentOrderId.ToString();
+
+            this.context.UserOrderModel.Add(new UserOrderModel
+            {
+                Id = 50001,
+                Userid = "tester",
+                Salesorderid = "SO-TEST",
+                Productionorderid = parentOrderIdStr,
+                Status = ServiceConstants.Cancelled,
+                StatusWorkParent = null,
+                TypeOrder = "FAB",
+                Quantity = 1,
+                StatusForTecnic = ServiceConstants.Asignado,
+            });
+
+            this.context.ProductionOrderSeparationModel.Add(new ProductionOrderSeparationModel
+            {
+                OrderId = parentOrderId,
+                ProductionDetailCount = 0,
+                TotalPieces = 10,
+                AvailablePieces = 10,
+                Status = "statusTest",
+            });
+
+            await this.context.SaveChangesAsync();
+
+            var body = new List<UpdateStatusOrderModel>
+            {
+                new UpdateStatusOrderModel
+                {
+                    OrderId = parentOrderId,
+                    UserId = "tester",
+                    Status = ServiceConstants.Pendiente,
+                    UserRoleType = (int)UserRoleType.Tecnic,
+                },
+            };
+
+            // Act
+            var response = await this.pedidosService.UpdateStatusOrder(body);
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            var updated = await this.context.UserOrderModel.FirstAsync(u => u.Productionorderid == parentOrderIdStr);
+
+            Assert.That(updated.StatusWorkParent, Is.EqualTo(ServiceConstants.Pendiente));
+            Assert.That(updated.Status, Is.EqualTo(ServiceConstants.Cancelled));
+        }
     }
 }
