@@ -40,6 +40,7 @@ global using Omicron.Pedidos.Services.SapFile;
 global using Omicron.Pedidos.Services.SapServiceLayerAdapter;
 global using Omicron.Pedidos.Services.User;
 global using Omicron.Pedidos.Services.Utils;
+global using Omicron.Pedidos.Entities.Enums;
 global using Serilog;
 global using StackExchange.Redis;
 global using System;

@@ -173,6 +173,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     x.StatusAlmacen,
                     x.Comments,
                     x.DeliveryId,
+                    x.MagistralQr,
                 }).ToList();
 
             return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, null);

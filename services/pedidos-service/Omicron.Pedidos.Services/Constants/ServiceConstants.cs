@@ -1111,6 +1111,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string StepSaveChildOrderHistory = "SaveChildOrderHistory";
 
         /// <summary>
+        /// NotDivisionPending.
+        /// </summary>
+        public const string NotDivisionPending = "No se puede dividir: orden padre en Pendiente.";
+
+        /// <summary>
         /// EmptyValue.
         /// </summary>
         public const string EmptyValue = "";

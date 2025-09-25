@@ -11,11 +11,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
     using Microsoft.EntityFrameworkCore;
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Entities.Model;
-    using System;
-    using System.Linq;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
     using Omicron.Pedidos.Entities.Model.Db;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Security.Cryptography;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// dao for pedidos
@@ -852,6 +853,26 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
                 .Where(po => ordersIds.Contains(po.OrderId) && po.AvailablePieces > 0)
                 .AsNoTracking()
                 .ToListAsync();
+        }
+
+        public async Task<int> UpdateStatusWorkParent(int parentOrderId, string workStatus)
+        {
+            var usersOrders = await this.databaseContext.UserOrderModel
+                           .FirstOrDefaultAsync(x => x.Productionorderid == parentOrderId.ToString());
+
+            if (usersOrders == null) return 0;
+            
+            usersOrders.StatusWorkParent = workStatus;
+            this.databaseContext.UserOrderModel.Update(usersOrders);
+            return await((DatabaseContext)this.databaseContext).SaveChangesAsync();
+        }
+
+        public async Task<bool> IsParentOrder(int productionOrderId)
+        {
+            var isParent = await this.databaseContext.ProductionOrderSeparationModel
+                      .AnyAsync(s => s.OrderId == productionOrderId);
+
+            return isParent;
         }
     }
 }
