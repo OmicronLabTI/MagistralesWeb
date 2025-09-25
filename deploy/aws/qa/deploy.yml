@@ -295,7 +295,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: omicron-qa
-                  key: kafka_eh_fqdn           
+                  key: kafka_eh_fqdn
             - name: KAFKA_INSERTLOGS_EH_NAME
               valueFrom:
                 secretKeyRef:
