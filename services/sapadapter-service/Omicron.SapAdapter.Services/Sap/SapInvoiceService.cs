@@ -228,6 +228,13 @@ namespace Omicron.SapAdapter.Services.Sap
             var ordersIdToLookFor = deliveryDetails.Where(x => x.BaseEntry.HasValue).Select(x => x.BaseEntry.Value).Distinct().ToList();
             var fabOrders = (await this.sapDao.GetFabOrderBySalesOrderId(ordersIdToLookFor)).ToList();
 
+            if (type != ServiceConstants.Empaquetado)
+            {
+                userOrders = userOrders.Where(x => x.InvoiceLineNum == invoiceSubId).ToList();
+                lineProducts = lineProducts.Where(x => x.InvoiceLineNum == invoiceSubId).ToList();
+                fabOrders = fabOrders.Where(x => userOrders.Any(uorder => uorder.Productionorderid == x.OrdenId.ToString())).ToList();
+            }
+
             var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetIncidents, ordersIdToLookFor);
             var incidents = JsonConvert.DeserializeObject<List<IncidentsModel>>(almacenResponse.Response.ToString());
 
