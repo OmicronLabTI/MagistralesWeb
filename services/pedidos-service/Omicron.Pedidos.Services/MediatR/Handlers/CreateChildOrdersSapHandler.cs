@@ -74,6 +74,12 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
                 var productionOrder = (await this.pedidosDao.GetUserOrderByProducionOrder([request.ProductionOrderId.ToString()]))
                                       .FirstOrDefault() ?? throw new Exception(LogsConstants.ProductionOrderNotFound);
 
+                if (productionOrder.IsProductionOrder &&
+                    string.Equals(productionOrder.StatusWorkParent, ServiceConstants.Pendiente, StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new InvalidOperationException(ServiceConstants.NotDivisionPending);
+                }
+
                 await this.ExecuteCreateChildOrderStep(productionOrder, request, logBase);
 
                 this.logger.Information($"{logBase} - Proceso de division de orden ejecutado correctamente (Orden de produccion hija: {request.ProductionOrderChildId})");

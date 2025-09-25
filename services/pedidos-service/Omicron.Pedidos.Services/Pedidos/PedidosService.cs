@@ -213,16 +213,35 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var listOrderLogToInsert = new List<SalesLogs>();
 
-            ordersList.ForEach(x =>
+            foreach (var x in ordersList)
             {
-                var order = updateStatusOrder.FirstOrDefault(y => y.OrderId.ToString().Equals(x.Productionorderid));
-                order ??= new UpdateStatusOrderModel();
-                x.Status = order.Status ?? x.Status;
-                x.TecnicId = ServiceShared.CalculateTernary(isTecnicUser, order.UserId ?? x.TecnicId, x.TecnicId);
-                x.Userid = ServiceShared.CalculateTernary(isTecnicUser, x.Userid, order.UserId ?? x.Userid);
-                x.StatusForTecnic = ServiceShared.CalculateTernary(x.Status == ServiceConstants.Proceso, ServiceConstants.Asignado, x.Status);
+                var order = updateStatusOrder.FirstOrDefault(y => y.OrderId.ToString().Equals(x.Productionorderid))
+                            ?? new UpdateStatusOrderModel();
+
+                var isParent = int.TryParse(x.Productionorderid, out var productionorderid)
+                        && await this.pedidosDao.IsParentOrder(productionorderid);
+
+                if (isParent)
+                {
+                    if (!string.IsNullOrEmpty(order.Status) &&
+                        (order.Status == ServiceConstants.Pendiente || order.Status == ServiceConstants.Proceso))
+                    {
+                        x.StatusWorkParent = order.Status;
+                    }
+
+                    x.Userid = ServiceShared.CalculateTernary(isTecnicUser, x.Userid, order.UserId ?? x.Userid);
+                }
+                else
+                {
+                    x.Status = order.Status ?? x.Status;
+                    x.TecnicId = ServiceShared.CalculateTernary(isTecnicUser, order.UserId ?? x.TecnicId, x.TecnicId);
+                    x.Userid = ServiceShared.CalculateTernary(isTecnicUser, x.Userid, order.UserId ?? x.Userid);
+                    x.StatusForTecnic = ServiceShared.CalculateTernary(
+                        x.Status == ServiceConstants.Proceso, ServiceConstants.Asignado, x.Status);
+                }
+
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(x.Userid, new List<UserOrderModel> { x }));
-            });
+            }
 
             await this.pedidosDao.UpdateUserOrders(ordersList);
             if (updateStatusOrder.Any(x => x.Status == ServiceConstants.Entregado))
