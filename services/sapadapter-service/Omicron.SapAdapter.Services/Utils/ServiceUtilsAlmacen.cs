@@ -320,7 +320,7 @@ namespace Omicron.SapAdapter.Services.Utils
                 }
             });
 
-            return sapOrdersFiltered.DistinctBy(x => new { x.DocNum, x.FabricationOrder }).ToList();
+            return sapOrdersFiltered.DistinctBy(x => new { x.DocNum, x.FabricationOrder, x.Detalles.ProductoId }).ToList();
         }
 
         /// <summary>
