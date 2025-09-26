@@ -851,22 +851,27 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
                 return new List<OpenOrderProductionModel>();
 
             var query =
-                from p in this.databaseContext.ProductionOrderSeparationModel.AsNoTracking()
-                join u in this.databaseContext.UserOrderModel.AsNoTracking()
-                    on p.OrderId.ToString() equals u.Productionorderid
-                where p.Status == partiallyDivided
-                   && u.Userid == qfbId
-                select new OpenOrderProductionModel
-                {
-                    OrderProductionId = p.OrderId.ToString(),
-                    TotalPieces = p.TotalPieces,
-                    AvailablePieces = p.AvailablePieces,
-                    QfbWhoSplit = null,
-                    DetailOrdersCount = p.ProductionDetailCount,
-                    OrderProductionDetail = new List<OpenOrderProductionDetailModel>(),
-                    AutoExpandOrderDetail = false
-                };
-
+            from p in this.databaseContext.ProductionOrderSeparationModel.AsNoTracking()
+            join u in this.databaseContext.UserOrderModel.AsNoTracking()
+                on p.OrderId.ToString() equals u.Productionorderid
+            join psd in this.databaseContext.ProductionOrderSeparationDetailModel.AsNoTracking()
+                on p.OrderId equals psd.OrderId into psdGroup
+            from userFirst in psdGroup
+            .OrderBy(x => x.ConsecutiveIndex)
+            .Take(1)
+            .DefaultIfEmpty()
+            where p.Status == partiallyDivided
+               && u.Userid == qfbId
+            select new OpenOrderProductionModel
+            {
+                OrderProductionId = p.OrderId.ToString(),
+                TotalPieces = p.TotalPieces,
+                AvailablePieces = p.AvailablePieces,
+                QfbWhoSplit = userFirst != null ? userFirst.UserId : null,
+                DetailOrdersCount = p.ProductionDetailCount,
+                OrderProductionDetail = new List<OpenOrderProductionDetailModel>(),
+                AutoExpandOrderDetail = false
+            };
             return await query.ToListAsync();
         }
 
