@@ -643,12 +643,5 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="productionOrderId">production order ids.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<bool> IsParentOrder(int productionOrderId);
-
-        /// <summary>
-        /// IsParentOrder.
-        /// </summary>
-        /// <param name="parentIds">production order ids.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        Task<Dictionary<int, string>> GetFirstSplitterUserByParentIds(IEnumerable<int> parentIds);
     }
 }

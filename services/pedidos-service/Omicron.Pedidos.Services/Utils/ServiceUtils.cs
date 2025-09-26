@@ -509,26 +509,6 @@ namespace Omicron.Pedidos.Services.Utils
         }
 
         /// <summary>
-        /// Separate the orders for coma.
-        /// </summary>
-        /// <param name="result">list of IEnumerable to evaluate.</param>
-        /// <param name="firstUsers">Dictionary to evaluate.</param>
-        public static void QfbWhoSplit(
-        IEnumerable<OpenOrderProductionModel> result,
-        Dictionary<int, string> firstUsers)
-        {
-            foreach (var parent in result)
-            {
-                if (int.TryParse(parent.OrderProductionId, out var pid) &&
-                    firstUsers.TryGetValue(pid, out var user) &&
-                    !string.IsNullOrWhiteSpace(user))
-                {
-                    parent.QfbWhoSplit = user;
-                }
-            }
-        }
-
-        /// <summary>
         /// split the dates to int array.
         /// </summary>
         /// <param name="date">the date in string.</param>
