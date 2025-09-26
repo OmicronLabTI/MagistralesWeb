@@ -354,8 +354,15 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                     return await this.GetOpenParentsForQfb(qfbId, offset, limit, ServiceConstants.PartiallyDivided);
                 }
 
-                var existsParents = await this.pedidosDao.FindExistingParentIds(listOrders);
-                var childToParent = await this.pedidosDao.FindParentsByChildIds(listOrders);
+                var existsParents = ServiceShared.CalculateTernary(
+                    listOrders == null || listOrders.Count == 0,
+                    new HashSet<int>(),
+                    await this.pedidosDao.FindExistingParentIds(listOrders));
+
+                var childToParent = ServiceShared.CalculateTernary(
+                    listOrders.Count > 0,
+                    await this.pedidosDao.FindParentsByChildIds(listOrders),
+                    new Dictionary<int, int>());
 
                 var allParentIds = existsParents.Union(childToParent.Values).ToList();
 
@@ -428,6 +435,15 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
 
                 var total = result.Count;
                 var page = result.Skip(offset).Take(limit).ToList();
+
+                var parentIdsForSplitter = result
+                   .Where(p => int.TryParse(p.OrderProductionId, out _))
+                   .Select(p => int.Parse(p.OrderProductionId))
+                   .Distinct()
+                   .ToList();
+
+                var firstUsers = await this.pedidosDao.GetFirstSplitterUserByParentIds(parentIdsForSplitter);
+                ServiceUtils.QfbWhoSplit(page, firstUsers);
 
                 await this.FullName(page);
                 this.logger.Information(LogsConstants.GetOpenOrderProductionsSuccess, logBase, string.Join(",", result.Select(r => r.OrderProductionId)), total, page.Count);
@@ -586,6 +602,10 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                     childrenMap.TryGetValue(pid, out var details) ? details : new List<OpenOrderProductionDetailModel>();
                     parent.AutoExpandOrderDetail = false;
                 });
+
+                var firstUsers = await this.pedidosDao.GetFirstSplitterUserByParentIds(parentIds);
+
+                ServiceUtils.QfbWhoSplit(page, firstUsers);
 
                 await this.FullName(page);
             }

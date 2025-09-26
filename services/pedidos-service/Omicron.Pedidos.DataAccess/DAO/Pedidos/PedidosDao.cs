@@ -862,13 +862,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
                     OrderProductionId = p.OrderId.ToString(),
                     TotalPieces = p.TotalPieces,
                     AvailablePieces = p.AvailablePieces,
-                    QfbWhoSplit = this.databaseContext.ProductionOrderSeparationDetailModel
-                        .AsNoTracking()
-                        .Where(d => d.OrderId == p.OrderId)
-                        .OrderBy(d => d.CreatedAt)
-                        .ThenBy(d => d.Id)
-                        .Select(d => d.UserId)
-                        .FirstOrDefault(),
+                    QfbWhoSplit = null,
                     DetailOrdersCount = p.ProductionDetailCount,
                     OrderProductionDetail = new List<OpenOrderProductionDetailModel>(),
                     AutoExpandOrderDetail = false
@@ -905,9 +899,6 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
 
         public async Task<HashSet<int>> FindExistingParentIds(List<int> ids)
         {
-            if (ids == null || ids.Count == 0)
-                return new HashSet<int>();
-
             var existing = await this.databaseContext.ProductionOrderSeparationModel
                 .AsNoTracking()
                 .Where(p => ids.Contains(p.OrderId))
@@ -920,21 +911,18 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
 
         public async Task<Dictionary<int, int>> FindParentsByChildIds(List<int> childIds)
         {
-            if (childIds == null || childIds.Count == 0)
-                return new Dictionary<int, int>();
-
             var rows = await this.databaseContext.ProductionOrderSeparationDetailModel
                 .AsNoTracking()
                 .Where(d => childIds.Contains(d.DetailOrderId))
                 .Select(d => new { d.DetailOrderId, d.OrderId })
                 .ToListAsync();
 
-            var map = rows
+            return rows
                 .GroupBy(x => x.DetailOrderId)
                 .ToDictionary(g => g.Key, g => g.First().OrderId);
-
-            return map;
         }
+        
+        /// <inheritdoc/>
 
         public async Task<List<OpenOrderProductionModel>> GetParentsAssignedToQfbByIds(List<int> parentIds, string qfbId, string partiallyDivided)
         {
@@ -953,17 +941,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
                     OrderProductionId = p.OrderId.ToString(),
                     TotalPieces = p.TotalPieces,
                     AvailablePieces = p.AvailablePieces,
-
-                    QfbWhoSplit =
-                        (from d in this.databaseContext.ProductionOrderSeparationDetailModel.AsNoTracking()
-                         where d.OrderId == p.OrderId
-                         orderby d.CreatedAt ascending
-                         select d.UserId).FirstOrDefault(),
-
+                    QfbWhoSplit = null,
                     DetailOrdersCount = p.ProductionDetailCount,
                     OrderProductionDetail = new List<OpenOrderProductionDetailModel>(),
                     AutoExpandOrderDetail = false
                 };
+
             return await query.ToListAsync();
         }
 
@@ -995,6 +978,36 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
 
             return isParent;
         }
+
+        /// <inheritdoc/>
+        public async Task<Dictionary<int, string>> GetFirstSplitterUserByParentIds(IEnumerable<int> parentIds)
+        {
+            var ids = parentIds.Distinct().ToList() ?? new List<int>();
+            if (ids.Count == 0)
+            {
+                return new Dictionary<int, string>();
+            }
+
+            var q =
+                from d in this.databaseContext.ProductionOrderSeparationDetailModel.AsNoTracking()
+                where ids.Contains(d.OrderId)
+                group d by d.OrderId into g
+                select new
+                {
+                    OrderId = g.Key,
+                    FirstUserId = g.OrderBy(x => x.CreatedAt ?? DateTime.MinValue)
+                                  .ThenBy(x => x.Id)
+                                  .Select(x => x.UserId)
+                                  .FirstOrDefault(),
+                };
+
+            var list = await q.ToListAsync();
+
+            return list
+                .Where(x => !string.IsNullOrWhiteSpace(x.FirstUserId))
+                .ToDictionary(x => x.OrderId, x => x.FirstUserId);
+        }
+
     }
 }
 
