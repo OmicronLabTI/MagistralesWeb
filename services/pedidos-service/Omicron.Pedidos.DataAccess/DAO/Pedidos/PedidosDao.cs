@@ -930,22 +930,22 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
 
         public async Task<List<OpenOrderProductionModel>> GetParentsAssignedToQfbByIds(List<int> parentIds, string qfbId, string partiallyDivided)
         {
-            if (parentIds == null || parentIds.Count == 0 || string.IsNullOrWhiteSpace(qfbId))
-                return new List<OpenOrderProductionModel>();
-
             var query =
                 from p in this.databaseContext.ProductionOrderSeparationModel.AsNoTracking()
                 join u in this.databaseContext.UserOrderModel.AsNoTracking()
                      on p.OrderId.ToString() equals u.Productionorderid
+                join pod in this.databaseContext.ProductionOrderSeparationDetailModel.AsNoTracking()
+                    on p.OrderId equals pod.OrderId
                 where parentIds.Contains(p.OrderId)
                    && p.Status == partiallyDivided
                    && u.Userid == qfbId
+                   && pod.ConsecutiveIndex == 1
                 select new OpenOrderProductionModel
                 {
                     OrderProductionId = p.OrderId.ToString(),
                     TotalPieces = p.TotalPieces,
                     AvailablePieces = p.AvailablePieces,
-                    QfbWhoSplit = null,
+                    QfbWhoSplit = pod.UserId,
                     DetailOrdersCount = p.ProductionDetailCount,
                     OrderProductionDetail = new List<OpenOrderProductionDetailModel>(),
                     AutoExpandOrderDetail = false
