@@ -28,3 +28,4 @@ global using Omicron.ProductionOrder.Batch.Services.PedidosService;
 global using Omicron.ProductionOrder.Batch.Services.Redis;
 global using Microsoft.Extensions.Options;
 global using Omicron.ProductionOrder.Batch.Constants;
+global using Omicron.ProductionOrder.Batch.Broker;

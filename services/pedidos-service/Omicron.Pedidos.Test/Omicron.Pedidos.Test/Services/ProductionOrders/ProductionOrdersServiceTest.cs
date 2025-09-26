@@ -350,7 +350,7 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
 
             var productionOrdersToFinalize = new ProductionOrderProcessingStatusModel
             {
-                Id = "778e6a6a-fa1d-4767-95fa-47f3c0cb2377",
+                Id = "656feb73-35ad-46ae-9e4c-4e708c05205d",
                 ProductionOrderId = 223580,
                 LastStep = "Update UsersOrders in postgres",
                 CreatedAt = DateTime.Now.AddMinutes(-10),
@@ -402,7 +402,7 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
             {
                 FinalizeProductionOrder = new FinalizeProductionOrderModel
                 {
-                    ProductionOrderId = 223580,
+                    ProductionOrderId = 223581,
                     UserId = "7ac2db83-3c31-4042-9d1b-5531753694b4",
                     SourceProcess = "SalesOrders",
                     Batches = new List<BatchesConfigurationModel>(),
@@ -411,8 +411,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
 
             var productionOrdersToFinalize = new ProductionOrderProcessingStatusModel
             {
-                Id = "778e6a6a-fa1d-4767-95fa-47f3c0cb2377",
-                ProductionOrderId = 223580,
+                Id = "6fe84f79-c724-45a3-9588-f3cf947322de",
+                ProductionOrderId = 223581,
                 LastStep = "Update UsersOrders in postgres",
                 CreatedAt = DateTime.Now.AddMinutes(-10),
                 ErrorMessage = null,

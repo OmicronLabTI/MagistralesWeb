@@ -32,6 +32,18 @@ namespace Omicron.Pedidos.Api.Consumers
         public static string KafkaTopicNameFinalizeProductionOrderPostgresql => "finalizeproductionorderpostgresql";
 
         /// <summary>
+        /// Gets KafkaTopicNameRetryFinalizeProductionOrder.
+        /// </summary>
+        /// <value>KafkaTopicNameRetryFinalizeProductionOrder.</value>
+        public static string KafkaTopicNameRetryFinalizeProductionOrder => "retryfinalizeproductionorder";
+
+        /// <summary>
+        /// Gets LogBaseKafkaConsumerRetryFinalizeProductionOrder.
+        /// </summary>
+        /// <value>LogBaseKafkaConsumerRetryFinalizeProductionOrder.</value>
+        public static string LogBaseKafkaConsumerRetryFinalizeProductionOrder => "Pedidos - KafkaConsumerRetryFinalizeProductionOrder";
+
+        /// <summary>
         /// Gets LogBaseKafkaConsumerFinalizeProductionOrderPostgresql.
         /// </summary>
         /// <value>LogBaseKafkaConsumerFinalizeProductionOrderPostgresql.</value>

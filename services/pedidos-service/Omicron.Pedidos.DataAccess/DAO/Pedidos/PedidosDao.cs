@@ -645,7 +645,6 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         {
             return await this.databaseContext.ProductionOrderProcessingStatusModel
                 .Where(po => productionOrderIds.Contains(po.ProductionOrderId))
-                .AsNoTracking()
                 .ToListAsync();
         }
 
