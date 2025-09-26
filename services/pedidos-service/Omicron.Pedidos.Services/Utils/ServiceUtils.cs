@@ -488,6 +488,27 @@ namespace Omicron.Pedidos.Services.Utils
         }
 
         /// <summary>
+        /// Separate the orders for coma.
+        /// </summary>
+        /// <param name="orders">list of bools to evaluate.</param>
+        /// <returns>the data.</returns>
+        public static List<int> SeparateOrders(string orders)
+        {
+            if (string.IsNullOrWhiteSpace(orders))
+            {
+                return new List<int>();
+            }
+
+            return orders.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                      .Select(s => s.Trim())
+                      .Where(s => int.TryParse(s, out _))
+                      .Select(int.Parse)
+                      .Distinct()
+                      .Take(10)
+                      .ToList();
+        }
+
+        /// <summary>
         /// split the dates to int array.
         /// </summary>
         /// <param name="date">the date in string.</param>

@@ -57,7 +57,7 @@ class SplitOrderTest: XCTestCase {
     }
     
     // MARK: - TEST FUNCTIONS
-    func saveChangesTest() {
+    func testSaveChanges() {
         splitOrderModel?.closeModal.subscribe(onNext: { mssg in
             XCTAssertTrue(mssg == CommonStrings.succesSplitOrder)
         }).disposed(by: disposeBag!)

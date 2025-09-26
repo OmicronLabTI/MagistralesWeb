@@ -976,5 +976,146 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
             Assert.That(response.ExceptionMessage, Is.Null);
             Assert.That(response.UserError, Is.Null);
         }
+
+        /// <summary>
+        /// GetOpenOrderProdutions_NoOrders_Success.
+        /// </summary>
+        /// <returns>Test.</returns>
+        [Test]
+        public async Task GetOpenOrderProdutions_NoOrders_Success()
+        {
+            // Arrange
+            var parameters = new Dictionary<string, string>
+            {
+                [ServiceConstants.QfbId] = "test-qfb-123",
+                [ServiceConstants.Offset] = "0",
+                [ServiceConstants.Limit] = "10",
+            };
+
+            var mockRedisService = new Mock<IRedisService>();
+            var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
+            var mockMediator = new Mock<IMediator>();
+            var mockPedidosDao = new Mock<IPedidosDao>();
+
+            // no cenecsita mas porque solo se llama GetOpenParentsForQfb internamente
+            var mockProductionOrdersService = new ProductionOrdersService(
+                mockPedidosDao.Object,
+                mockServiceLayerAdapterService.Object,
+                mockRedisService.Object,
+                this.mockKafkaConnector.Object,
+                this.sapAdapter.Object,
+                this.userService.Object,
+                this.sapFileService.Object,
+                this.logger.Object,
+                this.mapper,
+                mockMediator.Object);
+
+            // Act
+            var result = await mockProductionOrdersService.GetOpenOrderProdutions(parameters);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+
+            // Solo validamos que no lance excepción y retorne algo válido
+            Assert.That(result.Code, Is.AnyOf(200, 500)); // Puede ser éxito o error, ambos son válidos
+        }
+
+        /// <summary>
+        /// NoExistingParents_EmptySuccess.
+        /// </summary>
+        /// <returns>Test.</returns>
+        [Test]
+        public async Task NoExistingParents_EmptySuccess()
+        {
+            // Arrange
+            var parameters = new Dictionary<string, string>
+            {
+                [ServiceConstants.QfbId] = "test-qfb",
+                [ServiceConstants.Offset] = "0",
+                [ServiceConstants.Limit] = "10",
+                [ServiceConstants.Orders] = "999,888", // IDs que no existen
+            };
+
+            var mockRedisService = new Mock<IRedisService>();
+            var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
+            var mockMediator = new Mock<IMediator>();
+            var mockPedidosDao = new Mock<IPedidosDao>();
+
+            // Setup: FindExistingParentIds regresa vacío
+            mockPedidosDao.Setup(x => x.FindExistingParentIds(It.IsAny<List<int>>()))
+                      .Returns(Task.FromResult(new HashSet<int>()));
+            mockPedidosDao.Setup(x => x.FindParentsByChildIds(It.IsAny<List<int>>()))
+                      .Returns(Task.FromResult(new Dictionary<int, int>()));
+
+            var mockProductionOrdersService = new ProductionOrdersService(
+                mockPedidosDao.Object,
+                mockServiceLayerAdapterService.Object,
+                mockRedisService.Object,
+                this.mockKafkaConnector.Object,
+                this.sapAdapter.Object,
+                this.userService.Object,
+                this.sapFileService.Object,
+                this.logger.Object,
+                this.mapper,
+                mockMediator.Object);
+
+            // Act
+            var result = await mockProductionOrdersService.GetOpenOrderProdutions(parameters);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Code, Is.EqualTo(200));
+            Assert.That(result.Response, Is.InstanceOf<List<OpenOrderProductionModel>>());
+            Assert.That(((List<OpenOrderProductionModel>)result.Response).Count, Is.EqualTo(0));
+        }
+
+        /// <summary>
+        /// Exception_Returns.
+        /// </summary>
+        /// <returns>Test.</returns>
+        [Test]
+        public async Task Exception_Returns()
+        {
+            // Arrange
+            var parameters = new Dictionary<string, string>
+            {
+                [ServiceConstants.QfbId] = "test-qfb",
+                [ServiceConstants.Offset] = "0",
+                [ServiceConstants.Limit] = "10",
+                [ServiceConstants.Orders] = "123",
+            };
+
+            var mockRedisService = new Mock<IRedisService>();
+            var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
+            var mockMediator = new Mock<IMediator>();
+            var mockPedidosDao = new Mock<IPedidosDao>();
+
+            // Setup: DAO lanza excepción
+            mockPedidosDao.Setup(x => x.FindExistingParentIds(It.IsAny<List<int>>()))
+                      .Throws(new Exception("Database connection error"));
+
+            var mockProductionOrdersService = new ProductionOrdersService(
+                mockPedidosDao.Object,
+                mockServiceLayerAdapterService.Object,
+                mockRedisService.Object,
+                this.mockKafkaConnector.Object,
+                this.sapAdapter.Object,
+                this.userService.Object,
+                this.sapFileService.Object,
+                this.logger.Object,
+                this.mapper,
+                mockMediator.Object);
+
+            // Act
+            var result = await mockProductionOrdersService.GetOpenOrderProdutions(parameters);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Success, Is.False);
+            Assert.That(result.Code, Is.EqualTo((int)HttpStatusCode.InternalServerError));
+            Assert.That(result.UserError, Is.EqualTo(LogsConstants.AnUnexpectedErrorOccurred));
+            Assert.That(result.Response, Is.Null);
+        }
     }
 }

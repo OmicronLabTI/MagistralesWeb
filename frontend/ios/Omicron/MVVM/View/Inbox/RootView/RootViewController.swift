@@ -23,7 +23,8 @@ class RootViewController: UIViewController {
     @IBOutlet weak var rolLabel: UILabel!
     @IBOutlet weak var createBulk: UIButton!
     @IBOutlet weak var createSupplies: UIButton!
-
+    @IBOutlet weak var historicButton: UIButton!
+    
     @IBAction func logoutAction(_ sender: UIButton) {
         isLogOut = true
     }
@@ -208,5 +209,8 @@ class RootViewController: UIViewController {
     private func getUserInfo() -> String {
         guard let userInfo =  Persistence.shared.getUserData() else { return "" }
         return "\(userInfo.firstName!) \(userInfo.lastName!)"
+    }
+    @IBAction func historicButtonAction(_ sender: Any) {
+        inboxViewModel.goToHistorical()
     }
 }
