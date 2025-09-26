@@ -90,6 +90,9 @@ namespace Omicron.Pedidos.Test.Entities
             new SeparateProductionOrderDto(),
             new CreateChildOrderResultDto(),
             new ProductionOrderSeparationDetailLogsModel(),
+            new DetailOrderProductionModel(),
+            new OpenOrderProductionDetailModel(),
+            new OpenOrderProductionModel(),
         };
 
         /// <summary>

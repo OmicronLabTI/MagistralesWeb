@@ -663,6 +663,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Method to GetOpenOrderProdutions all orders.
+        /// </summary>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>List of orders.</returns>
+        [Route("/open/productionorders")]
+        [HttpGet]
+        public async Task<IActionResult> GetOpenOrderProdutions([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.pedidoFacade.GetOpenOrderProdutions(parameters);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>
