@@ -92,11 +92,11 @@ class ChildrenOrders: Codable {
     var assignedQfb: String = String()
     var dateCreated: String = String()
     
-    init(OrderProductionDetailId: Int, AssignedPieces: Int, AssignedQfb: String, DateCreated: String) {
-        self.orderProductionDetailId = OrderProductionDetailId
-        self.assignedPieces = AssignedPieces
-        self.assignedQfb = AssignedQfb
-        self.dateCreated = DateCreated
+    init(orderProductionDetailId: Int, assignedPieces: Int, assignedQfb: String, dateCreated: String) {
+        self.orderProductionDetailId = orderProductionDetailId
+        self.assignedPieces = assignedPieces
+        self.assignedQfb = assignedQfb
+        self.dateCreated = dateCreated
     }
     
     required init?(map: Map) {}

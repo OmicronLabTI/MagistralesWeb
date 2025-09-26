@@ -77,10 +77,10 @@ class HistoricViewController: UIViewController {
                 if order.detailOrdersCount > 0 {
                     if order.orderProductionDetail[0].orderProductionDetailId != 0 {
                         let headerChildrenRow = ChildrenOrders(
-                            OrderProductionDetailId: 0,
-                            AssignedPieces: 0,
-                            AssignedQfb: "",
-                            DateCreated: ""
+                            orderProductionDetailId: 0,
+                            assignedPieces: 0,
+                            assignedQfb: "",
+                            dateCreated: ""
                         )
                         order.orderProductionDetail.insert(headerChildrenRow, at: 0)
                     }
@@ -179,7 +179,11 @@ extension HistoricViewController: UITableViewDataSource, UITableViewDelegate {
         if let childIndex = indices.childIndex {
             if childIndex == 0 {
                 // Fila para headers de ordenes hijas
-                let cell = tableView.dequeueReusableCell(withIdentifier: ViewControllerIdentifiers.childrenOrderRowViewCell, for: indexPath) as! ChildrenOrderRowViewCell
+                guard let cell = tableView.dequeueReusableCell(
+                    withIdentifier: ViewControllerIdentifiers.childrenOrderRowViewCell,
+                    for: indexPath) as? ChildrenOrderRowViewCell else {
+                    fatalError("No se pudo cargar la celda de childrenOrderRowViewCell")
+                }
                 cell.isUserInteractionEnabled = false
                 cell.backgroundColor = OmicronColors.customColor
                 cell.childrenOrderIdLabel.text = "No. Orden hija"
@@ -194,7 +198,11 @@ extension HistoricViewController: UITableViewDataSource, UITableViewDelegate {
             } else {
                 // Fila hija o informacion expandida
                 let detail = ordersList[indices.parentIndex].orderProductionDetail[childIndex]
-                let cell = tableView.dequeueReusableCell(withIdentifier: ViewControllerIdentifiers.childrenOrderRowViewCell, for: indexPath) as! ChildrenOrderRowViewCell
+                guard let cell = tableView.dequeueReusableCell(
+                    withIdentifier: ViewControllerIdentifiers.childrenOrderRowViewCell,
+                    for: indexPath) as? ChildrenOrderRowViewCell else {
+                    fatalError("No se pudo cargar la celda de childrenOrderRowViewCell")
+                }
                 cell.backgroundColor = OmicronColors.customColor
                 cell.childrenOrderIdLabel.text = "\(detail.orderProductionDetailId)"
                 cell.assignedPiecesLabel.text = "\(detail.assignedPieces)"
@@ -206,7 +214,11 @@ extension HistoricViewController: UITableViewDataSource, UITableViewDelegate {
             // Fila padre
             
             let order = ordersList[indices.parentIndex]
-            let cell = tableView.dequeueReusableCell(withIdentifier: ViewControllerIdentifiers.historicTableViewCell, for: indexPath) as! HistoricTableViewCell
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: ViewControllerIdentifiers.historicTableViewCell,
+                for: indexPath) as? HistoricTableViewCell else {
+                fatalError("No se pudo cargar la celda de childrenOrderRowViewCell")
+            }
             if indices.parentIndex%2 == 0 {
                 cell.backgroundColor = OmicronColors.ligthGray
             } else {
@@ -232,8 +244,8 @@ extension HistoricViewController: UITableViewDataSource, UITableViewDelegate {
         let startRow = indexPath.row + 1
         let count = ordersList[parentIndex].orderProductionDetail.count
         var indexPaths: [IndexPath] = []
-        for i in 0..<count {
-            indexPaths.append(IndexPath(row: startRow + i, section: 0))
+        for index in 0..<count {
+            indexPaths.append(IndexPath(row: startRow + index, section: 0))
         }
         
         if ordersList[parentIndex].autoExpandOrderDetail {
