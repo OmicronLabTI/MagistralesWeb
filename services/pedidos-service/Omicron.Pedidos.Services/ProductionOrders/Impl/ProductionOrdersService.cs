@@ -257,7 +257,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
         public async Task<ResultModel> RetryFailedProductionOrderFinalization(RetryFailedProductionOrderFinalizationDto payloadRetry)
         {
             var logBase = string.Format(LogsConstants.RetryFailedProductionOrderFinalization, payloadRetry.BatchProcessId);
-            await this.InsertOnRedisKeysToProductionOrdersToRetry(payloadRetry.ProductionOrderProcessingPayload);
+            await this.InsertOnRedisKeysAndChangeStatusProductionOrdersToRetry(payloadRetry.ProductionOrderProcessingPayload);
 
             foreach (var payloadRequest in payloadRetry.ProductionOrderProcessingPayload)
             {
@@ -311,16 +311,23 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             return model;
         }
 
-        private async Task InsertOnRedisKeysToProductionOrdersToRetry(List<ProductionOrderProcessingStatusDto> productionOrders)
+        private async Task InsertOnRedisKeysAndChangeStatusProductionOrdersToRetry(List<ProductionOrderProcessingStatusDto> productionOrdersToRetry)
         {
-            foreach (var po in productionOrders)
+            var productionOrdersDB = (await this.pedidosDao.GetProductionOrderProcessingStatusByProductionOrderIds(productionOrdersToRetry.Select(x => x.ProductionOrderId))).ToList();
+
+            foreach (var po in productionOrdersDB)
             {
+                po.LastUpdated = DateTime.Now;
+                po.Status = ServiceConstants.FinalizeProcessInProgressStatus;
+
                 var redisKey = string.Format(ServiceConstants.ProductionOrderFinalizingKey, po.ProductionOrderId);
                 await this.redisService.WriteToRedis(
                     redisKey,
                     JsonConvert.SerializeObject(po),
                     ServiceConstants.DefaultRedisValueTimeToLive);
             }
+
+            await this.pedidosDao.UpdatesProductionOrderProcessingStatus(productionOrdersDB);
         }
 
         private async Task<ProductionOrderProcessingStatusModel> UpdateProcessStatus(
@@ -352,9 +359,6 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
         {
             try
             {
-                var redisKey = string.Format(ServiceConstants.ProductionOrderFinalizingKey, payload.ProductionOrderId);
-                await this.redisService.WriteToRedis(redisKey, JsonConvert.SerializeObject(payload), new TimeSpan(12, 0, 0));
-
                 switch (payload.LastStep?.Trim())
                 {
                     case ServiceConstants.StepPrimaryValidations:
