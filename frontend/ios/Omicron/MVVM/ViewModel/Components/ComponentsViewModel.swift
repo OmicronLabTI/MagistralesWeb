@@ -185,7 +185,6 @@ class ComponentsViewModel {
             [weak self] res in
             guard let self = self else { return }
             self.loading.onNext(false)
-            dump(res)
             if let components = res.response {
                 self.bindingData.onNext(components)
             }

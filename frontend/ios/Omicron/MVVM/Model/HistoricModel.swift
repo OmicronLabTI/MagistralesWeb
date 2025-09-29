@@ -9,13 +9,13 @@
 import ObjectMapper
 
 class HistoricRequestModel: Codable {
-    var qfb: String
+    var qfbId: String
     var orders: String
     var offset: Int?
     var limit: Int?
     
-    init(qfb: String, orders: String, offset: Int? = nil, limit: Int? = nil) {
-        self.qfb = qfb
+    init(qfbId: String, orders: String, offset: Int? = nil, limit: Int? = nil) {
+        self.qfbId = qfbId
         self.orders = orders
         self.offset = offset
         self.limit = limit
@@ -51,7 +51,7 @@ class HistoricResponseModel: HttpResponse {
 }
 
 class ParentOrders: Codable {
-    var orderProductionId: Int = 0
+    var orderProductionId: String = String()
     var totalPieces: Int = 0
     var availablePieces: Int = 0
     var qfbWhoSplit: String = String()
@@ -59,7 +59,7 @@ class ParentOrders: Codable {
     var orderProductionDetail: [ChildrenOrders] = []
     var autoExpandOrderDetail: Bool = false
     
-    init(orderProductionId: Int, totalPieces: Int, availablePieces: Int,
+    init(orderProductionId: String, totalPieces: Int, availablePieces: Int,
          qfbWhoSplit: String, detailOrdersCount: Int, orderProductionDetail: [ChildrenOrders],
          autoExpandOrderDetail: Bool) {
         self.orderProductionId = orderProductionId
@@ -87,12 +87,12 @@ extension ParentOrders: Mappable {
 }
 
 class ChildrenOrders: Codable {
-    var orderProductionDetailId: Int = 0
+    var orderProductionDetailId: String = String()
     var assignedPieces: Int = 0
     var assignedQfb: String = String()
     var dateCreated: String = String()
     
-    init(orderProductionDetailId: Int, assignedPieces: Int, assignedQfb: String, dateCreated: String) {
+    init(orderProductionDetailId: String, assignedPieces: Int, assignedQfb: String, dateCreated: String) {
         self.orderProductionDetailId = orderProductionDetailId
         self.assignedPieces = assignedPieces
         self.assignedQfb = assignedQfb
@@ -107,6 +107,6 @@ extension ChildrenOrders: Mappable {
         self.orderProductionDetailId <- map["orderProductionDetailId"]
         self.assignedPieces <- map["assignedPieces"]
         self.assignedQfb <- map["assignedQfb"]
-        self.assignedPieces <- map["dateCreated"]
+        self.dateCreated <- map["dateCreated"]
     }
 }
