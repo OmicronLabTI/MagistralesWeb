@@ -35,13 +35,40 @@ export class IPedidoDetalleReq {
     realLabel?: string;
     catalogGroup?: string;
     onSplitProcess: boolean;
+
+    orderRelationType: string;
+    availablePieces: number;
+    childOrdersCount: number;
+    childOrders: childrenOrders[]
 }
+
+export class childrenOrders {
+    ordenFabricacionId: number;
+    codigoProducto: string;
+    descripcionProducto: string;
+    assignedPieces: number;
+    fechaOf: string;
+    fechaOfFin: string;
+    qfb: string;
+    status: string;
+    userCreate: string;
+    createDate: string;
+    label: string;
+    realLabel: string;
+    finishedLabel: number;
+}
+
 export class IPedidoDetalleRes extends BaseResponseHttp {
     response: any;
 }
 export class IPedidoDetalleListRes extends BaseResponseHttp {
     response: IPedidoDetalleReq[];
 }
+
+export class IChildrenOrdersListRes extends BaseResponseHttp {
+    response: childrenOrders[]
+}
+
 export class IQrByOrdersRes extends BaseResponseHttp {
     response: string[];
 }
