@@ -149,7 +149,7 @@ export class FiltersService {
     const props = ['status', 'availablePieces'];
     const containsAllProps = props.every(x => data.hasOwnProperty(x));
     if (containsAllProps) {
-      return data.status == ConstStatus.cancelado && data.availablePieces > 0;
+      return data.status === ConstStatus.cancelado && data.availablePieces > 0;
     }
 
     return false;
