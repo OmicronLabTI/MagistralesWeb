@@ -228,6 +228,13 @@ namespace Omicron.SapAdapter.Services.Sap
             var ordersIdToLookFor = deliveryDetails.Where(x => x.BaseEntry.HasValue).Select(x => x.BaseEntry.Value).Distinct().ToList();
             var fabOrders = (await this.sapDao.GetFabOrderBySalesOrderId(ordersIdToLookFor)).ToList();
 
+            if (type != ServiceConstants.Empaquetado)
+            {
+                userOrders = userOrders.Where(x => x.InvoiceLineNum == invoiceSubId).ToList();
+                lineProducts = lineProducts.Where(x => x.InvoiceLineNum == invoiceSubId).ToList();
+                fabOrders = fabOrders.Where(x => userOrders.Any(uorder => uorder.Productionorderid == x.OrdenId.ToString())).ToList();
+            }
+
             var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetIncidents, ordersIdToLookFor);
             var incidents = JsonConvert.DeserializeObject<List<IncidentsModel>>(almacenResponse.Response.ToString());
 
@@ -929,7 +936,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var item = items.FirstOrDefault(x => x.ProductoId == invoice.ProductoId);
                 item ??= new ProductoModel { IsMagistral = "N", LargeDescription = string.Empty, ProductoId = string.Empty };
 
-                var dataToSearch = this.GetLookUpData(userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)), lineProducts.Where(x => !string.IsNullOrEmpty(x.ItemCode)));
+                var dataToSearch = this.GetLookUpData(userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && !string.IsNullOrEmpty(x.MagistralQr) && JsonConvert.DeserializeObject<PedidosMagistralQrModel>(x.MagistralQr).ItemCode == item.ProductoId), lineProducts.Where(x => !string.IsNullOrEmpty(x.ItemCode) && x.ItemCode == item.ProductoId));
                 var filterDeliveryDetails = dataToSearch.Where(x => x.DeliveryId == invoice.BaseEntry.Value).ToList();
                 var deliveryIds = filterDeliveryDetails.Select(x => x.DeliveryId).ToList();
                 var deliveriesDetail = deliveryDetails.FirstOrDefault(x => ServiceShared.CalculateAnd(deliveryIds.Contains(x.DeliveryId), x.ProductoId == invoice.ProductoId));
@@ -938,7 +945,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 foreach (var detail in filterDeliveryDetails)
                 {
-                    var productionOrdersIds = userOrders.Where(x => deliveryIds.Contains(x.DeliveryId) && !selectedPO.Contains(x.Productionorderid)).Select(x => x.Productionorderid ?? "0").ToList();
+                    var productionOrdersIds = userOrders.Where(x => deliveryIds.Contains(x.DeliveryId) && !selectedPO.Contains(x.Productionorderid) && !string.IsNullOrEmpty(x.MagistralQr) && JsonConvert.DeserializeObject<PedidosMagistralQrModel>(x.MagistralQr).ItemCode == item.ProductoId).Select(x => x.Productionorderid ?? "0").ToList();
                     var filterOrders = orders.Where(x => productionOrdersIds.Contains(x.OrdenId.ToString())).ToList();
                     var filterUserOrders = userOrders.Where(x => productionOrdersIds.Contains(x.Productionorderid)).OrderBy(x => int.Parse(x.Productionorderid)).ToList();
                     var product = await this.GetInvoiceProductsByProductionOrders(deliveryDetails, selectedTheme, deliveriesDetail, item, filterUserOrders, lineProducts, filterOrders, incidents, invoice, selectedPO);

@@ -109,6 +109,8 @@ namespace Omicron.Pedidos.Api
             webApplication.Services.AddHostedService<KafkaConsumerFinalizeProductionOrderSap>();
             webApplication.Services.AddHostedService<KafkaConsumerFinalizeProductionOrderPostgresql>();
             webApplication.Services.AddHostedService<KafkaConsumerProductionOrderPdfGeneration>();
+            webApplication.Services.AddHostedService<KafkaConsumerRetryFinalizeProductionOrder>();
+
             webApplication.Services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Fastest);
             webApplication.Services.AddResponseCompression();
 

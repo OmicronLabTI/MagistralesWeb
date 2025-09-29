@@ -584,11 +584,64 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<IEnumerable<ProductionOrderSeparationDetailLogsModel>> GetAllFailedDivisionOrders();
 
+
+        /// <summary>
+        /// GetAllOpenParentOrdersByQfb.
+        /// </summary>
+        /// <param>status.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<List<OpenOrderProductionModel>> GetAllOpenParentOrdersByQfb(string qfbId, string partiallyDivided);
+
+        /// <summary>
+        /// GetChildrenMapByParents.
+        /// </summary>
+        /// <param>status.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<List<DetailOrderProductionModel>> GetChildrenByParentIds(IEnumerable<int> parentIds, bool excludeCanceled = true);
+
+        /// <summary>
+        /// FindExistingParentIds.
+        /// </summary>
+        /// <param>status.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<HashSet<int>> FindExistingParentIds(List<int> ids);
+
+        /// <summary>
+        /// FindParentsByChildIds.
+        /// </summary>
+        /// <param>status.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<Dictionary<int, int>> FindParentsByChildIds(List<int> childIds);
+
+
+        /// <summary>
+        /// GetParentsAssignedToQfbByIds.
+        /// </summary>
+        /// <param>status.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<List<OpenOrderProductionModel>> GetParentsAssignedToQfbByIds(List<int> parentIds, string qfbId, string partiallyDivided );
+
         /// <summary>
         /// GetProductionOrderSeparationByOrderId.
         /// </summary>
         /// <param name="ordersIds">production order ids.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<List<ProductionOrderSeparationModel>> GetProductionOrderSeparationByOrderIdWithPendingPieces(List<int> ordersIds);
+
+        /// <summary>
+        /// GetProductionOrderSeparationByOrderId.
+        /// </summary>
+        /// <param name="parentOrderId">parentOrderId ids.</param>
+        /// <param name="workStatus">newWorkStatus.</param>
+        /// <param name="userId">userId.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<int> UpdateStatusWorkParent(int parentOrderId, string workStatus);
+
+        /// <summary>
+        /// IsParentOrder.
+        /// </summary>
+        /// <param name="productionOrderId">production order ids.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<bool> IsParentOrder(int productionOrderId);
     }
 }

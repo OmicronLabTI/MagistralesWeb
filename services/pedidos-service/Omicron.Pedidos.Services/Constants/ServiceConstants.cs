@@ -582,6 +582,21 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Limit = "limit";
 
         /// <summary>
+        /// Const for the qfbId.
+        /// </summary>
+        public const string QfbId = "qfbId";
+
+        /// <summary>
+        /// Const for the orders.
+        /// </summary>
+        public const string Orders = "orders";
+
+        /// <summary>
+        /// Const for the StatusCancelado.
+        /// </summary>
+        public const string StatusCancelado = "Cancelado";
+
+        /// <summary>
         /// delivery contants.
         /// </summary>
         public const string Delivery = "delivery";
@@ -1109,6 +1124,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// StepCreateChildOrderPostgres.
         /// </summary>
         public const string StepSaveChildOrderHistory = "SaveChildOrderHistory";
+
+        /// <summary>
+        /// NotDivisionPending.
+        /// </summary>
+        public const string NotDivisionPending = "No se puede dividir: orden padre en Pendiente.";
 
         /// <summary>
         /// EmptyValue.

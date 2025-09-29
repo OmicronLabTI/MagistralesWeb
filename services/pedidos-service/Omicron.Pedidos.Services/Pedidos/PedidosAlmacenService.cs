@@ -173,6 +173,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     x.StatusAlmacen,
                     x.Comments,
                     x.DeliveryId,
+                    x.MagistralQr,
                 }).ToList();
 
             return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, null);
@@ -261,12 +262,15 @@ namespace Omicron.Pedidos.Services.Pedidos
             var grouped = userOrdersComplete.GroupBy(x => x.Salesorderid).ToList();
             foreach (var orderData in grouped)
             {
-                var filterOrders = orderData.Where(x => x.Status != ServiceConstants.Cancelled && !string.IsNullOrEmpty(x.Productionorderid)).ToList();
-                if (!parentOrders.Any(po => po.OrderId.ToString() == orderData.Key) && filterOrders.All(x => x.StatusInvoice == ServiceConstants.Entregado))
+                var filterOrders = orderData.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).ToList();
+                var productionOrdersIdWithPendingDivision = parentOrders.Select(x => x.OrderId.ToString()).ToList();
+                var noCancelOrders = filterOrders.Where(x => x.Status != ServiceConstants.Cancelled);
+                if (!filterOrders.Any(forder => productionOrdersIdWithPendingDivision.Contains(forder.Productionorderid)) && noCancelOrders.All(x => x.StatusInvoice == ServiceConstants.Entregado))
                 {
                     var header = orderData.Where(x => string.IsNullOrEmpty(x.Productionorderid)).Select(x =>
                     {
                         x.StatusInvoice = ServiceConstants.Entregado;
+                        x.Status = ServiceConstants.Entregado;
                         return x;
                     }).ToList();
                     userOrdersToUpdate.AddRange(orderData);

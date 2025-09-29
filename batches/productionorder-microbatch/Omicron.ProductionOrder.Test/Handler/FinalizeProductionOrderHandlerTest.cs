@@ -17,11 +17,9 @@ namespace Omicron.ProductionOrder.Test.Handler
         private Mock<ILogger> loggerMock;
         private Mock<IRedisService> redisServiceMock;
         private Mock<IPedidosService> pedidosServiceMock;
-        private Mock<IServiceScopeFactory> serviceScopeFactoryMock;
-        private Mock<IServiceScope> serviceScopeMock;
-        private Mock<IServiceProvider> serviceProviderMock;
         private Mock<IOptionsSnapshot<Settings>> settingsMock;
         private FinalizeProductionOrderHandler handler;
+        private Mock<IKafkaConnector> kafkaConnectorMock;
 
         /// <summary>
         /// Setup.
@@ -32,18 +30,8 @@ namespace Omicron.ProductionOrder.Test.Handler
             this.loggerMock = new Mock<ILogger>();
             this.redisServiceMock = new Mock<IRedisService>();
             this.pedidosServiceMock = new Mock<IPedidosService>();
-            this.serviceScopeFactoryMock = new Mock<IServiceScopeFactory>();
-            this.serviceScopeMock = new Mock<IServiceScope>();
-            this.serviceProviderMock = new Mock<IServiceProvider>();
             this.settingsMock = new Mock<IOptionsSnapshot<Settings>>();
-
-            // Setup service scope factory
-            this.serviceScopeFactoryMock.Setup(x => x.CreateScope()).Returns(this.serviceScopeMock.Object);
-            this.serviceScopeMock.Setup(x => x.ServiceProvider).Returns(this.serviceProviderMock.Object);
-
-            // Fix: Use GetService instead of GetRequiredService and cast appropriately
-            this.serviceProviderMock.Setup(x => x.GetService(typeof(IPedidosService)))
-                .Returns(this.pedidosServiceMock.Object);
+            this.kafkaConnectorMock = new Mock<IKafkaConnector>();
 
             // Setup settings object
             var settings = new Settings
@@ -61,7 +49,7 @@ namespace Omicron.ProductionOrder.Test.Handler
                 this.pedidosServiceMock.Object,
                 this.redisServiceMock.Object,
                 this.settingsMock.Object,
-                this.serviceScopeFactoryMock.Object);
+                this.kafkaConnectorMock.Object);
         }
 
         /// <summary>

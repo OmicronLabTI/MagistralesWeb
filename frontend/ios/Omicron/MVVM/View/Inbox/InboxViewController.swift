@@ -124,6 +124,10 @@ class InboxViewController: UIViewController {
         self.view.endEditing(true)
         self.performSegue(withIdentifier: ViewControllerIdentifiers.supplieViewController, sender: nil)
     }
+    func goToHistoric() {
+        self.view.endEditing(true)
+        self.performSegue(withIdentifier: ViewControllerIdentifiers.historicViewController, sender: nil)
+    }
     func tapBindingButtons() {
         [similarityViewButton.rx.tap.bind(to: inboxViewModel.similarityViewButtonDidTap),
          normalViewButton.rx.tap.bind(to: inboxViewModel.normalViewButtonDidTap),
@@ -201,6 +205,9 @@ class InboxViewController: UIViewController {
         inboxViewModel.goToSuppliesView.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             self?.goToSupplies()
         }).disposed(by: self.disposeBag)
+        inboxViewModel.goToHistoricView.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            self?.goToHistoric()
+        }).disposed(by: self.disposeBag)
         self.modelBindingGrouped()
         self.modelBindingExtension1()
         self.modelBindingExtension3()
@@ -215,7 +222,9 @@ class InboxViewController: UIViewController {
             .observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] data in
                 guard let self = self else { return }
                 let parentOrders = searchParentOrders(indexPath: self.indexPathsSelected)
-                if !parentOrders.isEmpty {
+                if !parentOrders.isEmpty &&
+                    data.typeOfStatus != StatusNameConstants.penddingStatus &&
+                    data.typeOfStatus != StatusNameConstants.inProcessStatus {
                     self.inboxViewModel.showThereParentOrderSelectedMessage(parentOrders: parentOrders)
                     return
                 } else {
