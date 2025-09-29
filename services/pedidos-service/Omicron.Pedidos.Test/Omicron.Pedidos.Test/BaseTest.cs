@@ -318,7 +318,7 @@ namespace Omicron.Pedidos.Test
         {
             return new List<ProductionOrderSeparationDetailModel>
             {
-                new ProductionOrderSeparationDetailModel { Id = 1, DetailOrderId = 226274, OrderId = 226270, UserId = "user" },
+                new ProductionOrderSeparationDetailModel { Id = 1, DetailOrderId = 226274, OrderId = 226270, UserId = "user", SapOrder = 5 },
             };
         }
 

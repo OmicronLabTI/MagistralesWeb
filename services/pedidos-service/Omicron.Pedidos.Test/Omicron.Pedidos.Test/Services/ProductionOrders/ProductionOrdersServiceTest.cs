@@ -1031,6 +1031,7 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
             Assert.That(response.Any(x => x.FabOrderId == 227322), Is.True);
         }
 
+        /// <summary>
         /// GetOpenOrderProdutions_NoOrders_Success.
         /// </summary>
         /// <returns>Test.</returns>
@@ -1062,6 +1063,7 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 this.logger.Object,
                 this.mapper,
                 mockMediator.Object);
+
             // Act
             var result = await mockProductionOrdersService.GetOpenOrderProdutions(parameters);
 

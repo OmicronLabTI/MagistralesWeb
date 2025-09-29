@@ -369,7 +369,8 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="parentOrder">parent order.</param>
         /// <returns>Process Result.</returns>urns>
         Task<ResultDto> GetParentOrderDetail(int parentOrder);
-        
+
+        /// <summary>
         /// Get Open Production Order.
         /// </summary>
         /// <param name="parameter">GetOpenOrderProdutions.</param>

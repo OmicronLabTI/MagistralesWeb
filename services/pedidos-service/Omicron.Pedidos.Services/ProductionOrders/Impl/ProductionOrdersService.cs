@@ -350,6 +350,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, ordersToReturn, null);
         }
 
+        /// <inheritdoc/>
         public async Task<ResultModel> GetOpenOrderProdutions(Dictionary<string, string> parameters)
         {
             try

@@ -688,6 +688,7 @@ namespace Omicron.Pedidos.Api.Controllers
             return this.Ok(response);
         }
 
+        /// <summary>
         /// Method to GetOpenOrderProdutions all orders.
         /// </summary>
         /// <param name="parameters">The parameters.</param>
