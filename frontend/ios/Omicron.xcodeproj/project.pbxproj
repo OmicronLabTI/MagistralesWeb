@@ -8,10 +8,35 @@
 
 /* Begin PBXBuildFile section */
 		0511BBAE2E412304002EC973 /* SplitOrderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0511BBAD2E4122F8002EC973 /* SplitOrderTest.swift */; };
+		051D89FE2E7B0B9300BAD568 /* HistoricTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 051D89FC2E7B0B9300BAD568 /* HistoricTableViewCell.swift */; };
+		051D89FF2E7B0B9300BAD568 /* HistoricTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 051D89FC2E7B0B9300BAD568 /* HistoricTableViewCell.swift */; };
+		051D8A002E7B0B9300BAD568 /* HistoricTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 051D89FC2E7B0B9300BAD568 /* HistoricTableViewCell.swift */; };
+		051D8A012E7B0B9300BAD568 /* HistoricTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 051D89FC2E7B0B9300BAD568 /* HistoricTableViewCell.swift */; };
+		051D8A032E7B170E00BAD568 /* getHistoric.json in Resources */ = {isa = PBXBuildFile; fileRef = 051D8A022E7B16FA00BAD568 /* getHistoric.json */; };
+		051D8A042E7B170E00BAD568 /* getHistoric.json in Resources */ = {isa = PBXBuildFile; fileRef = 051D8A022E7B16FA00BAD568 /* getHistoric.json */; };
+		051D8A052E7B170E00BAD568 /* getHistoric.json in Resources */ = {isa = PBXBuildFile; fileRef = 051D8A022E7B16FA00BAD568 /* getHistoric.json */; };
+		051D8A062E7B170E00BAD568 /* getHistoric.json in Resources */ = {isa = PBXBuildFile; fileRef = 051D8A022E7B16FA00BAD568 /* getHistoric.json */; };
 		05B553882E39418100F2F0E5 /* SplitOrderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B553872E39417600F2F0E5 /* SplitOrderModel.swift */; };
 		05B553892E39418100F2F0E5 /* SplitOrderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B553872E39417600F2F0E5 /* SplitOrderModel.swift */; };
 		05B5538A2E39418100F2F0E5 /* SplitOrderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B553872E39417600F2F0E5 /* SplitOrderModel.swift */; };
 		05B5538B2E39418100F2F0E5 /* SplitOrderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B553872E39417600F2F0E5 /* SplitOrderModel.swift */; };
+		05C7301D2E830DE90077AD9B /* ChildrenOrderRowViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C7301C2E830DC90077AD9B /* ChildrenOrderRowViewCell.swift */; };
+		05C7301E2E830DE90077AD9B /* ChildrenOrderRowViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C7301C2E830DC90077AD9B /* ChildrenOrderRowViewCell.swift */; };
+		05C7301F2E830DE90077AD9B /* ChildrenOrderRowViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C7301C2E830DC90077AD9B /* ChildrenOrderRowViewCell.swift */; };
+		05C730202E830DE90077AD9B /* ChildrenOrderRowViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C7301C2E830DC90077AD9B /* ChildrenOrderRowViewCell.swift */; };
+		05C730542E8495C40077AD9B /* HistoricTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C730532E8495BA0077AD9B /* HistoricTest.swift */; };
+		05DD6A922E71D5460018197D /* HistoricModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DD6A912E71D5360018197D /* HistoricModel.swift */; };
+		05DD6A932E71D5460018197D /* HistoricModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DD6A912E71D5360018197D /* HistoricModel.swift */; };
+		05DD6A942E71D5460018197D /* HistoricModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DD6A912E71D5360018197D /* HistoricModel.swift */; };
+		05DD6A952E71D5460018197D /* HistoricModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DD6A912E71D5360018197D /* HistoricModel.swift */; };
+		05DD6ADD2E7329B20018197D /* HistoricViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DD6ADC2E7329AB0018197D /* HistoricViewModel.swift */; };
+		05DD6ADE2E7329B20018197D /* HistoricViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DD6ADC2E7329AB0018197D /* HistoricViewModel.swift */; };
+		05DD6ADF2E7329B20018197D /* HistoricViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DD6ADC2E7329AB0018197D /* HistoricViewModel.swift */; };
+		05DD6AE02E7329B20018197D /* HistoricViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DD6ADC2E7329AB0018197D /* HistoricViewModel.swift */; };
+		05DD6AE22E7333B10018197D /* HistoricViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DD6AE12E7333B10018197D /* HistoricViewController.swift */; };
+		05DD6AE32E7333B10018197D /* HistoricViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DD6AE12E7333B10018197D /* HistoricViewController.swift */; };
+		05DD6AE42E7333B10018197D /* HistoricViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DD6AE12E7333B10018197D /* HistoricViewController.swift */; };
+		05DD6AE52E7333B10018197D /* HistoricViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DD6AE12E7333B10018197D /* HistoricViewController.swift */; };
 		111005E229D367080069BEDE /* HistoryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 111005E129D367080069BEDE /* HistoryTest.swift */; };
 		1113E43729C27FBA0043083E /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1113E43629C27FBA0043083E /* History.swift */; };
 		1113E43829C27FBA0043083E /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1113E43629C27FBA0043083E /* History.swift */; };
@@ -636,7 +661,14 @@
 
 /* Begin PBXFileReference section */
 		0511BBAD2E4122F8002EC973 /* SplitOrderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitOrderTest.swift; sourceTree = "<group>"; };
+		051D89FC2E7B0B9300BAD568 /* HistoricTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricTableViewCell.swift; sourceTree = "<group>"; };
+		051D8A022E7B16FA00BAD568 /* getHistoric.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = getHistoric.json; sourceTree = "<group>"; };
 		05B553872E39417600F2F0E5 /* SplitOrderModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitOrderModel.swift; sourceTree = "<group>"; };
+		05C7301C2E830DC90077AD9B /* ChildrenOrderRowViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildrenOrderRowViewCell.swift; sourceTree = "<group>"; };
+		05C730532E8495BA0077AD9B /* HistoricTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricTest.swift; sourceTree = "<group>"; };
+		05DD6A912E71D5360018197D /* HistoricModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricModel.swift; sourceTree = "<group>"; };
+		05DD6ADC2E7329AB0018197D /* HistoricViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricViewModel.swift; sourceTree = "<group>"; };
+		05DD6AE12E7333B10018197D /* HistoricViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricViewController.swift; sourceTree = "<group>"; };
 		0A4BE9F3CB565F9C5BB8E3F8 /* Pods-Omicron.qa.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron.qa.xcconfig"; path = "Target Support Files/Pods-Omicron/Pods-Omicron.qa.xcconfig"; sourceTree = "<group>"; };
 		111005E129D367080069BEDE /* HistoryTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTest.swift; sourceTree = "<group>"; };
 		1113E43629C27FBA0043083E /* History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = History.swift; sourceTree = "<group>"; };
@@ -929,6 +961,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		051D89FD2E7B0B9300BAD568 /* HistoricCustomCell */ = {
+			isa = PBXGroup;
+			children = (
+				05C7301C2E830DC90077AD9B /* ChildrenOrderRowViewCell.swift */,
+				051D89FC2E7B0B9300BAD568 /* HistoricTableViewCell.swift */,
+			);
+			path = HistoricCustomCell;
+			sourceTree = "<group>";
+		};
+		05DD6A972E71FCB50018197D /* Historic */ = {
+			isa = PBXGroup;
+			children = (
+				051D89FD2E7B0B9300BAD568 /* HistoricCustomCell */,
+				05DD6AE12E7333B10018197D /* HistoricViewController.swift */,
+			);
+			path = Historic;
+			sourceTree = "<group>";
+		};
+		05DD6AD62E7329490018197D /* Historic */ = {
+			isa = PBXGroup;
+			children = (
+				05DD6ADC2E7329AB0018197D /* HistoricViewModel.swift */,
+			);
+			path = Historic;
+			sourceTree = "<group>";
+		};
 		111005E029D366DB0069BEDE /* History */ = {
 			isa = PBXGroup;
 			children = (
@@ -1050,6 +1108,7 @@
 		4989CC8F25ED900200257CA2 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				05DD6A912E71D5360018197D /* HistoricModel.swift */,
 				05B553872E39417600F2F0E5 /* SplitOrderModel.swift */,
 				11254FC82DDD3DC600B71F9B /* AddComponentModel.swift */,
 				1132D5302CB86557007345A6 /* OrderPDFRequestModel.swift */,
@@ -1088,6 +1147,7 @@
 		4989CCB725ED956A00257CA2 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
+				05DD6AD62E7329490018197D /* Historic */,
 				05B5537D2E392EEF00F2F0E5 /* SplitOrder */,
 				11254FBE2DDD30D100B71F9B /* AddComponent */,
 				11717B7B29C2468900B9ADFC /* History */,
@@ -1478,6 +1538,7 @@
 		98015CC524AFBC6D00E7772F /* OmicronTests */ = {
 			isa = PBXGroup;
 			children = (
+				05C730532E8495BA0077AD9B /* HistoricTest.swift */,
 				0511BBAD2E4122F8002EC973 /* SplitOrderTest.swift */,
 				111005E029D366DB0069BEDE /* History */,
 				11E7879A29B65A9000B888C6 /* Supplies */,
@@ -1510,6 +1571,7 @@
 		980F234124DA115E0073E2C8 /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
+				051D8A022E7B16FA00BAD568 /* getHistoric.json */,
 				112ACAF02E271E5700AF41E9 /* warehouses.json */,
 				1EC2920A254B4C9F002FD4E3 /* connect.json */,
 				381B3BDB25E032460077F764 /* container.json */,
@@ -1589,6 +1651,7 @@
 		98C8C03624AFCB9800018A88 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				05DD6A972E71FCB50018197D /* Historic */,
 				05BDA76D2E37E11D007BAC4C /* SplitOrder */,
 				11580C302DDBEC4500C00FE1 /* AddComponent */,
 				11717B8129C2470700B9ADFC /* History */,
@@ -1858,6 +1921,7 @@
 				490B69BD268E98ED00DBE9F1 /* SF-Pro-Display-Semibold.ttf in Resources */,
 				490B69BE268E98ED00DBE9F1 /* finishedOrderResponse.json in Resources */,
 				490B69BF268E98ED00DBE9F1 /* connect.json in Resources */,
+				051D8A032E7B170E00BAD568 /* getHistoric.json in Resources */,
 				490B69C0268E98ED00DBE9F1 /* LaunchScreen.storyboard in Resources */,
 				112ACAF12E271E5B00AF41E9 /* warehouses.json in Resources */,
 				490B69C1268E98ED00DBE9F1 /* CardCollectionViewCell.xib in Resources */,
@@ -1906,6 +1970,7 @@
 				49CF65FE25F2D4AB002CD598 /* SF-Pro-Display-Semibold.ttf in Resources */,
 				49CF65FF25F2D4AB002CD598 /* finishedOrderResponse.json in Resources */,
 				49CF660025F2D4AB002CD598 /* connect.json in Resources */,
+				051D8A062E7B170E00BAD568 /* getHistoric.json in Resources */,
 				49CF660125F2D4AB002CD598 /* LaunchScreen.storyboard in Resources */,
 				112ACAF42E271E5B00AF41E9 /* warehouses.json in Resources */,
 				49CF660225F2D4AB002CD598 /* CardCollectionViewCell.xib in Resources */,
@@ -1954,6 +2019,7 @@
 				49CF668125F2D821002CD598 /* SF-Pro-Display-Semibold.ttf in Resources */,
 				49CF668225F2D821002CD598 /* finishedOrderResponse.json in Resources */,
 				49CF668325F2D821002CD598 /* connect.json in Resources */,
+				051D8A052E7B170E00BAD568 /* getHistoric.json in Resources */,
 				49CF668425F2D821002CD598 /* LaunchScreen.storyboard in Resources */,
 				112ACAF32E271E5B00AF41E9 /* warehouses.json in Resources */,
 				49CF668525F2D821002CD598 /* CardCollectionViewCell.xib in Resources */,
@@ -2012,6 +2078,7 @@
 				7CBA553D24CF8E9B00918C38 /* CardCollectionViewCell.xib in Resources */,
 				7C2401DE24D4970700E2D56C /* SF-Pro-Display-Bold.otf in Resources */,
 				49E4D87025F154E100E196F9 /* GoogleService-Info.plist in Resources */,
+				051D8A042E7B170E00BAD568 /* getHistoric.json in Resources */,
 				98015CB924AFBC6D00E7772F /* Assets.xcassets in Resources */,
 				1EF0321E251931B30040DC65 /* workload.json in Resources */,
 				98532B2F24B390A80015BBC6 /* loading.json in Resources */,
@@ -2444,6 +2511,7 @@
 				490B6983268E98ED00DBE9F1 /* FileManager.swift in Sources */,
 				1132D5342CB86569007345A6 /* OrderPDFRequestModel.swift in Sources */,
 				11A7CA4329DB456200AE4336 /* RootViewControllerExtension.swift in Sources */,
+				05DD6A942E71D5460018197D /* HistoricModel.swift in Sources */,
 				11254FCC2DDD3DD500B71F9B /* AddComponentModel.swift in Sources */,
 				1142E19329AE623E008651D1 /* SupplieViewController.swift in Sources */,
 				F3D21DF3298A53490099B94A /* OrderDetailViewModelExtension.swift in Sources */,
@@ -2454,6 +2522,8 @@
 				490B6987268E98ED00DBE9F1 /* LoginViewController.swift in Sources */,
 				490B6988268E98ED00DBE9F1 /* ApiService.swift in Sources */,
 				490B6989268E98ED00DBE9F1 /* ComponentFormViewController.swift in Sources */,
+				05C7301D2E830DE90077AD9B /* ChildrenOrderRowViewCell.swift in Sources */,
+				051D8A012E7B0B9300BAD568 /* HistoricTableViewCell.swift in Sources */,
 				490B698A268E98ED00DBE9F1 /* ComponentsTableViewCell.swift in Sources */,
 				11FD7B1F29C2331700F04747 /* DropdownViewController.swift in Sources */,
 				490B698B268E98ED00DBE9F1 /* AppDelegate.swift in Sources */,
@@ -2484,6 +2554,7 @@
 				490B6999268E98ED00DBE9F1 /* Constants.swift in Sources */,
 				F3D21DEE298A4F610099B94A /* OrderDetailViewControllerExtension.swift in Sources */,
 				490B699A268E98ED00DBE9F1 /* ComponentsViewController.swift in Sources */,
+				05DD6AE32E7333B10018197D /* HistoricViewController.swift in Sources */,
 				490B699B268E98ED00DBE9F1 /* OrderDetailModel.swift in Sources */,
 				490B699C268E98ED00DBE9F1 /* ChartViewModel.swift in Sources */,
 				1113E43A29C27FBA0043083E /* History.swift in Sources */,
@@ -2503,6 +2574,7 @@
 				7F4FFECE292EA1DC00428501 /* PatientListViewController.swift in Sources */,
 				490B69A8268E98ED00DBE9F1 /* InboxModel.swift in Sources */,
 				490B69A9268E98ED00DBE9F1 /* PDFViewController.swift in Sources */,
+				05DD6AE02E7329B20018197D /* HistoricViewModel.swift in Sources */,
 				490B69AA268E98ED00DBE9F1 /* SceneDelegate.swift in Sources */,
 				1135809C29C1020400A58C74 /* HistoryViewController.swift in Sources */,
 				490B69AB268E98ED00DBE9F1 /* ExtensionOrderDetailFormViewController.swift in Sources */,
@@ -2553,6 +2625,7 @@
 				49CF65C425F2D4AB002CD598 /* FileManager.swift in Sources */,
 				1132D5322CB86569007345A6 /* OrderPDFRequestModel.swift in Sources */,
 				11A7CA4129DB456200AE4336 /* RootViewControllerExtension.swift in Sources */,
+				05DD6A922E71D5460018197D /* HistoricModel.swift in Sources */,
 				11254FCA2DDD3DD500B71F9B /* AddComponentModel.swift in Sources */,
 				1142E19129AE623E008651D1 /* SupplieViewController.swift in Sources */,
 				F3D21DF1298A53490099B94A /* OrderDetailViewModelExtension.swift in Sources */,
@@ -2563,6 +2636,8 @@
 				49CF65C825F2D4AB002CD598 /* LoginViewController.swift in Sources */,
 				49CF65C925F2D4AB002CD598 /* ApiService.swift in Sources */,
 				49CF65CA25F2D4AB002CD598 /* ComponentFormViewController.swift in Sources */,
+				05C7301F2E830DE90077AD9B /* ChildrenOrderRowViewCell.swift in Sources */,
+				051D8A002E7B0B9300BAD568 /* HistoricTableViewCell.swift in Sources */,
 				49CF65CB25F2D4AB002CD598 /* ComponentsTableViewCell.swift in Sources */,
 				11FD7B1D29C2331700F04747 /* DropdownViewController.swift in Sources */,
 				49CF65CC25F2D4AB002CD598 /* AppDelegate.swift in Sources */,
@@ -2593,6 +2668,7 @@
 				49CF65DA25F2D4AB002CD598 /* Constants.swift in Sources */,
 				F3D21DEC298A4F610099B94A /* OrderDetailViewControllerExtension.swift in Sources */,
 				49CF65DB25F2D4AB002CD598 /* ComponentsViewController.swift in Sources */,
+				05DD6AE42E7333B10018197D /* HistoricViewController.swift in Sources */,
 				49CF65DC25F2D4AB002CD598 /* OrderDetailModel.swift in Sources */,
 				49CF65DD25F2D4AB002CD598 /* ChartViewModel.swift in Sources */,
 				1113E43829C27FBA0043083E /* History.swift in Sources */,
@@ -2612,6 +2688,7 @@
 				7F4FFECC292EA1DC00428501 /* PatientListViewController.swift in Sources */,
 				49CF65E925F2D4AB002CD598 /* InboxModel.swift in Sources */,
 				49CF65EA25F2D4AB002CD598 /* PDFViewController.swift in Sources */,
+				05DD6ADF2E7329B20018197D /* HistoricViewModel.swift in Sources */,
 				49CF65EB25F2D4AB002CD598 /* SceneDelegate.swift in Sources */,
 				1135809A29C1020400A58C74 /* HistoryViewController.swift in Sources */,
 				49CF65EC25F2D4AB002CD598 /* ExtensionOrderDetailFormViewController.swift in Sources */,
@@ -2662,6 +2739,7 @@
 				49CF664725F2D821002CD598 /* FileManager.swift in Sources */,
 				1132D5332CB86569007345A6 /* OrderPDFRequestModel.swift in Sources */,
 				11A7CA4229DB456200AE4336 /* RootViewControllerExtension.swift in Sources */,
+				05DD6A932E71D5460018197D /* HistoricModel.swift in Sources */,
 				11254FCB2DDD3DD500B71F9B /* AddComponentModel.swift in Sources */,
 				1142E19229AE623E008651D1 /* SupplieViewController.swift in Sources */,
 				F3D21DF2298A53490099B94A /* OrderDetailViewModelExtension.swift in Sources */,
@@ -2672,6 +2750,8 @@
 				49CF664B25F2D821002CD598 /* LoginViewController.swift in Sources */,
 				49CF664C25F2D821002CD598 /* ApiService.swift in Sources */,
 				49CF664D25F2D821002CD598 /* ComponentFormViewController.swift in Sources */,
+				05C730202E830DE90077AD9B /* ChildrenOrderRowViewCell.swift in Sources */,
+				051D89FE2E7B0B9300BAD568 /* HistoricTableViewCell.swift in Sources */,
 				49CF664E25F2D821002CD598 /* ComponentsTableViewCell.swift in Sources */,
 				11FD7B1E29C2331700F04747 /* DropdownViewController.swift in Sources */,
 				49CF664F25F2D821002CD598 /* AppDelegate.swift in Sources */,
@@ -2702,6 +2782,7 @@
 				49CF665D25F2D821002CD598 /* Constants.swift in Sources */,
 				F3D21DED298A4F610099B94A /* OrderDetailViewControllerExtension.swift in Sources */,
 				49CF665E25F2D821002CD598 /* ComponentsViewController.swift in Sources */,
+				05DD6AE22E7333B10018197D /* HistoricViewController.swift in Sources */,
 				49CF665F25F2D821002CD598 /* OrderDetailModel.swift in Sources */,
 				49CF666025F2D821002CD598 /* ChartViewModel.swift in Sources */,
 				1113E43929C27FBA0043083E /* History.swift in Sources */,
@@ -2721,6 +2802,7 @@
 				7F4FFECD292EA1DC00428501 /* PatientListViewController.swift in Sources */,
 				49CF666C25F2D821002CD598 /* InboxModel.swift in Sources */,
 				49CF666D25F2D821002CD598 /* PDFViewController.swift in Sources */,
+				05DD6ADE2E7329B20018197D /* HistoricViewModel.swift in Sources */,
 				49CF666E25F2D821002CD598 /* SceneDelegate.swift in Sources */,
 				1135809B29C1020400A58C74 /* HistoryViewController.swift in Sources */,
 				49CF666F25F2D821002CD598 /* ExtensionOrderDetailFormViewController.swift in Sources */,
@@ -2771,6 +2853,7 @@
 				7CCC6A4824F880E200ACBBE8 /* FileManager.swift in Sources */,
 				1132D5312CB86569007345A6 /* OrderPDFRequestModel.swift in Sources */,
 				11A7CA4029DB456200AE4336 /* RootViewControllerExtension.swift in Sources */,
+				05DD6A952E71D5460018197D /* HistoricModel.swift in Sources */,
 				11254FC92DDD3DD500B71F9B /* AddComponentModel.swift in Sources */,
 				1142E19029AE623E008651D1 /* SupplieViewController.swift in Sources */,
 				F3D21DF0298A53490099B94A /* OrderDetailViewModelExtension.swift in Sources */,
@@ -2781,6 +2864,8 @@
 				98C8C03324AFBD4C00018A88 /* LoginViewController.swift in Sources */,
 				98C8C03924AFCBE300018A88 /* ApiService.swift in Sources */,
 				989391D9250AE174004750D8 /* ComponentFormViewController.swift in Sources */,
+				05C7301E2E830DE90077AD9B /* ChildrenOrderRowViewCell.swift in Sources */,
+				051D89FF2E7B0B9300BAD568 /* HistoricTableViewCell.swift in Sources */,
 				7C7DDC73251007760049B43C /* ComponentsTableViewCell.swift in Sources */,
 				11FD7B1C29C2331700F04747 /* DropdownViewController.swift in Sources */,
 				98015CB024AFBC6C00E7772F /* AppDelegate.swift in Sources */,
@@ -2811,6 +2896,7 @@
 				98C8C03C24AFCC7B00018A88 /* Constants.swift in Sources */,
 				F3D21DEB298A4F610099B94A /* OrderDetailViewControllerExtension.swift in Sources */,
 				987BDFE02509869200D9C6E4 /* ComponentsViewController.swift in Sources */,
+				05DD6AE52E7333B10018197D /* HistoricViewController.swift in Sources */,
 				7CB6332624DDCBE70055425C /* OrderDetailModel.swift in Sources */,
 				1EF032222519388C0040DC65 /* ChartViewModel.swift in Sources */,
 				1113E43729C27FBA0043083E /* History.swift in Sources */,
@@ -2830,6 +2916,7 @@
 				7F4FFECB292EA1DC00428501 /* PatientListViewController.swift in Sources */,
 				7CE216D624CB9588005A7FED /* InboxModel.swift in Sources */,
 				1E83B0732534F34C00755026 /* PDFViewController.swift in Sources */,
+				05DD6ADD2E7329B20018197D /* HistoricViewModel.swift in Sources */,
 				98015CB224AFBC6C00E7772F /* SceneDelegate.swift in Sources */,
 				1135809929C1020400A58C74 /* HistoryViewController.swift in Sources */,
 				4951100025E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift in Sources */,
@@ -2861,6 +2948,7 @@
 			files = (
 				7C5DFB16251C82740041B2AC /* BatchTest.swift in Sources */,
 				0511BBAE2E412304002EC973 /* SplitOrderTest.swift in Sources */,
+				05C730542E8495C40077AD9B /* HistoricTest.swift in Sources */,
 				49005EB825DF1AC700EA4206 /* ExtensionInboxTest.swift in Sources */,
 				7C5DFB1A251D50920041B2AC /* OrderDetailFormTest.swift in Sources */,
 				49C2F71125DF1C8B00673471 /* ExtensionInbox2Test.swift in Sources */,
@@ -3001,7 +3089,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.27;
+				MARKETING_VERSION = 1.1.29;
 				PRODUCT_BUNDLE_IDENTIFIER = com.omicronlab.Formulas;
 				PRODUCT_NAME = Magistrales;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3394,7 +3482,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.27;
+				MARKETING_VERSION = 1.1.29;
 				PRODUCT_BUNDLE_IDENTIFIER = com.omicronlab.Formulas;
 				PRODUCT_NAME = Magistrales;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3635,7 +3723,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.27;
+				MARKETING_VERSION = 1.1.29;
 				PRODUCT_BUNDLE_IDENTIFIER = com.omicronlab.Formulas;
 				PRODUCT_NAME = Magistrales;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3659,7 +3747,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.27;
+				MARKETING_VERSION = 1.1.29;
 				PRODUCT_BUNDLE_IDENTIFIER = com.omicronlab.Formulas;
 				PRODUCT_NAME = Magistrales;
 				PROVISIONING_PROFILE_SPECIFIER = "";

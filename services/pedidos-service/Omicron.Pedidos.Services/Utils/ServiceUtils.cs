@@ -488,6 +488,27 @@ namespace Omicron.Pedidos.Services.Utils
         }
 
         /// <summary>
+        /// Separate the orders for coma.
+        /// </summary>
+        /// <param name="orders">list of bools to evaluate.</param>
+        /// <returns>the data.</returns>
+        public static List<int> SeparateOrders(string orders)
+        {
+            if (string.IsNullOrWhiteSpace(orders))
+            {
+                return new List<int>();
+            }
+
+            return orders.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                      .Select(s => s.Trim())
+                      .Where(s => int.TryParse(s, out _))
+                      .Select(int.Parse)
+                      .Distinct()
+                      .Take(10)
+                      .ToList();
+        }
+
+        /// <summary>
         /// split the dates to int array.
         /// </summary>
         /// <param name="date">the date in string.</param>
@@ -547,7 +568,7 @@ namespace Omicron.Pedidos.Services.Utils
             var sapOrdersDict = sapOrders.ToDictionary(s => s.ProductionOrderId, s => s);
 
             var filteredUserOrders = userOrders.Where(x => x.Status.Equals(status.ToString()) ||
-            (x.Status.Equals(ServiceConstants.Cancelled) && TryIncludeCancelledOrderInStatusGroup(x, sapOrdersDict, statusId))).ToList();
+            (x.Status.Equals(ServiceConstants.Cancelled) && TryIncludeCancelledOrderInStatusGroup(x, sapOrdersDict, statusId, status.ToString()))).ToList();
 
             filteredUserOrders.ForEach(o =>
                 {
@@ -599,7 +620,7 @@ namespace Omicron.Pedidos.Services.Utils
             };
         }
 
-        private static bool TryIncludeCancelledOrderInStatusGroup(UserOrderModel userOrder, Dictionary<int, CompleteFormulaWithDetalle> sapOrdersDict, int statusId)
+        private static bool TryIncludeCancelledOrderInStatusGroup(UserOrderModel userOrder, Dictionary<int, CompleteFormulaWithDetalle> sapOrdersDict, int statusId, string status)
         {
             int.TryParse(userOrder.Productionorderid, out int orderId);
 
@@ -611,8 +632,14 @@ namespace Omicron.Pedidos.Services.Utils
             var parentOrder = sapOrder.OrderRelationType == ServiceConstants.ParentOrder;
             var reassignmentDateExists = userOrder.ReassignmentDate.HasValue;
 
-            return (statusId == (int)ServiceEnums.Status.Proceso && parentOrder && !reassignmentDateExists)
-                || (statusId == (int)ServiceEnums.Status.Reasignado && parentOrder && reassignmentDateExists);
+            if (string.IsNullOrEmpty(userOrder.StatusWorkParent))
+            {
+                return (statusId == (int)ServiceEnums.Status.Proceso && parentOrder && !reassignmentDateExists)
+                    || (statusId == (int)ServiceEnums.Status.Reasignado && parentOrder && reassignmentDateExists);
+            }
+
+            var validStatusId = new List<int>() { (int)ServiceEnums.Status.Proceso, (int)ServiceEnums.Status.Reasignado, (int)ServiceEnums.Status.Pendiente };
+            return validStatusId.Contains(statusId) && parentOrder && userOrder.StatusWorkParent == status;
         }
     }
 }

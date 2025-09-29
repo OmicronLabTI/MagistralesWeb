@@ -1090,6 +1090,7 @@ namespace Omicron.SapAdapter.Services.Constants
             Advance,
             Current,
             NeedsLargeDsc,
+            Classifications,
             Parent,
         };
 

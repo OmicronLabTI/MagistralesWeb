@@ -73,6 +73,9 @@ struct ViewControllerIdentifiers {
     static let historyTableViewCell = "HistoryTableViewCell"
     static let addComponentViewController = "AddComponentViewController"
     static let splitOrderViewController = "SplitOrderViewController"
+    static let historicViewController = "HistoricViewController"
+    static let historicTableViewCell = "HistoricTableViewCell"
+    static let childrenOrderRowViewCell = "ChildrenOrderRowViewCell"
 }
 struct OmicronColors {
     static let blue = UIColor.init(red: 16/255, green: 149/255, blue: 200/255, alpha: 1)
@@ -98,6 +101,8 @@ struct OmicronColors {
     static let historyStatusClosed = UIColor(red: 2/255, green: 172/255, blue: 74/255, alpha: 1)
     static let historyStatusCancel = UIColor(red: 227/255, green: 9/255, blue: 0/255, alpha: 1)
     static let redColor = UIColor(red: 255/255, green: 59/255, blue: 48/255, alpha: 1)
+    static let customColor = UIColor(red: 237/255, green: 249/255, blue: 255/255, alpha: 1)
+
 }
 
 struct UsersDefaultsConstants {

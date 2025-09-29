@@ -86,5 +86,11 @@ namespace Omicron.Pedidos.Services.ProductionOrders
         /// <param name="fabOrder">fabOrder.</param>
         /// <returns>Process Result.</returns>
         Task<ResultModel> GetParentOrderDetail(int fabOrder);
+        
+        /// Get Open Production Order.
+        /// </summary>
+        /// <param name="parameter">GetOpenOrderProdutions.</param>
+        /// <returns>Process Result.</returns>urns>
+        Task<ResultModel> GetOpenOrderProdutions(Dictionary<string, string> parameter);
     }
 }

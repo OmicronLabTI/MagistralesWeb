@@ -524,5 +524,53 @@ namespace Omicron.Pedidos.Services.Constants
         /// SaveHistoryOrdersFabEndWithError.
         /// </value>
         public static string SaveHistoryOrdersFabEndWithError => "{0} - End Process With Error";
+
+        /// <summary>
+        /// Gets GetOpenOrderProductions.
+        /// </summary>
+        /// <value>
+        /// GetOpenOrderProductions.
+        /// </value>
+        public static string GetOpenOrderProductions => "{0} - LogsOpenOrderProductions";
+
+        /// <summary>
+        /// Gets GetOpenOrderProductionsStart.
+        /// </summary>
+        /// <value>
+        /// GetOpenOrderProductionsStart.
+        /// </value>
+        public static string GetOpenOrderProductionsStart => "{LogBase} - Start - Orders: [{Orders}] - QfbId: {QfbId} - Count: {OrdersCount}";
+
+        /// <summary>
+        /// Gets GetOpenOrderProductionsCallGetOpenParents.
+        /// </summary>
+        /// <value>
+        /// GetOpenOrderProductionsCallGetOpenParents.
+        /// </value>
+        public static string GetOpenOrderProductionsCallGetOpenParents => "{LogBase} - No specific orders - Using GetOpenParentsForQfb - QfbId: {QfbId}";
+
+        /// <summary>
+        /// Gets GetOpenOrderProductionsNoData.
+        /// </summary>
+        /// <value>
+        /// GetOpenOrderProductionsNoData.
+        /// </value>
+        public static string GetOpenOrderProductionsNoData => "{LogBase} - No data found - Orders: [{Orders}]";
+
+        /// <summary>
+        /// Gets GetOpenOrderProductionsSuccess.
+        /// </summary>
+        /// <value>
+        /// GetOpenOrderProductionsSuccess.
+        /// </value>
+        public static string GetOpenOrderProductionsSuccess => "{LogBase} - Success - ResultOrders: [{ResultOrders}] - Total: {Total} - Returned: {PageSize}";
+
+        /// <summary>
+        /// Gets GetOpenOrderProductionsError.
+        /// </summary>
+        /// <value>
+        /// GetOpenOrderProductionsError.
+        /// </value>
+        public static string GetOpenOrderProductionsError => "{LogBase} - Unexpected error - Orders: [{Orders}";
     }
 }

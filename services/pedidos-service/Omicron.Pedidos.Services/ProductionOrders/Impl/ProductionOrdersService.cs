@@ -10,6 +10,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
@@ -141,7 +142,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                 this.logger.Information(LogsConstants.InsertAllProductionOrderProcessingStatus, JsonConvert.SerializeObject(productionOrderProcessingStatus));
                 await this.pedidosDao.InsertProductionOrderProcessingStatus(productionOrderProcessingStatus);
 
-                _ = Task.Run(() => this.SendKafkaMessagesAsync(productionOrderProcessingStatus));
+                await this.SendKafkaMessagesAsync(productionOrderProcessingStatus);
 
                 var validationsResult = new FinalizeProductionOrdersResult
                 {
@@ -171,8 +172,6 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
 
             if (!isProcessSuccesfully)
             {
-                var redisKey = string.Format(ServiceConstants.ProductionOrderFinalizingKey, productionOrderUpdated.ProductionOrderId);
-                await this.redisService.DeleteKey(redisKey);
                 return ServiceUtils.CreateResult(false, (int)HttpStatusCode.InternalServerError, null, null, null);
             }
 
@@ -194,12 +193,10 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
 
             var (productionOrderUpdated, isProcessSuccesfully) = await this.UpdateProductionOrdersOnPostgresProcess(productionOrderProcessingPayload, logBase);
             this.logger.Information(LogsConstants.UpdateProductionOrderProcessingStatus, logBase, JsonConvert.SerializeObject(productionOrderUpdated));
-            _ = this.pedidosDao.UpdatesProductionOrderProcessingStatus([productionOrderUpdated]);
+            await this.pedidosDao.UpdatesProductionOrderProcessingStatus([productionOrderUpdated]);
 
             if (!isProcessSuccesfully)
             {
-                var redisKey = string.Format(ServiceConstants.ProductionOrderFinalizingKey, productionOrderUpdated.ProductionOrderId);
-                await this.redisService.DeleteKey(redisKey);
                 return ServiceUtils.CreateResult(false, (int)HttpStatusCode.InternalServerError, null, null, null);
             }
 
@@ -218,10 +215,8 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
 
             var (productionOrderUpdated, isProcessSuccesfully) = await this.CreateProductionOrderPdf(productionOrderProcessingPayload, logBase);
             this.logger.Information(LogsConstants.UpdateProductionOrderProcessingStatus, logBase, JsonConvert.SerializeObject(productionOrderUpdated));
-            _ = this.pedidosDao.UpdatesProductionOrderProcessingStatus([productionOrderUpdated]);
-
-            var redisKey = string.Format(ServiceConstants.ProductionOrderFinalizingKey, productionOrderUpdated.ProductionOrderId);
-            await this.redisService.DeleteKey(redisKey);
+            await this.pedidosDao.UpdatesProductionOrderProcessingStatus([productionOrderUpdated]);
+            await this.DeleteRedisControlKeyToFinalizeProductionOrder(productionOrderUpdated.ProductionOrderId);
 
             if (!isProcessSuccesfully)
             {
@@ -264,10 +259,12 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
         public async Task<ResultModel> RetryFailedProductionOrderFinalization(RetryFailedProductionOrderFinalizationDto payloadRetry)
         {
             var logBase = string.Format(LogsConstants.RetryFailedProductionOrderFinalization, payloadRetry.BatchProcessId);
-            await this.InsertOnRedisKeysToProductionOrdersToRetry(payloadRetry.ProductionOrderProcessingPayload);
+            await this.UpdateProductionOrdersToRetryStatusInProgress(payloadRetry);
 
             foreach (var payloadRequest in payloadRetry.ProductionOrderProcessingPayload)
             {
+                var redisKey = string.Format(ServiceConstants.ProductionOrderFinalizingKey, payloadRequest.ProductionOrderId);
+                await this.redisService.WriteToRedis(redisKey, JsonConvert.SerializeObject(payloadRequest), new TimeSpan(12, 0, 0));
                 var payload = this.mapper.Map<ProductionOrderProcessingStatusModel>(payloadRequest);
                 await this.RetryFailedProductionOrderFinalizationProcess(payload, logBase);
             }
@@ -353,6 +350,110 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, ordersToReturn, null);
         }
 
+        public async Task<ResultModel> GetOpenOrderProdutions(Dictionary<string, string> parameters)
+        {
+            try
+            {
+                var qfbId = parameters[ServiceConstants.QfbId];
+                var offset = int.Parse(parameters[ServiceConstants.Offset]);
+                var limit = int.Parse(parameters[ServiceConstants.Limit]);
+
+                parameters.TryGetValue(ServiceConstants.Orders, out var orders);
+                var logBase = string.Format(LogsConstants.GetOpenOrderProductions, orders ?? qfbId);
+                var listOrders = ServiceUtils.SeparateOrders(orders);
+                this.logger.Information(LogsConstants.GetOpenOrderProductionsStart, logBase, string.Join(",", listOrders), qfbId, listOrders.Count);
+
+                if (listOrders.Count == 0)
+                {
+                    this.logger.Information(LogsConstants.GetOpenOrderProductionsCallGetOpenParents, logBase, qfbId);
+                    return await this.GetOpenParentsForQfb(qfbId, offset, limit, ServiceConstants.PartiallyDivided);
+                }
+
+                var existsParents = await this.pedidosDao.FindExistingParentIds(listOrders);
+                var childToParent = await this.pedidosDao.FindParentsByChildIds(listOrders);
+                var allParentIds = existsParents.Union(childToParent.Values).ToList();
+
+                if (allParentIds.Count == 0)
+                {
+                    this.logger.Information(LogsConstants.GetOpenOrderProductionsNoData, logBase, string.Join(",", listOrders));
+                    return ServiceUtils.CreateResult(true, 200, null, new List<OpenOrderProductionModel>(), null, null);
+                }
+
+                var parents = await this.pedidosDao.GetParentsAssignedToQfbByIds(allParentIds, qfbId, ServiceConstants.PartiallyDivided);
+
+                if (parents.Count == 0)
+                {
+                    this.logger.Information(LogsConstants.GetOpenOrderProductionsNoData, logBase, string.Join(",", listOrders));
+                    return ServiceUtils.CreateResult(true, 200, null, new List<OpenOrderProductionModel>(), null, null);
+                }
+
+                var parentIds = parents
+                    .Select(p => int.TryParse(p.OrderProductionId, out var n) ? n : -1)
+                    .Where(n => n >= 0)
+                    .Distinct()
+                    .ToList();
+
+                var childrenMap = await this.GetChildrenMapByParents(parentIds, excludeCanceled: true);
+                var requestedChildIds = childToParent.GroupBy(kv => kv.Value, kv => kv.Key.ToString())
+                                                    .ToDictionary(g => g.Key, g => g.ToHashSet());
+
+                var result = parents
+                    .Where(p => int.TryParse(p.OrderProductionId, out _))
+                    .Select(parent =>
+                    {
+                        var parentId = int.Parse(parent.OrderProductionId);
+                        var allVisibleChildren = childrenMap.GetValueOrDefault(parentId, new List<OpenOrderProductionDetailModel>())
+                            .OrderBy(c => int.TryParse(c.OrderProductionDetailId, out var n) ? n : int.MaxValue)
+                            .ToList();
+
+                        var hasRequestedChildren = requestedChildIds.ContainsKey(parentId);
+                        var isParentRequested = existsParents.Contains(parentId);
+
+                        if (hasRequestedChildren)
+                        {
+                            var filteredChildren = allVisibleChildren
+                                .Where(c => requestedChildIds[parentId].Contains(c.OrderProductionDetailId))
+                                .ToList();
+
+                            parent.OrderProductionDetail = filteredChildren.Count > 0 ? filteredChildren :
+                                                           (isParentRequested ? allVisibleChildren : new List<OpenOrderProductionDetailModel>());
+                            parent.AutoExpandOrderDetail = filteredChildren.Count > 0;
+                        }
+                        else
+                        {
+                            parent.OrderProductionDetail = allVisibleChildren;
+                            parent.AutoExpandOrderDetail = false;
+                        }
+
+                        return parent;
+                    })
+                    .Where(p =>
+                    {
+                        var hasChildren = (p.OrderProductionDetail?.Count ?? 0) > 0;
+                        if (!int.TryParse(p.OrderProductionId, out var pid))
+                        {
+                            return hasChildren;
+                        }
+
+                        return hasChildren || existsParents.Contains(pid);
+                    })
+                    .OrderBy(p => int.TryParse(p.OrderProductionId, out var n) ? n : int.MaxValue)
+                    .ToList();
+
+                var total = result.Count;
+                var page = result.Skip(offset).Take(limit).ToList();
+                await this.FullName(page);
+                this.logger.Information(LogsConstants.GetOpenOrderProductionsSuccess, logBase, string.Join(",", result.Select(r => r.OrderProductionId)), total, page.Count);
+
+                return ServiceUtils.CreateResult(true, 200, null, page, null, $"{total}");
+            }
+            catch (Exception ex)
+            {
+                this.logger.Error(ex, LogsConstants.GetOpenOrderProductionsError);
+                return ServiceUtils.CreateResult(false, (int)HttpStatusCode.InternalServerError, LogsConstants.AnUnexpectedErrorOccurred, null, null, null);
+            }
+        }
+
         private static ProductionOrderFailedResultModel CreateFinalizedFailedResponse(FinalizeProductionOrderModel orderToFinish, string reason)
         {
             return new ProductionOrderFailedResultModel
@@ -396,6 +497,115 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             return model;
         }
 
+        private async Task<Dictionary<int, List<OpenOrderProductionDetailModel>>> GetChildrenMapByParents(IEnumerable<int> parentIds, bool excludeCanceled = true)
+        {
+            var rawData = await this.pedidosDao.GetChildrenByParentIds(parentIds, excludeCanceled);
+            var culture = CultureInfo.GetCultureInfo("es-MX");
+            var dict = new Dictionary<int, List<OpenOrderProductionDetailModel>>();
+
+            foreach (var x in rawData)
+            {
+                if (!dict.TryGetValue(x.OrderId, out List<OpenOrderProductionDetailModel> list))
+                {
+                    list = new List<OpenOrderProductionDetailModel>();
+                    dict[x.OrderId] = list;
+                }
+
+                list.Add(new OpenOrderProductionDetailModel
+                {
+                    OrderProductionDetailId = x.DetailOrderId.ToString(),
+                    AssignedPieces = x.AssignedPieces,
+                    AssignedQfb = x.AssignedQfb,
+                    DateCreated = (x.CreatedAt ?? DateTime.MinValue)
+                        .ToLocalTime()
+                        .ToString("dd/MM/yyyy HH:mm:ss", culture),
+                });
+            }
+
+            return dict;
+        }
+
+        private async Task FullName(List<OpenOrderProductionModel> page)
+        {
+            var userIds = page
+                .SelectMany(p => new[] { p.QfbWhoSplit }
+                    .Concat(p.OrderProductionDetail?.Select(d => d.AssignedQfb) ?? Enumerable.Empty<string>()))
+                .Where(id => !string.IsNullOrWhiteSpace(id))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            if (userIds.Count > 0)
+            {
+                var usersResp = await this.userService.PostSimpleUsers(userIds, ServiceConstants.GetUsersById);
+                var users = JsonConvert.DeserializeObject<List<UserModel>>(usersResp.Response?.ToString() ?? "[]")
+                                ?? new List<UserModel>();
+
+                var fullNameById = users
+                    .Where(u => !string.IsNullOrWhiteSpace(u.Id))
+                    .ToDictionary(
+                        u => u.Id,
+                        u => string.Join(" ", new[] { u.FirstName, u.LastName }.Where(s => !string.IsNullOrWhiteSpace(s))).Trim(),
+                        StringComparer.OrdinalIgnoreCase);
+
+                foreach (var p in page)
+                {
+                    if (!string.IsNullOrWhiteSpace(p.QfbWhoSplit) &&
+                        fullNameById.TryGetValue(p.QfbWhoSplit, out var splitFullName) &&
+                        !string.IsNullOrWhiteSpace(splitFullName))
+                    {
+                        p.QfbWhoSplit = splitFullName;
+                    }
+
+                    foreach (var d in p.OrderProductionDetail ?? new List<OpenOrderProductionDetailModel>())
+                    {
+                        if (!string.IsNullOrWhiteSpace(d.AssignedQfb) &&
+                            fullNameById.TryGetValue(d.AssignedQfb, out var assigneeFullName) &&
+                            !string.IsNullOrWhiteSpace(assigneeFullName))
+                        {
+                            d.AssignedQfb = assigneeFullName;
+                        }
+                    }
+                }
+            }
+        }
+
+        private async Task<ResultModel> GetOpenParentsForQfb(
+        string qfbId,
+        int offset,
+        int limit,
+        string partiallyDivided)
+        {
+            var allParents = await this.pedidosDao.GetAllOpenParentOrdersByQfb(qfbId, partiallyDivided);
+            var ordered = allParents
+                .OrderBy(p => int.TryParse(p.OrderProductionId, out var n) ? n : int.MaxValue)
+                .ToList();
+
+            var total = ordered.Count;
+            var page = ordered.Skip(offset).Take(limit).ToList();
+
+            if (page.Count > 0)
+            {
+                var parentIds = page
+                    .Where(p => int.TryParse(p.OrderProductionId, out _))
+                    .Select(p => int.Parse(p.OrderProductionId))
+                    .Distinct()
+                    .ToList();
+
+                var childrenMap = await this.GetChildrenMapByParents(parentIds, excludeCanceled: true);
+
+                page.ForEach(parent =>
+                {
+                    parent.OrderProductionDetail = int.TryParse(parent.OrderProductionId, out var pid) &&
+                    childrenMap.TryGetValue(pid, out var details) ? details : new List<OpenOrderProductionDetailModel>();
+                    parent.AutoExpandOrderDetail = false;
+                });
+
+                await this.FullName(page);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, page, null, $"{total}");
+        }
+
         private async Task SeparateProductionOrderProcessAsync(
             int productionOrderId,
             int pieces,
@@ -416,18 +626,6 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             await this.mediator.Send(command);
         }
 
-        private async Task InsertOnRedisKeysToProductionOrdersToRetry(List<ProductionOrderProcessingStatusDto> productionOrders)
-        {
-            foreach (var po in productionOrders)
-            {
-                var redisKey = string.Format(ServiceConstants.ProductionOrderFinalizingKey, po.ProductionOrderId);
-                await this.redisService.WriteToRedis(
-                    redisKey,
-                    JsonConvert.SerializeObject(po),
-                    ServiceConstants.DefaultRedisValueTimeToLive);
-            }
-        }
-
         private async Task<ProductionOrderProcessingStatusModel> UpdateProcessStatus(
             string id,
             string status,
@@ -440,6 +638,12 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             modelToUpdate.LastStep = lastStep;
             modelToUpdate.LastUpdated = DateTime.Now;
             await this.pedidosDao.UpdatesProductionOrderProcessingStatus([modelToUpdate]);
+
+            if (status == ServiceConstants.FinalizeProcessFailedStatus)
+            {
+                await this.DeleteRedisControlKeyToFinalizeProductionOrder(modelToUpdate.ProductionOrderId);
+            }
+
             return modelToUpdate;
         }
 
@@ -521,13 +725,11 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             }
         }
 
-        private async Task RetryFailedProductionOrderFinalizationProcess(ProductionOrderProcessingStatusModel payload, string logBase)
+        private async Task RetryFailedProductionOrderFinalizationProcess(
+            ProductionOrderProcessingStatusModel payload, string logBase)
         {
             try
             {
-                var redisKey = string.Format(ServiceConstants.ProductionOrderFinalizingKey, payload.ProductionOrderId);
-                await this.redisService.WriteToRedis(redisKey, JsonConvert.SerializeObject(payload), new TimeSpan(12, 0, 0));
-
                 switch (payload.LastStep?.Trim())
                 {
                     case ServiceConstants.StepPrimaryValidations:
@@ -577,6 +779,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                     ex.Message,
                     ex.InnerException);
 
+                await this.DeleteRedisControlKeyToFinalizeProductionOrder(payload.ProductionOrderId);
                 this.logger.Error(ex, error);
             }
         }
@@ -697,7 +900,6 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
 
         private async Task<(ProductionOrderProcessingStatusModel, bool)> UpdateProductionOrdersOnPostgresProcess(ProductionOrderProcessingStatusModel productionOrderProcessingPayload, string logBase)
         {
-            var productionOrderProcessingStatusInBD = await this.pedidosDao.GetFirstProductionOrderProcessingStatusByProductionOrderId(productionOrderProcessingPayload.ProductionOrderId);
             var payloadJson = JsonConvert.DeserializeObject<FinalizeProductionOrderPayload>(productionOrderProcessingPayload.Payload);
             try
             {
@@ -766,32 +968,30 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                 this.logger.Information(LogsConstants.ListToUpdate, JsonConvert.SerializeObject(userOrdersToUpdate));
                 await this.pedidosDao.UpdateUserOrders(userOrdersToUpdate);
 
-                productionOrderProcessingStatusInBD = UpdateProcessingStatusAsync(
-                    productionOrderProcessingStatusInBD,
+                productionOrderProcessingPayload = await this.UpdateProcessStatus(
+                    productionOrderProcessingPayload.Id,
                     ServiceConstants.FinalizeProcessInProgressStatus,
-                    string.Empty,
+                    productionOrderProcessingPayload.ErrorMessage,
                     ServiceConstants.StepUpdatePostgres);
 
-                return (productionOrderProcessingStatusInBD, true);
+                return (productionOrderProcessingPayload, true);
             }
             catch (Exception ex)
             {
                 var error = string.Format(LogsConstants.EndFinalizeProductionOrderOnPostgresWithError, ex.Message, ex.InnerException);
                 this.logger.Error(ex, error);
 
-                productionOrderProcessingStatusInBD = UpdateProcessingStatusAsync(
-                    productionOrderProcessingStatusInBD,
-                    ServiceConstants.FinalizeProcessFailedStatus,
-                    string.Format(LogsConstants.GenericErrorLog, ex.Message, ex.InnerException),
-                    productionOrderProcessingStatusInBD.LastStep);
-
-                return (productionOrderProcessingStatusInBD, false);
+                productionOrderProcessingPayload = await this.UpdateProcessStatus(
+                        productionOrderProcessingPayload.Id,
+                        ServiceConstants.FinalizeProcessFailedStatus,
+                        string.Format(LogsConstants.GenericErrorLog, ex.Message, ex.InnerException),
+                        productionOrderProcessingPayload.LastStep);
+                return (productionOrderProcessingPayload, false);
             }
         }
 
         private async Task<(ProductionOrderProcessingStatusModel, bool)> CreateProductionOrderPdf(ProductionOrderProcessingStatusModel productionOrderProcessingPayload, string logBase)
         {
-            var productionOrderProcessingStatusInBD = await this.pedidosDao.GetFirstProductionOrderProcessingStatusByProductionOrderId(productionOrderProcessingPayload.ProductionOrderId);
             var payloadJson = JsonConvert.DeserializeObject<FinalizeProductionOrderPayload>(productionOrderProcessingPayload.Payload);
             try
             {
@@ -816,26 +1016,25 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
 
                 await SendToGeneratePdfUtils.CreateModelGeneratePdf(listSalesOrder, listIsolated, this.sapAdapter, this.pedidosDao, this.sapFileService, this.userService, true);
 
-                productionOrderProcessingStatusInBD = UpdateProcessingStatusAsync(
-                    productionOrderProcessingStatusInBD,
+                productionOrderProcessingPayload = await this.UpdateProcessStatus(
+                    productionOrderProcessingPayload.Id,
                     ServiceConstants.FinalizeProcessInSuccessStatus,
-                    string.Empty,
+                    productionOrderProcessingPayload.ErrorMessage,
                     ServiceConstants.StepCreatePdf);
 
-                return (productionOrderProcessingStatusInBD, true);
+                return (productionOrderProcessingPayload, true);
             }
             catch (Exception ex)
             {
                 var error = string.Format(LogsConstants.EndCreatePdfWithError, ex.Message, ex.InnerException);
                 this.logger.Error(ex, error);
 
-                productionOrderProcessingStatusInBD = UpdateProcessingStatusAsync(
-                    productionOrderProcessingStatusInBD,
+                productionOrderProcessingPayload = await this.UpdateProcessStatus(
+                    productionOrderProcessingPayload.Id,
                     ServiceConstants.FinalizeProcessFailedStatus,
                     string.Format(LogsConstants.GenericErrorLog, ex.Message, ex.InnerException),
-                    productionOrderProcessingStatusInBD.LastStep);
-
-                return (productionOrderProcessingStatusInBD, false);
+                    productionOrderProcessingPayload.LastStep);
+                return (productionOrderProcessingPayload, false);
             }
         }
 
@@ -852,6 +1051,26 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             var salesOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { salesOrdersId })).Where(x => x.Status != ServiceConstants.Cancelled).ToList();
 
             return (salesOrders, productionOrder);
+        }
+
+        private async Task DeleteRedisControlKeyToFinalizeProductionOrder(int productionOrderId)
+        {
+            var redisKey = string.Format(ServiceConstants.ProductionOrderFinalizingKey, productionOrderId);
+            await this.redisService.DeleteKey(redisKey);
+        }
+
+        private async Task UpdateProductionOrdersToRetryStatusInProgress(RetryFailedProductionOrderFinalizationDto payloadRetry)
+        {
+            var productionOrdersToRetry = payloadRetry.ProductionOrderProcessingPayload;
+            var productionOrdersDB = (await this.pedidosDao.GetProductionOrderProcessingStatusByProductionOrderIds(productionOrdersToRetry.Select(x => x.ProductionOrderId))).ToList();
+
+            productionOrdersDB.ForEach(x =>
+            {
+                x.LastUpdated = DateTime.Now;
+                x.Status = ServiceConstants.FinalizeProcessInProgressStatus;
+            });
+
+            await this.pedidosDao.UpdatesProductionOrderProcessingStatus(productionOrdersDB);
         }
     }
 }

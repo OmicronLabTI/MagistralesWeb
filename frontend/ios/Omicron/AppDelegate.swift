@@ -60,5 +60,6 @@ import  Firebase
         Resolver.register { HistoryViewModel() }.scope(.application)
         Resolver.register { AddComponentViewModel() }.scope(.application)
         Resolver.register { SplitOrderViewModel() }.scope(.application)
+        Resolver.register { HistoricViewModel() }.scope(.application)
     }
 }

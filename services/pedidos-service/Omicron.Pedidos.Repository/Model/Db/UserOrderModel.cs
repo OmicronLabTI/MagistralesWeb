@@ -340,6 +340,14 @@ namespace Omicron.Pedidos.Entities.Model
         public string SeparationId { get; set; }
 
         /// <summary>
+        /// Gets or sets status.
+        /// </summary>
+        /// <value>
+        /// String status.
+        [Column("statusworkparent")]
+        public string StatusWorkParent { get; set; }
+
+        /// <summary>
         /// Gets a value indicating whether gets.
         /// </summary>
         /// <value>

@@ -99,6 +99,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var invoices = ServiceShared.CalculateTernary(invoicesId.Any(), (await this.sapDao.GetInvoiceHeaderByInvoiceId(invoicesId)).ToList(), new List<InvoiceHeaderModel>());
 
             var sapSaleOrders = await this.sapDao.GetOrdersById(saleOrders);
+            var hasAnyChildFabOrder = await this.sapDao.GetHasAnyChildProductionOrder(saleOrders);
             var details = await this.sapDao.GetDetails(saleOrders.Cast<int?>().ToList());
             var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
             var pedidosResponse = await this.pedidosService.PostPedidos(saleOrders, ServiceConstants.GetUserSalesOrder);
@@ -129,6 +130,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 IsPackage = deliveryDetails.FirstOrDefault().IsPackage == ServiceConstants.IsPackage,
                 IsOmigenomics = deliveryDetails.Exists(del => ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(del.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(del.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(del.IsSecondary))),
                 DxpId = ServiceShared.ValidateNull(deliveryDetails.FirstOrDefault().DocNumDxp.GetShortShopTransaction()).ToUpper(),
+                HasChildOrders = hasAnyChildFabOrder,
             };
 
             return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, null);
@@ -467,17 +469,28 @@ namespace Omicron.SapAdapter.Services.Sap
             var themeIds = deliveryDetails.Select(x => x.Producto.ThemeId).Distinct().ToList();
             var themesResponse = await this.catalogsService.PostCatalogs(themeIds, ServiceConstants.GetThemes);
             var themes = JsonConvert.DeserializeObject<List<ProductColorsDto>>(themesResponse.Response.ToString());
+            var productionOrdersUsed = new List<string>();
             foreach (var order in deliveryDetails)
             {
                 order.BaseEntry ??= 0;
                 var item = products.FirstOrDefault(x => order.ProductoId == x.ProductoId);
                 item ??= new ProductoModel { IsMagistral = "N", LargeDescription = string.Empty, ProductoId = string.Empty };
-
-                var productType = ServiceShared.CalculateTernary(item.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
-
                 var saleDetail = prodOrders.FirstOrDefault(x => x.ProductoId == order.ProductoId);
                 var orderId = saleDetail?.OrdenId.ToString() ?? string.Empty;
-                var itemcode = ServiceShared.CalculateTernary(!string.IsNullOrEmpty(orderId), $"{item.ProductoId} - {orderId}", item.ProductoId);
+
+                var productType = ServiceShared.CalculateTernary(item.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
+                var itemcode = item.ProductoId;
+                var isChild = false;
+
+                if (!string.IsNullOrEmpty(orderId))
+                {
+                    var productionOrdersFilter = userOrders.Where(x => x.DeliveryId == order.DeliveryId && x.Salesorderid == order.BaseEntry.ToString() && !string.IsNullOrEmpty(x.Productionorderid) && !string.IsNullOrEmpty(x.MagistralQr)).ToList();
+                    var selectedProduct = productionOrdersFilter.Where(x => JsonConvert.DeserializeObject<PedidosMagistralQrModel>(x.MagistralQr).ItemCode == item.ProductoId && !productionOrdersUsed.Contains(x.Productionorderid)).FirstOrDefault() ?? new UserOrderModel() { Productionorderid = "0" };
+                    var productionOrder = prodOrders.Where(x => x.OrdenId == int.Parse(selectedProduct.Productionorderid)).FirstOrDefault();
+                    productionOrdersUsed.Add(selectedProduct.Productionorderid);
+                    itemcode = $"{item.ProductoId} - {selectedProduct.Productionorderid}";
+                    isChild = productionOrder.OrderRelationType == "N";
+                }
 
                 var listBatches = new List<string>();
 
@@ -522,6 +535,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     BackgroundColor = selectedTheme.BackgroundColor,
                     LabelText = selectedTheme.LabelText,
                     LabelColor = selectedTheme.TextColor,
+                    IsChild = isChild,
                 });
             }
 

@@ -620,9 +620,11 @@ namespace Omicron.SapAdapter.Test
         /// <returns>the data.</returns>
         public ResultDto GetUserOrderRemision()
         {
+            var qr = new PedidosMagistralQrModel() { ItemCode = "Linea1" };
             var userOrders = new List<UserOrderModel>
             {
-                new UserOrderModel { Salesorderid = "75000", Comments = "Comments", FinishedLabel = 1, Status = "Almacenado", DeliveryId = 46036 },
+                new UserOrderModel { Salesorderid = "75000", Comments = "Comments", FinishedLabel = 1, Status = "Almacenado", DeliveryId = 46036, MagistralQr = JsonConvert.SerializeObject(qr) },
+                new UserOrderModel { Salesorderid = "75001", Comments = "Comments", FinishedLabel = 1, Status = "Almacenado", DeliveryId = 46037, Productionorderid = "1003", MagistralQr = JsonConvert.SerializeObject(qr) },
             };
 
             return new ResultDto

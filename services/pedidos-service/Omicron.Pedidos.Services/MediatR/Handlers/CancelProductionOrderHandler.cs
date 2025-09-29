@@ -82,7 +82,27 @@ namespace Omicron.Pedidos.Services.MediatR.Handlers
                     (await this.pedidosDao.GetUserOrderByProducionOrder([request.ProductionOrderId.ToString()]))
                     .FirstOrDefault() ?? throw new Exception(LogsConstants.ProductionOrderNotFound);
 
+                if (productionOrder.IsProductionOrder &&
+                    string.Equals(productionOrder.StatusWorkParent, ServiceConstants.Pendiente, StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new InvalidOperationException(ServiceConstants.NotDivisionPending);
+                }
+
                 await this.ExecuteCancellationStepAsync(productionOrder, request, logBase);
+
+                var isParent = await this.pedidosDao.IsParentOrder(request.ProductionOrderId);
+                if (isParent &&
+                    !string.Equals(productionOrder.StatusWorkParent, ServiceConstants.Pendiente, StringComparison.OrdinalIgnoreCase))
+                {
+                    var newStatus = productionOrder.ReassignmentDate.HasValue
+                    ? ServiceConstants.Reasignado
+                    : ServiceConstants.Proceso;
+
+                    if (!string.Equals(productionOrder.StatusWorkParent, newStatus, StringComparison.OrdinalIgnoreCase))
+                    {
+                        await this.pedidosDao.UpdateStatusWorkParent(request.ProductionOrderId, newStatus);
+                    }
+                }
 
                 this.backgroundTaskQueue.QueueBackgroundWorkItem(async (services, token) =>
                 {
