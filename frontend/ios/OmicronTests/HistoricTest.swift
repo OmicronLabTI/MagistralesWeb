@@ -32,7 +32,7 @@ class HistoricTest: XCTestCase {
             endpointClosure: customEndpointClosure,
             stubClosure: MoyaProvider.immediatelyStub)
         dataRequest = HistoricRequestModel(
-            qfb: "d125566b-6321-4854-9a42-10fb5c5e4cc1",
+            qfbId: "d125566b-6321-4854-9a42-10fb5c5e4cc1",
             orders: "102920",
             offset: 0,
             limit: 10
