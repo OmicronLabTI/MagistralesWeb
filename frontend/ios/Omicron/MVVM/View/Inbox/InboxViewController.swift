@@ -222,7 +222,9 @@ class InboxViewController: UIViewController {
             .observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] data in
                 guard let self = self else { return }
                 let parentOrders = searchParentOrders(indexPath: self.indexPathsSelected)
-                if !parentOrders.isEmpty && data.typeOfStatus != StatusNameConstants.penddingStatus {
+                if !parentOrders.isEmpty &&
+                    data.typeOfStatus != StatusNameConstants.penddingStatus &&
+                    data.typeOfStatus != StatusNameConstants.inProcessStatus {
                     self.inboxViewModel.showThereParentOrderSelectedMessage(parentOrders: parentOrders)
                     return
                 } else {

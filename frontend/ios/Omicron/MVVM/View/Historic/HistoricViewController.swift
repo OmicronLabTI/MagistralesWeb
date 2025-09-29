@@ -14,6 +14,7 @@ import RxSwift
 class HistoricViewController: UIViewController {
     @IBOutlet var tableView: UITableView!
     @IBOutlet var searchBar: UISearchBar!
+    @IBOutlet weak var noResultsLabel: UILabel!
     var disposeBag: DisposeBag? = DisposeBag()
     var isLoading = false
     var refreshControl = UIRefreshControl()
@@ -73,47 +74,54 @@ class HistoricViewController: UIViewController {
         historicViewModel.tableData.subscribe(onNext: { [weak self] list in
             guard let self = self else { return }
             
-            for order in list {
-                if order.detailOrdersCount > 0 {
-                    if order.orderProductionDetail[0].orderProductionDetailId != 0 {
-                        let headerChildrenRow = ChildrenOrders(
-                            orderProductionDetailId: 0,
-                            assignedPieces: 0,
-                            assignedQfb: "",
-                            dateCreated: ""
-                        )
-                        order.orderProductionDetail.insert(headerChildrenRow, at: 0)
+            if let searchBarText = self.searchBar.text, !searchBarText.isEmpty && list.count == 0 {
+                tableView.isHidden = true
+                noResultsLabel.isHidden = false
+            } else {
+                tableView.isHidden = false
+                noResultsLabel.isHidden = true
+                for order in list {
+                    if order.orderProductionDetail.count > 0 {
+                        if order.orderProductionDetail[0].orderProductionDetailId != "0" {
+                            let headerChildrenRow = ChildrenOrders(
+                                orderProductionDetailId: "0",
+                                assignedPieces: 0,
+                                assignedQfb: "",
+                                dateCreated: ""
+                            )
+                            order.orderProductionDetail.insert(headerChildrenRow, at: 0)
+                        }
                     }
                 }
-            }
-            
-            // Contar cuántas filas había antes
-            let oldCount = tableView.numberOfRows(inSection: 0)
-            
-            // Agregar las nuevas órdenes al modelo
-            self.ordersList.append(contentsOf: list)
-            
-            // Calcular los nuevos IndexPath (padres + hijos si están expandidos)
-            var newIndexPaths: [IndexPath] = []
-            var row = oldCount
-            for order in list {
-                // Padre
-                newIndexPaths.append(IndexPath(row: row, section: 0))
-                row += 1
                 
-                // Hijos visibles si está expandido
-                if order.autoExpandOrderDetail {
-                    for _ in order.orderProductionDetail {
-                        newIndexPaths.append(IndexPath(row: row, section: 0))
-                        row += 1
+                // Contar cuántas filas había antes
+                let oldCount = tableView.numberOfRows(inSection: 0)
+                
+                // Agregar las nuevas órdenes al modelo
+                self.ordersList.append(contentsOf: list)
+                
+                // Calcular los nuevos IndexPath (padres + hijos si están expandidos)
+                var newIndexPaths: [IndexPath] = []
+                var row = oldCount
+                for order in list {
+                    // Padre
+                    newIndexPaths.append(IndexPath(row: row, section: 0))
+                    row += 1
+                    
+                    // Hijos visibles si está expandido
+                    if order.autoExpandOrderDetail {
+                        for _ in order.orderProductionDetail {
+                            newIndexPaths.append(IndexPath(row: row, section: 0))
+                            row += 1
+                        }
                     }
                 }
+                
+                // Insertar las nuevas filas
+                tableView.beginUpdates()
+                tableView.insertRows(at: newIndexPaths, with: .automatic)
+                tableView.endUpdates()
             }
-            
-            // Insertar las nuevas filas
-            tableView.beginUpdates()
-            tableView.insertRows(at: newIndexPaths, with: .automatic)
-            tableView.endUpdates()
         }).disposed(by: disposeBag!)
     }
     
@@ -220,9 +228,17 @@ extension HistoricViewController: UITableViewDataSource, UITableViewDelegate {
                 fatalError("No se pudo cargar la celda de childrenOrderRowViewCell")
             }
             if indices.parentIndex%2 == 0 {
-                cell.backgroundColor = OmicronColors.ligthGray
+                if order.autoExpandOrderDetail {
+                    cell.backgroundColor = OmicronColors.tableColorRow
+                } else {
+                    cell.backgroundColor = OmicronColors.ligthGray
+                }
             } else {
-                cell.backgroundColor = .white
+                if order.autoExpandOrderDetail {
+                    cell.backgroundColor = OmicronColors.tableColorRow
+                } else {
+                    cell.backgroundColor = .white
+                }
             }
             cell.isSelected = order.autoExpandOrderDetail
             cell.parentOrderIdLabel.text = "\(order.orderProductionId)"

@@ -653,11 +653,18 @@
                                 </prototypes>
                                 <sections/>
                             </tableView>
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No se encontraron órdenes con el número ingresado." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hhw-v4-TIu">
+                                <rect key="frame" x="217" y="501.5" width="557" height="23"/>
+                                <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="25"/>
+                                <color key="textColor" name="darkGray"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="g1W-ZW-8PP"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="g1W-ZW-8PP" firstAttribute="trailing" secondItem="rmC-XY-PGY" secondAttribute="trailing" id="32U-2F-t9P"/>
+                            <constraint firstItem="Hhw-v4-TIu" firstAttribute="centerX" secondItem="wc8-7b-CsO" secondAttribute="centerX" id="COC-b8-Mwb"/>
                             <constraint firstItem="g1W-ZW-8PP" firstAttribute="trailing" secondItem="daz-Hu-MUg" secondAttribute="trailing" id="DDo-jn-idc"/>
                             <constraint firstItem="daz-Hu-MUg" firstAttribute="leading" secondItem="g1W-ZW-8PP" secondAttribute="leading" id="HQz-cr-OVt"/>
                             <constraint firstItem="g1W-ZW-8PP" firstAttribute="bottom" secondItem="daz-Hu-MUg" secondAttribute="bottom" id="JUP-bK-ApZ"/>
@@ -666,12 +673,14 @@
                             <constraint firstItem="daz-Hu-MUg" firstAttribute="top" secondItem="hhE-q9-qcm" secondAttribute="bottom" id="blq-D9-TRv"/>
                             <constraint firstItem="g1W-ZW-8PP" firstAttribute="trailing" secondItem="hhE-q9-qcm" secondAttribute="trailing" id="e1C-ek-CDa"/>
                             <constraint firstItem="rmC-XY-PGY" firstAttribute="top" secondItem="g1W-ZW-8PP" secondAttribute="top" id="khe-9X-gHf"/>
+                            <constraint firstItem="Hhw-v4-TIu" firstAttribute="centerY" secondItem="wc8-7b-CsO" secondAttribute="centerY" constant="1" id="lvH-Kv-mrP"/>
                             <constraint firstItem="hhE-q9-qcm" firstAttribute="top" secondItem="rmC-XY-PGY" secondAttribute="bottom" id="p6U-s5-the"/>
                             <constraint firstItem="hhE-q9-qcm" firstAttribute="leading" secondItem="g1W-ZW-8PP" secondAttribute="leading" id="sCv-ys-E9o"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="9lt-BI-kRH"/>
                     <connections>
+                        <outlet property="noResultsLabel" destination="Hhw-v4-TIu" id="OBz-UK-tOf"/>
                         <outlet property="searchBar" destination="Q8E-fp-yhc" id="Zcs-yY-Bjl"/>
                         <outlet property="tableView" destination="daz-Hu-MUg" id="n5W-4I-Rdo"/>
                     </connections>
@@ -3419,17 +3428,17 @@
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="DetailTableViewCell" id="Nlc-ol-hxo" customClass="DetailTableViewCell" customModule="Magistrales" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="50" width="1161" height="162.5"/>
+                                        <rect key="frame" x="0.0" y="50" width="1161" height="163.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Nlc-ol-hxo" id="nkM-Kx-4J3">
-                                            <rect key="frame" x="0.0" y="0.0" width="1161" height="162.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="1161" height="163.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gaz-W2-6Zh">
-                                                    <rect key="frame" x="0.0" y="0.0" width="1161" height="162.5"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="1161" height="163.5"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aqC-3S-gUW">
-                                                            <rect key="frame" x="20" y="0.0" width="25" height="162.5"/>
+                                                            <rect key="frame" x="20" y="0.0" width="25" height="163.5"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="25" id="UpO-9s-IHn"/>
                                                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="50" id="nGG-BF-VEb"/>
@@ -3439,7 +3448,7 @@
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AtN-QF-rH5">
-                                                            <rect key="frame" x="45" y="0.0" width="100" height="162.5"/>
+                                                            <rect key="frame" x="45" y="0.0" width="100" height="163.5"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="100" id="tRU-BM-mgT"/>
                                                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="50" id="wVY-gl-vkE"/>
@@ -3449,7 +3458,7 @@
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8Nf-se-ske">
-                                                            <rect key="frame" x="145" y="0.0" width="430" height="162.5"/>
+                                                            <rect key="frame" x="145" y="0.0" width="430" height="163.5"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="430" id="LCf-kG-V6L"/>
                                                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="50" id="LPo-PX-Kgd"/>
@@ -3459,28 +3468,28 @@
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="2xc-yU-CuJ" userLabel="Stack">
-                                                            <rect key="frame" x="575" y="0.0" width="566" height="162.5"/>
+                                                            <rect key="frame" x="575" y="0.0" width="566" height="163.5"/>
                                                             <subviews>
                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="htG-7K-yPq">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="141.5" height="162.5"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="141.5" height="163.5"/>
                                                                     <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="17"/>
                                                                     <nil key="textColor"/>
                                                                     <nil key="highlightedColor"/>
                                                                 </label>
                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="i5W-cw-Qid">
-                                                                    <rect key="frame" x="141.5" y="0.0" width="141.5" height="162.5"/>
+                                                                    <rect key="frame" x="141.5" y="0.0" width="141.5" height="163.5"/>
                                                                     <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="17"/>
                                                                     <nil key="textColor"/>
                                                                     <nil key="highlightedColor"/>
                                                                 </label>
                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aP2-Hs-VO6">
-                                                                    <rect key="frame" x="283" y="0.0" width="141.5" height="162.5"/>
+                                                                    <rect key="frame" x="283" y="0.0" width="141.5" height="163.5"/>
                                                                     <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="17"/>
                                                                     <nil key="textColor"/>
                                                                     <nil key="highlightedColor"/>
                                                                 </label>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xxg-io-xgs">
-                                                                    <rect key="frame" x="424.5" y="0.0" width="141.5" height="162.5"/>
+                                                                    <rect key="frame" x="424.5" y="0.0" width="141.5" height="163.5"/>
                                                                 </view>
                                                             </subviews>
                                                             <constraints>
@@ -4551,20 +4560,20 @@
                                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                                 <prototypes>
                                                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="HistoryTableViewCell" id="XuV-gk-lOD" customClass="HistoryTableViewCell" customModule="Magistrales" customModuleProvider="target">
-                                                                        <rect key="frame" x="0.0" y="50" width="970.5" height="249.5"/>
+                                                                        <rect key="frame" x="0.0" y="50" width="970.5" height="250.5"/>
                                                                         <autoresizingMask key="autoresizingMask"/>
                                                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="XuV-gk-lOD" id="NZg-NL-LNA">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="970.5" height="249.5"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="970.5" height="250.5"/>
                                                                             <autoresizingMask key="autoresizingMask"/>
                                                                             <subviews>
                                                                                 <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="tcy-iN-bsq">
-                                                                                    <rect key="frame" x="0.0" y="10" width="970.5" height="229.5"/>
+                                                                                    <rect key="frame" x="0.0" y="10" width="970.5" height="230.5"/>
                                                                                     <subviews>
                                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="F94-Kv-kbc">
-                                                                                            <rect key="frame" x="0.0" y="0.0" width="70" height="229.5"/>
+                                                                                            <rect key="frame" x="0.0" y="0.0" width="70" height="230.5"/>
                                                                                             <subviews>
                                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="12341" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ibh-YX-q7e">
-                                                                                                    <rect key="frame" x="0.0" y="0.0" width="70" height="229.5"/>
+                                                                                                    <rect key="frame" x="0.0" y="0.0" width="70" height="230.5"/>
                                                                                                     <constraints>
                                                                                                         <constraint firstAttribute="width" constant="70" id="ePw-0O-1Bp"/>
                                                                                                     </constraints>
@@ -4581,10 +4590,10 @@
                                                                                             </constraints>
                                                                                         </view>
                                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="C6v-KP-RRv">
-                                                                                            <rect key="frame" x="80" y="0.0" width="140" height="229.5"/>
+                                                                                            <rect key="frame" x="80" y="0.0" width="140" height="230.5"/>
                                                                                             <subviews>
                                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="123" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fac-cr-pLR">
-                                                                                                    <rect key="frame" x="0.0" y="0.0" width="140" height="229.5"/>
+                                                                                                    <rect key="frame" x="0.0" y="0.0" width="140" height="230.5"/>
                                                                                                     <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="15"/>
                                                                                                     <nil key="textColor"/>
                                                                                                     <nil key="highlightedColor"/>
@@ -4599,10 +4608,10 @@
                                                                                             </constraints>
                                                                                         </view>
                                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="92g-s0-6BN">
-                                                                                            <rect key="frame" x="230" y="0.0" width="170.5" height="229.5"/>
+                                                                                            <rect key="frame" x="230" y="0.0" width="170.5" height="230.5"/>
                                                                                             <subviews>
                                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="descripcion del producto" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hXc-1e-eHX">
-                                                                                                    <rect key="frame" x="0.0" y="0.0" width="170.5" height="229.5"/>
+                                                                                                    <rect key="frame" x="0.0" y="0.0" width="170.5" height="230.5"/>
                                                                                                     <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="15"/>
                                                                                                     <nil key="textColor"/>
                                                                                                     <nil key="highlightedColor"/>
@@ -4616,10 +4625,10 @@
                                                                                             </constraints>
                                                                                         </view>
                                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zVy-Ao-4MG">
-                                                                                            <rect key="frame" x="410.5" y="0.0" width="120" height="229.5"/>
+                                                                                            <rect key="frame" x="410.5" y="0.0" width="120" height="230.5"/>
                                                                                             <subviews>
                                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="823-I0-zeH">
-                                                                                                    <rect key="frame" x="0.0" y="0.0" width="120" height="229.5"/>
+                                                                                                    <rect key="frame" x="0.0" y="0.0" width="120" height="230.5"/>
                                                                                                     <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="15"/>
                                                                                                     <nil key="textColor"/>
                                                                                                     <nil key="highlightedColor"/>
@@ -4634,10 +4643,10 @@
                                                                                             </constraints>
                                                                                         </view>
                                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="D6V-6u-hdD">
-                                                                                            <rect key="frame" x="540.5" y="0.0" width="80" height="229.5"/>
+                                                                                            <rect key="frame" x="540.5" y="0.0" width="80" height="230.5"/>
                                                                                             <subviews>
                                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pieza" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ghk-RT-3nD">
-                                                                                                    <rect key="frame" x="0.0" y="0.0" width="80" height="229.5"/>
+                                                                                                    <rect key="frame" x="0.0" y="0.0" width="80" height="230.5"/>
                                                                                                     <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="15"/>
                                                                                                     <nil key="textColor"/>
                                                                                                     <nil key="highlightedColor"/>
@@ -4652,10 +4661,10 @@
                                                                                             </constraints>
                                                                                         </view>
                                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Owu-ye-mBL">
-                                                                                            <rect key="frame" x="630.5" y="0.0" width="100" height="229.5"/>
+                                                                                            <rect key="frame" x="630.5" y="0.0" width="100" height="230.5"/>
                                                                                             <subviews>
                                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="MG" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mEb-hx-bqz">
-                                                                                                    <rect key="frame" x="0.0" y="0.0" width="100" height="229.5"/>
+                                                                                                    <rect key="frame" x="0.0" y="0.0" width="100" height="230.5"/>
                                                                                                     <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="15"/>
                                                                                                     <nil key="textColor"/>
                                                                                                     <nil key="highlightedColor"/>
@@ -4670,10 +4679,10 @@
                                                                                             </constraints>
                                                                                         </view>
                                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="I29-lb-i2z">
-                                                                                            <rect key="frame" x="740.5" y="0.0" width="120" height="229.5"/>
+                                                                                            <rect key="frame" x="740.5" y="0.0" width="120" height="230.5"/>
                                                                                             <subviews>
                                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="12/12/2023" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yKX-Me-xbb">
-                                                                                                    <rect key="frame" x="0.0" y="0.0" width="120" height="229.5"/>
+                                                                                                    <rect key="frame" x="0.0" y="0.0" width="120" height="230.5"/>
                                                                                                     <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="15"/>
                                                                                                     <nil key="textColor"/>
                                                                                                     <nil key="highlightedColor"/>
@@ -4688,10 +4697,10 @@
                                                                                             </constraints>
                                                                                         </view>
                                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Tta-5F-cbd">
-                                                                                            <rect key="frame" x="870.5" y="0.0" width="100" height="229.5"/>
+                                                                                            <rect key="frame" x="870.5" y="0.0" width="100" height="230.5"/>
                                                                                             <subviews>
                                                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KXN-dK-MBN" userLabel="circle">
-                                                                                                    <rect key="frame" x="12" y="110" width="10" height="10"/>
+                                                                                                    <rect key="frame" x="12" y="110.5" width="10" height="10"/>
                                                                                                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                                                                     <constraints>
                                                                                                         <constraint firstAttribute="height" constant="10" id="1dq-1f-jbv"/>
@@ -11392,6 +11401,9 @@ AAAEAQAAAAAAAABqAAAAAAAAAAAAAAAAAAW0IA
         <image name="square.and.arrow.down.on.square" catalog="system" width="116" height="128"/>
         <namedColor name="blueOmicron">
             <color red="0.063000001013278961" green="0.58399999141693115" blue="0.7839999794960022" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="darkGray">
+            <color red="0.66274509803921566" green="0.66274509803921566" blue="0.66274509803921566" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="lightGrayOmicron">
             <color red="0.49799999594688416" green="0.52899998426437378" blue="0.55299997329711914" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
