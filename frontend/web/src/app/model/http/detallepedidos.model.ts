@@ -39,7 +39,7 @@ export class IPedidoDetalleReq {
     orderRelationType: string;
     availablePieces: number;
     childOrdersCount: number;
-    childOrders: childrenOrders[]
+    childOrders: childrenOrders[];
 }
 
 export class childrenOrders {

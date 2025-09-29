@@ -91,7 +91,8 @@ export class FiltersService {
               t.status === ConstStatus.asignado,
               t.status.toLowerCase() === ConstStatus.enProceso.toLowerCase(),
               t.status === ConstStatus.pendiente,
-              t.status === ConstStatus.terminado
+              t.status === ConstStatus.terminado,
+              this.getValidParentOrderToReasign(t)
             ]),
             !t.onSplitProcess
           ])
@@ -142,6 +143,16 @@ export class FiltersService {
         ]);
         return enableButton;
     }
+  }
+
+  getValidParentOrderToReasign(data: any): boolean {
+    const props = ['status', 'availablePieces'];
+    const containsAllProps = props.every(x => data.hasOwnProperty(x));
+    if (containsAllProps) {
+      return data.status == ConstStatus.cancelado && data.availablePieces > 0;
+    }
+
+    return false;
   }
 
   getDataChecked = <T>(data: T[], checked: (prop: T) => boolean): T[] => data.filter(checked);

@@ -24,6 +24,9 @@ export const DetailOrderMock = {
             finishedLabel: 0,
             catalogGroup: '',
             onSplitProcess: false,
+            orderRelationType: "Y",
+            availablePieces: 0,
+            childOrdersCount: 0, childOrders: [],
         },
         {
             ordenFabricacionId: 89101,
@@ -45,6 +48,9 @@ export const DetailOrderMock = {
             pedidoId: 1234,
             catalogGroup: '',
             onSplitProcess: false,
+            orderRelationType: "Y",
+            availablePieces: 0,
+            childOrdersCount: 0, childOrders: [],
         },
         {
             ordenFabricacionId: 89102,
@@ -66,6 +72,9 @@ export const DetailOrderMock = {
             pedidoId: 1234,
             catalogGroup: '',
             onSplitProcess: false,
+            orderRelationType: "Y",
+            availablePieces: 0,
+            childOrdersCount: 0, childOrders: [],
         },
         {
             ordenFabricacionId: 89103,
@@ -87,6 +96,9 @@ export const DetailOrderMock = {
             pedidoId: 1234,
             catalogGroup: '',
             onSplitProcess: false,
+            orderRelationType: "Y",
+            availablePieces: 0,
+            childOrdersCount: 0, childOrders: [],
         },
         {
             ordenFabricacionId: 89104,
@@ -108,6 +120,9 @@ export const DetailOrderMock = {
             pedidoId: 1234,
             catalogGroup: '',
             onSplitProcess: false,
+            orderRelationType: "Y",
+            availablePieces: 0,
+            childOrdersCount: 0, childOrders: [],
         },
         {
             ordenFabricacionId: 89105,
@@ -129,6 +144,9 @@ export const DetailOrderMock = {
             pedidoId: 1234,
             catalogGroup: '',
             onSplitProcess: false,
+            orderRelationType: "Y",
+            availablePieces: 0,
+            childOrdersCount: 0, childOrders: [],
         }
     ]
 };

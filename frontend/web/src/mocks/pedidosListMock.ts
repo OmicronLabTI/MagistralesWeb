@@ -194,4 +194,4 @@ export const childrenOrdersMock: childrenOrders[] = [
         realLabel: "NA",
         finishedLabel: 0
     }
-]
+];
