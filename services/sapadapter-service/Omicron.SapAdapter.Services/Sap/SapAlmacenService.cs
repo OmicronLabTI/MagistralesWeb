@@ -382,7 +382,7 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             var magistralProducts = sapOrders.Count(x => x.ProductionOrderId != 0);
-            if (!userOrderModels.Any() || magistralProducts != userOrderModels.Count(x => !string.IsNullOrEmpty(x.Productionorderid)))
+            if (!userOrderModels.Any() || magistralProducts != userOrderModels.Count(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Status != ServiceConstants.Cancelado))
             {
                 return false;
             }
