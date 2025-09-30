@@ -752,5 +752,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="saleOrdersId">saleOrdersId.</param>
         /// <returns>the data.</returns>
         Task<bool> GetHasAnyChildProductionOrder(List<int> saleOrdersId);
+
+        /// <summary>
+        /// GetOrdersWithChildBySaleOrder.
+        /// </summary>
+        /// <param name="saleOrdersIds">saleOrdersIds.</param>
+        /// <returns>the data.</returns>
+        Task<List<OrdenFabricacionModel>> GetOrdersWithChildBySaleOrder(List<int> saleOrdersIds);
     }
 }
