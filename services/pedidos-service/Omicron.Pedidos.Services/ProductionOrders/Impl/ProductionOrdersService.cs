@@ -175,10 +175,11 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             }
 
             this.logger.Information(LogsConstants.SendKafkaMessageFinalizeProductionOrderPostgresql, logBase, JsonConvert.SerializeObject(productionOrderUpdated));
-            await this.kafkaConnector.PushMessage(
-                productionOrderUpdated,
-                ServiceConstants.KafkaFinalizeProductionOrderPostgresqlConfigName,
-                logBase);
+
+            await this.SendMessageToKafka(
+               productionOrderUpdated,
+               ServiceConstants.KafkaFinalizeProductionOrderPostgresqlConfigName,
+               logBase);
 
             this.logger.Information(LogsConstants.EndFinalizeProductionOrderInSap, JsonConvert.SerializeObject(productionOrderProcessingPayload));
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
@@ -199,10 +200,11 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                 return ServiceUtils.CreateResult(false, (int)HttpStatusCode.InternalServerError, null, null, null);
             }
 
-            await this.kafkaConnector.PushMessage(
+            await this.SendMessageToKafka(
                 productionOrderUpdated,
                 ServiceConstants.KafkaProductionOrderPdfGenerationConfigName,
                 logBase);
+
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
         }
 
@@ -406,7 +408,11 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             {
                 var logBase = string.Format(LogsConstants.FinalizeProductionOrdersAsync, productionOrderProcessing.Id);
                 this.logger.Information(LogsConstants.SendKafkaMessageFinalizeProductionOrderSap, logBase, JsonConvert.SerializeObject(productionOrderProcessing));
-                await this.kafkaConnector.PushMessage(productionOrderProcessing, ServiceConstants.KafkaFinalizeProductionOrderSapConfigName, logBase);
+
+                await this.SendMessageToKafka(
+                    productionOrderProcessing,
+                    ServiceConstants.KafkaFinalizeProductionOrderSapConfigName,
+                    logBase);
             }
         }
 
@@ -824,6 +830,18 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             });
 
             await this.pedidosDao.UpdatesProductionOrderProcessingStatus(productionOrdersDB);
+        }
+
+        private async Task SendMessageToKafka(
+            ProductionOrderProcessingStatusModel productionOrderProcessing,
+            string queueType,
+            string logBase)
+        {
+            var isSuccesfully = await this.kafkaConnector.PushMessage(productionOrderProcessing, queueType, logBase);
+            if (!isSuccesfully)
+            {
+                await this.DeleteRedisControlKeyToFinalizeProductionOrder(productionOrderProcessing.ProductionOrderId);
+            }
         }
     }
 }
