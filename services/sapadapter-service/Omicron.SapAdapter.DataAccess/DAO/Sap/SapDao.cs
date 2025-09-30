@@ -1716,6 +1716,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return hasAny;
         }
 
+        public async Task<List<OrdenFabricacionModel>> GetOrdersWithChildBySaleOrder(List<int> saleOrdersIds)
+        {
+            var query = await this.databaseContext.OrdenFabricacionModel.Where(x => saleOrdersIds.Contains(x.PedidoId.Value) && x.OrderRelationType == "N").AsNoTracking().ToListAsync();
+            return query;
+        }
+
         private IQueryable<InvoiceHeaderModel> GetInvoiceHeaderJoinDoctorBaseQuery()
         {
             return from invoice in this.databaseContext.InvoiceHeaderModel
