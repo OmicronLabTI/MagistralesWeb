@@ -291,7 +291,7 @@ namespace Omicron.SapAdapter.Services.Utils
             sapOrders = sapOrders.Where(x => x.IsParentFabOrder != "Y").ToList();
             var sapOrdersConfiguration = await ServiceUtils.GetRouteConfigurationsForProducts(catalogsService, redisService, ServiceConstants.AlmacenDbValue);
             sapOrdersConfiguration.ClassificationCodes.AddRange(new List<string> { ServiceConstants.OrderTypeMQ, ServiceConstants.OrderTypeMU, ServiceConstants.OrderTypePackage });
-            var usersOrdersIds = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(x => int.Parse(x.Productionorderid));
+            var usersOrdersIds = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(x => int.Parse(x.Productionorderid)).ToList();
             var sapOrdersFiltered = new List<CompleteRecepcionPedidoDetailModel>();
             sapOrders.ForEach(order =>
             {
@@ -320,7 +320,7 @@ namespace Omicron.SapAdapter.Services.Utils
                 }
             });
 
-            return sapOrdersFiltered.DistinctBy(x => new { x.DocNum, x.FabricationOrder }).ToList();
+            return sapOrdersFiltered.DistinctBy(x => new { x.DocNum, x.FabricationOrder, x.Detalles.ProductoId }).ToList();
         }
 
         /// <summary>

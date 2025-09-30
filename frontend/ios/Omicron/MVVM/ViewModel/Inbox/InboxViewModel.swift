@@ -58,6 +58,7 @@ class InboxViewModel {
     var currentSection: SectionOrder = SectionOrder(
         statusId: 0, statusName: String(), numberTask: 0, imageIndicatorStatus: String(), orders: [])
     var goToSuppliesView = PublishSubject<Void>()
+    var goToHistoricView = PublishSubject<Void>()
 
     @Injected var rootViewModel: RootViewModel
     @Injected var networkManager: NetworkManager
@@ -131,6 +132,10 @@ class InboxViewModel {
     func goToSupplies() {
         self.goToSuppliesView.onNext(())
     }
+    
+    func goToHistorical() {
+        self.goToHistoricView.onNext(())
+    }
 
     func groupByShopTransactionButtonDidTapBinding() {
         groupByShopTransactionButtonDidTap.subscribe(onNext: {[weak self] _ in
@@ -151,6 +156,7 @@ class InboxViewModel {
 
     func initExtension() {
         viewKPIDidPressed.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            print("here")
             guard let self = self else { return }
             self.showKPIView.onNext(true)
             self.deselectRow.onNext(true)

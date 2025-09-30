@@ -36,6 +36,7 @@ enum ApiService {
     case getLotsByProduct(data: LotsByProductRequest)
     case getWarehousesByItemcode(data: WarehouseByProductRequest)
     case postSplitOrder(data: SplitOrderRequest)
+    case getHistoric(data: HistoricRequestModel)
 }
 
 extension ApiService: AuthorizedTargetType {
@@ -109,6 +110,8 @@ extension ApiService: AuthorizedTargetType {
             return "/catalogos/product/warehouses"
         case .postSplitOrder:
             return "/pedidos/separate/order"
+        case .getHistoric:
+            return "/pedidos/open/productionorders"
         }
     }
     var method: Moya.Method {
@@ -136,7 +139,8 @@ extension ApiService: AuthorizedTargetType {
              .getContainer,
              .getHistory,
              .getLotsByProduct,
-             .getWarehousesByItemcode:
+             .getWarehousesByItemcode,
+             .getHistoric:
             return .get
         case .deleteItemOfOrdenDetail,
              .changeStatusOrder,
@@ -191,6 +195,8 @@ extension ApiService: AuthorizedTargetType {
         case .getMostCommonComponents(let data):
             return .requestParameters(parameters: data.toDictionary(), encoding: URLEncoding.queryString)
         case .getHistory(let data):
+            return .requestParameters(parameters: data.toDictionary(), encoding: URLEncoding.queryString)
+        case .getHistoric(let data):
             return .requestParameters(parameters: data.toDictionary(), encoding: URLEncoding.queryString)
         }
     }
@@ -274,6 +280,12 @@ extension ApiService: AuthorizedTargetType {
             guard let url = Bundle.main.url(forResource: "getComponents", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()
+            }
+            return data
+        case .getHistoric:
+            guard let url = Bundle.main.url(forResource: "getHistoric", withExtension: "json"),
+                  let data = try? Data(contentsOf: url) else {
+                return Data()
             }
             return data
         case .getWorkload:
