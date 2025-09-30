@@ -44,7 +44,8 @@ export const Endpoints = {
     rangeDateInit:
     `${environment.baseUrl}/api/catalogos/params/contains/field?MagistralesDaysToLook=MagistralesDaysToLook&ProductNoLabel=ProductNoLabel`,
     refuseOrdersService: `${environment.baseUrl}/api/pedidos/salesOrder/reject`,
-    productWarehouses: `${environment.baseUrl}/api/catalogos/product/warehouses`
+    productWarehouses: `${environment.baseUrl}/api/catalogos/product/warehouses`,
+    childrenOrdersDetail: `${environment.baseUrl}/api/pedidos/parentOrderDetail`
   },
   inventoryBatches: {
     getInventoryBatches: `${environment.baseUrl}/api/sapadapter/componentes/lotes/`,

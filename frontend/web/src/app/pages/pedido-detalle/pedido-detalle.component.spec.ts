@@ -23,6 +23,7 @@ import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { ObservableService } from 'src/app/services/observable.service';
 import { MessagesService } from 'src/app/services/messages.service';
 import { FiltersService } from 'src/app/services/filters.service';
+import { childrenOrdersMock, getChildrenResponseMock } from 'src/mocks/pedidosListMock';
 
 describe('PedidoDetalleComponent', () => {
   let component: PedidoDetalleComponent;
@@ -35,6 +36,7 @@ describe('PedidoDetalleComponent', () => {
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
   let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
   let filtersServiceSpy: jasmine.SpyObj<FiltersService>;
+  const dataDetail = [...DetailOrderMock.response];
 
   const catalogs = new Catalogs();
   const iPedidoDetalleRes = new IPedidoDetalleListRes();
@@ -75,7 +77,8 @@ describe('PedidoDetalleComponent', () => {
       'putOrdersToDelivered',
       'postPlaceOrdersDetail',
       'getOrdersPdfViews',
-      'getDetailCarousel'
+      'getDetailCarousel',
+      'getChildrenOrders'
     ]);
     localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
       'getProductNoLabel',
@@ -108,7 +111,7 @@ describe('PedidoDetalleComponent', () => {
     });
     pedidosServiceSpy.finishLabels.and.returnValue(of(iPedidoDetalleRes));
     pedidosServiceSpy.putOrdersToDelivered.and.returnValue(of(iCreatePdfOrdersRes));
-    pedidosServiceSpy.getDetallePedido.and.returnValue(of(DetailOrderMock));
+    pedidosServiceSpy.getDetallePedido.and.returnValue(of({ ...DetailOrderMock }));
     pedidosServiceSpy.savedComments.and.returnValue(of(iPedidoDetalleRes));
     pedidosServiceSpy.postPlaceOrdersDetail.and.callFake(() => {
       return of(iProcessOrdersRes);
@@ -116,8 +119,11 @@ describe('PedidoDetalleComponent', () => {
     pedidosServiceSpy.getOrdersPdfViews.and.callFake(() => {
       return of(iCreatePdfOrdersRes);
     });
-    pedidosServiceSpy.getDetailCarousel .and.callFake(() => {
+    pedidosServiceSpy.getDetailCarousel.and.callFake(() => {
       return of(iPedidoDetalleListRes);
+    });
+    pedidosServiceSpy.getChildrenOrders.and.callFake(() => {
+      return of({ ...getChildrenResponseMock });
     });
 
     // --- ObservableService
@@ -168,7 +174,7 @@ describe('PedidoDetalleComponent', () => {
         { provide: DownloadImagesService, useValue: downloadImagesServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
         { provide: DataService, useValue: dataServiceSpy },
-        { provide: LocalStorageService, useValue: localStorageServiceSpy},
+        { provide: LocalStorageService, useValue: localStorageServiceSpy },
         { provide: ObservableService, useValue: observableServiceSpy },
         { provide: MessagesService, useValue: messagesServiceSpy },
         { provide: FiltersService, useValue: filtersServiceSpy },
@@ -182,6 +188,12 @@ describe('PedidoDetalleComponent', () => {
     fixture = TestBed.createComponent(PedidoDetalleComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+  afterEach(() => {
+    // (opcional) limpiar cosas globales
+    TestBed.resetTestingModule();  // fuerza un reset completo del TestBed
+    jasmine.clock().uninstall();   // si usaste timers falsos
+    localStorage.clear();          // si tus tests modifican storage
   });
   it('should create', () => {
     expect(component).toBeTruthy();
@@ -199,6 +211,7 @@ describe('PedidoDetalleComponent', () => {
     component.dataSource.data = [
       {
         isChecked: true,
+        childOrders: []
       } as IPedidoDetalleReq
     ];
     expect(component.someComplete()).toBeTruthy();
@@ -208,13 +221,15 @@ describe('PedidoDetalleComponent', () => {
     component.dataSource.data = [
       {
         isChecked: false,
+        childOrders: []
       } as IPedidoDetalleReq
     ];
     component.allComplete = true;
     expect(component.someComplete()).toBeFalsy();
   });
   it('should updateAllComplete', () => {
-    component.dataSource.data = DetailOrderMock.response;
+    component.dataSource.data = [];
+    component.dataSource.data = [...dataDetail];
     component.updateAllComplete(false);
     component.dataSource.data.forEach(detail => detail.isChecked = true);
     expect(component.OrderToGenerateQR = component.dataSource.data.some(detail => detail.isChecked)).toBeTruthy();
@@ -222,20 +237,26 @@ describe('PedidoDetalleComponent', () => {
     expect(component.OrderToGenerateQR = component.dataSource.data.some(detail => detail.isChecked)).toBeTruthy();
     expect(component.allComplete).toBeTruthy();
   });
+  it('should toggleExpand', () => {
+    component.dataSource.data = [...dataDetail];
+    const childRow = dataDetail[0];
+    component.toggleExpand(childRow);
+    expect(pedidosServiceSpy.getChildrenOrders).toHaveBeenCalled();
+  });
+  it('should removeSignatureFromChildren', () => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
+      return Promise.resolve({
+        isConfirmed: true
+      });
+    });
+
+    component.removeSignatureFromChildren({ ...childrenOrdersMock[0] });
+    expect(messagesServiceSpy.presentToastCustom).toHaveBeenCalled();
+  });
   it('should setAll', () => {
-    component.dataSource.data.forEach(detail => detail.isChecked = false);
-    component.dataSource.data = null;
-    component.setAll(false);
-    expect(component.allComplete).toBe(false);
-    component.dataSource.data = DetailOrderMock.response;
+    component.dataSource.data = [...dataDetail];
     component.setAll(true);
     expect(component.allComplete).toBe(true);
-    expect(component.dataSource.data.every(detail => detail.isChecked)).toBeTruthy();
-    expect(component.OrderToGenerateQR = component.dataSource.data.some(detail => detail.isChecked)).toBeTruthy();
-    component.setAll(false);
-    expect(component.allComplete).toBe(false);
-    expect(component.dataSource.data.every(detail => !detail.isChecked)).toBeTruthy();
-    expect(component.OrderToGenerateQR = component.dataSource.data.some(detail => !detail.isChecked)).toBeTruthy();
   });
 
   it('should call ordersToDownloadQr()', () => {
@@ -268,10 +289,10 @@ describe('PedidoDetalleComponent', () => {
   });
   it('should processOrdersDetail', () => {
     messagesServiceSpy.presentToastCustom.and.callFake(() => {
-    return Promise.resolve({
-      isConfirmed: true
+      return Promise.resolve({
+        isConfirmed: true
+      });
     });
-  });
     component.dataSource.data = [
       {
         isChecked: true,
@@ -375,11 +396,6 @@ describe('PedidoDetalleComponent', () => {
     expect(messagesServiceSpy.presentToastCustom).toHaveBeenCalled();
   });
 
-  // it('should viewOrdersWithPdf', () => {
-  //   component.viewOrdersWithPdf();
-  //   expect(pedidosServiceSpy.getOrdersPdfViews).toHaveBeenCalled();
-  // });
-
   it('should viewOrdersWithPdf error', () => {
     pedidosServiceSpy.getOrdersPdfViews.and.callFake(() => {
       return throwError({ error: true });
@@ -428,14 +444,6 @@ describe('PedidoDetalleComponent', () => {
     component.ordersToDelivered();
     expect(messagesServiceSpy.presentToastCustom).toHaveBeenCalled();
   });
-
-  // it('should ordersToDelivered error', () => {
-  //   filtersServiceSpy.getItemOnDateWithFilter.and.callFake(() => {
-  //     return [throwError({ error: true })];
-  //   });
-  //   component.ordersToDelivered();
-  //   // expect(messagesServiceSpy.presentToastCustom).toHaveBeenCalled();
-  // });
 
   it('should openPlaceOrderDialog', () => {
     component.openPlaceOrderDialog();

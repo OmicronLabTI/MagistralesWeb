@@ -39,10 +39,11 @@ export class IPedidoDetalleReq {
     orderRelationType: string;
     availablePieces: number;
     childOrdersCount: number;
-    childOrders: childrenOrders[];
+    childOrders: ChildrenOrders[];
 }
 
-export class childrenOrders {
+export class ChildrenOrders {
+    isChecked: boolean;
     ordenFabricacionId: number;
     codigoProducto: string;
     descripcionProducto: string;
@@ -66,7 +67,7 @@ export class IPedidoDetalleListRes extends BaseResponseHttp {
 }
 
 export class IChildrenOrdersListRes extends BaseResponseHttp {
-    response: childrenOrders[]
+    response: ChildrenOrders[];
 }
 
 export class IQrByOrdersRes extends BaseResponseHttp {
