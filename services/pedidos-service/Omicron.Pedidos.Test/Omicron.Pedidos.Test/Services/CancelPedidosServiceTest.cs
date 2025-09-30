@@ -20,8 +20,6 @@ namespace Omicron.Pedidos.Test.Services
 
         private Mock<ISapAdapter> mockSapAdapter;
 
-        private Mock<IKafkaConnector> kafkaConnector;
-
         private Mock<ISapServiceLayerAdapterService> serviceLayerAdapterService;
 
         private Mock<IPedidosDao> pedidosDaoMock;
@@ -117,11 +115,6 @@ namespace Omicron.Pedidos.Test.Services
             this.context.SaveChanges();
             this.pedidosDao = new PedidosDao(this.context);
             this.pedidosDaoMock = new Mock<IPedidosDao>();
-
-            this.kafkaConnector = new Mock<IKafkaConnector>();
-            this.kafkaConnector
-                .Setup(m => m.PushMessage(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(true));
         }
 
         /// <summary>
@@ -165,7 +158,7 @@ namespace Omicron.Pedidos.Test.Services
             var mockUserService = new Mock<IUsersService>();
             var mockSapFile = new Mock<ISapFileService>();
 
-            return new CancelPedidosService(this.mockSapAdapter.Object, this.pedidosDao, mockSapFile.Object, mockUserService.Object, this.kafkaConnector.Object, this.serviceLayerAdapterService.Object);
+            return new CancelPedidosService(this.mockSapAdapter.Object, this.pedidosDao, mockSapFile.Object, mockUserService.Object, this.serviceLayerAdapterService.Object);
         }
 
         /// <summary>

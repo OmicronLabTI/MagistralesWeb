@@ -284,11 +284,6 @@ spec:
                 secretKeyRef:
                   name: omicron-uat
                   key: omicron_net_postgress_db
-            - name: EVENHUB_CONNECTION_STRING
-              valueFrom:
-                secretKeyRef:
-                  name: omicron-uat
-                  key: eventhub_net_connection
             - name: EVENTHUB_NET_CONNECTION_FINALIZEPRODUCTIONORDERSAP
               valueFrom:
                 secretKeyRef:
