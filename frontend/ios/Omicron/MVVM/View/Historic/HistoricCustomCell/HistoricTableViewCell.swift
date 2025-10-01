@@ -15,4 +15,5 @@ class HistoricTableViewCell: UITableViewCell {
     @IBOutlet weak var availablePiecesLabel: UILabel!
     @IBOutlet weak var qfbLabel: UILabel!
     @IBOutlet weak var childrenOrdersLabel: UILabel!
+    @IBOutlet weak var actionImage: UIImageView!
 }
