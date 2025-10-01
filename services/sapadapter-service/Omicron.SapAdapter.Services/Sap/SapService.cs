@@ -180,7 +180,10 @@ namespace Omicron.SapAdapter.Services.Sap
             var ordersParent = response.ProductionOrderSeparations;
             var productionOrdersDetail = response.ProductionOrderSeparationsDetail;
 
-            var listUsers = await this.GetUsers(userOrders);
+            var userIDs = userOrders.Where(x => !string.IsNullOrEmpty(x.Userid)).Select(x => x.Userid).Distinct().ToList();
+            var createUsers = productionOrdersDetail.Where(x => !string.IsNullOrEmpty(x.UserId)).Select(x => x.UserId).Distinct().ToList();
+            userIDs.AddRange(createUsers);
+            var listUsers = await this.GetUsersById(userIDs);
 
             var listToProcess = details.Where(y => y.OrdenFabricacionId == 0).ToList();
             listToProcess.AddRange(details.Where(y => y.OrdenFabricacionId != 0).UtilsDistinctBy(y => y.OrdenFabricacionId));

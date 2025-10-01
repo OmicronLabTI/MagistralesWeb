@@ -199,6 +199,6 @@ namespace Omicron.SapAdapter.Entities.Model
         /// Gets or sets ChildrenOrderPieces.
         /// </summary>
         /// <value>The ChildrenOrderPieces.</value>
-        public List<ChildOrderModel> ChildOrders { get; set; }
+        public List<ChildOrderModel> ChildOrders { get; set; } = new List<ChildOrderModel>();
     }
 }

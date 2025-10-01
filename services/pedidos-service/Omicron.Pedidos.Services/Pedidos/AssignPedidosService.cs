@@ -262,14 +262,13 @@ namespace Omicron.Pedidos.Services.Pedidos
             var validOrders = orders.Where(x => x.Status != ServiceConstants.Cancelled).ToList();
             var parentIds = parents.Where(x => x.Productionorderid != null).Select(p => int.Parse(p.Productionorderid)).ToList();
             var parentValids = await this.pedidosDao.GetProductionOrderSeparationByOrderId(parentIds);
-            parentValids.ForEach(x =>
-            {
-                if (x.Status == ServiceConstants.PartiallyDivided)
-                {
-                    var parentValid = parents.FirstOrDefault(o => o.Productionorderid == x.OrderId.ToString());
-                    validOrders.Add(parentValid);
-                }
-            });
+            var partiallyDividedParents = parentValids
+                .Where(x => x.Status == ServiceConstants.PartiallyDivided)
+                .Select(x => parents.FirstOrDefault(o => o.Productionorderid == x.OrderId.ToString()))
+                .Where(p => p != null)
+                .ToList();
+
+            validOrders.AddRange(partiallyDividedParents);
             return validOrders;
         }
 
