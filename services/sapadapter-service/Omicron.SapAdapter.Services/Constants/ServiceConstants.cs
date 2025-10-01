@@ -1176,6 +1176,7 @@ namespace Omicron.SapAdapter.Services.Constants
             Almacenado,
             Finalizado,
             Pendiente,
+            Cancelado,
         };
 
         /// <summary>

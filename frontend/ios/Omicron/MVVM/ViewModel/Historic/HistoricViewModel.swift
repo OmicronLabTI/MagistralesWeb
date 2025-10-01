@@ -87,7 +87,6 @@ class HistoricViewModel {
         
         self.loading.onNext(true)
         networkManager.getHistoric(request).subscribe(onNext: {[weak self] res in
-            dump(res)
             guard let self = self else { return }
             self.loading.onNext(false)
             if res.code == 200 {
@@ -108,7 +107,7 @@ class HistoricViewModel {
     
     func getRequestData(orders: String, offset: Int, limit: Int) -> HistoricRequestModel {
         return HistoricRequestModel(
-            qfb: Persistence.shared.getUserData()?.id ?? String(),
+            qfbId: Persistence.shared.getUserData()?.id ?? String(),
             orders: orders,
             offset: offset,
             limit: limit

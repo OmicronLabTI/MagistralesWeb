@@ -14,6 +14,7 @@ import RxSwift
 class HistoricViewController: UIViewController {
     @IBOutlet var tableView: UITableView!
     @IBOutlet var searchBar: UISearchBar!
+    @IBOutlet weak var noResultsLabel: UILabel!
     var disposeBag: DisposeBag? = DisposeBag()
     var isLoading = false
     var refreshControl = UIRefreshControl()
@@ -26,6 +27,7 @@ class HistoricViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        self.title = "Órdenes padre abiertas"
         
         // Configuración de la tabla
         tableView.dataSource = self
@@ -60,6 +62,16 @@ class HistoricViewController: UIViewController {
     }
     
     func modelBinding() {
+        self.searchBar.backgroundImage = UIImage()
+        if let textField = searchBar.value(forKey: "searchField") as? UITextField {
+            textField.backgroundColor = .white  // fondo blanco
+            
+            textField.layer.borderColor = UIColor.lightGray.cgColor // color del borde
+            textField.layer.borderWidth = 1.0 / UIScreen.main.scale // 1 px real (retina safe)
+            
+            textField.layer.cornerRadius = 8   // opcional, para bordes redondeados
+            textField.layer.masksToBounds = true
+        }
         self.searchBar.rx.text.orEmpty.bind(to: historicViewModel.searchFilter).disposed(by: disposeBag!)
         self.searchBar.rx.searchButtonClicked.bind(to: historicViewModel.searchDidTap).disposed(by: disposeBag!)
         self.historicViewModel.restartTable.subscribe(onNext: {[weak self] restartTable in
@@ -73,47 +85,54 @@ class HistoricViewController: UIViewController {
         historicViewModel.tableData.subscribe(onNext: { [weak self] list in
             guard let self = self else { return }
             
-            for order in list {
-                if order.detailOrdersCount > 0 {
-                    if order.orderProductionDetail[0].orderProductionDetailId != 0 {
-                        let headerChildrenRow = ChildrenOrders(
-                            orderProductionDetailId: 0,
-                            assignedPieces: 0,
-                            assignedQfb: "",
-                            dateCreated: ""
-                        )
-                        order.orderProductionDetail.insert(headerChildrenRow, at: 0)
+            if let searchBarText = self.searchBar.text, !searchBarText.isEmpty && list.count == 0 {
+                tableView.isHidden = true
+                noResultsLabel.isHidden = false
+            } else {
+                tableView.isHidden = false
+                noResultsLabel.isHidden = true
+                for order in list {
+                    if order.orderProductionDetail.count > 0 {
+                        if order.orderProductionDetail[0].orderProductionDetailId != "0" {
+                            let headerChildrenRow = ChildrenOrders(
+                                orderProductionDetailId: "0",
+                                assignedPieces: 0,
+                                assignedQfb: "",
+                                dateCreated: ""
+                            )
+                            order.orderProductionDetail.insert(headerChildrenRow, at: 0)
+                        }
                     }
                 }
-            }
-            
-            // Contar cuántas filas había antes
-            let oldCount = tableView.numberOfRows(inSection: 0)
-            
-            // Agregar las nuevas órdenes al modelo
-            self.ordersList.append(contentsOf: list)
-            
-            // Calcular los nuevos IndexPath (padres + hijos si están expandidos)
-            var newIndexPaths: [IndexPath] = []
-            var row = oldCount
-            for order in list {
-                // Padre
-                newIndexPaths.append(IndexPath(row: row, section: 0))
-                row += 1
                 
-                // Hijos visibles si está expandido
-                if order.autoExpandOrderDetail {
-                    for _ in order.orderProductionDetail {
-                        newIndexPaths.append(IndexPath(row: row, section: 0))
-                        row += 1
+                // Contar cuántas filas había antes
+                let oldCount = tableView.numberOfRows(inSection: 0)
+                
+                // Agregar las nuevas órdenes al modelo
+                self.ordersList.append(contentsOf: list)
+                
+                // Calcular los nuevos IndexPath (padres + hijos si están expandidos)
+                var newIndexPaths: [IndexPath] = []
+                var row = oldCount
+                for order in list {
+                    // Padre
+                    newIndexPaths.append(IndexPath(row: row, section: 0))
+                    row += 1
+                    
+                    // Hijos visibles si está expandido
+                    if order.autoExpandOrderDetail {
+                        for _ in order.orderProductionDetail {
+                            newIndexPaths.append(IndexPath(row: row, section: 0))
+                            row += 1
+                        }
                     }
                 }
+                
+                // Insertar las nuevas filas
+                tableView.beginUpdates()
+                tableView.insertRows(at: newIndexPaths, with: .automatic)
+                tableView.endUpdates()
             }
-            
-            // Insertar las nuevas filas
-            tableView.beginUpdates()
-            tableView.insertRows(at: newIndexPaths, with: .automatic)
-            tableView.endUpdates()
         }).disposed(by: disposeBag!)
     }
     
@@ -175,7 +194,6 @@ extension HistoricViewController: UITableViewDataSource, UITableViewDelegate {
         guard let indices = orderAndChildIndex(for: indexPath) else {
             return UITableViewCell()
         }
-        
         if let childIndex = indices.childIndex {
             if childIndex == 0 {
                 // Fila para headers de ordenes hijas
@@ -186,14 +204,14 @@ extension HistoricViewController: UITableViewDataSource, UITableViewDelegate {
                 }
                 cell.isUserInteractionEnabled = false
                 cell.backgroundColor = OmicronColors.customColor
-                cell.childrenOrderIdLabel.text = "No. Orden hija"
-                cell.childrenOrderIdLabel.font = UIFont.boldSystemFont(ofSize: 17)
-                cell.assignedPiecesLabel.text = "Piezas asignadas"
-                cell.assignedPiecesLabel.font = UIFont.boldSystemFont(ofSize: 17)
-                cell.assignedQfbLabel.text = "QFB asignado"
-                cell.assignedQfbLabel.font = UIFont.boldSystemFont(ofSize: 17)
-                cell.createdDateLabel.text = "Fecha y hora de creación"
-                cell.createdDateLabel.font = UIFont.boldSystemFont(ofSize: 17)
+                UtilsManager.shared.labelsStyle(label: cell.childrenOrderIdLabel, text: "N° Orden hija",
+                                                fontSize: 17, typeFont: "bold")
+                UtilsManager.shared.labelsStyle(label: cell.assignedPiecesLabel, text: "Piezas asignadas",
+                                                fontSize: 17, typeFont: "bold")
+                UtilsManager.shared.labelsStyle(label: cell.assignedQfbLabel, text: "QFB asignado",
+                                                fontSize: 17, typeFont: "bold")
+                UtilsManager.shared.labelsStyle(label: cell.createdDateLabel, text: "Fecha y hora de creación",
+                                                fontSize: 17, typeFont: "bold")
                 return cell
             } else {
                 // Fila hija o informacion expandida
@@ -204,15 +222,18 @@ extension HistoricViewController: UITableViewDataSource, UITableViewDelegate {
                     fatalError("No se pudo cargar la celda de childrenOrderRowViewCell")
                 }
                 cell.backgroundColor = OmicronColors.customColor
-                cell.childrenOrderIdLabel.text = "\(detail.orderProductionDetailId)"
-                cell.assignedPiecesLabel.text = "\(detail.assignedPieces)"
-                cell.assignedQfbLabel.text = "\(detail.assignedQfb)"
-                cell.createdDateLabel.text = "\(detail.dateCreated)"
+                UtilsManager.shared.labelsStyle(label: cell.childrenOrderIdLabel, text: "\(detail.orderProductionDetailId)",
+                                                fontSize: 17, typeFont: "regular")
+                UtilsManager.shared.labelsStyle(label: cell.assignedPiecesLabel, text: "\(detail.assignedPieces)",
+                                                fontSize: 17, typeFont: "regular")
+                UtilsManager.shared.labelsStyle(label: cell.assignedQfbLabel, text: "\(detail.assignedQfb)",
+                                                fontSize: 17, typeFont: "regular")
+                UtilsManager.shared.labelsStyle(label: cell.createdDateLabel, text: "\(detail.dateCreated)",
+                                                fontSize: 17, typeFont: "regular")
                 return cell
             }
         } else {
             // Fila padre
-            
             let order = ordersList[indices.parentIndex]
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: ViewControllerIdentifiers.historicTableViewCell,
@@ -220,9 +241,17 @@ extension HistoricViewController: UITableViewDataSource, UITableViewDelegate {
                 fatalError("No se pudo cargar la celda de childrenOrderRowViewCell")
             }
             if indices.parentIndex%2 == 0 {
-                cell.backgroundColor = OmicronColors.ligthGray
+                if order.autoExpandOrderDetail {
+                    cell.backgroundColor = OmicronColors.tableColorRow
+                } else {
+                    cell.backgroundColor = OmicronColors.ligthGray
+                }
             } else {
-                cell.backgroundColor = .white
+                if order.autoExpandOrderDetail {
+                    cell.backgroundColor = OmicronColors.tableColorRow
+                } else {
+                    cell.backgroundColor = .white
+                }
             }
             cell.isSelected = order.autoExpandOrderDetail
             cell.parentOrderIdLabel.text = "\(order.orderProductionId)"
@@ -241,6 +270,12 @@ extension HistoricViewController: UITableViewDataSource, UITableViewDelegate {
         let parentIndex = indices.parentIndex
         ordersList[parentIndex].autoExpandOrderDetail.toggle()
         
+        if let cell = tableView.cellForRow(at: indexPath) as? HistoricTableViewCell {
+            let isExpanded = ordersList[parentIndex].autoExpandOrderDetail
+            let imageName = isExpanded ? "chevron.up" : "chevron.down"
+            cell.actionImage.image = UIImage(systemName: imageName)
+        }
+
         let startRow = indexPath.row + 1
         let count = ordersList[parentIndex].orderProductionDetail.count
         var indexPaths: [IndexPath] = []
@@ -255,7 +290,7 @@ extension HistoricViewController: UITableViewDataSource, UITableViewDelegate {
         }
         tableView.endUpdates()
     }
-    
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
     }
