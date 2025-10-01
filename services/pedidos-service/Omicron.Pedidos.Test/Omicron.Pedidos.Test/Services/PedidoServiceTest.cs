@@ -52,6 +52,7 @@ namespace Omicron.Pedidos.Test.Services
             this.context.UserOrderModel.AddRange(this.GetUserOrderModel());
             this.context.UserOrderSignatureModel.AddRange(this.GetSignature());
             this.context.ProductionOrderSeparationModel.AddRange(this.GetProductionOrderSeparation());
+            this.context.ProductionOrderSeparationDetailModel.AddRange(this.GetProductionOrderSeparationDetailModel());
             this.context.SaveChanges();
 
             this.reportingService = new Mock<IReportingService>();
@@ -111,6 +112,23 @@ namespace Omicron.Pedidos.Test.Services
 
             // act
             var response = await this.pedidosService.GetUserOrderBySalesOrder(listIds);
+
+            // assert
+            Assert.That(response, Is.Not.Null);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task GetUserOrderBySalesOrderWithDetail()
+        {
+            // arrange
+            var listIds = new List<int> { 1, 2, 3 };
+
+            // act
+            var response = await this.pedidosService.GetUserOrderBySalesOrderWithDetail(listIds);
 
             // assert
             Assert.That(response, Is.Not.Null);
@@ -1231,6 +1249,54 @@ namespace Omicron.Pedidos.Test.Services
             Assert.That(response.Count, Is.EqualTo(2));
             Assert.That(response.Any(x => x.FabOrderId == 226274), Is.True);
             Assert.That(response.Any(x => x.FabOrderId == 226277), Is.True);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetFabOrdersOnlyParentsOrComplete()
+        {
+            var dates = new DateTime(2025, 05, 28).ToString("dd/MM/yyyy");
+            var dateFinal = new DateTime(2025, 05, 30).ToString("dd/MM/yyyy");
+            var dicParams = new Dictionary<string, string>
+            {
+                { ServiceConstants.FechaInicio, string.Format("{0}-{1}", dates, dateFinal) },
+                { ServiceConstants.Classifications, "MG" },
+                { ServiceConstants.Parent, "true" },
+            };
+
+            var localSapAdapter = new Mock<ISapAdapter>();
+            var mockUsers = new Mock<IUsersService>();
+            var mockRedis = new Mock<IRedisService>();
+
+            localSapAdapter
+                .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetFabricacionOrderModelOnlyParentsOrComplete()));
+
+            mockUsers
+                .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserModel()));
+
+            mockRedis
+                .Setup(r => r.GetRedisKeys(It.IsAny<List<string>>()))
+                .ReturnsAsync(new List<string>());
+
+            var mockSapFile = new Mock<ISapFileService>();
+            var mockSaDiApi = new Mock<ISapDiApi>();
+            var localService = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, mockRedis.Object, this.kafkaConnector.Object, this.sapServiceLayerService.Object, mockSaDiApi.Object, this.productionOrdersService.Object, this.logger.Object);
+
+            // act
+            var result = await localService.GetFabOrders(dicParams);
+            var response = result.Response as List<CompleteOrderModel>;
+            Console.WriteLine(JsonConvert.SerializeObject(response, Formatting.Indented));
+
+            // assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(response.Count, Is.EqualTo(1));
+            Assert.That(response.Any(x => x.FabOrderId == 226277), Is.True);
+            Assert.That(response.First(x => x.FabOrderId == 226277).OrderRelationType, Is.EqualTo("Padre"));
         }
 
         /// <summary>

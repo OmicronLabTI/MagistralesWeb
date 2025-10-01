@@ -1,49 +1,59 @@
 ﻿// <summary>
-// <copyright file="FabricacionOrderModel.cs" company="Axity">
+// <copyright file="ChildOrderModel.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
 
-namespace Omicron.Pedidos.Entities.Model
+namespace Omicron.SapAdapter.Entities.Model.BusinessModels
 {
-    using System;
-
     /// <summary>
-    /// the fabricacion order.
+    /// Class for the doctor prescription info.
     /// </summary>
-    public class FabricacionOrderModel
+    public class ChildOrderModel
     {
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public int OrdenId { get; set; }
+        public int OrdenFabricacionId { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public int? PedidoId { get; set; }
+        public string CodigoProducto { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public decimal Quantity { get; set; }
+        public string DescripcionProducto { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public DateTime PostDate { get; set; }
+        public int AssignedPieces { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public DateTime CreatedDate { get; set; }
+        public string FechaOf { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string FechaOfFin { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string Qfb { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
@@ -55,52 +65,30 @@ namespace Omicron.Pedidos.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public string ProductoId { get; set; }
+        public string UserCreate { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public string DataSource { get; set; }
+        public string CreateDate { get; set; }
 
         /// <summary>
-        /// Gets or sets Code.
+        /// Gets or sets a value indicating whether gets or sets the value for missing stock.
         /// </summary>
-        /// <value>The code.</value>
-        public string ProdName { get; set; }
+        /// <value>the value of stock.</value>
+        public string Label { get; set; }
 
         /// <summary>
-        /// Gets or sets measurement of unit.
+        /// Gets or sets a value indicating whether gets or sets the value for missing stock.
         /// </summary>
-        /// <value>The measurement of unit.</value>
-        public string Unit { get; set; }
+        /// <value>the value of stock.</value>
+        public string RealLabel { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether gets.
+        /// Gets or sets a value indicating whether gets or sets the value for missing stock.
         /// </summary>
-        /// <value>
-        /// Bool is sales order.
-        public bool HasMissingStock { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether IsOmigenomics.
-        /// </summary>
-        /// <value>
-        /// Bool IsOmigenomics.
-        public bool IsOmigenomics { get; set; }
-
-        /// <summary>
-        /// Gets or sets measurement of unit.
-        /// </summary>
-        /// <value>The measurement of unit.</value>
-        public string OrderType { get; set; }
-
-        /// <summary>
-        /// Gets or sets OrderRelationType.
-        /// </summary>
-        /// <value>
-        /// string OrderRelationType.
-        /// </value>
-        public string OrderRelationType { get; set; }
+        /// <value>the value of stock.</value>
+        public int FinishedLabel { get; set; }
     }
 }

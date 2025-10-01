@@ -105,6 +105,24 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <inheritdoc/>
+        public async Task<ResultModel> GetUserOrderBySalesOrderWithDetail(List<int> listIds)
+        {
+            var listIdString = listIds.Select(x => x.ToString()).ToList();
+            var orders = await this.pedidosDao.GetUserOrderBySaleOrder(listIdString);
+
+            var productionOrders = orders.Where(x => x.Productionorderid != null).Select(x => int.Parse(x.Productionorderid)).ToList();
+            var ordersParent = await this.pedidosDao.GetProductionOrderSeparationByOrderId(productionOrders);
+            var childOrders = await this.pedidosDao.GetProductionOrderSeparationDetailBySapOrderId(listIds);
+            var listToReturn = new UserOrderSeparationModel
+            {
+                UserOrders = orders.ToList(),
+                ProductionOrderSeparations = ordersParent,
+                ProductionOrderSeparationsDetail = childOrders,
+            };
+            return ServiceUtils.CreateResult(true, 200, null, listToReturn, null);
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultModel> GetUserOrderByFabOrder(List<int> listIds)
         {
             var listIdString = listIds.Select(x => x.ToString()).ToList();
@@ -665,7 +683,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var userResponse = await this.userService.PostSimpleUsers(usersId, ServiceConstants.GetUsersById);
             var users = JsonConvert.DeserializeObject<List<UserModel>>(userResponse.Response.ToString());
 
-            var orderToReturn = (await GetFabOrderUtils.CreateModels(sapOrders, userOrders, users, this.redis)).OrderBy(o => o.DocNum).ToList();
+            var orderToReturn = (await GetFabOrderUtils.CreateModels(sapOrders, userOrders, users, this.redis, this.pedidosDao)).OrderBy(o => o.DocNum).ToList();
 
             orderToReturn = orderToReturn.OrderBy(x => x.FabOrderId).ToList();
             var total = sapResponse.Comments == null ? "0" : sapResponse.Comments.ToString();

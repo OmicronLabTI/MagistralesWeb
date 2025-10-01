@@ -333,6 +333,26 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
         }
 
         /// <inheritdoc/>
+        public async Task<ResultModel> GetParentOrderDetail(int fabOrder)
+        {
+            var ordersToReturn = await this.pedidosDao.GetParentOrderDetailByOrderId(fabOrder);
+            var usersId = ordersToReturn.SelectMany(x => new[] { x.UserCreate, x.Qfb }).Distinct().ToList();
+
+            var userResponse = await this.userService.PostSimpleUsers(usersId, ServiceConstants.GetUsersById);
+            var users = JsonConvert.DeserializeObject<List<UserModel>>(userResponse.Response.ToString());
+
+            var usersDict = users.ToDictionary(u => u.Id, u => $"{u.FirstName} {u.LastName}");
+
+            ordersToReturn.ForEach(x =>
+            {
+                x.UserCreate = usersDict.TryGetValue(x.UserCreate, out var userCreateName) ? userCreateName : string.Empty;
+                x.Qfb = usersDict.TryGetValue(x.Qfb, out var qfbName) ? qfbName : string.Empty;
+            });
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, ordersToReturn, null);
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultModel> GetOpenOrderProdutions(Dictionary<string, string> parameters)
         {
             try

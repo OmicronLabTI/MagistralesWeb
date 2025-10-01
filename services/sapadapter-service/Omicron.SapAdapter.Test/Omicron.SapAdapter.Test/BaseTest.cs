@@ -886,6 +886,44 @@ namespace Omicron.SapAdapter.Test
         }
 
         /// <summary>
+        /// gets the resultdto for getuserpedidos.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetResultGetUserPedidosForParentOrders()
+        {
+            var response = new UserOrderSeparationModel()
+            {
+                UserOrders = new List<UserOrderModel>
+                {
+                    new UserOrderModel { Id = 1, Productionorderid = "227308", Salesorderid = "176687", Status = "Terminado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20), FinishedLabel = 1 },
+                    new UserOrderModel { Id = 2, Productionorderid = null, Salesorderid = "176687", Status = "Terminado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20), FinishedLabel = 1 },
+                    new UserOrderModel { Id = 3, Productionorderid = "227306", Salesorderid = "176687", Status = "Terminado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20), FinishedLabel = 1 },
+                    new UserOrderModel { Id = 4, Productionorderid = "227307", Salesorderid = "176687", Status = "Cancelado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20), FinishedLabel = 1 },
+                    new UserOrderModel { Id = 5, Productionorderid = "227309", Salesorderid = "176687", Status = "Terminado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20), FinishedLabel = 1 },
+                },
+
+                ProductionOrderSeparations = new List<ProductionOrderSeparationModel>
+                {
+                new ProductionOrderSeparationModel { Id = 2, OrderId = 227307, ProductionDetailCount = 2, TotalPieces = 2, AvailablePieces = 0, Status = "Completamente dividida" },
+                },
+                OnSplitProcess = true,
+                ProductionOrderSeparationsDetail = new List<ProductionOrderSeparationDetailModel>
+                {
+                    new ProductionOrderSeparationDetailModel { DetailOrderId = 227308, OrderId = 227307, UserId = "123", CreatedAt = new DateTime(2020, 1, 20), AssignedPieces = 3 },
+                },
+            };
+
+            return new ResultDto
+            {
+                Code = 200,
+                ExceptionMessage = null,
+                Response = JsonConvert.SerializeObject(response),
+                Success = true,
+                Comments = null,
+            };
+        }
+
+        /// <summary>
         /// the linse products.
         /// </summary>
         /// <returns>the data.</returns>
@@ -1093,6 +1131,20 @@ namespace Omicron.SapAdapter.Test
                new CompleteOrderModel { DocNum = 175623, Cliente = "LUIS JAVIER GARCIA AQUINO", Codigo = "C02804", FechaInicio = "28/05/2025", FechaFin = "07/06/2025", PedidoStatus = "O", OrderType = "MG", DocNumDxp = "37058e65-2de5-44ae-bb22-a5be0c891ad2", ClientType = "general" },
                new CompleteOrderModel { DocNum = 175627, Cliente = "LUIS JAVIER GARCIA AQUINO", Codigo = "C02804", FechaInicio = "28/05/2025", FechaFin = "07/06/2025", PedidoStatus = "O", OrderType = "MN", DocNumDxp = "37058e65-2de5-44ae-bb22-a5be0c891ad2", ClientType = "general" },
                new CompleteOrderModel { DocNum = 175629, Cliente = "LUIS JAVIER GARCIA AQUINO", Codigo = "C02804", FechaInicio = "28/05/2025", FechaFin = "07/06/2025", PedidoStatus = "O", OrderType = "BE", DocNumDxp = "37058e65-2de5-44ae-bb22-a5be0c891ad2", ClientType = "general" },
+            };
+        }
+
+        /// <summary>
+        /// Gets the attachments models.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public List<CompleteDetailOrderModel> GetCompleteDetailOrderModelForParentOrders()
+        {
+            return new List<CompleteDetailOrderModel>
+            {
+               new CompleteDetailOrderModel { OrdenFabricacionId = 227306, CodigoProducto = "BQ 252", DescripcionProducto = "BiBiest",  QtyPlanned = 1, QtyPlannedDetalle = 1, PedidoId = 176687, OrderRelationType = null, Label = "Genérica", RealLabel = "NA" },
+               new CompleteDetailOrderModel { OrdenFabricacionId = 227307, CodigoProducto = "BQ 250", DescripcionProducto = "BiBiest",  QtyPlanned = 2, QtyPlannedDetalle = 2, PedidoId = 176687, OrderRelationType = "Y", Label = "Genérica", RealLabel = "NA" },
+               new CompleteDetailOrderModel { OrdenFabricacionId = 227308, CodigoProducto = "BQ 250", DescripcionProducto = "BiBiest",  QtyPlanned = 1, QtyPlannedDetalle = 2, PedidoId = 176687, OrderRelationType = "N", Label = "Genérica", RealLabel = "NA" },
             };
         }
 
