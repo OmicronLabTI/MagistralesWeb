@@ -27,6 +27,13 @@ namespace Omicron.Pedidos.Services.Pedidos
         Task<ResultModel> GetUserOrderBySalesOrder(List<int> listIds);
 
         /// <summary>
+        /// returns the orders ids.
+        /// </summary>
+        /// <param name="listIds">the list ids.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetUserOrderBySalesOrderWithDetail(List<int> listIds);
+
+        /// <summary>
         /// Get the user order by fabrication order id.
         /// </summary>
         /// <param name="listIds">the list of ids.</param>

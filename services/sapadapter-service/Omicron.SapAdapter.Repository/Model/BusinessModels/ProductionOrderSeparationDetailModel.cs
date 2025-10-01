@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="UserOrderSeparationModel.cs" company="Axity">
+// <copyright file="ProductionOrderSeparationDetailModel.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -8,44 +8,51 @@
 
 namespace Omicron.SapAdapter.Entities.Model.BusinessModels
 {
-    using System.Collections.Generic;
-    using Omicron.SapAdapter.Entities.Model.JoinsModels;
+    using System;
 
     /// <summary>
     /// Class for the doctor prescription info.
     /// </summary>
-    public class UserOrderSeparationModel
+    public class ProductionOrderSeparationDetailModel
     {
         /// <summary>
-        /// Gets or sets userid.
+        /// Gets or sets detailproductionorderid.
         /// </summary>
         /// <value>
-        /// Datetime userid.
+        /// Int detailproductionorderid.
         /// </value>
-        public List<UserOrderModel> UserOrders { get; set; }
+        public int DetailOrderId { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderId.
+        /// </summary>
+        /// <value>
+        /// Int OrderId.
+        /// </value>
+        public int OrderId { get; set; }
 
         /// <summary>
         /// Gets or sets userid.
         /// </summary>
         /// <value>
-        /// Datetime userid.
+        /// String userid.
         /// </value>
-        public List<ProductionOrderSeparationModel> ProductionOrderSeparations { get; set; }
+        public string UserId { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether gets or sets OnSplitProcess.
+        /// Gets or sets createdat.
         /// </summary>
         /// <value>
-        /// bool OnSplitProcess.
+        /// DateTime createdat.
         /// </value>
-        public bool OnSplitProcess { get; set; }
+        public DateTime? CreatedAt { get; set; }
 
         /// <summary>
-        /// Gets or sets userid.
+        /// Gets or sets assignedpieces.
         /// </summary>
         /// <value>
-        /// Datetime userid.
+        /// int assignedpieces.
         /// </value>
-        public List<ProductionOrderSeparationDetailModel> ProductionOrderSeparationsDetail { get; set; }
+        public int AssignedPieces { get; set; }
     }
 }

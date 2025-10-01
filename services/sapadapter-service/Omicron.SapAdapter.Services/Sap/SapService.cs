@@ -174,19 +174,25 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var details = await this.sapDao.GetAllDetailsByRoutesConfiguration(new List<int?> { docId }, orderFiltersByConfigType);
 
-            var usersOrderModel = await this.pedidosService.PostPedidos(new List<int> { docId }, ServiceConstants.GetUserSalesOrder);
-            var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(usersOrderModel.Response.ToString());
+            var result = await this.pedidosService.PostPedidos(new List<int> { docId }, ServiceConstants.GetUserSalesOrderWithDetail);
+            var response = JsonConvert.DeserializeObject<UserOrderSeparationModel>(result.Response.ToString());
+            var userOrders = response.UserOrders;
+            var ordersParent = response.ProductionOrderSeparations;
+            var productionOrdersDetail = response.ProductionOrderSeparationsDetail;
 
             var listUsers = await this.GetUsers(userOrders);
 
             var listToProcess = details.Where(y => y.OrdenFabricacionId == 0).ToList();
             listToProcess.AddRange(details.Where(y => y.OrdenFabricacionId != 0).UtilsDistinctBy(y => y.OrdenFabricacionId));
             listToProcess = listToProcess.OrderBy(x => x.OrdenFabricacionId).ThenBy(x => x.DescripcionProducto).ToList();
+            var childOrders = listToProcess.Where(o => o.OrderRelationType == "N").ToList();
+            listToProcess = listToProcess.Where(o => o.OrderRelationType != "N").ToList();
 
             foreach (var x in listToProcess)
             {
                 var pedido = userOrders.GetSaleOrderHeader(docId.ToString());
                 var userOrder = userOrders.FirstOrDefault(y => y.Productionorderid == x.OrdenFabricacionId.ToString());
+                var parentOrder = ordersParent.FirstOrDefault(y => y.OrderId == x.OrdenFabricacionId) ?? new ProductionOrderSeparationModel();
                 userOrder ??= new UserOrderModel { Userid = string.Empty, Status = string.Empty };
                 var userId = userOrder.Userid;
                 var user = listUsers.FirstOrDefault(y => y.Id.Equals(userId));
@@ -204,7 +210,12 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.FinishedLabel = userOrder.FinishedLabel;
                 x.PedidoId = docId;
                 x.OnSplitProcess = await this.GetRedisSeparateKey(x.OrdenFabricacionId);
+                x.OrderRelationType = x.OrderRelationType != null ? ServiceShared.GetDictionaryValueString(ServiceConstants.OrderRelation, x.OrderRelationType, ServiceConstants.Complete) : ServiceConstants.Complete;
+                x.AvailablePieces = parentOrder.AvailablePieces;
+                x.ChildOrdersCount = parentOrder.ProductionDetailCount;
             }
+
+            listToProcess = GetOrderRelation(listToProcess, childOrders, productionOrdersDetail, userOrders, listUsers);
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listToProcess, null, null);
         }
@@ -985,6 +996,60 @@ namespace Omicron.SapAdapter.Services.Sap
                 .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
                 .ToArray())
                 .ToUpper();
+        }
+
+        private static List<CompleteDetailOrderModel> GetOrderRelation(
+            List<CompleteDetailOrderModel> parent,
+            List<CompleteDetailOrderModel> childs,
+            List<ProductionOrderSeparationDetailModel> productionOrdersDetail,
+            List<UserOrderModel> userOrders,
+            List<UserModel> users)
+        {
+            foreach (var order in parent.Where(x => x.OrderRelationType == ServiceConstants.Padre))
+            {
+                var detail = productionOrdersDetail.Where(x => x.OrderId == order.OrdenFabricacionId).ToList();
+
+                order.ChildOrders = AssignOrders(childs, detail, userOrders, users);
+            }
+
+            return parent;
+        }
+
+        private static List<ChildOrderModel> AssignOrders(
+            List<CompleteDetailOrderModel> childs,
+            List<ProductionOrderSeparationDetailModel> detail,
+            List<UserOrderModel> userOrders,
+            List<UserModel> users)
+        {
+            var orders = new List<ChildOrderModel>();
+
+            detail.ForEach(x =>
+            {
+                var complete = childs.FirstOrDefault(c => c.OrdenFabricacionId == x.DetailOrderId);
+                var userOrder = userOrders.FirstOrDefault(x => x.Productionorderid == complete.OrdenFabricacionId.ToString());
+                var userQfb = users.FirstOrDefault(y => y.Id.Equals(userOrder.Userid));
+                var userCreate = users.FirstOrDefault(y => y.Id.Equals(x.UserId));
+
+                var childOrder = new ChildOrderModel
+                {
+                    OrdenFabricacionId = complete.OrdenFabricacionId,
+                    CodigoProducto = complete.CodigoProducto,
+                    DescripcionProducto = complete.DescripcionProducto,
+                    AssignedPieces = x.AssignedPieces,
+                    FechaOf = complete.FechaOf,
+                    FechaOfFin = ServiceShared.GetDateValueOrDefault(userOrder.FinishDate, string.Empty),
+                    Qfb = $"{userQfb.FirstName.ValidateNull()} {userQfb.LastName.ValidateNull()}".Trim(),
+                    Status = ServiceShared.CalculateTernary(userOrder.Status.Equals(ServiceConstants.Proceso), ServiceConstants.EnProceso, userOrder.Status),
+                    UserCreate = $"{userCreate.FirstName.ValidateNull()} {userCreate.LastName.ValidateNull()}".Trim(),
+                    CreateDate = x.CreatedAt.HasValue ? x.CreatedAt.Value.ToString("dd/MM/yyyy HH:mm:ss") : string.Empty,
+                    Label = ServiceShared.CalculateTernary(complete.Label.ToLower().Equals(ServiceConstants.Personalizado.ToLower()), ServiceConstants.Personalizado, ServiceConstants.Generico),
+                    RealLabel = complete.Label,
+                    FinishedLabel = userOrder.FinishedLabel,
+                };
+                orders.Add(childOrder);
+            });
+
+            return orders;
         }
 
         private static List<CompleteOrderModel> FilterByClassifications(List<CompleteOrderModel> orders, Dictionary<string, string> parameters)

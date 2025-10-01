@@ -978,6 +978,60 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
         }
 
         /// <summary>
+        /// SeparateOrder.
+        /// </summary>
+        /// <param name="existRedisValue">Exist redis value.</param>
+        /// <returns>Test.</returns>
+        [Test]
+        public async Task GetParentOrderDetail()
+        {
+            int request = 227318;
+
+            var mockRedisService = new Mock<IRedisService>();
+            var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
+            var mockSapAdapter = new Mock<ISapAdapter>();
+            var mockSapFile = new Mock<ISapFileService>();
+            var mockUsers = new Mock<IUsersService>();
+            var mockDao = new Mock<IPedidosDao>();
+            var mockMediator = new Mock<IMediator>();
+
+            mockDao
+                .Setup(x => x.GetParentOrderDetailByOrderId(It.IsAny<int>()))
+                .Returns(Task.FromResult(this.GetParentOrderDetailModel()));
+
+            mockUsers
+                .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserModel()));
+
+            var mockProductionOrdersService = new ProductionOrdersService(
+                mockDao.Object,
+                mockServiceLayerAdapterService.Object,
+                mockRedisService.Object,
+                this.mockKafkaConnector.Object,
+                mockSapAdapter.Object,
+                mockUsers.Object,
+                mockSapFile.Object,
+                this.logger.Object,
+                this.mapper,
+                mockMediator.Object);
+
+            var result = await mockProductionOrdersService.GetParentOrderDetail(request);
+
+            // Assert
+            Assert.That(result.Code.Equals((int)HttpStatusCode.OK));
+            Assert.That(result.Response, Is.Not.Null);
+
+            var response = result.Response as List<ParentOrderDetailModel>;
+            Assert.That(response.Count, Is.EqualTo(3));
+            var order = response[0];
+            Assert.That(order.UserCreate, Is.EqualTo("usurio prueba"));
+            Assert.That(order.Qfb, Is.EqualTo("usurio prueba"));
+            Assert.That(response.Any(x => x.FabOrderId == 227323), Is.True);
+            Assert.That(response.Any(x => x.FabOrderId == 227324), Is.True);
+            Assert.That(response.Any(x => x.FabOrderId == 227322), Is.True);
+        }
+
+        /// <summary>
         /// GetOpenOrderProdutions_NoOrders_Success.
         /// </summary>
         /// <returns>Test.</returns>

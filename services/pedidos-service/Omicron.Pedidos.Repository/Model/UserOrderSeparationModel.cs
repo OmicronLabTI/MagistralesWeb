@@ -39,5 +39,13 @@ namespace Omicron.Pedidos.Entities.Model
         /// bool OnSplitProcess.
         /// </value>
         public bool OnSplitProcess { get; set; }
+
+        /// <summary>
+        /// Gets or sets userid.
+        /// </summary>
+        /// <value>
+        /// Datetime userid.
+        /// </value>
+        public List<ProductionOrderSeparationDetailModel> ProductionOrderSeparationsDetail { get; set; }
     }
 }

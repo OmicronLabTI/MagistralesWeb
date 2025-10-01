@@ -79,6 +79,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Get the user order by Pedido id.
+        /// </summary>
+        /// <param name="listIds">the ids.</param>
+        /// <returns>the data.</returns>
+        [Route("/getUserOrder/salesOrder/detail")]
+        [HttpPost]
+        public async Task<IActionResult> GetUserOrderBySalesOrderWithDetail(List<int> listIds)
+        {
+            var response = await this.pedidoFacade.GetUserOrderBySalesOrderWithDetail(listIds);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Get the user order by fabrication order id.
         /// </summary>
         /// <param name="listIds">the ids.</param>
@@ -659,6 +672,19 @@ namespace Omicron.Pedidos.Api.Controllers
         public async Task<IActionResult> RetryFailedProductionOrderDivision(RetryFailedProductionOrderDivisionDto payloadRetry)
         {
             var response = await this.pedidoFacade.RetryFailedProductionOrderDivision(payloadRetry);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// GetFailedDivisionOrdersWithError.
+        /// </summary>
+        /// <param name="fabOrder">fabOrder.</param>
+        /// <returns>Failed Division Orders.</returns>
+        [Route("/parentOrderDetail/{fabOrder}")]
+        [HttpGet]
+        public async Task<IActionResult> GetParentOrderDetail(int fabOrder)
+        {
+            var response = await this.pedidoFacade.GetParentOrderDetail(fabOrder);
             return this.Ok(response);
         }
 

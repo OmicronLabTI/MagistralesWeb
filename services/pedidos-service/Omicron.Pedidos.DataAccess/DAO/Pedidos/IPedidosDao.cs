@@ -481,6 +481,20 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<List<ProductionOrderSeparationModel>> GetProductionOrderSeparationByOrderId(List<int> ordersIds);
 
+        /// <summary>
+        /// GetProductionOrderSeparationByOrderId.
+        /// </summary>
+        /// <param name="ordersIds">production order ids.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<List<ProductionOrderSeparationDetailModel>> GetProductionOrderSeparationDetailByDetailOrderId(List<int> ordersIds);
+
+        /// <summary>
+        /// GetProductionOrderSeparationDetailBySapOrderId.
+        /// </summary>
+        /// <param name="ordersIds">production order ids.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<List<ProductionOrderSeparationDetailModel>> GetProductionOrderSeparationDetailBySapOrderId(List<int> ordersIds);
+
         /// Returns the user orders by SalesOrder (Pedido)
         /// </summary>
         /// <param name="separationId">the list ids.</param>
@@ -584,6 +598,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<IEnumerable<ProductionOrderSeparationDetailLogsModel>> GetAllFailedDivisionOrders();
 
+        /// <summary>
+        /// GetParentOrderDetailByOrderId.
+        /// </summary>
+        /// <param name="parentId">Parent id</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<List<ParentOrderDetailModel>> GetParentOrderDetailByOrderId(int parentId);
 
         /// <summary>
         /// GetAllOpenParentOrdersByQfb.
