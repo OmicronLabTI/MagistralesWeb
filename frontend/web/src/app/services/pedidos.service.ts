@@ -18,6 +18,7 @@ import {
   ProcessOrdersDetailReq
 } from '../model/http/pedidos';
 import {
+  IChildrenOrdersListRes,
   IOrdersRefuseReq,
   IPedidoDetalleLabelReq,
   IPedidoDetalleListRes,
@@ -135,5 +136,9 @@ export class PedidosService {
 
   getProductWarehouses(productId: string) {
     return this.consumeService.httpGet<IProductWarehouses>(`${Endpoints.pedidos.productWarehouses}?itemCode=${productId}`);
+  }
+
+  getChildrenOrders(parentOrderId: number) {
+    return this.consumeService.httpGet<IChildrenOrdersListRes>(`${Endpoints.pedidos.childrenOrdersDetail}/${parentOrderId}`);
   }
 }

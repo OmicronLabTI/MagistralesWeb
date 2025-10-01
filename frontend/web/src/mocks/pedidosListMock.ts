@@ -1,3 +1,5 @@
+import { ChildrenOrders, IChildrenOrdersListRes } from 'src/app/model/http/detallepedidos.model';
+
 export const DetalleFormulaMock = {
     code: 200,
     comments: 118,
@@ -159,4 +161,62 @@ export const productWarehousesResponseMock = {
     success: true,
     userError: null,
     response: ['MN']
+};
+
+export const childrenOrdersMock: ChildrenOrders[] = [
+    {
+        ordenFabricacionId: 227308,
+        codigoProducto: 'BQ 250',
+        // tslint:disable-next-line:max-line-length
+        descripcionProducto: 'Biest (66.6/33.3) 3 mg (2 mg estriol + 1 mg estradiol)/g, DHEA 10 mg/g, Testosterona 4 mg/g, Crema base csp 30 g',
+        assignedPieces: 1,
+        fechaOf: '05/09/2025',
+        fechaOfFin: '05/09/2025',
+        qfb: 'josue castillo',
+        status: 'Abierto',
+        userCreate: 'josue castillo',
+        createDate: '05/09/2025 17:10:26',
+        label: 'Genérica',
+        realLabel: 'NA',
+        finishedLabel: 0,
+        isChecked: true
+    },
+    {
+        ordenFabricacionId: 227309,
+        codigoProducto: 'BQ 250',
+        // tslint:disable-next-line:max-line-length
+        descripcionProducto: 'Biest (66.6/33.3) 3 mg (2 mg estriol + 1 mg estradiol)/g, DHEA 10 mg/g, Testosterona 4 mg/g, Crema base csp 30 g',
+        assignedPieces: 1,
+        fechaOf: '05/09/2025',
+        fechaOfFin: '05/09/2025',
+        qfb: 'josue castillo',
+        status: 'Terminado',
+        userCreate: 'josue castillo',
+        createDate: '05/09/2025 17:12:24',
+        label: 'Genérica',
+        realLabel: 'NA',
+        finishedLabel: 0,
+        isChecked: true
+    },
+    {
+        ordenFabricacionId: 227309,
+        codigoProducto: 'BQ 250',
+        // tslint:disable-next-line:max-line-length
+        descripcionProducto: 'Biest (66.6/33.3) 3 mg (2 mg estriol + 1 mg estradiol)/g, DHEA 10 mg/g, Testosterona 4 mg/g, Crema base csp 30 g',
+        assignedPieces: 1,
+        fechaOf: '05/09/2025',
+        fechaOfFin: '05/09/2025',
+        qfb: 'josue castillo',
+        status: 'Planificado',
+        userCreate: 'josue castillo',
+        createDate: '05/09/2025 17:12:24',
+        label: 'Genérica',
+        realLabel: 'NA',
+        finishedLabel: 1,
+        isChecked: true
+    }
+];
+
+export const getChildrenResponseMock: IChildrenOrdersListRes = {
+    response: childrenOrdersMock
 };

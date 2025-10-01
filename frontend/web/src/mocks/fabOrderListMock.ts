@@ -20,6 +20,10 @@ export const FabOrderListMock = {
             quantityFinish: 12,
             batch: 'L-000001',
             onSplitProcess: false,
+            orderRelationType: '',
+            availablePieces: 0,
+            childOrdersCount: 0,
+            childOrders: []
         },
         {
             docNum: 0,
@@ -36,6 +40,10 @@ export const FabOrderListMock = {
             quantityFinish: 12,
             batch: 'L-000002',
             onSplitProcess: false,
+            orderRelationType: '',
+            availablePieces: 0,
+            childOrdersCount: 0,
+            childOrders: []
         },
         {
             docNum: 0,
@@ -52,6 +60,10 @@ export const FabOrderListMock = {
             quantityFinish: 12,
             batch: 'L-000003',
             onSplitProcess: false,
+            orderRelationType: '',
+            availablePieces: 0,
+            childOrdersCount: 0,
+            childOrders: []
         },
         {
             docNum: 0,
@@ -68,6 +80,10 @@ export const FabOrderListMock = {
             quantityFinish: 12,
             batch: 'L-000004',
             onSplitProcess: false,
+            orderRelationType: '',
+            availablePieces: 0,
+            childOrdersCount: 0,
+            childOrders: []
         },
         {
             docNum: 0,
@@ -84,6 +100,10 @@ export const FabOrderListMock = {
             quantityFinish: 12,
             batch: 'L-000005',
             onSplitProcess: false,
+            orderRelationType: '',
+            availablePieces: 0,
+            childOrdersCount: 0,
+            childOrders: []
         },
         {
             docNum: 0,
@@ -100,6 +120,10 @@ export const FabOrderListMock = {
             quantityFinish: 12,
             batch: 'L-000006',
             onSplitProcess: false,
+            orderRelationType: '',
+            availablePieces: 0,
+            childOrdersCount: 0,
+            childOrders: []
         },
         {
             docNum: 0,
@@ -116,6 +140,10 @@ export const FabOrderListMock = {
             quantityFinish: 12,
             batch: 'L-000007',
             onSplitProcess: false,
+            orderRelationType: '',
+            availablePieces: 0,
+            childOrdersCount: 0,
+            childOrders: []
         },
         {
             docNum: 0,
@@ -132,6 +160,10 @@ export const FabOrderListMock = {
             quantityFinish: 12,
             batch: 'L-000008',
             onSplitProcess: false,
+            orderRelationType: '',
+            availablePieces: 0,
+            childOrdersCount: 0,
+            childOrders: []
         },
         {
             docNum: 0,
@@ -148,6 +180,10 @@ export const FabOrderListMock = {
             quantityFinish: 12,
             batch: 'L-000009',
             onSplitProcess: false,
+            orderRelationType: '',
+            availablePieces: 0,
+            childOrdersCount: 0,
+            childOrders: []
         },
         {
             docNum: 0,
@@ -164,6 +200,10 @@ export const FabOrderListMock = {
             quantityFinish: 12,
             batch: 'L-0000010',
             onSplitProcess: false,
+            orderRelationType: '',
+            availablePieces: 0,
+            childOrdersCount: 0,
+            childOrders: []
         }
     ]
 };
