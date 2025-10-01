@@ -56,10 +56,14 @@ describe('FabordersListComponent', () => {
       'getItemOnDataOnlyIds',
       'changeRouterForFormula',
       'calculateAndValueList',
+      'calculateTernary',
     ]);
     dataServiceSpy.calculateAndValueList.and.callFake((list: boolean[]) => {
       const res = list.every((value) => value === true);
       return res;
+    });
+    dataServiceSpy.calculateTernary.and.callFake(<T, U>(validation: boolean, firstValue: T, secondaValue: U): T | U => {
+      return validation ? firstValue : secondaValue;
     });
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
       'httpError'
@@ -207,7 +211,7 @@ describe('FabordersListComponent', () => {
     component.limit = 20;
     component.userClasification = 'MN,MG';
     component.getFullQueryString();
-    expect(component.fullQueryString).toEqual('?status=Abierto&offset=10&limit=20&classifications=MN,MG');
+    expect(component.fullQueryString).toEqual('?status=Abierto&offset=10&limit=20&classifications=MN,MG&parent=true');
   });
   it('should getDateFormatted()', () => {
     component.getDateFormatted(new Date(), new Date(), true);
@@ -284,7 +288,8 @@ describe('FabordersListComponent', () => {
         isWithError: false,
         isWithErrorBatch: false,
         hasMissingStock: false,
-        batch: ''
+        batch: '',
+        childOrders: []
       } as IOrdersReq
     ];
     component.cancelOrder();

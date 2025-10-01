@@ -421,6 +421,7 @@
 
                 </td>
             </ng-container>
+            
             <ng-container matColumnDef="expandedDetail">
                 <td mat-cell *matCellDef="let element; let i = index;" [attr.colspan]="displayedColumns.length">
                     <div class="element-detail d-flex flex-column"
@@ -654,7 +655,7 @@
             <tr mat-row 
                 *matRowDef="let row; let i = index; columns: displayedColumns;"
                 class="element-row"
-                [ngClass]="{ 'row-odd': i % 2 === 0, 'row-even': i % 2 === 1 }"
+                [ngStyle]="{ 'background-color': row.style }"
                 [class.expanded-row]="expandedElement === row">
             </tr>
             <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-element-row"></tr>

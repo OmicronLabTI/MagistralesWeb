@@ -136,7 +136,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.productCodeSplit = [];
     this.paramsDetailOrder.current = response[CONST_NUMBER.zero].pedidoId.toString();
     this.dataSource.data = response;
-    this.dataSource.data.forEach(orders => {
+    this.dataSource.data.forEach((orders, i) => {
       const productCodeSplit = orders.codigoProducto.split(' ');
       this.productCodeSplit.push(productCodeSplit[0]);
       this.realLabel = constRealLabel.impresaCliente;
@@ -185,6 +185,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
           break;
       }
       orders.descripcionProducto = orders.descripcionProducto.toUpperCase();
+      orders.style = this.dataService.calculateTernary(i % 2 === 0, '#f1f2f3', '#fff');
     });
     this.isThereOrdersToViewPdf = false;
     this.isThereOrdersDetailToDelivered = false;
@@ -327,6 +328,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
           this.detailsOrderToProcess.userId = this.localStorageService.getUserId();
           this.detailsOrderToProcess.productId =
             this.dataSource.data.filter(t => (t.isChecked && t.status === ConstStatus.abierto)).map(detail => detail.codigoProducto);
+          const childrenProducts = this.getChildrenOrdersProductToPlan(ConstStatus.abierto);
+          this.detailsOrderToProcess.productId = this.detailsOrderToProcess.productId.concat(childrenProducts);
           this.pedidosService.postPlaceOrdersDetail(this.detailsOrderToProcess).subscribe(resultProcessDetail => {
             if (resultProcessDetail.success && resultProcessDetail.response.length > 0) {
               const titleProcessDetailWithError = this.messagesService.getMessageTitle(
@@ -340,6 +343,16 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
           }, error => this.errorService.httpError(error));
         }
       });
+  }
+  getChildrenOrdersProductToPlan(status: string) {
+    return this.dataSource.data.map(parentOrder =>
+      parentOrder.childOrders.filter(childOrder =>
+        this.dataService.calculateAndValueList([
+          childOrder.isChecked,
+          childOrder.status === status
+        ])
+      ).map(order => order.codigoProducto))
+      .reduce((acc, ids) => acc.concat(ids), []);
   }
 
   cancelOrders() {
@@ -357,12 +370,26 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   reassignOrderDetail() {
+    const parentOrdersReasign = this.filtersService.getItemOnDateWithFilter(this.dataSource.data,
+      FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.ordenFabricacionId));
+
+    const childrenOrders = this.getChildrenOrdersChecked();
+    const childrenOrderToReasign = this.filtersService.getItemOnDateWithFilter(childrenOrders,
+      FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.ordenFabricacionId));
+
+    const dataRequest = parentOrdersReasign.concat(childrenOrderToReasign);
     this.observableService.setQbfToPlace({
       modalType: MODAL_NAMES.placeOrdersDetail,
-      list: this.filtersService.getItemOnDateWithFilter(this.dataSource.data,
-        FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.ordenFabricacionId))
-      , isFromReassign: true
+      list: dataRequest,
+      isFromReassign: true
     });
+  }
+
+  getChildrenOrdersChecked() {
+    const childrenChecked = this.dataSource.data
+      .map(parentOrder => parentOrder.childOrders.filter(childOrder => childOrder.isChecked))
+      .reduce((acc, children) => acc.concat(children), []);
+    return childrenChecked;
   }
 
   goToOrders(urlPath: string[]) {
@@ -376,16 +403,62 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     CONST_NUMBER.zero]);
   }
   getDataCancel(status: string) {
-    return this.dataSource.data.filter
+    const childrenOrders = this.getChildrenOrdersToCancel(status);
+    const parentsOrders = this.dataSource.data.filter
       (t => (t.isChecked && (t.status !== status && t.status !== ConstStatus.almacenado))).map(order => {
         return this.getCancelOrderReq(order.ordenFabricacionId);
       });
+    const dataRequest = parentsOrders.concat(childrenOrders);
+    return dataRequest;
   }
+
+  getChildrenOrdersToCancel(status: string) {
+    const orders = this.getChildrenOrdersCheckedIdsToCancel(status);
+    return orders.map(order => this.getCancelOrderReq(order));
+  }
+
+  getChildrenOrdersCheckedIdsToCancel(status: string) {
+    const childrenChecked = this.dataSource.data.map(parentOrder =>
+      parentOrder.childOrders.filter(childOrder =>
+        this.dataService.calculateAndValueList([
+          childOrder.isChecked,
+          childOrder.status !== status,
+          childOrder.status !== ConstStatus.almacenado
+        ])
+      ).map(order => order.ordenFabricacionId))
+      .reduce((acc, ids) => acc.concat(ids), []);
+    return childrenChecked;
+  }
+
   getDataCancelFinalize(status: string, isFromFinalize: boolean = false) {
-    return this.dataSource.data.filter
-      (t => (t.isChecked && (isFromFinalize ? t.status === status : t.status !== status))).map(order => {
+    const childrenOrders = this.getChildrenOrdersTiFinalize(status, isFromFinalize);
+    const parentOrders = this.dataSource.data.filter(t =>
+      (t.isChecked && (isFromFinalize ? t.status === status : t.status !== status))).map(order => {
         return this.getCancelOrderReq(order.ordenFabricacionId);
       });
+    const dataRequest = parentOrders.concat(childrenOrders);
+    return dataRequest;
+  }
+
+  getChildrenOrdersTiFinalize(status: string, isFromFinalize: boolean = false) {
+    const orders = this.getChildrenOrdersCheckedIds(status, isFromFinalize);
+    return orders.map(order => this.getCancelOrderReq(order));
+  }
+
+  getChildrenOrdersCheckedIds(status: string, isFromFinalize: boolean = false) {
+    const childrenChecked = this.dataSource.data.map(parentOrder =>
+      parentOrder.childOrders.filter(childOrder =>
+        this.dataService.calculateAndValueList([
+          childOrder.isChecked,
+          this.dataService.calculateTernary(
+            isFromFinalize,
+            childOrder.status === status,
+            childOrder.status !== status,
+          )
+        ])
+      ).map(order => order.ordenFabricacionId))
+      .reduce((acc, ids) => acc.concat(ids), []);
+    return childrenChecked;
   }
 
   getCancelOrderReq(ordenFabricacionId: number): CancelOrderReq {

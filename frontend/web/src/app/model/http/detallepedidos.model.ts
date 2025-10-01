@@ -40,6 +40,8 @@ export class IPedidoDetalleReq {
     availablePieces: number;
     childOrdersCount: number;
     childOrders: ChildrenOrders[];
+
+    style?: string;
 }
 
 export class ChildrenOrders {

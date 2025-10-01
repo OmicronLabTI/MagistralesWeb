@@ -131,9 +131,17 @@ export class FiltersService {
               !t.onSplitProcess
             ])
         );
-        enableButton = this.dataService.calculateAndValueList([
-          evaluateStatusAndInProcessIsolatedCancel,
-          dataChecked.length !== 0
+        evaluateChildrenOrders = this.evaluateChildrenForfromOrdersIsolatedCancelCase(childrenOrdersChecked, status);
+        enableButton = this.dataService.calculateOrValueList([
+          this.dataService.calculateAndValueList([
+            evaluateStatusAndInProcessIsolatedCancel,
+            dataChecked.length !== 0
+          ]),
+          this.dataService.calculateAndValueList([
+            evaluateStatusAndInProcessIsolatedCancel,
+            evaluateChildrenOrders,
+            childrenOrdersChecked.length !== 0
+          ]),
         ]);
         return enableButton;
       case FromToFilter.fromOrderDetailLabel:
@@ -159,7 +167,6 @@ export class FiltersService {
             childrenOrdersChecked.length !== 0
           ]),
         ]);
-        console.log(enableButton, evaluateChildrenOrders, evaluateStatusAndInProcessDetailLabel);
         return enableButton;
       default:
         const evaluateStatusAndInProcessDefault = dataChecked.every(
@@ -183,6 +190,16 @@ export class FiltersService {
         ]);
         return enableButton;
     }
+  }
+
+  evaluateChildrenForfromOrdersIsolatedCancelCase(orders: ChildrenOrders[], statusToCompare: string): boolean {
+    return orders.every(order =>
+      this.dataService.calculateAndValueList([
+        order.status !== statusToCompare,
+        order.status !== ConstStatus.cancelado,
+        order.status !== ConstStatus.almacenado
+      ])
+    );
   }
 
   evaluateChildrenForfromOrderDetailLabelCase(orders: ChildrenOrders[], statusToCompare: string): boolean {

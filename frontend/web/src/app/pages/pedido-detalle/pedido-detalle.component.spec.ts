@@ -95,6 +95,7 @@ describe('PedidoDetalleComponent', () => {
       'getFullStringForCarousel',
       'changeRouterForFormula',
       'calculateAndValueList',
+      'calculateTernary',
     ]);
     localStorageServiceSpy.getProductNoLabel.and.returnValue(catalogs);
     localStorageServiceSpy.getUserRole.and.returnValue('4');
@@ -104,6 +105,9 @@ describe('PedidoDetalleComponent', () => {
     dataServiceSpy.calculateAndValueList.and.callFake((list: boolean[]) => {
       const res = list.every((value) => value === true);
       return res;
+    });
+    dataServiceSpy.calculateTernary.and.callFake(<T, U>(validation: boolean, firstValue: T, secondaValue: U): T | U => {
+      return validation ? firstValue : secondaValue;
     });
     downloadImagesServiceSpy = jasmine.createSpyObj<DownloadImagesService>('DownloadImagesService', ['downloadImageFromUrl']);
     pedidosServiceSpy.qrByEachOrder.and.callFake(() => {
@@ -297,7 +301,8 @@ describe('PedidoDetalleComponent', () => {
       {
         isChecked: true,
         status: 'Abierto',
-        codigoProducto: '1'
+        codigoProducto: '1',
+        childOrders: []
       } as IPedidoDetalleReq
     ];
     iProcessOrdersRes.response = ['1'];
@@ -316,7 +321,8 @@ describe('PedidoDetalleComponent', () => {
       {
         isChecked: true,
         status: 'Abierto',
-        codigoProducto: '1'
+        codigoProducto: '1',
+        childOrders: []
       } as IPedidoDetalleReq
     ];
     pedidosServiceSpy.postPlaceOrdersDetail();
@@ -426,7 +432,8 @@ describe('PedidoDetalleComponent', () => {
         status: 'Planificado',
         codigoProducto: 'oj 6',
         finishedLabel: 0,
-        ordenFabricacionId: 1
+        ordenFabricacionId: 1,
+        childOrders: []
       } as IPedidoDetalleReq
     ];
     // FromToFilter.fromOrderIsolatedReassignItems;
