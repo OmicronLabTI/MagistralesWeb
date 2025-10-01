@@ -229,8 +229,6 @@ namespace Omicron.Pedidos.Services.Pedidos
                 return ServiceUtils.CreateResult(false, 400, message, null, null);
             }
 
-            var listOrderLogToInsert = new List<SalesLogs>();
-
             foreach (var x in ordersList)
             {
                 var order = updateStatusOrder.FirstOrDefault(y => y.OrderId.ToString().Equals(x.Productionorderid))
@@ -257,8 +255,6 @@ namespace Omicron.Pedidos.Services.Pedidos
                     x.StatusForTecnic = ServiceShared.CalculateTernary(
                         x.Status == ServiceConstants.Proceso, ServiceConstants.Asignado, x.Status);
                 }
-
-                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(x.Userid, new List<UserOrderModel> { x }));
             }
 
             await this.pedidosDao.UpdateUserOrders(ordersList);
@@ -271,15 +267,8 @@ namespace Omicron.Pedidos.Services.Pedidos
                 saleOrder.Status = ServiceShared.CalculateTernary(allDelivered, ServiceConstants.Entregado, saleOrder.Status);
                 saleOrder.StatusForTecnic = ServiceShared.CalculateTernary(saleOrder.Status == ServiceConstants.Proceso, ServiceConstants.Asignado, saleOrder.Status);
                 var userId = isTecnicUser ? ordersList.FirstOrDefault().TecnicId : ordersList.FirstOrDefault().Userid;
-                if (allDelivered)
-                {
-                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userId, new List<UserOrderModel> { saleOrder }));
-                }
-
                 await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { saleOrder });
             }
-
-            _ = this.kafkaConnector.PushMessage(listOrderLogToInsert, ServiceConstants.KafkaInsertLogsConfigName);
 
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(updateStatusOrder), null);
         }
@@ -383,7 +372,6 @@ namespace Omicron.Pedidos.Services.Pedidos
             var succesfulyOrdersId = ordersId.Where(x => !failedOrders.Contains(x)).ToList();
             var succesfuly = new List<UserOrderModel>();
             var failed = new List<object>();
-            var listOrderLogToInsert = new List<SalesLogs>();
 
             foreach (var orderId in failedOrders)
             {
@@ -403,12 +391,9 @@ namespace Omicron.Pedidos.Services.Pedidos
                     Comments = rejectOrders.Comments,
                 };
                 succesfuly.Add(userOrder);
-                /* logs */
-                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(rejectOrders.UserId, new List<UserOrderModel> { userOrder }));
             }
 
             await this.pedidosDao.InsertUserOrder(succesfuly);
-            _ = this.kafkaConnector.PushMessage(listOrderLogToInsert, ServiceConstants.KafkaInsertLogsConfigName);
 
             var resultAsesors = await this.sapAdapter.PostSapAdapter(succesfuly.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList(), ServiceConstants.GetAsesorsMail);
             var resultAsesorEmail = JsonConvert.DeserializeObject<List<AsesorModel>>(JsonConvert.SerializeObject(resultAsesors.Response));
@@ -459,12 +444,12 @@ namespace Omicron.Pedidos.Services.Pedidos
             var failed = new List<ProductionOrderFailedResultModel>();
 
             var fnalizeProductionOrder = finishOrders.Select(fo => new FinalizeProductionOrderModel
-                {
-                    UserId = fo.UserId,
-                    ProductionOrderId = fo.OrderId,
-                    SourceProcess = ServiceConstants.FabOrders,
-                    Batches = fo.Batches,
-                }).ToList();
+            {
+                UserId = fo.UserId,
+                ProductionOrderId = fo.OrderId,
+                SourceProcess = ServiceConstants.FabOrders,
+                Batches = fo.Batches,
+            }).ToList();
 
             var request = await ServiceUtils.IsProductionOrderBeingProcessed(fnalizeProductionOrder, failed, this.pedidosDao, this.redis, this.logger);
 
@@ -583,7 +568,6 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var listSignatureToInsert = new List<UserOrderSignatureModel>();
             var listToUpdate = new List<UserOrderSignatureModel>();
-            var listOrderLogToInsert = new List<SalesLogs>();
             orders.ForEach(o =>
             {
                 var signature = orderSignatures.FirstOrDefault(x => x.UserOrderId == o.Id);
@@ -592,7 +576,6 @@ namespace Omicron.Pedidos.Services.Pedidos
                 o.Status = ServiceConstants.Terminado;
                 o.StatusForTecnic = ServiceConstants.Terminado;
                 o.PackingDate = ServiceShared.CalculateTernary(o.PackingDate.HasValue, o.PackingDate, DateTime.Now);
-                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(updateOrderSignature.UserId, new List<UserOrderModel> { o }));
             });
 
             await this.pedidosDao.InsertOrderSignatures(listSignatureToInsert);
@@ -618,29 +601,19 @@ namespace Omicron.Pedidos.Services.Pedidos
                     var areInvalidOrders = orderBySale.Any(x => x.IsProductionOrder && !listProductionOrders.Contains(x.Productionorderid) && !ServiceConstants.ValidStatusTerminar.Contains(x.Status));
                     var tupleValues = preProdOrderSap.FirstOrDefault(x => x.Order.DocNum == int.Parse(sale.Salesorderid));
                     tupleValues ??= new OrderWithDetailModel { Detalle = new List<CompleteDetailOrderModel>() };
-                    var previousStatus = sale.Status;
                     sale.Status = ServiceShared.CalculateTernary(areInvalidOrders || tupleValues.Detalle.Any(x => string.IsNullOrEmpty(x.Status)) || hasPendingToSeparate, sale.Status, ServiceConstants.Terminado);
                     sale.StatusForTecnic = sale.Status;
-
-                    /** add logs**/
-                    if (previousStatus != sale.Status)
-                    {
-                        listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(updateOrderSignature.UserId, new List<UserOrderModel> { sale }));
-                    }
-
                     listorderToUpdate.Add(sale);
                 });
             }
 
             await this.pedidosDao.UpdateUserOrders(listorderToUpdate);
-            _ = this.kafkaConnector.PushMessage(listOrderLogToInsert, ServiceConstants.KafkaInsertLogsConfigName);
             return ServiceUtils.CreateResult(true, 200, null, updateOrderSignature, null);
         }
 
         /// <inheritdoc/>
         public async Task<ResultModel> CreateIsolatedProductionOrder(CreateIsolatedFabOrderModel isolatedFabOrder)
         {
-            var listOrderLogToInsert = new List<SalesLogs>();
             var payload = new { isolatedFabOrder.ProductCode };
             var diapiResult = await this.serviceLayerAdapterService.PostAsync(payload, ServiceConstants.CreateIsolatedFabOrder);
 
@@ -669,10 +642,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     PlanningDate = DateTime.Now,
                 };
 
-                /** add logs**/
-                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(isolatedFabOrder.UserId, new List<UserOrderModel> { newProductionOrder }));
                 await this.pedidosDao.InsertUserOrder(new List<UserOrderModel> { newProductionOrder });
-                _ = this.kafkaConnector.PushMessage(listOrderLogToInsert, ServiceConstants.KafkaInsertLogsConfigName);
                 await this.SaveCommonComponents(isolatedFabOrder.ProductCode);
             }
 
@@ -843,20 +813,17 @@ namespace Omicron.Pedidos.Services.Pedidos
             var qfbSignatureAsByte = Convert.FromBase64String(tecnicOrderSignature.QfbSignature.ValidateIfNull());
             var listSignatureToInsert = new List<UserOrderSignatureModel>();
             var listToUpdate = new List<UserOrderSignatureModel>();
-            var listOrderLogToInsert = new List<SalesLogs>();
             orders.ForEach(order =>
             {
                 var signature = orderSignatures.FirstOrDefault(x => x.UserOrderId == order.Id);
                 this.GetOrdersSignatures(signature, listSignatureToInsert, listToUpdate, order, tecnicSignatureAsByte, qfbSignatureAsByte, true);
                 order.StatusForTecnic = ServiceConstants.SignedStatus;
                 order.PackingDate = DateTime.Now;
-                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(tecnicOrderSignature.UserId, new List<UserOrderModel> { order }));
             });
 
             await this.pedidosDao.InsertOrderSignatures(listSignatureToInsert);
             await this.pedidosDao.SaveOrderSignatures(listToUpdate);
             await this.pedidosDao.UpdateUserOrders(orders);
-            _ = this.kafkaConnector.PushMessage(listOrderLogToInsert, ServiceConstants.KafkaInsertLogsConfigName);
             return ServiceUtils.CreateResult(true, 200, null, tecnicOrderSignature, null);
         }
 

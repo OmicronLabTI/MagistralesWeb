@@ -1229,14 +1229,6 @@ namespace Omicron.Pedidos.Services.Constants
         public static string ProductionOrderFinalizingRetryCronjob => "production-order-finalizing-retry-cronjob";
 
         /// <summary>
-        /// Gets KafkaInsertLogsConfigName.
-        /// </summary>
-        /// <value>
-        /// KafkaInsertLogsConfigName.
-        /// </value>
-        public static string KafkaInsertLogsConfigName => "insertlogs";
-
-        /// <summary>
         /// Gets KafkaFinalizeProductionOrderSapConfigName.
         /// </summary>
         /// <value>
