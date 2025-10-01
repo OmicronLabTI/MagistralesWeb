@@ -147,7 +147,7 @@ export class FinalizeOrdersComponent implements OnInit {
     const finalizeOrderReq: CancelOrderReq[] = [];
     fullData.forEach(orderIsolated => {
       const finalizeOrder = new CancelOrderReq();
-      finalizeOrder.orderId = orderIsolated.fabOrderId;
+      finalizeOrder.orderId = orderIsolated.fabOrderId ? orderIsolated.fabOrderId : orderIsolated.ordenFabricacionId;
       finalizeOrder.userId = this.localStorageService.getUserId();
       if (orderIsolated.docNum === 0) {
         finalizeOrder.batches = [{

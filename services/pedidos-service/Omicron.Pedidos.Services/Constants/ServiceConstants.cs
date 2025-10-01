@@ -307,11 +307,6 @@ namespace Omicron.Pedidos.Services.Constants
         public const string GetLastIsolatedProductionOrderId = "fabOrder/isolated/last";
 
         /// <summary>
-        /// the route to call the details for the details.
-        /// </summary>
-        public const string GetFabOrdersByPedidoId = "detail/{0}";
-
-        /// <summary>
         /// route to create orders.
         /// </summary>
         public const string CreateFabOrder = "createFabOrder";
@@ -545,6 +540,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// the filter for orders.
         /// </summary>
         public const string Status = "status";
+
+        /// <summary>
+        /// the filter for orders.
+        /// </summary>
+        public const string Parent = "parent";
 
         /// <summary>
         /// the filter for orders.
@@ -1144,6 +1144,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const int ProductionDetailCount = 1;
 
         /// <summary>
+        /// the order Complete.
+        /// </summary>
+        public const string Complete = "Completa";
+
+        /// <summary>
         /// Gets DefaultRedisValueTimeToLive.
         /// </summary>
         /// <value>
@@ -1555,6 +1560,19 @@ namespace Omicron.Pedidos.Services.Constants
             { (false, "Padre"), 3 },
             { (false, "Completa"), 4 },
             { (false, "Hija"), 5 },
+        };
+
+        /// <summary>
+        /// Gets the Order Relation.
+        /// </summary>
+        /// <value>
+        /// the OrderRelation.
+        /// </value>
+        public static Dictionary<string, string> OrderRelation { get; } = new Dictionary<string, string>
+        {
+            { "Y", "Padre" },
+            { "N", "Hija" },
+            { "SA", "Completa" },
         };
     }
 }

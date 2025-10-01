@@ -71,6 +71,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string NeedsLargeDsc = "Ldsc";
 
         /// <summary>
+        /// the filter for orders.
+        /// </summary>
+        public const string Parent = "parent";
+
+        /// <summary>
         /// the key for cliente.
         /// </summary>
         public const string Cliente = "cliente";
@@ -194,6 +199,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// route to get the users sales orders.
         /// </summary>
         public const string GetUserSalesOrder = "getUserOrder/salesOrder";
+
+        /// <summary>
+        /// route to get the users sales orders.
+        /// </summary>
+        public const string GetUserSalesOrderWithDetail = "getUserOrder/salesOrder/detail";
 
         /// <summary>
         /// route to get the users sales orders.
@@ -529,6 +539,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// the order Complete.
         /// </summary>
         public const string Complete = "Completa";
+
+        /// <summary>
+        /// the order Complete.
+        /// </summary>
+        public const string Padre = "Padre";
 
         /// <summary>
         /// foregin package error.
@@ -1076,6 +1091,7 @@ namespace Omicron.SapAdapter.Services.Constants
             Current,
             NeedsLargeDsc,
             Classifications,
+            Parent,
         };
 
         /// <summary>

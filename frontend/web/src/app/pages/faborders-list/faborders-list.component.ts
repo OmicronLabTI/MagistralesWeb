@@ -9,7 +9,7 @@ import {
   HttpServiceTOCall,
   HttpStatus,
   MODAL_FIND_ORDERS,
-  MODAL_NAMES, RouterPaths
+  MODAL_NAMES, orderRelationTypes, RouterPaths
 } from '../../constants/const';
 import { DataService } from '../../services/data.service';
 import { ErrorService } from '../../services/error.service';
@@ -30,11 +30,21 @@ import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { DateService } from '../../services/date.service';
 import { FiltersService } from '../../services/filters.service';
 import { MessagesService } from 'src/app/services/messages.service';
+import { HttpParams } from '@angular/common/http';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { childrenOrdersMock } from 'src/mocks/pedidosListMock';
 
 @Component({
   selector: 'app-faborders-list',
   templateUrl: './faborders-list.component.html',
-  styleUrls: ['./faborders-list.component.scss']
+  styleUrls: ['./faborders-list.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4,0.0,0.2,1)')),
+    ]),
+  ],
 })
 export class FabordersListComponent implements OnInit, OnDestroy {
   allComplete = false;
@@ -48,6 +58,8 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     'lote',
     'fechaorden',
     'fechatermino',
+    'piezasDisponibles',
+    'ordenesHija',
     'qfbasignado',
     'estatus',
     'actions'
@@ -71,6 +83,8 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   isReAssignOrderIsolated = false;
   isFinalizeOrderIsolated = false;
   isOnInit = true;
+  initialSearch = true;
+  expandedElement: IOrdersReq | null;
   constructor(
     private ordersService: OrdersService,
     private dataService: DataService,
@@ -127,13 +141,27 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     this.getOrdersAction();
   }
   updateAllComplete(event: boolean) {
-    this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t.isChecked);
+    const allChildrenChecked = this.getIfAllChildrenOrdersIsChecked();
+    this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t.isChecked) && allChildrenChecked;
     this.showOnSplitProcessMessage(event);
     this.getButtonsOrdersIsolatedToUnLooked();
   }
 
+  getIfAllChildrenOrdersIsChecked(): boolean {
+    const allChlidrenOrdersChecked = this.dataSource.data
+      .every(parentOrder => parentOrder.childOrders.every(childOrder => childOrder.isChecked));
+    return allChlidrenOrdersChecked;
+  }
+
   someComplete(): boolean {
-    return this.dataSource.data.filter(t => t.isChecked).length > 0 && !this.allComplete;
+    const someChildrenChecked = this.someChildrenOrderIsChecked();
+    return (this.dataSource.data.filter(t => t.isChecked).length > 0 || someChildrenChecked) && !this.allComplete;
+  }
+
+  someChildrenOrderIsChecked(): boolean {
+    const someChlidrenOrdersChecked = this.dataSource.data
+      .some(parentOrder => parentOrder.childOrders.some(childOrder => childOrder.isChecked));
+    return someChlidrenOrdersChecked;
   }
 
   setAll(completed: boolean) {
@@ -151,7 +179,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
       ordersRes => {
         this.lengthPaginator = ordersRes.comments;
         this.dataSource.data = ordersRes.response;
-        this.dataSource.data.forEach(element => {
+        this.dataSource.data.forEach((element, i) => {
           switch (element.status) {
             case ConstStatus.abierto:
               element.class = 'abierto';
@@ -186,6 +214,8 @@ export class FabordersListComponent implements OnInit, OnDestroy {
               break;
           }
           element.description = element.description.toUpperCase();
+          element.childOrders = [];
+          element.style = this.dataService.calculateTernary(i % 2 === 0, '#f1f2f3', '#fff');
         });
         this.isThereOrdersIsolatedToCancel = false;
         this.isAssignOrderIsolated = false;
@@ -204,7 +234,9 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   }
 
   getFullQueryString() {
-    this.fullQueryString = `${this.queryString}&offset=${this.offset}&limit=${this.limit}&classifications=${this.userClasification}`;
+    const extraParam = this.initialSearch ? '&parent=true' : '';
+    // tslint:disable-next-line:max-line-length
+    this.fullQueryString = `${this.queryString}&offset=${this.offset}&limit=${this.limit}&classifications=${this.userClasification}${extraParam}`;
   }
 
   getDateFormatted(initDate: Date, finishDate: Date, isBeginDate: boolean) {
@@ -237,6 +269,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     this.filterDataOrders = new ParamsPedidos();
     this.filterDataOrders = this.filtersService.getNewDataToFilter(resultSearchOrdersModal)[0];
     this.queryString = this.filtersService.getNewDataToFilter(resultSearchOrdersModal)[1];
+    this.initialSearch = this.validateParameters(this.queryString);
     this.isSearchOrderWithFilter = this.filtersService.getIsWithFilter(resultSearchOrdersModal);
     this.pageIndex = resultSearchOrdersModal.pageIndex || 0;
     this.offset = resultSearchOrdersModal.offset || 0;
@@ -246,17 +279,83 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     this.isDateInit = resultSearchOrdersModal.dateType === ConstOrders.defaultDateInit;
   }
 
+  validateParameters(url: string): boolean {
+    const queryString = url.split('?')[1];
+    if (!queryString) {
+      return false;
+    }
+
+    const params = new HttpParams({ fromString: queryString });
+    const permitidos = ['fini', 'ffin'];
+
+    let valido = true;
+    params.keys().forEach(key => {
+      if (!permitidos.includes(key)) {
+        valido = false;
+      }
+    });
+
+    return valido;
+  }
+
+  getChildrenOrdersData(parentOrderID: number, indexToSetData: number) {
+    this.pedidosService.getChildrenOrders(parentOrderID).subscribe(
+      res => {
+        this.dataSource.data[indexToSetData].childOrders = [...res.response];
+      },
+      error => this.errorService.httpError(error));
+  }
+
+  toggleExpand(order: IOrdersReq) {
+    const parentOrderId = order.fabOrderId;
+    const indice = this.dataSource.data.indexOf(order);
+    if (this.dataSource.data[indice].childOrders === undefined || this.dataSource.data[indice].childOrders.length === 0) {
+      this.getChildrenOrdersData(parentOrderId, indice);
+    }
+    this.expandedElement = this.expandedElement === order ? null : order;
+  }
+
   cancelOrder() {
     this.observableService.setCancelOrders({
-      list: this.dataSource.data.filter
-        (t => (t.isChecked && t.status !== ConstStatus.finalizado && t.status !== ConstStatus.almacenado)).map(order => {
-          const cancelOrder = new CancelOrderReq();
-          cancelOrder.orderId = Number(order.fabOrderId);
-          return cancelOrder;
-        }),
+      list: this.getDataCancel(ConstStatus.finalizado),
       cancelType: MODAL_NAMES.placeOrdersDetail, isFromCancelIsolated: true
     });
   }
+
+  getDataCancel(status: string) {
+    const childrenOrders = this.getChildrenOrdersToCancel(status);
+    const parentsOrders = this.dataSource.data.filter
+      (t => (t.isChecked && (t.status !== status && t.status !== ConstStatus.almacenado))).map(order => {
+        return this.getCancelOrderReq(order.fabOrderId);
+      });
+    const dataRequest = parentsOrders.concat(childrenOrders);
+    return dataRequest;
+  }
+
+  getChildrenOrdersToCancel(status: string) {
+    const orders = this.getChildrenOrdersCheckedIdsToCancel(status);
+    return orders.map(order => this.getCancelOrderReq(order));
+  }
+
+  getCancelOrderReq(ordenFabricacionId: number): CancelOrderReq {
+    const cancelOrder = new CancelOrderReq();
+    cancelOrder.orderId = ordenFabricacionId;
+    return cancelOrder;
+  }
+
+  getChildrenOrdersCheckedIdsToCancel(status: string) {
+    const childrenChecked = this.dataSource.data.map(parentOrder =>
+      parentOrder.childOrders.filter(childOrder =>
+        this.dataService.calculateAndValueList([
+          childOrder.isChecked,
+          childOrder.status !== status,
+          childOrder.status !== ConstStatus.almacenado
+        ])
+      ).map(order => order.ordenFabricacionId))
+      .reduce((acc, ids) => acc.concat(ids), []);
+    return childrenChecked;
+  }
+
   assignOrderIsolated() {
     this.observableService.setQbfToPlace({
       modalType: MODAL_NAMES.placeOrdersDetail,
@@ -277,10 +376,10 @@ export class FabordersListComponent implements OnInit, OnDestroy {
 
   showOnSplitProcessMessage(check: boolean) {
     const orders = this.dataSource.data.filter(order =>
-        this.dataService.calculateAndValueList([
-          order.isChecked,
-          order.onSplitProcess
-        ])).map(t => t.fabOrderId);
+      this.dataService.calculateAndValueList([
+        order.isChecked,
+        order.onSplitProcess
+      ])).map(t => t.fabOrderId);
     const someOnSplitProcess = orders.length > 0;
     const showMessage = this.dataService.calculateAndValueList([someOnSplitProcess, check]);
     if (showMessage) {
@@ -290,10 +389,17 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   }
 
   reAssignOrder() {
+    const parentOrdersReasign = this.filtersService.getItemOnDateWithFilter(this.dataSource.data,
+      FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.ordenFabricacionId));
+
+    const childrenOrders = this.getChildrenOrdersChecked();
+    const childrenOrderToReasign = this.filtersService.getItemOnDateWithFilter(childrenOrders,
+      FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.ordenFabricacionId));
+
+    const dataRequest = parentOrdersReasign.concat(childrenOrderToReasign);
     this.observableService.setQbfToPlace({
       modalType: MODAL_NAMES.placeOrdersDetail,
-      list: this.filtersService.getItemOnDateWithFilter(this.dataSource.data,
-        FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.fabOrderId))
+      list: dataRequest
       , isFromOrderIsolated: true, isFromReassign: true
     });
   }
@@ -302,13 +408,27 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   }
 
   finalizeOrder() {
+    const finalizeParentOrders = this.filtersService.
+      getItemOnDateWithFilter(this.dataSource.data, FromToFilter.fromDefault, ConstStatus.terminado);
+
+    const childrenOrdersChecked = this.getChildrenOrdersChecked();
+    const finalizeChildrenOrders = this.filtersService.
+      getItemOnDateWithFilter(childrenOrdersChecked, FromToFilter.fromDefault, ConstStatus.terminado);
+    const finalizeOrderData = finalizeParentOrders.concat(finalizeChildrenOrders);
+    console.log(finalizeOrderData);
     this.dialog.open(FinalizeOrdersComponent, {
       panelClass: 'custom-dialog-container',
       data: {
-        finalizeOrdersData: this.filtersService.
-          getItemOnDateWithFilter(this.dataSource.data, FromToFilter.fromDefault, ConstStatus.terminado)
+        finalizeOrdersData: finalizeOrderData
       }
     }).afterClosed().subscribe(() => this.getOrdersAction());
+  }
+
+  getChildrenOrdersChecked() {
+    const childrenChecked = this.dataSource.data
+      .map(parentOrder => parentOrder.childOrders.filter(childOrder => childOrder.isChecked))
+      .reduce((acc, children) => acc.concat(children), []);
+    return childrenChecked;
   }
 
   materialRequestIsolatedOrder() {

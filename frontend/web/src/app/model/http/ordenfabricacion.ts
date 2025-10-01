@@ -1,4 +1,5 @@
 import {BaseResponseHttp} from './commons';
+import { ChildrenOrders } from './detallepedidos.model';
 
 export class IOrdersRes extends BaseResponseHttp {
     response: IOrdersReq[];
@@ -26,6 +27,13 @@ export class IOrdersReq {
     hasMissingStock?: boolean;
     batch: string;
     onSplitProcess: boolean;
+
+    orderRelationType: string;
+    availablePieces: number;
+    childOrdersCount: number;
+    childOrders: ChildrenOrders[];
+
+    style?: string;
 }
 
 export class ParamsOrders {
