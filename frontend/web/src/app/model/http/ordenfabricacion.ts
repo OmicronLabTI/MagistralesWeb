@@ -5,6 +5,10 @@ export class IOrdersRes extends BaseResponseHttp {
     response: IOrdersReq[];
 }
 
+export class IChildrenOrdersListRes extends BaseResponseHttp {
+    response: ChildrenOrdersFabOrderList[];
+}
+
 export class IOrdersReq {
     isChecked?: boolean;
     docNum: number;
@@ -30,10 +34,23 @@ export class IOrdersReq {
 
     orderRelationType: string;
     availablePieces: number;
-    childOrdersCount: number;
-    childOrders: ChildrenOrders[];
+    childOrders: number;
+    childOrdersDetail: ChildrenOrdersFabOrderList[];
 
     style?: string;
+}
+
+export class ChildrenOrdersFabOrderList {
+    isChecked: boolean;
+    docNum: string;
+    fabOrderId: number;
+    quantity: number;
+    createDate: string;
+    userCreate: string;
+    finishDate: string;
+    qfb: string;
+    status: string;
+    batch: string;
 }
 
 export class ParamsOrders {

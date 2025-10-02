@@ -18,7 +18,6 @@ import {
   ProcessOrdersDetailReq
 } from '../model/http/pedidos';
 import {
-  IChildrenOrdersListRes,
   IOrdersRefuseReq,
   IPedidoDetalleLabelReq,
   IPedidoDetalleListRes,
@@ -26,6 +25,7 @@ import {
 } from '../model/http/detallepedidos.model';
 import { IComponentsLotesRes, IResponseSaveChanges } from '../model/http/addComponent';
 import { BaseResponseHttp } from '../model/http/commons';
+import { IChildrenOrdersListRes } from '../model/http/ordenfabricacion';
 
 
 @Injectable({
