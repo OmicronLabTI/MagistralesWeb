@@ -68,10 +68,6 @@ export class IPedidoDetalleListRes extends BaseResponseHttp {
     response: IPedidoDetalleReq[];
 }
 
-export class IChildrenOrdersListRes extends BaseResponseHttp {
-    response: ChildrenOrders[];
-}
-
 export class IQrByOrdersRes extends BaseResponseHttp {
     response: string[];
 }

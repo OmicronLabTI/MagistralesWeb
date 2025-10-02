@@ -185,6 +185,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
           break;
       }
       orders.descripcionProducto = orders.descripcionProducto.toUpperCase();
+      // orders.childOrders = [];
       orders.style = this.dataService.calculateTernary(i % 2 === 0, '#f1f2f3', '#fff');
     });
     this.isThereOrdersToViewPdf = false;
@@ -203,20 +204,15 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
       && order.ordenFabricacionId === CONST_NUMBER.zero);
   }
 
-  getChildrenOrdersData(parentOrderID: number, indexToSetData: number) {
-    this.pedidosService.getChildrenOrders(parentOrderID).subscribe(
-      res => {
-        this.dataSource.data[indexToSetData].childOrders = [...res.response];
-      },
-      error => this.errorService.httpError(error));
-  }
+  // getChildrenOrdersData(parentOrderID: number, indexToSetData: number) {
+  //   this.pedidosService.getChildrenOrders(parentOrderID).subscribe(
+  //     res => {
+  //       this.dataSource.data[indexToSetData].childOrders = [...res.response];
+  //     },
+  //     error => this.errorService.httpError(error));
+  // }
 
   toggleExpand(order: IPedidoDetalleReq) {
-    const parentOrderId = order.ordenFabricacionId;
-    const indice = this.dataSource.data.indexOf(order);
-    if (this.dataSource.data[indice].childOrders.length === 0) {
-      this.getChildrenOrdersData(parentOrderId, indice);
-    }
     this.expandedElement = this.expandedElement === order ? null : order;
   }
 
@@ -373,11 +369,13 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     const parentOrdersReasign = this.filtersService.getItemOnDateWithFilter(this.dataSource.data,
       FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.ordenFabricacionId));
 
+
     const childrenOrders = this.getChildrenOrdersChecked();
     const childrenOrderToReasign = this.filtersService.getItemOnDateWithFilter(childrenOrders,
       FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.ordenFabricacionId));
 
     const dataRequest = parentOrdersReasign.concat(childrenOrderToReasign);
+    console.log(dataRequest);
     this.observableService.setQbfToPlace({
       modalType: MODAL_NAMES.placeOrdersDetail,
       list: dataRequest,

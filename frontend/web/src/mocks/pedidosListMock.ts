@@ -1,4 +1,5 @@
-import { ChildrenOrders, IChildrenOrdersListRes } from 'src/app/model/http/detallepedidos.model';
+import { ChildrenOrders } from 'src/app/model/http/detallepedidos.model';
+import { ChildrenOrdersFabOrderList, IChildrenOrdersListRes } from 'src/app/model/http/ordenfabricacion';
 
 export const DetalleFormulaMock = {
     code: 200,
@@ -163,7 +164,46 @@ export const productWarehousesResponseMock = {
     response: ['MN']
 };
 
-export const childrenOrdersMock: ChildrenOrders[] = [
+export const childrenOrdersMock: ChildrenOrdersFabOrderList[] = [
+    {
+        docNum: '176693',
+        fabOrderId: 227323,
+        quantity: 3,
+        createDate: '07/09/2025 23:25:31',
+        userCreate: 'Miranda Garfias',
+        finishDate: '08/09/2025',
+        qfb: 'Miranda Garfias',
+        status: 'Terminado',
+        batch: null,
+        isChecked: false
+    },
+    {
+        docNum: '176693',
+        fabOrderId: 227324,
+        quantity: 3,
+        createDate: '08/09/2025 00:07:23',
+        userCreate: 'Miranda Garfias',
+        finishDate: '08/09/2025',
+        qfb: 'Miranda Garfias',
+        status: 'Terminado',
+        batch: null,
+        isChecked: false
+    },
+    {
+        docNum: '176693',
+        fabOrderId: 227322,
+        quantity: 3,
+        createDate: '07/09/2025 23:24:58',
+        userCreate: 'Miranda Garfias',
+        finishDate: '08/09/2025',
+        qfb: 'Miranda Garfias',
+        status: 'Terminado',
+        batch: '',
+        isChecked: false
+    }
+];
+
+export const childrenOrdersDetailMock: ChildrenOrders[] = [
     {
         ordenFabricacionId: 227308,
         codigoProducto: 'BQ 250',

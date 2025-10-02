@@ -72,6 +72,10 @@
                             <ng-container *ngIf="element.orderRelationType === 'Padre'">
                                 <img src="assets/icons/parentOrdersIcon.svg" class="typeOrderIcon" alt="comments" />
                             </ng-container>
+                            <ng-container *ngIf="element.orderRelationType === 'Hija'">
+                                <img src="assets/icons/childrenOrdersIcon.svg" class="typeOrderIcon" alt="comments" />
+                            </ng-container>
+
                         </div>
                     </td>
                     <td mat-footer-cell *matFooterCellDef></td>
@@ -152,7 +156,7 @@
                     <td mat-cell *matCellDef="let element"
                         class="color-text-intables tdcell tdcell-center mobile-hide qfb">
                         <ng-container *ngIf="element.orderRelationType === 'Padre'">
-                            {{element.childOrdersCount}}
+                            {{element.childOrders}}
                         </ng-container>
                         <ng-container *ngIf="element.orderRelationType !== 'Padre'">N/A</ng-container>
                         <button mat-button *ngIf="element.orderRelationType === 'Padre' && initialSearch"
@@ -285,7 +289,7 @@
                                     ACCIONES
                                 </div>
                             </div>
-                            <ng-container *ngFor="let item of element.childOrders">
+                            <ng-container *ngFor="let item of element.childOrdersDetail">
                                 <div class="d-flex child-order-row">
                                     <div class="d-flex align-items-center justify-content-around w-5">
                                         <mat-checkbox [(ngModel)]="item.isChecked"
@@ -294,25 +298,25 @@
                                             alt="comments" />
                                     </div>
                                     <div class="d-flex align-items-center justify-content-center w-5">
-                                        {{item.ordenFabricacionId}}
+                                        {{item.fabOrderId}}
                                     </div>
                                     <div class="d-flex align-items-center justify-content-center w-15">
                                         {{item.userCreate}} </div>
                                     <div class="d-flex align-items-center justify-content-center w-5">
-                                        {{item.assignedPieces}}
+                                        {{item.quantity}}
                                     </div>
                                     <div class="d-flex align-items-center justify-content-center w-15">
                                         {{item.qfb}} </div>
                                     <div class="d-flex align-items-center justify-content-center w-15">
-                                        {{item.fechaOf}} </div>
+                                        {{item.createDate}} </div>
                                     <div class="d-flex align-items-center justify-content-center w-15">
-                                        {{item.fechaOfFin}} </div>
+                                        {{item.finishDate}} </div>
                                     <div class="d-flex align-items-center justify-content-center w-15">
                                         {{item.status}} </div>
                                     <div class="d-flex align-items-center justify-content-center w-10">
                                         <button mat-icon-button matTooltip="Ver fórmula" class="ico-col-pri"
                                             *ngIf="element.ordenFabricacionId !== 0 && localStorageService.getUserRole() !== '5' && localStorageService.getUserRole() !== '4'"
-                                            (click)="goToFormulaDetail(item.ordenFabricacionId)">
+                                            (click)="goToFormulaDetail(item.fabOrderId)">
                                             <mat-icon>
                                                 <svg *ngIf="!element.hasMissingStock" xmlns="http://www.w3.org/2000/svg"
                                                     aria-hidden="true" focusable="false" width="2em" height="2em"

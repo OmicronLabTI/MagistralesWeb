@@ -149,7 +149,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
 
   getIfAllChildrenOrdersIsChecked(): boolean {
     const allChlidrenOrdersChecked = this.dataSource.data
-      .every(parentOrder => parentOrder.childOrders.every(childOrder => childOrder.isChecked));
+      .every(parentOrder => parentOrder.childOrdersDetail.every(childOrder => childOrder.isChecked));
     return allChlidrenOrdersChecked;
   }
 
@@ -160,7 +160,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
 
   someChildrenOrderIsChecked(): boolean {
     const someChlidrenOrdersChecked = this.dataSource.data
-      .some(parentOrder => parentOrder.childOrders.some(childOrder => childOrder.isChecked));
+      .some(parentOrder => parentOrder.childOrdersDetail.some(childOrder => childOrder.isChecked));
     return someChlidrenOrdersChecked;
   }
 
@@ -214,7 +214,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
               break;
           }
           element.description = element.description.toUpperCase();
-          element.childOrders = [];
+          element.childOrdersDetail = [];
           element.style = this.dataService.calculateTernary(i % 2 === 0, '#f1f2f3', '#fff');
         });
         this.isThereOrdersIsolatedToCancel = false;
@@ -301,7 +301,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   getChildrenOrdersData(parentOrderID: number, indexToSetData: number) {
     this.pedidosService.getChildrenOrders(parentOrderID).subscribe(
       res => {
-        this.dataSource.data[indexToSetData].childOrders = [...res.response];
+        this.dataSource.data[indexToSetData].childOrdersDetail = [...res.response];
       },
       error => this.errorService.httpError(error));
   }
@@ -309,7 +309,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   toggleExpand(order: IOrdersReq) {
     const parentOrderId = order.fabOrderId;
     const indice = this.dataSource.data.indexOf(order);
-    if (this.dataSource.data[indice].childOrders === undefined || this.dataSource.data[indice].childOrders.length === 0) {
+    if (this.dataSource.data[indice].childOrdersDetail === undefined || this.dataSource.data[indice].childOrdersDetail.length === 0) {
       this.getChildrenOrdersData(parentOrderId, indice);
     }
     this.expandedElement = this.expandedElement === order ? null : order;
@@ -345,13 +345,13 @@ export class FabordersListComponent implements OnInit, OnDestroy {
 
   getChildrenOrdersCheckedIdsToCancel(status: string) {
     const childrenChecked = this.dataSource.data.map(parentOrder =>
-      parentOrder.childOrders.filter(childOrder =>
+      parentOrder.childOrdersDetail.filter(childOrder =>
         this.dataService.calculateAndValueList([
           childOrder.isChecked,
           childOrder.status !== status,
           childOrder.status !== ConstStatus.almacenado
         ])
-      ).map(order => order.ordenFabricacionId))
+      ).map(order => order.fabOrderId))
       .reduce((acc, ids) => acc.concat(ids), []);
     return childrenChecked;
   }
@@ -426,7 +426,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
 
   getChildrenOrdersChecked() {
     const childrenChecked = this.dataSource.data
-      .map(parentOrder => parentOrder.childOrders.filter(childOrder => childOrder.isChecked))
+      .map(parentOrder => parentOrder.childOrdersDetail.filter(childOrder => childOrder.isChecked))
       .reduce((acc, children) => acc.concat(children), []);
     return childrenChecked;
   }

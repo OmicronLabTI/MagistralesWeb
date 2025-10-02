@@ -1,4 +1,6 @@
-export const FabOrderListMock = {
+import { IOrdersRes } from 'src/app/model/http/ordenfabricacion';
+
+export const FabOrderListMock: IOrdersRes = {
     code: 200,
     userError: null,
     exceptionMessage: null,
@@ -22,8 +24,8 @@ export const FabOrderListMock = {
             onSplitProcess: false,
             orderRelationType: '',
             availablePieces: 0,
-            childOrdersCount: 0,
-            childOrders: []
+            childOrders: 0,
+            childOrdersDetail: []
         },
         {
             docNum: 0,
@@ -42,8 +44,8 @@ export const FabOrderListMock = {
             onSplitProcess: false,
             orderRelationType: '',
             availablePieces: 0,
-            childOrdersCount: 0,
-            childOrders: []
+            childOrders: 0,
+            childOrdersDetail: []
         },
         {
             docNum: 0,
@@ -62,8 +64,8 @@ export const FabOrderListMock = {
             onSplitProcess: false,
             orderRelationType: '',
             availablePieces: 0,
-            childOrdersCount: 0,
-            childOrders: []
+            childOrders: 0,
+            childOrdersDetail: []
         },
         {
             docNum: 0,
@@ -82,8 +84,8 @@ export const FabOrderListMock = {
             onSplitProcess: false,
             orderRelationType: '',
             availablePieces: 0,
-            childOrdersCount: 0,
-            childOrders: []
+            childOrders: 0,
+            childOrdersDetail: []
         },
         {
             docNum: 0,
@@ -102,8 +104,8 @@ export const FabOrderListMock = {
             onSplitProcess: false,
             orderRelationType: '',
             availablePieces: 0,
-            childOrdersCount: 0,
-            childOrders: []
+            childOrders: 0,
+            childOrdersDetail: []
         },
         {
             docNum: 0,
@@ -122,8 +124,8 @@ export const FabOrderListMock = {
             onSplitProcess: false,
             orderRelationType: '',
             availablePieces: 0,
-            childOrdersCount: 0,
-            childOrders: []
+            childOrders: 0,
+            childOrdersDetail: []
         },
         {
             docNum: 0,
@@ -142,8 +144,8 @@ export const FabOrderListMock = {
             onSplitProcess: false,
             orderRelationType: '',
             availablePieces: 0,
-            childOrdersCount: 0,
-            childOrders: []
+            childOrders: 0,
+            childOrdersDetail: []
         },
         {
             docNum: 0,
@@ -162,8 +164,8 @@ export const FabOrderListMock = {
             onSplitProcess: false,
             orderRelationType: '',
             availablePieces: 0,
-            childOrdersCount: 0,
-            childOrders: []
+            childOrders: 0,
+            childOrdersDetail: []
         },
         {
             docNum: 0,
@@ -182,8 +184,8 @@ export const FabOrderListMock = {
             onSplitProcess: false,
             orderRelationType: '',
             availablePieces: 0,
-            childOrdersCount: 0,
-            childOrders: []
+            childOrders: 0,
+            childOrdersDetail: []
         },
         {
             docNum: 0,
@@ -202,8 +204,8 @@ export const FabOrderListMock = {
             onSplitProcess: false,
             orderRelationType: '',
             availablePieces: 0,
-            childOrdersCount: 0,
-            childOrders: []
+            childOrders: 0,
+            childOrdersDetail: []
         }
     ]
 };
