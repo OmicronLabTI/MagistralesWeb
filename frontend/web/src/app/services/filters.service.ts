@@ -18,9 +18,10 @@ export class FiltersService {
   getIsThereOnData(
     dataToSearch: any[],
     status: string,
-    fromToFilter: FromToFilter
+    fromToFilter: FromToFilter,
+    isFromFabOrderList: boolean = false,
   ) {
-    const childrenOrdersChecked = this.getChildrenOrdersChecked(dataToSearch);
+    const childrenOrdersChecked = this.getChildrenOrdersChecked(dataToSearch, isFromFabOrderList);
     const dataChecked = this.getDataChecked(dataToSearch, t => t.isChecked);
     let evaluateChildrenOrders = false;
     let enableButton = BoolConst.false;
@@ -243,11 +244,26 @@ export class FiltersService {
     return orderStatus === statusToCompare;
   }
 
-  getChildrenOrdersChecked(dataToSearch: any[]): ChildrenOrders[] {
-    const childrenOrdersChecked = dataToSearch.map(parentOrder => parentOrder.childOrders
-      .filter(childrenOrders => childrenOrders.isChecked))
-      .reduce((acc, childrenOrders) => acc.concat(childrenOrders), []);
+  getChildrenOrdersChecked(dataToSearch: any[], isFromFabOrderList: boolean = false) {
+    let childrenOrdersChecked = [];
+    if (isFromFabOrderList) {
+      childrenOrdersChecked = this.getChildrenOrdersCheckedForList(dataToSearch);
+    } else {
+      childrenOrdersChecked = this.getChildrenOrdersCheckedForDetail(dataToSearch);
+    }
     return childrenOrdersChecked;
+  }
+
+  getChildrenOrdersCheckedForList(dataToSearch: any[]) {
+    return dataToSearch.map(parentOrder => parentOrder.childOrdersDetail
+        .filter(childrenOrders => childrenOrders.isChecked))
+        .reduce((acc, childrenOrders) => acc.concat(childrenOrders), []);
+  }
+
+  getChildrenOrdersCheckedForDetail(dataToSearch: any[]) {
+    return dataToSearch.map(parentOrder => parentOrder.childOrders
+        .filter(childrenOrders => childrenOrders.isChecked))
+        .reduce((acc, childrenOrders) => acc.concat(childrenOrders), []);
   }
 
   getValidParentOrderToReasign(data: any): boolean {
