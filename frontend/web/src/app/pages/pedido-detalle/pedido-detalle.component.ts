@@ -367,7 +367,6 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
       FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.ordenFabricacionId));
 
     const dataRequest = parentOrdersReasign.concat(childrenOrderToReasign);
-    console.log(dataRequest);
     this.observableService.setQbfToPlace({
       modalType: MODAL_NAMES.placeOrdersDetail,
       list: dataRequest,
