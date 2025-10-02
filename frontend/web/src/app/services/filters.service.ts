@@ -276,7 +276,8 @@ export class FiltersService {
               t.status === ConstStatus.asignado ||
               t.status.toLowerCase() === ConstStatus.enProceso.toLowerCase() ||
               t.status === ConstStatus.pendiente ||
-              t.status === ConstStatus.terminado)
+              t.status === ConstStatus.terminado ||
+              this.getValidParentOrderToReasign(t))
         );
       case FromToFilter.fromOrdersReassign:
         return this.getValidationFromOrderReassign(dataToSearch, status);

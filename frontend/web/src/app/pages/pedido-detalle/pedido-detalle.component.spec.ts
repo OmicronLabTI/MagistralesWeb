@@ -23,7 +23,7 @@ import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { ObservableService } from 'src/app/services/observable.service';
 import { MessagesService } from 'src/app/services/messages.service';
 import { FiltersService } from 'src/app/services/filters.service';
-import { childrenOrdersMock, getChildrenResponseMock } from 'src/mocks/pedidosListMock';
+import { childrenOrdersDetailMock, childrenOrdersMock, getChildrenResponseMock } from 'src/mocks/pedidosListMock';
 
 describe('PedidoDetalleComponent', () => {
   let component: PedidoDetalleComponent;
@@ -242,10 +242,10 @@ describe('PedidoDetalleComponent', () => {
     expect(component.allComplete).toBeTruthy();
   });
   it('should toggleExpand', () => {
-    component.dataSource.data = [...dataDetail];
+    component.expandedElement = dataDetail[0];
     const childRow = dataDetail[0];
     component.toggleExpand(childRow);
-    expect(pedidosServiceSpy.getChildrenOrders).toHaveBeenCalled();
+    expect(component.expandedElement).toBeNull();
   });
   it('should removeSignatureFromChildren', () => {
     messagesServiceSpy.presentToastCustom.and.callFake(() => {
@@ -254,7 +254,7 @@ describe('PedidoDetalleComponent', () => {
       });
     });
 
-    component.removeSignatureFromChildren({ ...childrenOrdersMock[0] });
+    component.removeSignatureFromChildren({ ...childrenOrdersDetailMock[0] });
     expect(messagesServiceSpy.presentToastCustom).toHaveBeenCalled();
   });
   it('should setAll', () => {

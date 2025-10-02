@@ -289,7 +289,7 @@ describe('FabordersListComponent', () => {
         isWithErrorBatch: false,
         hasMissingStock: false,
         batch: '',
-        childOrders: []
+        childOrdersDetail: []
       } as IOrdersReq
     ];
     component.cancelOrder();
