@@ -365,13 +365,13 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   }
   private getButtonsOrdersIsolatedToUnLooked() {
     this.isFinalizeOrderIsolated = this.filtersService.
-      getIsThereOnData(this.dataSource.data, ConstStatus.terminado, FromToFilter.fromDefault);
+      getIsThereOnData(this.dataSource.data, ConstStatus.terminado, FromToFilter.fromDefault, true);
     this.isThereOrdersIsolatedToCancel = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
-      FromToFilter.fromOrdersIsolatedCancel);
+      FromToFilter.fromOrdersIsolatedCancel, true);
     this.isAssignOrderIsolated = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado,
-      FromToFilter.fromDefault);
+      FromToFilter.fromDefault, true);
     this.isReAssignOrderIsolated = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.reasingado,
-      FromToFilter.fromOrderIsolatedReassign);
+      FromToFilter.fromOrderIsolatedReassign, true);
   }
 
   showOnSplitProcessMessage(check: boolean) {
@@ -390,11 +390,11 @@ export class FabordersListComponent implements OnInit, OnDestroy {
 
   reAssignOrder() {
     const parentOrdersReasign = this.filtersService.getItemOnDateWithFilter(this.dataSource.data,
-      FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.ordenFabricacionId));
+      FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.fabOrderId));
 
     const childrenOrders = this.getChildrenOrdersChecked();
     const childrenOrderToReasign = this.filtersService.getItemOnDateWithFilter(childrenOrders,
-      FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.ordenFabricacionId));
+      FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.fabOrderId));
 
     const dataRequest = parentOrdersReasign.concat(childrenOrderToReasign);
     this.observableService.setQbfToPlace({
@@ -415,7 +415,6 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     const finalizeChildrenOrders = this.filtersService.
       getItemOnDateWithFilter(childrenOrdersChecked, FromToFilter.fromDefault, ConstStatus.terminado);
     const finalizeOrderData = finalizeParentOrders.concat(finalizeChildrenOrders);
-    console.log(finalizeOrderData);
     this.dialog.open(FinalizeOrdersComponent, {
       panelClass: 'custom-dialog-container',
       data: {

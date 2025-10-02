@@ -204,14 +204,6 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
       && order.ordenFabricacionId === CONST_NUMBER.zero);
   }
 
-  // getChildrenOrdersData(parentOrderID: number, indexToSetData: number) {
-  //   this.pedidosService.getChildrenOrders(parentOrderID).subscribe(
-  //     res => {
-  //       this.dataSource.data[indexToSetData].childOrders = [...res.response];
-  //     },
-  //     error => this.errorService.httpError(error));
-  // }
-
   toggleExpand(order: IPedidoDetalleReq) {
     this.expandedElement = this.expandedElement === order ? null : order;
   }
@@ -375,7 +367,6 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
       FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.ordenFabricacionId));
 
     const dataRequest = parentOrdersReasign.concat(childrenOrderToReasign);
-    console.log(dataRequest);
     this.observableService.setQbfToPlace({
       modalType: MODAL_NAMES.placeOrdersDetail,
       list: dataRequest,
