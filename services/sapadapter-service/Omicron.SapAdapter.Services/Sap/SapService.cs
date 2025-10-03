@@ -1048,6 +1048,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Label = ServiceShared.CalculateTernary(complete.Label.ToLower().Equals(ServiceConstants.Personalizado.ToLower()), ServiceConstants.Personalizado, ServiceConstants.Generico),
                     RealLabel = complete.Label,
                     FinishedLabel = userOrder.FinishedLabel,
+                    CatalogGroup = complete.CatalogGroup,
                 };
                 orders.Add(childOrder);
             });
