@@ -90,5 +90,11 @@ namespace Omicron.SapAdapter.Entities.Model.BusinessModels
         /// </summary>
         /// <value>the value of stock.</value>
         public int FinishedLabel { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string CatalogGroup { get; set; }
     }
 }
