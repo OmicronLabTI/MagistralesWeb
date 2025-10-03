@@ -39,6 +39,7 @@ class HistoricRequestModel: Codable {
 
 class HistoricResponseModel: HttpResponse {
     var response: [ParentOrders]?
+    var comments: String?
     
     required init?(map: Map) {
         super.init(map: map)
@@ -47,6 +48,7 @@ class HistoricResponseModel: HttpResponse {
     override func mapping(map: Map) {
         super.mapping(map: map)
         response <- map["response"]
+        comments <- map["comments"]
     }
 }
 

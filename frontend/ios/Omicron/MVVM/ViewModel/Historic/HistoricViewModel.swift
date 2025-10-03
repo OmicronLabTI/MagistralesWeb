@@ -30,6 +30,7 @@ class HistoricViewModel {
     var dataOffset: Int = 0
     let limit: Int = 10
     var chips = String()
+    var totalOrders = 0
     
     init() {
         searchDidTapBinding()
@@ -90,6 +91,7 @@ class HistoricViewModel {
             guard let self = self else { return }
             self.loading.onNext(false)
             if res.code == 200 {
+                totalOrders = Int(res.comments ?? "0") ?? 0
                 self.orders.append(contentsOf: res.response ?? [])
                 self.endRefreshing.onNext(())
                 tableData.onNext(res.response ?? [])
