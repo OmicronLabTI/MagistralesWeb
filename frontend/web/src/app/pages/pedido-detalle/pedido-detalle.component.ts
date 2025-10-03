@@ -495,22 +495,51 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     CatalogTypes.magistralDermocos.toUpperCase(),
     CatalogTypes.magistralMedicament.toUpperCase()];
     if (!isFromRemoveSignature) {
-      return this.dataSource.data.filter(order => order.isChecked &&
-        (order.status !== ConstStatus.abierto && order.status !== ConstStatus.cancelado)
-        && (order.codigoProducto.split(' ')[0] !== this.ProductNoLabel.value
-          || !invalidCatalogGroups.includes(order.catalogGroup.toUpperCase()))
-        && order.finishedLabel !== 1)
-        .map(order => {
-          const labelToFinish = new LabelToFinish();
-          labelToFinish.orderId = order.ordenFabricacionId;
-          labelToFinish.checked = true;
-          return labelToFinish;
-        });
+      const parentOrdersToFinishLabel = this.getParentOrdersToFinishLabels(invalidCatalogGroups);
+      const childrenOrderToFinishLabel = this.getChildrenOrdersToFinisLabel(invalidCatalogGroups);
+
+      const dataRequest = parentOrdersToFinishLabel.concat(childrenOrderToFinishLabel);
+      return dataRequest;
     } else {
       const labelsToFinish: LabelToFinish[] = [];
       labelsToFinish.push({ orderId: this.dataSource.data[index].ordenFabricacionId, checked: false });
       return labelsToFinish;
     }
+  }
+
+  getChildrenOrdersToFinisLabel(invalidCatalogGroups: string[]): LabelToFinish[] {
+    const childrenOrdersChecked = this.getChildrenOrdersChecked();
+
+    return childrenOrdersChecked.filter(order =>
+      this.dataService.calculateAndValueList([
+        order.isChecked,
+        (order.status !== ConstStatus.abierto && order.status !== ConstStatus.cancelado),
+        (order.codigoProducto.split(' ')[0] !== this.ProductNoLabel.value
+          || !invalidCatalogGroups.includes(order.catalogGroup.toUpperCase())),
+        order.finishedLabel !== 1
+      ])).map(order => {
+        const labelToFinish = new LabelToFinish();
+        labelToFinish.orderId = order.ordenFabricacionId;
+        labelToFinish.checked = true;
+        return labelToFinish;
+      });
+  }
+
+  getParentOrdersToFinishLabels(invalidCatalogGroups: string[]): LabelToFinish[] {
+    return this.dataSource.data.filter(order =>
+      this.dataService.calculateAndValueList([
+        order.isChecked,
+        (order.status !== ConstStatus.abierto && order.status !== ConstStatus.cancelado),
+        (order.codigoProducto.split(' ')[0] !== this.ProductNoLabel.value
+          || !invalidCatalogGroups.includes(order.catalogGroup.toUpperCase())),
+        order.finishedLabel !== 1
+      ]))
+      .map(order => {
+        const labelToFinish = new LabelToFinish();
+        labelToFinish.orderId = order.ordenFabricacionId;
+        labelToFinish.checked = true;
+        return labelToFinish;
+      });
   }
 
   removeSignature(index: number) {

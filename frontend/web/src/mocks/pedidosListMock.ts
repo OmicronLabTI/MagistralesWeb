@@ -219,7 +219,8 @@ export const childrenOrdersDetailMock: ChildrenOrders[] = [
         label: 'Genérica',
         realLabel: 'NA',
         finishedLabel: 0,
-        isChecked: true
+        isChecked: true,
+        catalogGroup: ''
     },
     {
         ordenFabricacionId: 227309,
@@ -236,7 +237,8 @@ export const childrenOrdersDetailMock: ChildrenOrders[] = [
         label: 'Genérica',
         realLabel: 'NA',
         finishedLabel: 0,
-        isChecked: true
+        isChecked: true,
+        catalogGroup: ''
     },
     {
         ordenFabricacionId: 227309,
@@ -253,7 +255,8 @@ export const childrenOrdersDetailMock: ChildrenOrders[] = [
         label: 'Genérica',
         realLabel: 'NA',
         finishedLabel: 1,
-        isChecked: true
+        isChecked: true,
+        catalogGroup: ''
     }
 ];
 

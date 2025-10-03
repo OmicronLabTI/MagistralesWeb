@@ -59,6 +59,7 @@ export class ChildrenOrders {
     label: string;
     realLabel: string;
     finishedLabel: number;
+    catalogGroup: string;
 }
 
 export class IPedidoDetalleRes extends BaseResponseHttp {
