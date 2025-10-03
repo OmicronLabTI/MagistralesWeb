@@ -175,6 +175,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
           }
           element.classClasification = this.getClassClasification(element.orderType);
           element.color = this.getClasificationColor(element.orderType);
+          element.childOrders = [];
         });
         this.isTherePedidosToViewPdf = false;
         this.isCheckedOrders = false;
