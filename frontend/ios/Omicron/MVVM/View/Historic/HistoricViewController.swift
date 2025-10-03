@@ -49,6 +49,8 @@ class HistoricViewController: UIViewController {
         super.viewDidDisappear(animated)
         disposeBag = DisposeBag()
         historicViewModel.orders = []
+        historicViewModel.chips = String()
+        historicViewModel.dataOffset = 0
         historicViewModel.tableData.onNext([])
     }
     
@@ -134,6 +136,12 @@ class HistoricViewController: UIViewController {
                 tableView.endUpdates()
             }
         }).disposed(by: disposeBag!)
+    }
+    
+    func getMoreData() {
+        if historicViewModel.orders.count < historicViewModel.totalOrders {
+            historicViewModel.onScroll.onNext(())
+        }
     }
     
     @objc func refreshData() {
@@ -295,25 +303,22 @@ extension HistoricViewController: UITableViewDataSource, UITableViewDelegate {
         return 60
     }
     
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let height = scrollView.frame.size.height
+        
+        if offsetY > contentHeight - height + 100 && !isLoading {
+            isLoading = true
+            getMoreData()
+        }
+    }
+    
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
         let customView = UIView()
         customView.backgroundColor = OmicronColors.tableColorRow
         cell.selectedBackgroundView = customView
-        
-        let lastSectionIndex = tableView.numberOfSections - 1
-        let lastRowIndex = tableView.numberOfRows(inSection: lastSectionIndex) - 1
-        
-
-        if indexPath.section == lastSectionIndex &&
-            !isLoading &&
-            indexPath.row == lastRowIndex &&
-            lastRowIndex >= 9 {
-            tableView.scrollToRow(at: [0, lastRowIndex - 4],
-                                  at: .middle,
-                                  animated: false)
-            historicViewModel.onScroll.onNext(())
-        }
         
     }
 

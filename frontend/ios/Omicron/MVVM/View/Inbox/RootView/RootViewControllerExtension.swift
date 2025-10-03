@@ -48,6 +48,28 @@ extension RootViewController {
         self.createBulk.rx.tap.bind { _ in
             self.openBulkProducts()
         }
+        setLayers()
+    }
+    
+    func setLayers() {
+        let topBorder = CALayer()
+        topBorder.frame = CGRect(x: 0, y: 0, width: historicView.frame.width, height: 1)
+        topBorder.backgroundColor = UIColor(red: 220/255, green: 220/255, blue: 205/255, alpha: 1).cgColor
+        
+        let bottomBorder = CALayer()
+        bottomBorder.frame = CGRect(x: 0, y: historicView.frame.height - 1, width: historicView.frame.width, height: 1)
+        bottomBorder.backgroundColor = UIColor(red: 220/255, green: 220/255, blue: 205/255, alpha: 1).cgColor
+        
+        historicView.layer.addSublayer(topBorder)
+        historicView.layer.addSublayer(bottomBorder)
+        
+        let indicatorViewbottomBorder = CALayer()
+        indicatorViewbottomBorder.frame = CGRect(x: 0, y: indicatorsView.frame.height - 1, width: indicatorsView.frame.width, height: 1)
+        indicatorViewbottomBorder.backgroundColor = UIColor(red: 220/255, green: 220/255, blue: 205/255, alpha: 1).cgColor
+        
+        indicatorsView.layer.addSublayer(indicatorViewbottomBorder)
+        
+        
     }
 
     func openBulkProducts() {
