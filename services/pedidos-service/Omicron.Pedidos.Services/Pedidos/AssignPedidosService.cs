@@ -221,6 +221,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 x.StatusForTecnic = ServiceShared.CalculateTernary(string.IsNullOrEmpty(x.Productionorderid), ServiceConstants.Liberado, ServiceConstants.Reasignado);
                 x.ReassignmentDate = DateTime.Now;
                 x.PackingDate = null;
+                x.StatusWorkParent = x.Status == ServiceConstants.Cancelled ? ServiceConstants.Reasignado : null;
             });
 
             await this.UpdateOrderSignedByReassignment(orders.Select(x => x.Id).Distinct().ToList());

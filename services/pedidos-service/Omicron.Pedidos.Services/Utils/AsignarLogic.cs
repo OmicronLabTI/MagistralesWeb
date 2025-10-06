@@ -258,6 +258,7 @@ namespace Omicron.Pedidos.Services.Utils
                         o.AssignmentDate = ServiceShared.CalculateTernary(isFromAssignOrder, DateTime.Now, o.AssignmentDate);
                         o.PackingDate = ServiceShared.CalculateTernary(isFromAssignOrder, o.PackingDate, null);
                         o.TecnicId = ServiceShared.CalculateTernary(!string.IsNullOrEmpty(y.Key), qfbInfoValidated.TecnicId, null);
+                        o.StatusWorkParent = o.Status == ServiceConstants.Cancelled ? ServiceConstants.Reasignado : null;
                         listToUpdate.Add(o);
                     });
 
