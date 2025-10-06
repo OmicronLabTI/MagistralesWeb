@@ -70,10 +70,12 @@
                             <mat-checkbox [(ngModel)]="element.isChecked"
                                 (ngModelChange)="updateAllComplete($event)"></mat-checkbox>
                             <ng-container *ngIf="element.orderRelationType === 'Padre'">
-                                <img src="assets/icons/parentOrdersIcon.svg" class="typeOrderIcon" alt="comments" />
+                                <img src="assets/icons/parentOrdersIcon.svg" class="typeOrderIcon" alt="comments"
+                                    matTooltip="Orden de fabricación padre" />
                             </ng-container>
                             <ng-container *ngIf="element.orderRelationType === 'Hija'">
-                                <img src="assets/icons/childrenOrdersIcon.svg" class="typeOrderIcon" alt="comments" />
+                                <img src="assets/icons/childrenOrdersIcon.svg" class="typeOrderIcon" alt="comments"
+                                    matTooltip="Orden de fabricación hija derivada de una división" />
                             </ng-container>
 
                         </div>
@@ -295,7 +297,8 @@
                                         <mat-checkbox [(ngModel)]="item.isChecked"
                                             (ngModelChange)="updateAllComplete($event)"></mat-checkbox>
                                         <img src="assets/icons/childrenOrdersIcon.svg" class="typeOrderIcon"
-                                            alt="comments" />
+                                            alt="comments"
+                                            matTooltip="Orden de fabricación hija derivada de una división" />
                                     </div>
                                     <div class="d-flex align-items-center justify-content-center w-5">
                                         {{item.fabOrderId}}
