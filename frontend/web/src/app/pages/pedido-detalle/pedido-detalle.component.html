@@ -134,7 +134,8 @@
                         <mat-checkbox [(ngModel)]="element.isChecked"
                             (ngModelChange)="updateAllComplete($event)"></mat-checkbox>
                         <ng-container *ngIf="element.orderRelationType === 'Padre'">
-                            <img src="assets/icons/parentOrdersIcon.svg" class="typeOrderIcon" alt="comments" />
+                            <img src="assets/icons/parentOrdersIcon.svg" class="typeOrderIcon" alt="comments"
+                                matTooltip="Orden de fabricación padre" />
                         </ng-container>
                     </div>
                 </td>
@@ -421,7 +422,7 @@
 
                 </td>
             </ng-container>
-            
+
             <ng-container matColumnDef="expandedDetail">
                 <td mat-cell *matCellDef="let element; let i = index;" [attr.colspan]="displayedColumns.length">
                     <div class="element-detail d-flex flex-column"
@@ -459,7 +460,7 @@
                                     <mat-checkbox [(ngModel)]="item.isChecked"
                                         (ngModelChange)="updateAllComplete($event)"></mat-checkbox>
                                     <img src="assets/icons/childrenOrdersIcon.svg" class="typeOrderIcon"
-                                        alt="comments" />
+                                        alt="comments" matTooltip="Orden de fabricación hija derivada de una división"/>
                                 </div>
                                 <div class="d-flex align-items-center justify-content-center w-5">
                                     {{item.ordenFabricacionId}}
@@ -652,11 +653,8 @@
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns" class="color-text-intables"></tr>
-            <tr mat-row 
-                *matRowDef="let row; let i = index; columns: displayedColumns;"
-                class="element-row"
-                [ngStyle]="{ 'background-color': row.style }"
-                [class.expanded-row]="expandedElement === row">
+            <tr mat-row *matRowDef="let row; let i = index; columns: displayedColumns;" class="element-row"
+                [ngStyle]="{ 'background-color': row.style }" [class.expanded-row]="expandedElement === row">
             </tr>
             <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-element-row"></tr>
         </table>

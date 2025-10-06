@@ -594,7 +594,9 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
   ordersToDownloadQr() {
     this.ordersReceivedFromRequest = [];
-    this.ordersToSendAndDownloadQR = this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromDetailOrderQr);
+    const parentOrders = this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromDetailOrderQr);
+    const childrenOrders = this.dataService.getItemOnDataOnlyIds(this.getChildrenOrdersChecked(), FromToFilter.fromDetailOrderQr);
+    this.ordersToSendAndDownloadQR = parentOrders.concat(childrenOrders);
     this.pedidosService.qrByEachOrder(this.ordersToSendAndDownloadQR)
       .subscribe(({ response }) => this.downloadQrByUrl(response), error => this.errorService.httpError(error));
 
