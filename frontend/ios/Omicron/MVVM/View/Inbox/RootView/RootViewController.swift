@@ -24,7 +24,8 @@ class RootViewController: UIViewController {
     @IBOutlet weak var createBulk: UIButton!
     @IBOutlet weak var createSupplies: UIButton!
     @IBOutlet weak var historicButton: UIButton!
-    
+    @IBOutlet weak var historicView: UIView!
+    @IBOutlet weak var indicatorsView: UIView!
     @IBAction func logoutAction(_ sender: UIButton) {
         isLogOut = true
     }

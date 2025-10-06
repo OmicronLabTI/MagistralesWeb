@@ -269,6 +269,7 @@ describe('PedidoDetalleComponent', () => {
         status: 'Planificado',
         pedidoStatus: 'Planificado',
         isChecked: true,
+        childOrders: [],
       } as IPedidoDetalleReq
     ];
 
@@ -285,6 +286,7 @@ describe('PedidoDetalleComponent', () => {
         status: 'Planificado',
         pedidoStatus: 'Planificado',
         isChecked: true,
+        childOrders: [],
       } as IPedidoDetalleReq
     ];
     component.ordersToDownloadQr();
