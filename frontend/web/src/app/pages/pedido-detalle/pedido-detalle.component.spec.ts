@@ -242,10 +242,9 @@ describe('PedidoDetalleComponent', () => {
     expect(component.allComplete).toBeTruthy();
   });
   it('should toggleExpand', () => {
-    component.expandedElement = dataDetail[0];
     const childRow = dataDetail[0];
     component.toggleExpand(childRow);
-    expect(component.expandedElement).toBeNull();
+    expect(component.expandedElementList.includes(childRow)).toBe(true);
   });
   it('should removeSignatureFromChildren', () => {
     messagesServiceSpy.presentToastCustom.and.callFake(() => {

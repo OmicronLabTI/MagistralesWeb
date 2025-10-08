@@ -85,6 +85,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   isOnInit = true;
   initialSearch = true;
   expandedElement: IOrdersReq | null;
+  expandedElementList: IOrdersReq[] = [];
   constructor(
     private ordersService: OrdersService,
     private dataService: DataService,
@@ -312,7 +313,20 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     if (this.dataSource.data[indice].childOrdersDetail === undefined || this.dataSource.data[indice].childOrdersDetail.length === 0) {
       this.getChildrenOrdersData(parentOrderId, indice);
     }
-    this.expandedElement = this.expandedElement === order ? null : order;
+    this.expandOrCollapseRow(order);
+  }
+
+  expandOrCollapseRow(order: IOrdersReq) {
+    const indice = this.expandedElementList.indexOf(order);
+    if (indice >= 0) {
+      this.expandedElementList.splice(indice, 1);
+    } else {
+      this.expandedElementList.push(order);
+    }
+  }
+
+  isExpanded(row: IOrdersReq): boolean {
+    return this.expandedElementList.includes(row);
   }
 
   cancelOrder() {
