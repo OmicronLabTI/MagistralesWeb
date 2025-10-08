@@ -93,6 +93,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   isThereOrdersDetailToDelivered = false;
   patientName = CONST_STRING.empty;
   expandedElement: IPedidoDetalleReq | null;
+  expandedElementList: IPedidoDetalleReq[] = [];
   constructor(
     private pedidosService: PedidosService,
     private route: ActivatedRoute,
@@ -205,7 +206,16 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   toggleExpand(order: IPedidoDetalleReq) {
-    this.expandedElement = this.expandedElement === order ? null : order;
+    const index = this.expandedElementList.indexOf(order);
+    if (index >= 0) {
+      this.expandedElementList.splice(index, 1);
+    } else {
+      this.expandedElementList.push(order);
+    }
+  }
+
+  isExpanded(row: IPedidoDetalleReq): boolean {
+    return this.expandedElementList.includes(row);
   }
 
   updateAllComplete(event: boolean) {
