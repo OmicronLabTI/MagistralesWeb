@@ -434,6 +434,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var totalAlmacenados = userProdOrders + lineProductsCount;
             var doctor = doctorData.FirstOrDefault(x => x.AddressId == order.DeliveryAddressId);
             doctor ??= new DoctorDeliveryAddressModel { Contact = order.Cliente };
+            var totalPieces = sapOrders.Where(x => x.IsParentFabOrder != "N").ToList().Sum(x => x.Detalles.Quantity);
 
             var sapClasification = await this.sapDao.GetClassificationsByValue([order.TypeOrder]);
             var productType = ServiceUtils.GetOrderTypeDescription([order.TypeOrder], sapClasification);
@@ -446,7 +447,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 InitDate = order?.FechaInicio ?? DateTime.Now,
                 Status = ServiceShared.CalculateTernary(order.Canceled == "Y", ServiceConstants.Cancelado, salesStatus),
                 TotalItems = productList.DistinctBy(x => x.ItemCode.Split(" - ")[0]).Count(),
-                TotalPieces = productList.Sum(x => x.Pieces),
+                TotalPieces = totalPieces,
                 TypeSaleOrder = $"Pedido {productType}",
                 OrderCounter = $"{totalAlmacenados}/{productList.Count}",
                 InvoiceType = invoiceType,
