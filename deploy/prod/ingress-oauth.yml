@@ -12,7 +12,7 @@ spec:
   tls:
     - hosts:
         - magistralesprod.omicronlab.com.mx
-      secretName: secure-tls-prod-2023
+      secretName: secure-tls-prod-2025
   rules:
     - host: magistralesprod.omicronlab.com.mx
       http:

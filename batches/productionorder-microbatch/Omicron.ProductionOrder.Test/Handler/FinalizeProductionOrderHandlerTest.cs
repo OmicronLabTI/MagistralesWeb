@@ -124,8 +124,8 @@ namespace Omicron.ProductionOrder.Test.Handler
 
             // Assert
             this.loggerMock.Verify(x => x.Information(BatchConstants.CronJobProcessAlreadyRunning, It.IsAny<string>()), Times.Once);
-            this.redisServiceMock.Verify(x => x.DeleteKey(It.IsAny<string>()), Times.Never);
-            this.loggerMock.Verify(x => x.Information(BatchConstants.EndCronJobProcess, It.IsAny<string>()), Times.Once);
+            this.redisServiceMock.Verify(x => x.DeleteKey(It.IsAny<string>()), Times.Exactly(4));
+            this.loggerMock.Verify(x => x.Information(BatchConstants.EndCronJobProcess, It.IsAny<string>()), Times.Never);
         }
 
         /// <summary>
@@ -149,8 +149,8 @@ namespace Omicron.ProductionOrder.Test.Handler
 
             // Assert
             this.loggerMock.Verify(x => x.Error(BatchConstants.ErrorRetrievingProductionOrders, It.IsAny<string>()), Times.Once);
-            this.redisServiceMock.Verify(x => x.DeleteKey(BatchConstants.ProductionOrderFinalizingRetryCronjob), Times.Once);
-            this.redisServiceMock.Verify(x => x.DeleteKey(BatchConstants.ProductionOrderFinalizingToProcessKey), Times.Once);
+            this.redisServiceMock.Verify(x => x.DeleteKey(BatchConstants.ProductionOrderFinalizingRetryCronjob), Times.Exactly(3));
+            this.redisServiceMock.Verify(x => x.DeleteKey(BatchConstants.ProductionOrderFinalizingToProcessKey), Times.Exactly(3));
         }
 
         /// <summary>
@@ -174,8 +174,8 @@ namespace Omicron.ProductionOrder.Test.Handler
 
             // Assert
             this.loggerMock.Verify(x => x.Information(BatchConstants.ThereAreNoProductionOrdersToProcess, It.IsAny<string>()), Times.Once);
-            this.redisServiceMock.Verify(x => x.DeleteKey(BatchConstants.ProductionOrderFinalizingRetryCronjob), Times.Once);
-            this.redisServiceMock.Verify(x => x.DeleteKey(BatchConstants.ProductionOrderFinalizingToProcessKey), Times.Once);
+            this.redisServiceMock.Verify(x => x.DeleteKey(BatchConstants.ProductionOrderFinalizingRetryCronjob), Times.Exactly(2));
+            this.redisServiceMock.Verify(x => x.DeleteKey(BatchConstants.ProductionOrderFinalizingToProcessKey), Times.Exactly(2));
         }
 
         /// <summary>
