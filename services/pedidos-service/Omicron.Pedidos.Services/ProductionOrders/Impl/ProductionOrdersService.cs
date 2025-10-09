@@ -628,25 +628,6 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                 totalPieces);
             await this.mediator.Send(command);
         }
-        
-        private async Task InsertOnRedisKeysAndChangeStatusProductionOrdersToRetry(List<ProductionOrderProcessingStatusDto> productionOrdersToRetry)
-        {
-            var productionOrdersDB = (await this.pedidosDao.GetProductionOrderProcessingStatusByProductionOrderIds(productionOrdersToRetry.Select(x => x.ProductionOrderId))).ToList();
-
-            foreach (var po in productionOrdersDB)
-            {
-                po.LastUpdated = DateTime.Now;
-                po.Status = ServiceConstants.FinalizeProcessInProgressStatus;
-
-                var redisKey = string.Format(ServiceConstants.ProductionOrderFinalizingKey, po.ProductionOrderId);
-                await this.redisService.WriteToRedis(
-                    redisKey,
-                    JsonConvert.SerializeObject(po),
-                    ServiceConstants.DefaultRedisValueTimeToLive);
-            }
-
-            await this.pedidosDao.UpdatesProductionOrderProcessingStatus(productionOrdersDB);
-        }
 
         private async Task<ProductionOrderProcessingStatusModel> UpdateProcessStatus(
             string id,
