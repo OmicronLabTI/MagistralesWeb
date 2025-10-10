@@ -705,30 +705,36 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
         {
             var filteredProductionOrderLines = productionOrder.ProductionOrderLines.Where(x => x.ProductionOrderIssueType.Equals(ServiceConstants.ProductionOrderTypeM)).ToList();
 
-            var inventoryGenExit = new InventoryGenExitDto
+            var alreadyIssued = filteredProductionOrderLines.Where(x => x.IssuedQuantity > 0).ToList();
+            if (alreadyIssued.Count != 0)
             {
-                InventoryGenExitLines = new List<InventoryGenExitLineDto>(),
-            };
-
-            foreach (var productOrderLine in filteredProductionOrderLines)
-            {
-                if (productOrderLine.IssuedQuantity != 0)
-                {
-                    this.logger.Error(LogsConstants.ComponentAlreadyHasConsumedQuantity, logBase, productOrderLine.ItemNo, productOrderLine.PlannedQuantity, productOrderLine.IssuedQuantity);
-                    throw new CustomServiceException($"{string.Format(ServiceConstants.FailConsumedQuantity, productionOrderId)}");
-                }
-
-                var line = new InventoryGenExitLineDto();
-                line.BaseType = 202;
-                line.BaseEntry = productionOrderId;
-                line.BaseLine = productOrderLine.LineNumber ?? 0;
-                line.Quantity = productOrderLine.PlannedQuantity;
-                line.WarehouseCode = productOrderLine.Warehouse;
-                line.BatchNumbers = GetBatchNumbers(productOrderLine);
-                inventoryGenExit.InventoryGenExitLines.Add(line);
+                this.logger.Information($"Production order {productionOrderId} already has issued lines. Will attempt to complete remaining lines.", logBase);
             }
 
-            if (filteredProductionOrderLines.Count > 0)
+            var pendingLines = filteredProductionOrderLines
+                .Where(x => x.IssuedQuantity == 0)
+                .ToList();
+
+            if (pendingLines.Count == 0)
+            {
+                this.logger.Information($"Production order {productionOrderId} is already fully issued. Nothing to do.", logBase);
+                return;
+            }
+
+            var inventoryGenExit = new InventoryGenExitDto
+            {
+                InventoryGenExitLines = pendingLines.Select(line => new InventoryGenExitLineDto
+                {
+                    BaseType = 202,
+                    BaseEntry = productionOrderId,
+                    BaseLine = line.LineNumber ?? 0,
+                    Quantity = line.PlannedQuantity,
+                    WarehouseCode = line.Warehouse,
+                    BatchNumbers = GetBatchNumbers(line),
+                }).ToList(),
+            };
+
+            if (inventoryGenExit.InventoryGenExitLines.Count > 0)
             {
                 await this.SaveInventoryGenExit(inventoryGenExit, productionOrderId, logBase);
             }
