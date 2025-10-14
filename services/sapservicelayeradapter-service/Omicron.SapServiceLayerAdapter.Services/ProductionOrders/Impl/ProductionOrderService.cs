@@ -6,6 +6,8 @@
 // </copyright>
 // </summary>
 
+using System.Globalization;
+
 namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
 {
     /// <summary>
@@ -37,7 +39,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             var results = new Dictionary<int, string>();
             foreach (var productionOrderConfig in productionOrders)
             {
-                var productionOrderId = productionOrderConfig.ProductionOrderId;
+                var productionOrderId = productionOrderConfig.FinalizeProductionOrder.ProductionOrderId;
                 try
                 {
                     this.logger.Information($"{logBase} - Trying to finish production order {productionOrderId}");
@@ -59,7 +61,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                     await this.ValidateRequiredQuantityForRetroactiveIssues(productionOrder);
 
                     this.logger.Information($"{logBase} - Validating new batches - {productionOrderId}");
-                    await this.ValidateNewBatches(productionOrder.ItemNo, productionOrderConfig.Batches);
+                    await this.ValidateNewBatches(productionOrder.ItemNo, productionOrderConfig.FinalizeProductionOrder.Batches);
 
                     this.logger.Information($"{logBase} - Create inventory gen exit - {productionOrderId}");
                     await this.CreateInventoryGenExit(productionOrder, productionOrderId, logBase);
@@ -363,42 +365,45 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
 
                 try
                 {
-                    this.logger.Information(LogsConstants.SearchProductionOrder, logBase, productionOrderInfo.ProductionOrderId);
-                    var productionOrder = await this.GetProductionOrder(productionOrderInfo.ProductionOrderId);
+                    this.logger.Information(LogsConstants.SearchProductionOrder, logBase, productionOrderInfo.FinalizeProductionOrder.ProductionOrderId);
+                    var productionOrder = await this.GetProductionOrder(productionOrderInfo.FinalizeProductionOrder.ProductionOrderId);
 
                     if (productionOrder.ProductionOrderStatus.Equals(ServiceConstants.ProductionOrderClosed))
                     {
-                        this.logger.Error(LogsConstants.ProductionOrderIsClosed, logBase, productionOrderInfo.ProductionOrderId);
+                        this.logger.Error(LogsConstants.ProductionOrderIsClosed, logBase, productionOrderInfo.FinalizeProductionOrder.ProductionOrderId);
                         validationsResult.Add(
                             GenerateValidationResult(
-                                productionOrderInfo.ProductionOrderId,
-                                string.Format(ServiceConstants.FailReasonClosedProductionOrder, productionOrderInfo.ProductionOrderId),
-                                string.Empty));
+                                productionOrderInfo.FinalizeProductionOrder.ProductionOrderId,
+                                string.Format(ServiceConstants.FailReasonClosedProductionOrder, productionOrderInfo.FinalizeProductionOrder.ProductionOrderId),
+                                string.Empty,
+                                productionOrderInfo.FinalizeProductionOrder));
                         continue;
                     }
 
                     if (!productionOrder.ProductionOrderStatus.Equals(ServiceConstants.ProductionOrderReleased))
                     {
-                        this.logger.Error(LogsConstants.ProductionOrderNotReleased, logBase, productionOrderInfo.ProductionOrderId);
+                        this.logger.Error(LogsConstants.ProductionOrderNotReleased, logBase, productionOrderInfo.FinalizeProductionOrder.ProductionOrderId);
                         validationsResult.Add(
                             GenerateValidationResult(
-                                productionOrderInfo.ProductionOrderId,
-                                string.Format(ServiceConstants.FailReasonNotReleasedProductionOrder, productionOrderInfo.ProductionOrderId),
-                                string.Empty));
+                                productionOrderInfo.FinalizeProductionOrder.ProductionOrderId,
+                                string.Format(ServiceConstants.FailReasonNotReleasedProductionOrder, productionOrderInfo.FinalizeProductionOrder.ProductionOrderId),
+                                string.Empty,
+                                productionOrderInfo.FinalizeProductionOrder));
                         continue;
                     }
 
-                    this.logger.Information(LogsConstants.ValidateRequiredQuantityForRetroactiveIssue, logBase, productionOrderInfo.ProductionOrderId);
+                    this.logger.Information(LogsConstants.ValidateRequiredQuantityForRetroactiveIssue, logBase, productionOrderInfo.FinalizeProductionOrder.ProductionOrderId);
                     await this.ValidateRequiredQuantityForRetroactiveIssues(productionOrder);
 
-                    this.logger.Information(LogsConstants.ValidatingNewBatches, logBase, productionOrderInfo.ProductionOrderId);
-                    await this.ValidateNewBatches(productionOrder.ItemNo, productionOrderInfo.Batches);
+                    this.logger.Information(LogsConstants.ValidatingNewBatches, logBase, productionOrderInfo.FinalizeProductionOrder.ProductionOrderId);
+                    await this.ValidateNewBatches(productionOrder.ItemNo, productionOrderInfo.FinalizeProductionOrder.Batches);
 
                     validationsResult.Add(
                             GenerateValidationResult(
-                                productionOrderInfo.ProductionOrderId,
+                                productionOrderInfo.FinalizeProductionOrder.ProductionOrderId,
                                 string.Empty,
-                                string.Empty));
+                                string.Empty,
+                                productionOrderInfo.FinalizeProductionOrder));
                 }
                 catch (CustomServiceException ex)
                 {
@@ -406,9 +411,10 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                     this.logger.Error(ex, error);
                     validationsResult.Add(
                             GenerateValidationResult(
-                                productionOrderInfo.ProductionOrderId,
+                                productionOrderInfo.FinalizeProductionOrder.ProductionOrderId,
                                 ex.Message,
-                                string.Empty));
+                                string.Empty,
+                                productionOrderInfo.FinalizeProductionOrder));
                 }
                 catch (Exception ex)
                 {
@@ -416,9 +422,10 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                     this.logger.Error(ex, error);
                     validationsResult.Add(
                             GenerateValidationResult(
-                                productionOrderInfo.ProductionOrderId,
+                                productionOrderInfo.FinalizeProductionOrder.ProductionOrderId,
                                 string.Format(LogsConstants.ProcessLogTwoParts, ex.Message, ex.StackTrace),
-                                string.Empty));
+                                string.Empty,
+                                productionOrderInfo.FinalizeProductionOrder));
                 }
             }
 
@@ -436,13 +443,14 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
 
                 try
                 {
-                    this.logger.Information(LogsConstants.ExecuteFinalizationSteps, logBase, productionOrder.ProductionOrderId);
+                    this.logger.Information(LogsConstants.ExecuteFinalizationSteps, logBase, productionOrder.FinalizeProductionOrder.ProductionOrderId);
                     await this.ExecuteFinalizationStepAsync(productionOrder, logBase);
                     processResultResult.Add(
                             GenerateValidationResult(
-                                productionOrder.ProductionOrderId,
+                                productionOrder.FinalizeProductionOrder.ProductionOrderId,
                                 string.Empty,
-                                productionOrder.LastStep));
+                                productionOrder.LastStep,
+                                productionOrder.FinalizeProductionOrder));
                 }
                 catch (CustomServiceException ex)
                 {
@@ -450,9 +458,10 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                     this.logger.Error(ex, error);
                     processResultResult.Add(
                             GenerateValidationResult(
-                                productionOrder.ProductionOrderId,
+                                productionOrder.FinalizeProductionOrder.ProductionOrderId,
                                 ex.Message,
-                                productionOrder.LastStep));
+                                productionOrder.LastStep,
+                                productionOrder.FinalizeProductionOrder));
                 }
                 catch (Exception ex)
                 {
@@ -460,9 +469,10 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                     this.logger.Error(ex, error);
                     processResultResult.Add(
                             GenerateValidationResult(
-                                productionOrder.ProductionOrderId,
+                                productionOrder.FinalizeProductionOrder.ProductionOrderId,
                                 ex.Message,
-                                productionOrder.LastStep));
+                                productionOrder.LastStep,
+                                productionOrder.FinalizeProductionOrder));
                 }
             }
 
@@ -472,13 +482,15 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
         private static ValidationsToFinalizeProductionOrdersResultDto GenerateValidationResult(
             int productionOrderId,
             string errorMessage,
-            string lastStep)
+            string lastStep,
+            FinalizeProductionOrderDto finalizeProductionOrder)
         {
             return new ValidationsToFinalizeProductionOrdersResultDto
             {
                 ProductionOrderId = productionOrderId,
                 ErrorMessage = errorMessage,
                 LastStep = lastStep,
+                FinalizeProductionOrder = finalizeProductionOrder,
             };
         }
 
@@ -639,7 +651,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
         {
             var receiptProduction = new InventoryGenEntryDto();
             var separator = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
-            closeConfiguration.Batches = closeConfiguration.Batches ?? new List<BatchesConfigurationDto>();
+            closeConfiguration.FinalizeProductionOrder.Batches = closeConfiguration.FinalizeProductionOrder.Batches ?? new List<BatchesConfigurationDto>();
 
             var quantityToReceipt = productionOrder.PlannedQuantity;
             receiptProduction.DocumentLines = new List<InventoryGenEntryLineDto>();
@@ -653,10 +665,10 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             if (product.ManageBatchNumbers == ServiceConstants.ManageBatchNumbers)
             {
                 this.logger.Information(LogsConstants.LogBatchesQuantityWithDecimalSeparator, logBase, separator);
-                this.logger.Information(LogsConstants.LogBatchesSum, logBase, closeConfiguration.Batches.Sum(x => double.Parse(System.Text.RegularExpressions.Regex.Replace(x.Quantity, "[.,]", separator))));
+                this.logger.Information(LogsConstants.LogBatchesSum, logBase, closeConfiguration.FinalizeProductionOrder.Batches.Sum(x => double.Parse(System.Text.RegularExpressions.Regex.Replace(x.Quantity, "[.,]", separator))));
 
-                quantityToReceipt = closeConfiguration.Batches.Sum(x => double.Parse(System.Text.RegularExpressions.Regex.Replace(x.Quantity, "[.,]", separator)));
-                foreach (var batchConfig in closeConfiguration.Batches)
+                quantityToReceipt = closeConfiguration.FinalizeProductionOrder.Batches.Sum(x => double.Parse(System.Text.RegularExpressions.Regex.Replace(x.Quantity, "[.,]", separator)));
+                foreach (var batchConfig in closeConfiguration.FinalizeProductionOrder.Batches)
                 {
                     line.BatchNumbers.Add(
                         new BatchInventoryGenEntryDto
@@ -686,6 +698,36 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             {
                 this.logger.Error(LogsConstants.AnErrorOcurredOnSaveReceiptProduction, logBase, response.Code, response.UserError);
                 throw new CustomServiceException($"{string.Format(ServiceConstants.FailReasonNotReceipProductionCreated, productionOrderId)} - {response.UserError}");
+            }
+        }
+
+        private void EnsureCloseConfigurationBatches(CloseProductionOrderDto closeConfiguration, ProductionOrderDto productionOrder)
+        {
+            try
+            {
+                if (closeConfiguration.FinalizeProductionOrder.Batches?.Count > 0)
+                {
+                    return;
+                }
+
+                if (productionOrder?.ProductionOrderLines == null)
+                {
+                    return;
+                }
+
+                closeConfiguration.FinalizeProductionOrder.Batches = productionOrder.ProductionOrderLines
+                    .Where(line => line.BatchNumbers?.Any() == true)
+                    .SelectMany(line => line.BatchNumbers.Select(batch => new BatchesConfigurationDto
+                    {
+                        BatchCode = batch.BatchNumber,
+                        Quantity = batch.Quantity.ToString(CultureInfo.InvariantCulture),
+                    }))
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                var aux = ex;
+                throw;
             }
         }
 
@@ -872,35 +914,36 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
 
         private async Task ExecuteFullFinalizationFlow(CloseProductionOrderDto productionOrder, string logBase)
         {
-            var productionOrderSap = await this.GetProductionOrder(productionOrder.ProductionOrderId);
-            this.logger.Information(LogsConstants.CreateInventoryGenExit, logBase, productionOrder.ProductionOrderId);
-            await this.CreateInventoryGenExit(productionOrderSap, productionOrder.ProductionOrderId, logBase);
+            var productionOrderSap = await this.GetProductionOrder(productionOrder.FinalizeProductionOrder.ProductionOrderId);
+            this.EnsureCloseConfigurationBatches(productionOrder, productionOrderSap);
+            this.logger.Information(LogsConstants.CreateInventoryGenExit, logBase, productionOrder.FinalizeProductionOrder.ProductionOrderId);
+            await this.CreateInventoryGenExit(productionOrderSap, productionOrder.FinalizeProductionOrder.ProductionOrderId, logBase);
             productionOrder.LastStep = ServiceConstants.CreateInventoryStep;
-            var updatedOrder = await this.GetProductionOrder(productionOrder.ProductionOrderId);
-            this.logger.Information(LogsConstants.CreateReceiptFromProductionOrderId, logBase, productionOrder.ProductionOrderId);
-            await this.CreateReceiptFromProductionOrderId(productionOrder.ProductionOrderId, productionOrder, updatedOrder, logBase);
+            var updatedOrder = await this.GetProductionOrder(productionOrder.FinalizeProductionOrder.ProductionOrderId);
+            this.logger.Information(LogsConstants.CreateReceiptFromProductionOrderId, logBase, productionOrder.FinalizeProductionOrder.ProductionOrderId);
+            await this.CreateReceiptFromProductionOrderId(productionOrder.FinalizeProductionOrder.ProductionOrderId, productionOrder, updatedOrder, logBase);
             productionOrder.LastStep = ServiceConstants.CreateReceiptStep;
-            this.logger.Information(LogsConstants.CloseProductionOrder, logBase, productionOrder.ProductionOrderId);
-            await this.CloseProductionOrder(productionOrder.ProductionOrderId, updatedOrder, logBase);
+            this.logger.Information(LogsConstants.CloseProductionOrder, logBase, productionOrder.FinalizeProductionOrder.ProductionOrderId);
+            await this.CloseProductionOrder(productionOrder.FinalizeProductionOrder.ProductionOrderId, updatedOrder, logBase);
             productionOrder.LastStep = ServiceConstants.SuccessfullyClosedInSapStep;
         }
 
         private async Task ExecuteFinalizationFromCreateReceiptStep(CloseProductionOrderDto productionOrder, string logBase)
         {
-            var updatedOrder = await this.GetProductionOrder(productionOrder.ProductionOrderId);
-            this.logger.Information(LogsConstants.CreateReceiptFromProductionOrderId, logBase, productionOrder.ProductionOrderId);
-            await this.CreateReceiptFromProductionOrderId(productionOrder.ProductionOrderId, productionOrder, updatedOrder, logBase);
+            var updatedOrder = await this.GetProductionOrder(productionOrder.FinalizeProductionOrder.ProductionOrderId);
+            this.logger.Information(LogsConstants.CreateReceiptFromProductionOrderId, logBase, productionOrder.FinalizeProductionOrder.ProductionOrderId);
+            await this.CreateReceiptFromProductionOrderId(productionOrder.FinalizeProductionOrder.ProductionOrderId, productionOrder, updatedOrder, logBase);
             productionOrder.LastStep = ServiceConstants.CreateReceiptStep;
-            this.logger.Information(LogsConstants.CloseProductionOrder, logBase, productionOrder.ProductionOrderId);
-            await this.CloseProductionOrder(productionOrder.ProductionOrderId, updatedOrder, logBase);
+            this.logger.Information(LogsConstants.CloseProductionOrder, logBase, productionOrder.FinalizeProductionOrder.ProductionOrderId);
+            await this.CloseProductionOrder(productionOrder.FinalizeProductionOrder.ProductionOrderId, updatedOrder, logBase);
             productionOrder.LastStep = ServiceConstants.SuccessfullyClosedInSapStep;
         }
 
         private async Task ExecuteFinalizationFromCloseProductionOrderStep(CloseProductionOrderDto productionOrder, string logBase)
         {
-            var updatedOrder = await this.GetProductionOrder(productionOrder.ProductionOrderId);
-            this.logger.Information(LogsConstants.CloseProductionOrder, logBase, productionOrder.ProductionOrderId);
-            await this.CloseProductionOrder(productionOrder.ProductionOrderId, updatedOrder, logBase);
+            var updatedOrder = await this.GetProductionOrder(productionOrder.FinalizeProductionOrder.ProductionOrderId);
+            this.logger.Information(LogsConstants.CloseProductionOrder, logBase, productionOrder.FinalizeProductionOrder.ProductionOrderId);
+            await this.CloseProductionOrder(productionOrder.FinalizeProductionOrder.ProductionOrderId, updatedOrder, logBase);
             productionOrder.LastStep = ServiceConstants.SuccessfullyClosedInSapStep;
         }
 
