@@ -36,8 +36,6 @@ import { ObservableService } from '../../services/observable.service';
 import { MessagesService } from 'src/app/services/messages.service';
 import { FiltersService } from '../../services/filters.service';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { childrenOrdersMock } from 'src/mocks/pedidosListMock';
-import { element } from 'protractor';
 
 @Component({
   selector: 'app-pedido-detalle',
