@@ -1,7 +1,12 @@
 import {BaseResponseHttp} from './commons';
+import { ChildrenOrders } from './detallepedidos.model';
 
 export class IOrdersRes extends BaseResponseHttp {
     response: IOrdersReq[];
+}
+
+export class IChildrenOrdersListRes extends BaseResponseHttp {
+    response: ChildrenOrdersFabOrderList[];
 }
 
 export class IOrdersReq {
@@ -24,6 +29,27 @@ export class IOrdersReq {
     isWithError?: boolean;
     isWithErrorBatch?: boolean;
     hasMissingStock?: boolean;
+    batch: string;
+    onSplitProcess: boolean;
+
+    orderRelationType: string;
+    availablePieces: number;
+    childOrders: number;
+    childOrdersDetail: ChildrenOrdersFabOrderList[];
+
+    style?: string;
+}
+
+export class ChildrenOrdersFabOrderList {
+    isChecked: boolean;
+    docNum: string;
+    fabOrderId: number;
+    quantity: number;
+    createDate: string;
+    userCreate: string;
+    finishDate: string;
+    qfb: string;
+    status: string;
     batch: string;
 }
 

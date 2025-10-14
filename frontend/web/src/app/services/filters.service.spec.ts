@@ -25,41 +25,49 @@ describe('FiltersService', () => {
     expect(service.getIsThereOnData([
       {
         isChecked: true,
-        pedidoStatus: ConstStatus.cancelado
+        pedidoStatus: ConstStatus.cancelado,
+        childOrders: [],
       }
     ], ConstStatus.cancelado, FromToFilter.fromOrders)).toBeTruthy();
     expect(service.getIsThereOnData([
       {
         isChecked: true,
-        pedidoStatus: ConstStatus.terminado
+        pedidoStatus: ConstStatus.terminado,
+        childOrders: [],
       }
     ], ConstStatus.terminado, FromToFilter.fromOrdersReassign)).toBeTruthy();
     expect(service.getIsThereOnData([
       {
         isChecked: true,
-        pedidoStatus: ConstStatus.terminado
+        pedidoStatus: ConstStatus.terminado,
+        childOrders: [],
       }
     ], ConstStatus.cancelado, FromToFilter.fromOrdersCancel)).toBeTruthy();
     expect(service.getIsThereOnData([{
       isChecked: true,
-      pedidoStatus: ConstStatus.terminado
+      pedidoStatus: ConstStatus.terminado,
+      childOrders: [],
     }], ConstStatus.cancelado, FromToFilter.fromDetailOrder)).toBeTruthy();
     expect(service.getIsThereOnData([{
       isChecked: true,
-      status: ConstStatus.cancelado
+      status: ConstStatus.cancelado,
+      childOrders: [],
     }], ConstStatus.cancelado, FromToFilter.fromOrderIsolatedReassign)).toBeTruthy();
     expect(service.getIsThereOnData([{
       isChecked: true,
-      status: ConstStatus.terminado
+      status: ConstStatus.terminado,
+      childOrders: [],
     }], ConstStatus.cancelado, FromToFilter.fromOrdersIsolatedCancel)).toBeTruthy();
     expect(service.getIsThereOnData([{
       isChecked: true,
       status: ConstStatus.terminado,
-      finishedLabel: 0
+      finishedLabel: 0,
+      childOrders: [],
     }], ConstStatus.cancelado, FromToFilter.fromOrderDetailLabel)).toBeTruthy();
     expect(service.getIsThereOnData([{
       isChecked: true,
       status: ConstStatus.terminado,
+      childOrders: [],
     }], ConstStatus.terminado, FromToFilter.fromDefault)).toBeTruthy();
   });
   it('should getItemOnDateWithFilter', () => {
@@ -75,7 +83,7 @@ describe('FiltersService', () => {
     {
       isChecked: true,
       status: ConstStatus.enProceso
-    },    {
+    }, {
       isChecked: true,
       status: ConstStatus.pendiente
     },

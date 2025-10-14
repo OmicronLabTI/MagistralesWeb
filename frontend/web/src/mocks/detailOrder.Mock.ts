@@ -22,7 +22,11 @@ export const DetailOrderMock = {
             comments: null,
             label: 'Genérica',
             finishedLabel: 0,
-            catalogGroup: ''
+            catalogGroup: '',
+            onSplitProcess: false,
+            orderRelationType: 'Y',
+            availablePieces: 0,
+            childOrdersCount: 0, childOrders: [],
         },
         {
             ordenFabricacionId: 89101,
@@ -42,7 +46,11 @@ export const DetailOrderMock = {
             label: 'Genérica',
             finishedLabel: 0,
             pedidoId: 1234,
-            catalogGroup: ''
+            catalogGroup: '',
+            onSplitProcess: false,
+            orderRelationType: 'Y',
+            availablePieces: 0,
+            childOrdersCount: 0, childOrders: [],
         },
         {
             ordenFabricacionId: 89102,
@@ -62,7 +70,11 @@ export const DetailOrderMock = {
             label: 'Genérica',
             finishedLabel: 1,
             pedidoId: 1234,
-            catalogGroup: ''
+            catalogGroup: '',
+            onSplitProcess: false,
+            orderRelationType: 'Y',
+            availablePieces: 0,
+            childOrdersCount: 0, childOrders: [],
         },
         {
             ordenFabricacionId: 89103,
@@ -82,7 +94,11 @@ export const DetailOrderMock = {
             label: 'Genérica',
             finishedLabel: 1,
             pedidoId: 1234,
-            catalogGroup: ''
+            catalogGroup: '',
+            onSplitProcess: false,
+            orderRelationType: 'Y',
+            availablePieces: 0,
+            childOrdersCount: 0, childOrders: [],
         },
         {
             ordenFabricacionId: 89104,
@@ -102,7 +118,11 @@ export const DetailOrderMock = {
             label: 'Genérica',
             finishedLabel: 0,
             pedidoId: 1234,
-            catalogGroup: ''
+            catalogGroup: '',
+            onSplitProcess: false,
+            orderRelationType: 'Y',
+            availablePieces: 0,
+            childOrdersCount: 0, childOrders: [],
         },
         {
             ordenFabricacionId: 89105,
@@ -122,7 +142,11 @@ export const DetailOrderMock = {
             label: 'Genérica',
             finishedLabel: 1,
             pedidoId: 1234,
-            catalogGroup: ''
+            catalogGroup: '',
+            onSplitProcess: false,
+            orderRelationType: 'Y',
+            availablePieces: 0,
+            childOrdersCount: 0, childOrders: [],
         }
     ]
 };

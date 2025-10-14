@@ -60,10 +60,13 @@ extension OrderDetailViewController {
                 self.initLabelsWithContent(detail: res.first!)
                 self.changeTextColorLabel(color: .black)
                 self.orderDetail = res
+                self.onGoingSplitProcess = res[0].onSplitProcess ?? false
+                self.disableButtonsForFatherOrder(res[0].orderRelationType ?? OrderRelationTypes.completa)
                 let detail = res.first!
                 buildObjectToUpdateData(detail)
                 componentsToUpdate = []
                 saveWarehousesChangesButton.isEnabled = false
+                self.productDescritionLabel.isHidden = false
                 self.productDescritionLabel.textColor = .black
                 self.productDescritionLabel.attributedText = self.getRichText(detail: detail)
                 self.destinyLabel.attributedText = UtilsManager.shared.boldSubstring(
@@ -185,6 +188,9 @@ extension OrderDetailViewController {
                 cell.selectedOption = data.warehouse ?? String()
                 cell.delegate = self
                 cell.productId = data.productID ?? String()
+                cell.pickerContainerView.isUserInteractionEnabled = self?.enablePickerBySplitProcess(
+                    typeOrder: self?.orderDetail[0].orderRelationType ?? OrderRelationTypes.completa,
+                    onSpliProcess: self?.orderDetail[0].onSplitProcess ?? false) ?? true
         }.disposed(by: disposeBag)
         orderDetailViewModel.tableData.subscribe(onNext: { [weak self] details in
             guard let self = self else { return }
@@ -193,6 +199,15 @@ extension OrderDetailViewController {
                 return ""
             }
         }).disposed(by: disposeBag)
+        orderDetailViewModel.splitButtonEnableFlag.subscribe(onNext: { [weak self] typeOrder in
+            guard let self = self else { return }
+            splitButton.isEnabled = typeOrder != OrderRelationTypes.hija
+        }).disposed(by: disposeBag)
+    }
+    
+    func enablePickerBySplitProcess(typeOrder: String, onSpliProcess: Bool) -> Bool {
+        let enablePicker = typeOrder != OrderRelationTypes.padre && !onSpliProcess
+        return enablePicker
     }
     
     func enablePicketContainer() -> Bool{
@@ -206,5 +221,17 @@ extension OrderDetailViewController {
             self.orderDetailViewModel.updateQuantity(quantity ?? 0)
         }
         .disposed(by: self.disposeBag)
+    }
+    
+    func disableButtonsForFatherOrder(_ typeOrder: String, onProcess: Bool = false) {
+        if typeOrder == OrderRelationTypes.padre || onProcess{
+            self.processButton.isEnabled = true
+            self.finishedButton.isEnabled = false
+            self.penddingButton.isEnabled = true
+            self.addComponentButton.isEnabled = false
+            self.saveButton.isEnabled = false
+            self.seeLotsButton.isEnabled = false
+            self.saveWarehousesChangesButton.isEnabled = false
+        }
     }
 }

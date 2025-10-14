@@ -87,6 +87,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         }
 
         /// <inheritdoc/>
+        public async Task<ResultDto> GetUserOrderBySalesOrderWithDetail(List<int> listIds)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.GetUserOrderBySalesOrderWithDetail(listIds));
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultDto> GetUserOrderByFabOrder(List<int> listIds)
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.GetUserOrderByFabOrder(listIds));
@@ -371,6 +377,35 @@ namespace Omicron.Pedidos.Facade.Pedidos
         public async Task<ResultDto> RetryFailedProductionOrderFinalization(RetryFailedProductionOrderFinalizationDto payloadRetry)
         {
             return this.mapper.Map<ResultDto>(await this.productionOrdersService.RetryFailedProductionOrderFinalization(payloadRetry));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> SeparateOrder(SeparateProductionOrderDto request)
+        {
+            return this.mapper.Map<ResultDto>(await this.productionOrdersService.SeparateOrder(request));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetFailedDivisionOrdersWithError()
+        {
+            return this.mapper.Map<ResultDto>(await this.productionOrdersService.GetFailedDivisionOrders());
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> RetryFailedProductionOrderDivision(RetryFailedProductionOrderDivisionDto payloadRetry)
+        {
+            return this.mapper.Map<ResultDto>(await this.productionOrdersService.RetryFailedProductionOrderDivision(payloadRetry));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetParentOrderDetail(int fabOrder)
+        {
+            return this.mapper.Map<ResultDto>(await this.productionOrdersService.GetParentOrderDetail(fabOrder));
+        }
+
+        public async Task<ResultDto> GetOpenOrderProdutions(Dictionary<string, string> parameters)
+        {
+            return this.mapper.Map<ResultDto>(await this.productionOrdersService.GetOpenOrderProdutions(parameters));
         }
     }
 }

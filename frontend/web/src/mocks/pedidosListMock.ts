@@ -1,3 +1,6 @@
+import { ChildrenOrders } from 'src/app/model/http/detallepedidos.model';
+import { ChildrenOrdersFabOrderList, IChildrenOrdersListRes } from 'src/app/model/http/ordenfabricacion';
+
 export const DetalleFormulaMock = {
     code: 200,
     comments: 118,
@@ -74,7 +77,8 @@ export const PedidosListMock = {
             labelType: 'G',
             finishedLabel: 0,
             orderType: 'MN',
-            clientType: 'general'
+            clientType: 'general',
+            onSplitProcess: false,
         },
         {
             docNum: 60022,
@@ -91,7 +95,8 @@ export const PedidosListMock = {
             labelType: 'P',
             finishedLabel: 0,
             orderType: 'MN',
-            clientType: 'general'
+            clientType: 'general',
+            onSplitProcess: false,
         },
         {
             docNum: 60023,
@@ -108,7 +113,8 @@ export const PedidosListMock = {
             labelType: 'M',
             finishedLabel: 0,
             orderType: 'MG',
-            clientType: 'general'
+            clientType: 'general',
+            onSplitProcess: false,
         },
         {
             docNum: 60024,
@@ -125,7 +131,8 @@ export const PedidosListMock = {
             labelType: 'G',
             finishedLabel: 1,
             orderType: 'BE',
-            clientType: 'general'
+            clientType: 'general',
+            onSplitProcess: false,
         },
         {
             docNum: 60025,
@@ -142,7 +149,8 @@ export const PedidosListMock = {
             labelType: 'P',
             finishedLabel: 1,
             orderType: 'MX',
-            clientType: 'general'
+            clientType: 'general',
+            onSplitProcess: false,
         }
     ]
 };
@@ -154,4 +162,104 @@ export const productWarehousesResponseMock = {
     success: true,
     userError: null,
     response: ['MN']
+};
+
+export const childrenOrdersMock: ChildrenOrdersFabOrderList[] = [
+    {
+        docNum: '176693',
+        fabOrderId: 227323,
+        quantity: 3,
+        createDate: '07/09/2025 23:25:31',
+        userCreate: 'Miranda Garfias',
+        finishDate: '08/09/2025',
+        qfb: 'Miranda Garfias',
+        status: 'Terminado',
+        batch: null,
+        isChecked: false
+    },
+    {
+        docNum: '176693',
+        fabOrderId: 227324,
+        quantity: 3,
+        createDate: '08/09/2025 00:07:23',
+        userCreate: 'Miranda Garfias',
+        finishDate: '08/09/2025',
+        qfb: 'Miranda Garfias',
+        status: 'Terminado',
+        batch: null,
+        isChecked: false
+    },
+    {
+        docNum: '176693',
+        fabOrderId: 227322,
+        quantity: 3,
+        createDate: '07/09/2025 23:24:58',
+        userCreate: 'Miranda Garfias',
+        finishDate: '08/09/2025',
+        qfb: 'Miranda Garfias',
+        status: 'Terminado',
+        batch: '',
+        isChecked: false
+    }
+];
+
+export const childrenOrdersDetailMock: ChildrenOrders[] = [
+    {
+        ordenFabricacionId: 227308,
+        codigoProducto: 'BQ 250',
+        // tslint:disable-next-line:max-line-length
+        descripcionProducto: 'Biest (66.6/33.3) 3 mg (2 mg estriol + 1 mg estradiol)/g, DHEA 10 mg/g, Testosterona 4 mg/g, Crema base csp 30 g',
+        assignedPieces: 1,
+        fechaOf: '05/09/2025',
+        fechaOfFin: '05/09/2025',
+        qfb: 'josue castillo',
+        status: 'Abierto',
+        userCreate: 'josue castillo',
+        createDate: '05/09/2025 17:10:26',
+        label: 'Genérica',
+        realLabel: 'NA',
+        finishedLabel: 0,
+        isChecked: true,
+        catalogGroup: ''
+    },
+    {
+        ordenFabricacionId: 227309,
+        codigoProducto: 'BQ 250',
+        // tslint:disable-next-line:max-line-length
+        descripcionProducto: 'Biest (66.6/33.3) 3 mg (2 mg estriol + 1 mg estradiol)/g, DHEA 10 mg/g, Testosterona 4 mg/g, Crema base csp 30 g',
+        assignedPieces: 1,
+        fechaOf: '05/09/2025',
+        fechaOfFin: '05/09/2025',
+        qfb: 'josue castillo',
+        status: 'Terminado',
+        userCreate: 'josue castillo',
+        createDate: '05/09/2025 17:12:24',
+        label: 'Genérica',
+        realLabel: 'NA',
+        finishedLabel: 0,
+        isChecked: true,
+        catalogGroup: ''
+    },
+    {
+        ordenFabricacionId: 227309,
+        codigoProducto: 'BQ 250',
+        // tslint:disable-next-line:max-line-length
+        descripcionProducto: 'Biest (66.6/33.3) 3 mg (2 mg estriol + 1 mg estradiol)/g, DHEA 10 mg/g, Testosterona 4 mg/g, Crema base csp 30 g',
+        assignedPieces: 1,
+        fechaOf: '05/09/2025',
+        fechaOfFin: '05/09/2025',
+        qfb: 'josue castillo',
+        status: 'Planificado',
+        userCreate: 'josue castillo',
+        createDate: '05/09/2025 17:12:24',
+        label: 'Genérica',
+        realLabel: 'NA',
+        finishedLabel: 1,
+        isChecked: true,
+        catalogGroup: ''
+    }
+];
+
+export const getChildrenResponseMock: IChildrenOrdersListRes = {
+    response: childrenOrdersMock
 };

@@ -83,6 +83,17 @@ namespace Omicron.Pedidos.Test.Entities
             new ProductionOrderProcessingStatusDto(),
             new FinalizeProductionOrdersResult(),
             new RetryFailedProductionOrderFinalizationDto(),
+            new UserOrderSeparationModel(),
+            new CancelProductionOrderDto(),
+            new ProductionOrderSeparationDetailModel(),
+            new ProductionOrderSeparationModel(),
+            new SeparateProductionOrderDto(),
+            new CreateChildOrderResultDto(),
+            new ProductionOrderSeparationDetailLogsModel(),
+            new ParentOrderDetailModel(),
+            new DetailOrderProductionModel(),
+            new OpenOrderProductionDetailModel(),
+            new OpenOrderProductionModel(),
         };
 
         /// <summary>

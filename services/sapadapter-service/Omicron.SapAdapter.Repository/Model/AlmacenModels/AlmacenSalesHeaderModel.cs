@@ -182,5 +182,11 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// </summary>
         /// <value>The RemissionList.</value>
         public string RemissionList => this.Remision.ToString();
+
+        /// <summary>
+        /// Gets or sets a value indicating whether has invoice.
+        /// </summary>
+        /// <value>The code.</value>
+        public bool HasChildOrders { get; set; }
     }
 }

@@ -20,9 +20,9 @@ namespace Omicron.Pedidos.Test.Services
 
         private Mock<ISapAdapter> mockSapAdapter;
 
-        private Mock<IKafkaConnector> kafkaConnector;
-
         private Mock<ISapServiceLayerAdapterService> serviceLayerAdapterService;
+
+        private Mock<IPedidosDao> pedidosDaoMock;
 
         private DatabaseContext context;
 
@@ -114,11 +114,7 @@ namespace Omicron.Pedidos.Test.Services
             this.context.UserOrderModel.AddRange(this.GetUserModelsForTotalCancellationInformation());
             this.context.SaveChanges();
             this.pedidosDao = new PedidosDao(this.context);
-
-            this.kafkaConnector = new Mock<IKafkaConnector>();
-            this.kafkaConnector
-                .Setup(m => m.PushMessage(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(true));
+            this.pedidosDaoMock = new Mock<IPedidosDao>();
         }
 
         /// <summary>
@@ -156,13 +152,60 @@ namespace Omicron.Pedidos.Test.Services
 
             this.serviceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
             this.serviceLayerAdapterService
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(mockResultDiapi));
 
             var mockUserService = new Mock<IUsersService>();
             var mockSapFile = new Mock<ISapFileService>();
 
-            return new CancelPedidosService(this.mockSapAdapter.Object, this.pedidosDao, mockSapFile.Object, mockUserService.Object, this.kafkaConnector.Object, this.serviceLayerAdapterService.Object);
+            return new CancelPedidosService(this.mockSapAdapter.Object, this.pedidosDao, mockSapFile.Object, mockUserService.Object, this.serviceLayerAdapterService.Object);
+        }
+
+        /// <summary>
+        /// ResetAvailablePiecesForCancelledOrder.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        [Test]
+        public async Task ResetAvailablePiecesForCancelledOrder()
+        {
+            // arrange
+            var parentOrder = new ProductionOrderSeparationModel
+            {
+                Id = 1,
+                OrderId = 1001,
+                AvailablePieces = 10,
+            };
+            var detailOrder = new ProductionOrderSeparationDetailModel
+            {
+                Id = 1,
+                OrderId = 1001,
+                DetailOrderId = 2001,
+                AssignedPieces = 5,
+            };
+
+            this.context.ProductionOrderSeparationModel.Add(parentOrder);
+            this.context.ProductionOrderSeparationDetailModel.Add(detailOrder);
+            await this.context.SaveChangesAsync();
+
+            this.pedidosDao = new PedidosDao(this.context);
+            this.cancelPedidosService = this.BuildService(null, "Ok");
+
+            var orderToReset = new OrderIdModel
+            {
+                UserId = this.userId,
+                OrderId = 2001, // ID de la orden hija
+            };
+
+            // act
+            await ((CancelPedidosService)this.cancelPedidosService)
+                .ResetAvailablePiecesForCancelledOrder(orderToReset);
+
+            // assert
+            var updatedParentOrder = await this.context.ProductionOrderSeparationModel
+                .FirstOrDefaultAsync(x => x.OrderId == 1001);
+
+            Assert.That(updatedParentOrder, Is.Not.Null);
+            Assert.That(updatedParentOrder.AvailablePieces, Is.EqualTo(15)); // 10 + 5 piezas devueltas
         }
 
         /// <summary>
@@ -189,7 +232,7 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.That(this.CheckAction(response, true, 1, 0, 1));
-            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
+            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
 
         /// <summary>
@@ -214,7 +257,7 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.That(this.CheckAction(response, true, 1, 0, 0));
-            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
+            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
 
         /// <summary>
@@ -238,7 +281,7 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.That(this.CheckAction(response, true, 0, 1, 0));
-            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
+            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
 
         /// <summary>
@@ -262,7 +305,7 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.That(this.CheckAction(response, true, 0, 1, 0));
-            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
+            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
 
         /// <summary>
@@ -286,7 +329,7 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.That(this.CheckAction(response, true, 1, 0, 1));
-            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
+            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), ServiceConstants.GetOrderWithDetail), Times.Once);
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), ServiceConstants.GetFabOrdersByFilter), Times.Once);
         }
@@ -312,7 +355,7 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.That(this.CheckAction(response, true, 1, 0, 1));
-            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
+            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), ServiceConstants.GetOrderWithDetail), Times.Never);
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), ServiceConstants.GetFabOrdersByFilter), Times.Once);
         }
@@ -339,7 +382,7 @@ namespace Omicron.Pedidos.Test.Services
             // assert
             Assert.That(response.Success);
             Assert.That(this.CheckAction(response, true, 1, 0, 1));
-            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
+            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
 
         /// <summary>
@@ -363,7 +406,7 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.That(this.CheckAction(response, true, 0, 1, 0));
-            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
+            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
 
         /// <summary>
@@ -388,7 +431,7 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.That(this.CheckAction(response, true, 1, 0, affectedRecords));
-            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Exactly(affectedRecords - 1));
+            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(affectedRecords - 1));
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
         }
 
@@ -413,7 +456,7 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.That(this.CheckAction(response, true, 0, 1, 0));
-            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
+            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
         }
 
@@ -438,7 +481,7 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.That(this.CheckAction(response, true, 0, 1, 0));
-            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
+            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
         }
 
@@ -464,7 +507,7 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.That(this.CheckAction(response, true, 1, 0, affectedRecords));
-            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Exactly(affectedRecords - 1));
+            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(affectedRecords - 1));
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), ServiceConstants.GetOrderWithDetail), Times.Once);
         }
 
@@ -489,7 +532,7 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.That(this.CheckAction(response, true, 0, 1, 0));
-            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
+            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), ServiceConstants.GetOrderWithDetail), Times.Once);
         }
 
@@ -514,7 +557,7 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.That(this.CheckAction(response, true, 0, 1, 0));
-            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
+            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), ServiceConstants.GetOrderWithDetail), Times.Once);
         }
 

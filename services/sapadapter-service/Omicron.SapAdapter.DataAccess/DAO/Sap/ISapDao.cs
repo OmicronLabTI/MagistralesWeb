@@ -75,6 +75,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <param name="ordersIds">ordersIds</param>
         /// <param name="orderFiltersByConfigType">orderFiltersByConfigType.</param>
+        /// <param name="filterByOrderRelationType">filterByOrderRelationType.</param>
         /// <returns>the details.</returns>
         Task<IEnumerable<CompleteDetailOrderModel>> GetAllDetailsByRoutesConfiguration(List<int?> ordersIds, OrderFiltersByConfigType orderFiltersByConfigType);
 
@@ -247,6 +248,14 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="orderId">the order id.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderItem(string itemCode, int orderId);
+
+        /// <summary>
+        /// Gest the batch transaction by order and item code.
+        /// </summary>
+        /// <param name="itemCode">the item code.</param>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderItems(List<string> itemCodes, List<int> orderIds);
 
         /// <summary>
         /// Gest the batch transaction by order and item code.
@@ -737,5 +746,19 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="itemCode">itemCodes.</param>
         /// <returns>the data.</returns>
         Task<ProductoModel> GetFullProductInfo(string itemCode);
+
+        /// <summary>
+        /// GetProductsUnits.
+        /// </summary>
+        /// <param name="saleOrdersId">saleOrdersId.</param>
+        /// <returns>the data.</returns>
+        Task<bool> GetHasAnyChildProductionOrder(List<int> saleOrdersId);
+
+        /// <summary>
+        /// GetOrdersWithChildBySaleOrder.
+        /// </summary>
+        /// <param name="saleOrdersIds">saleOrdersIds.</param>
+        /// <returns>the data.</returns>
+        Task<List<OrdenFabricacionModel>> GetOrdersWithChildBySaleOrder(List<int> saleOrdersIds);
     }
 }

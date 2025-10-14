@@ -338,6 +338,16 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.PostCatalogs(It.IsAny<object>(), ServiceConstants.GetThemes))
                 .Returns(Task.FromResult(this.GetResultDto(colorsResponse)));
 
+            var userorders = new List<UserOrderDto>
+            {
+                new UserOrderDto { InvoiceId = 1, InvoiceLineNum = 1, StatusInvoice = "Empaquetado" },
+                new UserOrderDto { InvoiceId = 1, InvoiceLineNum = 2 },
+            };
+            var userordersResponse = this.GetResultDto(userorders);
+
+            mockPedidos.Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(userordersResponse));
+
             var service = new SapInvoiceService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object, mockDoctors.Object);
 
             // act

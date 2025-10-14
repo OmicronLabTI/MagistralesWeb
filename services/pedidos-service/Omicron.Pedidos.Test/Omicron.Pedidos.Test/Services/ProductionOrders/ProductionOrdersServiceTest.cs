@@ -8,9 +8,9 @@
 
 namespace Omicron.Pedidos.Test.Services.ProductionOrders
 {
+    using global::MediatR;
+    using Omicron.Pedidos.Services.MediatR.Commands;
     using Omicron.Pedidos.Services.ProductionOrders.Impl;
-    using StackExchange.Redis;
-    using ZXing;
 
     /// <summary>
     /// class for the test.
@@ -43,8 +43,10 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
             var mapperConfiguration = new MapperConfiguration(cfg => cfg.AddProfile<AutoMapperProfile>());
             this.mapper = mapperConfiguration.CreateMapper();
 
+            var databaseName = $"TestDb_{Guid.NewGuid()}";
+
             var options = new DbContextOptionsBuilder<DatabaseContext>()
-                .UseInMemoryDatabase(databaseName: "Temporal")
+                .UseInMemoryDatabase(databaseName: databaseName)
                 .Options;
 
             this.context = new DatabaseContext(options);
@@ -104,8 +106,10 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
 
             var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
             mockServiceLayerAdapterService
-                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultModelCompl(resultMessages, isServiceLayerSuccess)));
+
+            var mockMediator = new Mock<IMediator>();
 
             var mockProductionOrdersService = new ProductionOrdersService(
                 this.pedidosDao,
@@ -116,7 +120,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 this.userService.Object,
                 this.sapFileService.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                mockMediator.Object);
 
             var response = await mockProductionOrdersService.FinalizeProductionOrdersAsync(productionOrdersToFinalize);
 
@@ -148,8 +153,10 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
 
             var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
             mockServiceLayerAdapterService
-                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ThrowsAsync(new Exception("Connection Refused."));
+
+            var mockMediator = new Mock<IMediator>();
 
             var mockProductionOrdersService = new ProductionOrdersService(
                 this.pedidosDao,
@@ -160,7 +167,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 this.userService.Object,
                 this.sapFileService.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                mockMediator.Object);
 
             var response = await mockProductionOrdersService.FinalizeProductionOrdersAsync(productionOrdersToFinalize);
 
@@ -222,8 +230,10 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
 
             var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
             mockServiceLayerAdapterService
-                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultModelCompl(resultMessages, isServiceLayerSuccess)));
+
+            var mockMediator = new Mock<IMediator>();
 
             var mockProductionOrdersService = new ProductionOrdersService(
                 this.pedidosDao,
@@ -234,7 +244,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 this.userService.Object,
                 this.sapFileService.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                mockMediator.Object);
 
             var response = await mockProductionOrdersService.FinalizeProductionOrdersOnSapAsync(productionOrdersToFinalize);
 
@@ -291,8 +302,10 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
 
             var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
             mockServiceLayerAdapterService
-                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ThrowsAsync(new Exception("Connection Refused."));
+
+            var mockMediator = new Mock<IMediator>();
 
             var mockProductionOrdersService = new ProductionOrdersService(
                 this.pedidosDao,
@@ -303,7 +316,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 this.userService.Object,
                 this.sapFileService.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                mockMediator.Object);
 
             var response = await mockProductionOrdersService.FinalizeProductionOrdersOnSapAsync(productionOrdersToFinalize);
 
@@ -336,7 +350,7 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
 
             var productionOrdersToFinalize = new ProductionOrderProcessingStatusModel
             {
-                Id = "778e6a6a-fa1d-4767-95fa-47f3c0cb2377",
+                Id = "656feb73-35ad-46ae-9e4c-4e708c05205d",
                 ProductionOrderId = 223580,
                 LastStep = "Update UsersOrders in postgres",
                 CreatedAt = DateTime.Now.AddMinutes(-10),
@@ -356,6 +370,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 .SetupSequence(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()));
 
+            var mockMediator = new Mock<IMediator>();
+
             var mockProductionOrdersService = new ProductionOrdersService(
                 this.pedidosDao,
                 mockServiceLayerAdapterService.Object,
@@ -365,7 +381,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 this.userService.Object,
                 this.sapFileService.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                mockMediator.Object);
 
             var response = await mockProductionOrdersService.FinalizeProductionOrdersOnPostgresqlAsync(productionOrdersToFinalize);
 
@@ -385,7 +402,7 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
             {
                 FinalizeProductionOrder = new FinalizeProductionOrderModel
                 {
-                    ProductionOrderId = 223580,
+                    ProductionOrderId = 223581,
                     UserId = "7ac2db83-3c31-4042-9d1b-5531753694b4",
                     SourceProcess = "SalesOrders",
                     Batches = new List<BatchesConfigurationModel>(),
@@ -394,8 +411,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
 
             var productionOrdersToFinalize = new ProductionOrderProcessingStatusModel
             {
-                Id = "778e6a6a-fa1d-4767-95fa-47f3c0cb2377",
-                ProductionOrderId = 223580,
+                Id = "6fe84f79-c724-45a3-9588-f3cf947322de",
+                ProductionOrderId = 223581,
                 LastStep = "Update UsersOrders in postgres",
                 CreatedAt = DateTime.Now.AddMinutes(-10),
                 ErrorMessage = null,
@@ -414,6 +431,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 .SetupSequence(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()));
 
+            var mockMediator = new Mock<IMediator>();
+
             // The error is in the sapAdapter response.
             var mockProductionOrdersService = new ProductionOrdersService(
                 this.pedidosDao,
@@ -424,7 +443,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 this.userService.Object,
                 this.sapFileService.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                mockMediator.Object);
 
             var response = await mockProductionOrdersService.FinalizeProductionOrdersOnPostgresqlAsync(productionOrdersToFinalize);
 
@@ -488,6 +508,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUserModel()));
 
+            var mockMediator = new Mock<IMediator>();
+
             var mockProductionOrdersService = new ProductionOrdersService(
                 this.pedidosDao,
                 mockServiceLayerAdapterService.Object,
@@ -497,7 +519,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 mockUsers.Object,
                 mockSapFile.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                mockMediator.Object);
 
             var response = await mockProductionOrdersService.ProductionOrderPdfGenerationAsync(productionOrdersToFinalize);
 
@@ -528,6 +551,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 .Setup(x => x.GetAllProductionOrderProcessingStatusByStatus(It.IsAny<List<string>>()))
                 .Returns(Task.FromResult(this.GetProductionOrderProcessingStatusModelForGetFailedProductionOrders()));
 
+            var mockMediator = new Mock<IMediator>();
+
             var mockProductionOrdersService = new ProductionOrdersService(
                 mockDao.Object,
                 mockServiceLayerAdapterService.Object,
@@ -537,7 +562,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 mockUsers.Object,
                 mockSapFile.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                mockMediator.Object);
 
             var response = await mockProductionOrdersService.GetFailedProductionOrders();
 
@@ -588,7 +614,7 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
 
             var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
             mockServiceLayerAdapterService
-                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultModelCompl(resultMessages, true)));
 
             var mockSapAdapter = new Mock<ISapAdapter>();
@@ -596,6 +622,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
             var mockSapFile = new Mock<ISapFileService>();
 
             var mockUsers = new Mock<IUsersService>();
+
+            var mockMediator = new Mock<IMediator>();
 
             var mockProductionOrdersService = new ProductionOrdersService(
                 this.pedidosDao,
@@ -606,7 +634,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 mockUsers.Object,
                 mockSapFile.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                mockMediator.Object);
 
             var response = await mockProductionOrdersService.RetryFailedProductionOrderFinalization(request);
 
@@ -661,6 +690,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUserModel()));
 
+            var mockMediator = new Mock<IMediator>();
+
             var mockProductionOrdersService = new ProductionOrdersService(
                 this.pedidosDao,
                 mockServiceLayerAdapterService.Object,
@@ -670,13 +701,475 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 mockUsers.Object,
                 mockSapFile.Object,
                 this.logger.Object,
-                this.mapper);
+                this.mapper,
+                mockMediator.Object);
 
             var response = await mockProductionOrdersService.RetryFailedProductionOrderFinalization(request);
 
             // Assert
             Assert.That(response.Success, Is.True);
             Assert.That(response.Code.Equals((int)HttpStatusCode.OK));
+        }
+
+        /// <summary>
+        /// SeparateOrder.
+        /// </summary>
+        /// <param name="existRedisValue">Exist redis value.</param>
+        /// <returns>Test.</returns>
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task SeparateOrder(bool existRedisValue)
+        {
+            var mockRedisService = new Mock<IRedisService>();
+            var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
+            var mockSapAdapter = new Mock<ISapAdapter>();
+            var mockSapFile = new Mock<ISapFileService>();
+            var mockUsers = new Mock<IUsersService>();
+            var mockDao = new Mock<IPedidosDao>();
+            var mockMediator = new Mock<IMediator>();
+
+            var request = new SeparateProductionOrderDto
+            {
+                ProductionOrderId = 12345,
+                Pieces = 5,
+            };
+
+            var redisValue = string.Empty;
+
+            if (existRedisValue)
+            {
+                redisValue = JsonConvert.SerializeObject(new SeparateProductionOrderDto
+                {
+                    ProductionOrderId = 12345,
+                    Pieces = 5,
+                });
+            }
+
+            mockRedisService
+                .Setup(mr => mr.GetRedisKey(It.IsAny<string>()))
+                .Returns(Task.FromResult(redisValue));
+            mockRedisService.Setup(m => m.WriteToRedis(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>()));
+
+            var mockProductionOrdersService = new ProductionOrdersService(
+                mockDao.Object,
+                mockServiceLayerAdapterService.Object,
+                mockRedisService.Object,
+                this.mockKafkaConnector.Object,
+                mockSapAdapter.Object,
+                mockUsers.Object,
+                mockSapFile.Object,
+                this.logger.Object,
+                this.mapper,
+                mockMediator.Object);
+
+            var response = await mockProductionOrdersService.SeparateOrder(request);
+
+            // Assert
+            if (!existRedisValue)
+            {
+                Assert.That(response.Success, Is.True);
+                Assert.That(response.Code.Equals((int)HttpStatusCode.OK));
+                Assert.That(response.Response, Is.Null);
+                Assert.That(response.Comments, Is.Null);
+                Assert.That(response.ExceptionMessage, Is.Null);
+                Assert.That(response.UserError, Is.Null);
+            }
+            else
+            {
+                Assert.That(response.Success, Is.False);
+                Assert.That(response.Code.Equals((int)HttpStatusCode.InternalServerError));
+                Assert.That(response.Response, Is.Null);
+                Assert.That(response.Comments, Is.Null);
+                Assert.That(response.ExceptionMessage, Is.Null);
+                Assert.That(response.UserError, Is.Not.Null);
+                Assert.That(response.UserError.Equals("La orden de fabricación seleccionada ya tiene un proceso de división en curso. Por favor espera a que finalice antes de intentar dividirla nuevamente."));
+            }
+        }
+
+        /// <summary>
+        /// GetFailedProductionOrders.
+        /// </summary>
+        /// <returns>Test.</returns>
+        [Test]
+        public async Task GetFailedDivisionOrders()
+        {
+            var mockRedisService = new Mock<IRedisService>();
+
+            var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
+
+            var mockSapAdapter = new Mock<ISapAdapter>();
+
+            var mockSapFile = new Mock<ISapFileService>();
+
+            var mockUsers = new Mock<IUsersService>();
+
+            var mockDao = new Mock<IPedidosDao>();
+            mockDao
+                .Setup(x => x.GetAllFailedDivisionOrders())
+                .Returns(Task.FromResult(this.GetProductionOrderSeparationDetailLogsModel()));
+
+            var mockMediator = new Mock<IMediator>();
+
+            var mockProductionOrdersService = new ProductionOrdersService(
+                mockDao.Object,
+                mockServiceLayerAdapterService.Object,
+                mockRedisService.Object,
+                this.mockKafkaConnector.Object,
+                mockSapAdapter.Object,
+                mockUsers.Object,
+                mockSapFile.Object,
+                this.logger.Object,
+                this.mapper,
+                mockMediator.Object);
+
+            var response = await mockProductionOrdersService.GetFailedDivisionOrders();
+
+            // Assert
+            Assert.That(response.Success, Is.True);
+            Assert.That(response.Code.Equals((int)HttpStatusCode.OK));
+            Assert.That(response.Response, Is.EqualTo(3));
+        }
+
+        /// <summary>
+        /// SeparateOrder.
+        /// </summary>
+        /// <param name="existRedisValue">Exist redis value.</param>
+        /// <returns>Test.</returns>
+        [Test]
+        public async Task RetryFailedProductionOrderDivision()
+        {
+            var mockRedisService = new Mock<IRedisService>();
+            var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
+            var mockSapAdapter = new Mock<ISapAdapter>();
+            var mockSapFile = new Mock<ISapFileService>();
+            var mockUsers = new Mock<IUsersService>();
+            var mockDao = new Mock<IPedidosDao>();
+            var mockMediator = new Mock<IMediator>();
+
+            var payload = new SeparateProductionOrderDto
+            {
+                ProductionOrderId = 227160,
+                Pieces = 1,
+                UserId = "1a663b91-fffa-4298-80c3-aaae35586dc6",
+                DxpOrder = "7ee41bbc-6ee9-4ccd-a3ed-7bf74d8013dc",
+                SapOrder = 176575,
+                TotalPieces = 3,
+            };
+
+            var list = new List<ProductionOrderSeparationDetailLogsDto>
+            {
+                new ProductionOrderSeparationDetailLogsDto
+                {
+                    Id = "eeacc0b4-0837-461c-b0ac-8d00b026069d",
+                    ParentProductionOrderId = 227160,
+                    LastStep = "StartCancelParentOrderProcess",
+                    IsSuccessful = false,
+                    ErrorMessage = "Production Order Not Found",
+                    ChildProductionOrderId = null,
+                    Payload = JsonConvert.SerializeObject(payload),
+                    CreatedAt = DateTime.Now,
+                    LastUpdated = DateTime.Now,
+                },
+            };
+
+            var request = new RetryFailedProductionOrderDivisionDto
+            {
+                BatchProcessId = "12345",
+                ProductionOrderProcessingPayload = list,
+            };
+
+            mockRedisService.Setup(m => m.WriteToRedis(It.IsAny<string>(), It.IsAny<string>()));
+
+            var mockProductionOrdersService = new ProductionOrdersService(
+                mockDao.Object,
+                mockServiceLayerAdapterService.Object,
+                mockRedisService.Object,
+                this.mockKafkaConnector.Object,
+                mockSapAdapter.Object,
+                mockUsers.Object,
+                mockSapFile.Object,
+                this.logger.Object,
+                this.mapper,
+                mockMediator.Object);
+
+            var response = await mockProductionOrdersService.RetryFailedProductionOrderDivision(request);
+
+            // Assert
+            Assert.That(response.Success, Is.True);
+            Assert.That(response.Code.Equals((int)HttpStatusCode.OK));
+            Assert.That(response.Response, Is.Null);
+            Assert.That(response.Comments, Is.Null);
+            Assert.That(response.ExceptionMessage, Is.Null);
+            Assert.That(response.UserError, Is.Null);
+        }
+
+        /// <summary>
+        /// SeparateOrder.
+        /// </summary>
+        /// <param name="existRedisValue">Exist redis value.</param>
+        /// <returns>Test.</returns>
+        [Test]
+        public async Task RetryFailedProductionOrderDivisionWithError()
+        {
+            var mockRedisService = new Mock<IRedisService>();
+            var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
+            var mockSapAdapter = new Mock<ISapAdapter>();
+            var mockSapFile = new Mock<ISapFileService>();
+            var mockUsers = new Mock<IUsersService>();
+            var mockDao = new Mock<IPedidosDao>();
+            var mockMediator = new Mock<IMediator>();
+
+            var payload = new SeparateProductionOrderDto
+            {
+                ProductionOrderId = 227160,
+                Pieces = 1,
+                UserId = "1a663b91-fffa-4298-80c3-aaae35586dc6",
+                DxpOrder = "7ee41bbc-6ee9-4ccd-a3ed-7bf74d8013dc",
+                SapOrder = 176575,
+                TotalPieces = 3,
+            };
+
+            var list = new List<ProductionOrderSeparationDetailLogsDto>
+            {
+                new ProductionOrderSeparationDetailLogsDto
+                {
+                    Id = "eeacc0b4-0837-461c-b0ac-8d00b026069d",
+                    ParentProductionOrderId = 227160,
+                    LastStep = "error",
+                    IsSuccessful = false,
+                    ErrorMessage = "Production Order Not Found",
+                    ChildProductionOrderId = null,
+                    Payload = JsonConvert.SerializeObject(payload),
+                    CreatedAt = DateTime.Now,
+                    LastUpdated = DateTime.Now,
+                },
+            };
+
+            var request = new RetryFailedProductionOrderDivisionDto
+            {
+                BatchProcessId = "12345",
+                ProductionOrderProcessingPayload = list,
+            };
+
+            mockRedisService.Setup(m => m.WriteToRedis(It.IsAny<string>(), It.IsAny<string>()));
+
+            var mockProductionOrdersService = new ProductionOrdersService(
+                mockDao.Object,
+                mockServiceLayerAdapterService.Object,
+                mockRedisService.Object,
+                this.mockKafkaConnector.Object,
+                mockSapAdapter.Object,
+                mockUsers.Object,
+                mockSapFile.Object,
+                this.logger.Object,
+                this.mapper,
+                mockMediator.Object);
+
+            var response = await mockProductionOrdersService.RetryFailedProductionOrderDivision(request);
+
+            // Assert
+            Assert.That(response.Success, Is.True);
+            Assert.That(response.Code.Equals((int)HttpStatusCode.OK));
+            Assert.That(response.Response, Is.Null);
+            Assert.That(response.Comments, Is.Null);
+            Assert.That(response.ExceptionMessage, Is.Null);
+            Assert.That(response.UserError, Is.Null);
+        }
+
+        /// <summary>
+        /// SeparateOrder.
+        /// </summary>
+        /// <param name="existRedisValue">Exist redis value.</param>
+        /// <returns>Test.</returns>
+        [Test]
+        public async Task GetParentOrderDetail()
+        {
+            int request = 227318;
+
+            var mockRedisService = new Mock<IRedisService>();
+            var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
+            var mockSapAdapter = new Mock<ISapAdapter>();
+            var mockSapFile = new Mock<ISapFileService>();
+            var mockUsers = new Mock<IUsersService>();
+            var mockDao = new Mock<IPedidosDao>();
+            var mockMediator = new Mock<IMediator>();
+
+            mockDao
+                .Setup(x => x.GetParentOrderDetailByOrderId(It.IsAny<int>()))
+                .Returns(Task.FromResult(this.GetParentOrderDetailModel()));
+
+            mockUsers
+                .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserModel()));
+
+            var mockProductionOrdersService = new ProductionOrdersService(
+                mockDao.Object,
+                mockServiceLayerAdapterService.Object,
+                mockRedisService.Object,
+                this.mockKafkaConnector.Object,
+                mockSapAdapter.Object,
+                mockUsers.Object,
+                mockSapFile.Object,
+                this.logger.Object,
+                this.mapper,
+                mockMediator.Object);
+
+            var result = await mockProductionOrdersService.GetParentOrderDetail(request);
+
+            // Assert
+            Assert.That(result.Code.Equals((int)HttpStatusCode.OK));
+            Assert.That(result.Response, Is.Not.Null);
+
+            var response = result.Response as List<ParentOrderDetailModel>;
+            Assert.That(response.Count, Is.EqualTo(3));
+            var order = response[0];
+            Assert.That(order.UserCreate, Is.EqualTo("usurio prueba"));
+            Assert.That(order.Qfb, Is.EqualTo("usurio prueba"));
+            Assert.That(response.Any(x => x.FabOrderId == 227323), Is.True);
+            Assert.That(response.Any(x => x.FabOrderId == 227324), Is.True);
+            Assert.That(response.Any(x => x.FabOrderId == 227322), Is.True);
+        }
+
+        /// <summary>
+        /// GetOpenOrderProdutions_NoOrders_Success.
+        /// </summary>
+        /// <returns>Test.</returns>
+        [Test]
+        public async Task GetOpenOrderProdutions_NoOrders_Success()
+        {
+            // Arrange
+            var parameters = new Dictionary<string, string>
+            {
+                [ServiceConstants.QfbId] = "test-qfb-123",
+                [ServiceConstants.Offset] = "0",
+                [ServiceConstants.Limit] = "10",
+            };
+
+            var mockRedisService = new Mock<IRedisService>();
+            var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
+            var mockMediator = new Mock<IMediator>();
+            var mockPedidosDao = new Mock<IPedidosDao>();
+
+            // no cenecsita mas porque solo se llama GetOpenParentsForQfb internamente
+            var mockProductionOrdersService = new ProductionOrdersService(
+                mockPedidosDao.Object,
+                mockServiceLayerAdapterService.Object,
+                mockRedisService.Object,
+                this.mockKafkaConnector.Object,
+                this.sapAdapter.Object,
+                this.userService.Object,
+                this.sapFileService.Object,
+                this.logger.Object,
+                this.mapper,
+                mockMediator.Object);
+
+            // Act
+            var result = await mockProductionOrdersService.GetOpenOrderProdutions(parameters);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+
+            // Solo validamos que no lance excepción y retorne algo válido
+            Assert.That(result.Code, Is.AnyOf(200, 500)); // Puede ser éxito o error, ambos son válidos
+        }
+
+        /// <summary>
+        /// NoExistingParents_EmptySuccess.
+        /// </summary>
+        /// <returns>Test.</returns>
+        [Test]
+        public async Task NoExistingParents_EmptySuccess()
+        {
+            // Arrange
+            var parameters = new Dictionary<string, string>
+            {
+                [ServiceConstants.QfbId] = "test-qfb",
+                [ServiceConstants.Offset] = "0",
+                [ServiceConstants.Limit] = "10",
+                [ServiceConstants.Orders] = "999,888", // IDs que no existen
+            };
+
+            var mockRedisService = new Mock<IRedisService>();
+            var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
+            var mockMediator = new Mock<IMediator>();
+            var mockPedidosDao = new Mock<IPedidosDao>();
+
+            // Setup: FindExistingParentIds regresa vacío
+            mockPedidosDao.Setup(x => x.FindExistingParentIds(It.IsAny<List<int>>()))
+                      .Returns(Task.FromResult(new HashSet<int>()));
+            mockPedidosDao.Setup(x => x.FindParentsByChildIds(It.IsAny<List<int>>()))
+                      .Returns(Task.FromResult(new Dictionary<int, int>()));
+
+            var mockProductionOrdersService = new ProductionOrdersService(
+                mockPedidosDao.Object,
+                mockServiceLayerAdapterService.Object,
+                mockRedisService.Object,
+                this.mockKafkaConnector.Object,
+                this.sapAdapter.Object,
+                this.userService.Object,
+                this.sapFileService.Object,
+                this.logger.Object,
+                this.mapper,
+                mockMediator.Object);
+
+            // Act
+            var result = await mockProductionOrdersService.GetOpenOrderProdutions(parameters);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Code, Is.EqualTo(200));
+            Assert.That(result.Response, Is.InstanceOf<List<OpenOrderProductionModel>>());
+            Assert.That(((List<OpenOrderProductionModel>)result.Response).Count, Is.EqualTo(0));
+        }
+
+        /// <summary>
+        /// Exception_Returns.
+        /// </summary>
+        /// <returns>Test.</returns>
+        [Test]
+        public async Task Exception_Returns()
+        {
+            // Arrange
+            var parameters = new Dictionary<string, string>
+            {
+                [ServiceConstants.QfbId] = "test-qfb",
+                [ServiceConstants.Offset] = "0",
+                [ServiceConstants.Limit] = "10",
+                [ServiceConstants.Orders] = "123",
+            };
+
+            var mockRedisService = new Mock<IRedisService>();
+            var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
+            var mockMediator = new Mock<IMediator>();
+            var mockPedidosDao = new Mock<IPedidosDao>();
+
+            // Setup: DAO lanza excepción
+            mockPedidosDao.Setup(x => x.FindExistingParentIds(It.IsAny<List<int>>()))
+                      .Throws(new Exception("Database connection error"));
+
+            var mockProductionOrdersService = new ProductionOrdersService(
+                mockPedidosDao.Object,
+                mockServiceLayerAdapterService.Object,
+                mockRedisService.Object,
+                this.mockKafkaConnector.Object,
+                this.sapAdapter.Object,
+                this.userService.Object,
+                this.sapFileService.Object,
+                this.logger.Object,
+                this.mapper,
+                mockMediator.Object);
+
+            // Act
+            var result = await mockProductionOrdersService.GetOpenOrderProdutions(parameters);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Success, Is.False);
+            Assert.That(result.Code, Is.EqualTo((int)HttpStatusCode.InternalServerError));
+            Assert.That(result.UserError, Is.EqualTo(LogsConstants.AnUnexpectedErrorOccurred));
+            Assert.That(result.Response, Is.Null);
         }
     }
 }

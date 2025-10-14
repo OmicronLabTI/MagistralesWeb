@@ -38,7 +38,7 @@ describe('PedidosComponent', () => {
   let dateServiceSpy: jasmine.SpyObj<DateService>;
   let filtersServiceSpy: jasmine.SpyObj<FiltersService>;
   let errorServiceSpy;
-  const routerSpy = {navigate: jasmine.createSpy('navigate')};
+  const routerSpy = { navigate: jasmine.createSpy('navigate') };
 
   const paramsPedidos = new ParamsPedidos();
   const iRecipesRes = new IRecipesRes();
@@ -65,7 +65,12 @@ describe('PedidosComponent', () => {
       [
         'getItemOnDataOnlyIds',
         'openNewTapByUrl',
+        'calculateAndValueList',
       ]);
+    dataServiceSpy.calculateAndValueList.and.callFake((list: boolean[]) => {
+      const res = list.every((value) => value === true);
+      return res;
+    });
     dataServiceSpy.getItemOnDataOnlyIds.and.returnValue([]);
     messagesServiceSpy.presentToastCustom.and.returnValue(Promise.resolve(true));
     messagesServiceSpy.getMessageTitle.and.returnValue('');
@@ -92,7 +97,7 @@ describe('PedidosComponent', () => {
     pedidosServiceSpy.getPedidos.and.callFake(() => {
       return of(PedidosListMock);
     });
-    pedidosServiceSpy.getRecipesByOrder .and.callFake(() => {
+    pedidosServiceSpy.getRecipesByOrder.and.callFake(() => {
       return of(iRecipesRes);
     });
     pedidosServiceSpy.createPdfOrders.and.callFake(() => {
@@ -227,10 +232,10 @@ describe('PedidosComponent', () => {
   it('should updateAllComplete', () => {
     component.dataSource.data = PedidosListMock.response;
     component.dataSource.data.forEach(user => user.isChecked = false);
-    component.updateAllComplete();
+    component.updateAllComplete(false);
     expect(component.allComplete).toBeFalsy();
     component.dataSource.data.forEach(user => user.isChecked = true);
-    component.updateAllComplete();
+    component.updateAllComplete(false);
     expect(component.allComplete).toBeTruthy();
 
   });
@@ -284,7 +289,8 @@ describe('PedidosComponent', () => {
       labelType: 'string',
       finishedLabel: 2,
       orderType: 'string',
-      clientType: 'general'
+      clientType: 'general',
+      onSplitProcess: false,
     }];
     component.cancelOrders();
     component.dataSource.data = PedidosListMock.response;
@@ -307,7 +313,8 @@ describe('PedidosComponent', () => {
       labelType: 'string',
       finishedLabel: 2,
       orderType: 'string',
-      clientType: 'general'
+      clientType: 'general',
+      onSplitProcess: false,
     }];
     component.finalizeOrders();
     component.dataSource.data = PedidosListMock.response;
@@ -385,7 +392,8 @@ describe('PedidosComponent', () => {
       labelType: 'string',
       finishedLabel: 2,
       orderType: 'string',
-      clientType: 'general'
+      clientType: 'general',
+      onSplitProcess: false,
     }];
     filtersServiceSpy.getItemOnDateWithFilter(component.dataSource.data, FromToFilter.fromOrdersReassign, ConstStatus.liberado);
     component.reassignOrders();
@@ -447,7 +455,8 @@ describe('PedidosComponent', () => {
       labelType: 'string',
       finishedLabel: 2,
       orderType: 'string',
-      clientType: 'general'
+      clientType: 'general',
+      onSplitProcess: false,
     }];
     messagesServiceSpy.presentToastCustom.and.callFake(() => {
       return Promise.resolve({

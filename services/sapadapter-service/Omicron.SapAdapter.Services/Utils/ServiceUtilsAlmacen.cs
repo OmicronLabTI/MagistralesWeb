@@ -96,7 +96,8 @@ namespace Omicron.SapAdapter.Services.Utils
             var sapOrdersConfiguration = await ServiceUtils.GetRouteConfigurationsForProducts(catalogsService, redisService, ServiceConstants.AlmacenDbValue);
             sapOrdersConfiguration.ClassificationCodes.AddRange(new List<string> { ServiceConstants.OrderTypeMQ, ServiceConstants.OrderTypeMU, ServiceConstants.OrderTypePackage });
 
-            sapOrders.Where(o => o.Canceled == "N").GroupBy(x => x.DocNum).ToList().ForEach(orders =>
+            var ordersNoCancelled = sapOrders.Where(o => o.Canceled == "N").GroupBy(x => x.DocNum).ToList();
+            ordersNoCancelled.ForEach(orders =>
             {
                 var hasProductsWithValidConfig = orders
                     .Where(x => ((sapOrdersConfiguration.ClassificationCodes.Contains(x.TypeOrder) &&
@@ -287,9 +288,10 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <returns>the data.</returns>
         public static async Task<List<CompleteRecepcionPedidoDetailModel>> GetFilterSapOrdersByConfig(List<CompleteRecepcionPedidoDetailModel> sapOrders, List<UserOrderModel> userOrders, List<LineProductsModel> lineOrders, ICatalogsService catalogsService, IRedisService redisService)
         {
+            sapOrders = sapOrders.Where(x => x.IsParentFabOrder != "Y").ToList();
             var sapOrdersConfiguration = await ServiceUtils.GetRouteConfigurationsForProducts(catalogsService, redisService, ServiceConstants.AlmacenDbValue);
             sapOrdersConfiguration.ClassificationCodes.AddRange(new List<string> { ServiceConstants.OrderTypeMQ, ServiceConstants.OrderTypeMU, ServiceConstants.OrderTypePackage });
-            var usersOrdersIds = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(x => int.Parse(x.Productionorderid));
+            var usersOrdersIds = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(x => int.Parse(x.Productionorderid)).ToList();
             var sapOrdersFiltered = new List<CompleteRecepcionPedidoDetailModel>();
             sapOrders.ForEach(order =>
             {
@@ -303,13 +305,22 @@ namespace Omicron.SapAdapter.Services.Utils
                 }
 
                 var validFabOrder = int.TryParse(order.FabricationOrder, out int fabOrderId);
-                if (validFabOrder && usersOrdersIds.Contains(fabOrderId))
+                if (!validFabOrder)
+                {
+                    return;
+                }
+
+                var validUserOrder = userOrders.Any(x => ServiceShared.CalculateAnd(
+                    x.Productionorderid == fabOrderId.ToString(),
+                    ServiceConstants.StatusForOrderLiberado.Contains(x.Status),
+                    x.FinishedLabel == 1));
+                if (usersOrdersIds.Contains(fabOrderId) && validUserOrder)
                 {
                     sapOrdersFiltered.Add(order);
                 }
             });
 
-            return sapOrdersFiltered.DistinctBy(x => new { x.DocNum, x.Detalles.ProductoId }).ToList();
+            return sapOrdersFiltered.DistinctBy(x => new { x.DocNum, x.FabricationOrder, x.Detalles.ProductoId }).ToList();
         }
 
         /// <summary>

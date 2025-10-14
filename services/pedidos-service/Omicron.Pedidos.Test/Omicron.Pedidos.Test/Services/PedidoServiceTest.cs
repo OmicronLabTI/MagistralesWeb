@@ -51,6 +51,8 @@ namespace Omicron.Pedidos.Test.Services
             this.context = new DatabaseContext(options);
             this.context.UserOrderModel.AddRange(this.GetUserOrderModel());
             this.context.UserOrderSignatureModel.AddRange(this.GetSignature());
+            this.context.ProductionOrderSeparationModel.AddRange(this.GetProductionOrderSeparation());
+            this.context.ProductionOrderSeparationDetailModel.AddRange(this.GetProductionOrderSeparationDetailModel());
             this.context.SaveChanges();
 
             this.reportingService = new Mock<IReportingService>();
@@ -78,10 +80,13 @@ namespace Omicron.Pedidos.Test.Services
 
             var mockSapFile = new Mock<ISapFileService>();
             this.redisService = new Mock<IRedisService>();
+            this.redisService
+                .Setup(r => r.GetRedisKeys(It.IsAny<List<string>>()))
+                .ReturnsAsync(new List<string>());
 
             this.sapServiceLayerService = new Mock<ISapServiceLayerAdapterService>();
             this.sapServiceLayerService
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultCreateOrder()));
 
             this.productionOrdersService = new Mock<IProductionOrdersService>();
@@ -107,6 +112,23 @@ namespace Omicron.Pedidos.Test.Services
 
             // act
             var response = await this.pedidosService.GetUserOrderBySalesOrder(listIds);
+
+            // assert
+            Assert.That(response, Is.Not.Null);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task GetUserOrderBySalesOrderWithDetail()
+        {
+            // arrange
+            var listIds = new List<int> { 1, 2, 3 };
+
+            // act
+            var response = await this.pedidosService.GetUserOrderBySalesOrderWithDetail(listIds);
 
             // assert
             Assert.That(response, Is.Not.Null);
@@ -155,6 +177,96 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.That(response, Is.Not.Null);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return fabOrder.</returns>
+        [Test]
+        public async Task GetFabOrderByUserIdOrdersPaternt()
+        {
+            // arrange
+            var id = "1a663b91-fffa-4298-80c3-aaae35586dc6";
+
+            var localSapAdapter = new Mock<ISapAdapter>();
+
+            localSapAdapter
+                .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetListFormulaDetalleForOrdersParent()));
+
+            var mockUsuarios = new Mock<IUsersService>();
+
+            mockUsuarios
+                .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUser()));
+
+            var mockSapFile = new Mock<ISapFileService>();
+            var mockSaDiApi = new Mock<ISapDiApi>();
+
+            var pedidosServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockUsuarios.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object, this.sapServiceLayerService.Object, mockSaDiApi.Object, this.productionOrdersService.Object, this.logger.Object);
+
+            // act
+            var response = await pedidosServiceLocal.GetFabOrderByUserId(id);
+            var result = response.Response as QfbOrderModel;
+
+            var procesoStatus = result.Status.FirstOrDefault(s => s.StatusName == "En Proceso");
+            var orderInEnProceso = procesoStatus.Orders.Any(order => order.ProductionOrderId == 225306);
+            var reasignadoStatus = result.Status.FirstOrDefault(s => s.StatusName == "Reasignado");
+            var orderInReasignado = reasignadoStatus.Orders.Any(order => order.ProductionOrderId == 225305);
+
+            // assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(procesoStatus, Is.Not.Null);
+            Assert.That(reasignadoStatus, Is.Not.Null);
+            Assert.That(procesoStatus.Orders.Count, Is.EqualTo(1));
+            Assert.That(reasignadoStatus.Orders.Count, Is.EqualTo(1));
+            Assert.That(orderInEnProceso, Is.True);
+            Assert.That(orderInReasignado, Is.True);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return fabOrder.</returns>
+        [Test]
+        public async Task GetFabOrderByUserIdOrdersPaterntOrder()
+        {
+            // arrange
+            var id = "bd4b2724-3b13-490e-aed2-5c8bfdd7551a";
+
+            var localSapAdapter = new Mock<ISapAdapter>();
+
+            localSapAdapter
+                .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetListFormulaDetalleForOrdersParent()));
+
+            var mockUsuarios = new Mock<IUsersService>();
+
+            mockUsuarios
+                .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUser()));
+
+            var mockSapFile = new Mock<ISapFileService>();
+            var mockSaDiApi = new Mock<ISapDiApi>();
+
+            var pedidosServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockUsuarios.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object, this.sapServiceLayerService.Object, mockSaDiApi.Object, this.productionOrdersService.Object, this.logger.Object);
+
+            // act
+            var response = await pedidosServiceLocal.GetFabOrderByUserId(id);
+            var result = response.Response as QfbOrderModel;
+
+            var procesoStatus = result.Status.FirstOrDefault(s => s.StatusName == "En Proceso");
+
+            // assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(procesoStatus, Is.Not.Null);
+            Assert.That(procesoStatus.Orders.Count, Is.EqualTo(5));
+            Assert.That(procesoStatus.Orders[0].ProductionOrderId, Is.EqualTo(225309));
+            Assert.That(procesoStatus.Orders[1].ProductionOrderId, Is.EqualTo(225310));
+            Assert.That(procesoStatus.Orders[2].ProductionOrderId, Is.EqualTo(225311));
+            Assert.That(procesoStatus.Orders[3].ProductionOrderId, Is.EqualTo(225312));
+            Assert.That(procesoStatus.Orders[4].ProductionOrderId, Is.EqualTo(225313));
         }
 
         /// <summary>
@@ -255,7 +367,7 @@ namespace Omicron.Pedidos.Test.Services
             var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
 
             serviceLayer
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             var listResult = new List<ProductUnitDto> { new ProductUnitDto() { ProductoId = "Aspirina", Id = 1 } };
@@ -695,7 +807,7 @@ namespace Omicron.Pedidos.Test.Services
             mockResult.Response = JsonConvert.SerializeObject(mockContent);
 
             mockServiceLayerLocal
-                .Setup(m => m.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(m => m.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(mockResult));
 
             var mockProductionOrders = new Mock<IProductionOrdersService>();
@@ -788,7 +900,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var mockServiceLayerLocal = new Mock<ISapServiceLayerAdapterService>();
             mockServiceLayerLocal
-                .Setup(m => m.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(m => m.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(mockResult));
 
             var result = this.GetResultModelCompleteDetailModel();
@@ -851,7 +963,7 @@ namespace Omicron.Pedidos.Test.Services
             mockResult.Response = JsonConvert.SerializeObject(mockContent);
 
             mockSapServiceLayer
-                .Setup(m => m.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(m => m.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(mockResult));
 
             var result = this.GetResultModelCompleteDetailModel();
@@ -922,7 +1034,7 @@ namespace Omicron.Pedidos.Test.Services
             mockResultSapAdapter.Response = "12345";
 
             serviceLayerLocal
-                .Setup(m => m.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(m => m.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(mockResultDiApi));
 
             mockSapAdapter
@@ -1062,6 +1174,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var localSapAdapter = new Mock<ISapAdapter>();
             var mockUsers = new Mock<IUsersService>();
+            var mockRedis = new Mock<IRedisService>();
 
             localSapAdapter
                 .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
@@ -1071,9 +1184,13 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetUserModel()));
 
+            mockRedis
+                .Setup(r => r.GetRedisKeys(It.IsAny<List<string>>()))
+                .ReturnsAsync(new List<string>());
+
             var mockSapFile = new Mock<ISapFileService>();
             var mockSaDiApi = new Mock<ISapDiApi>();
-            var localService = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object, this.sapServiceLayerService.Object, mockSaDiApi.Object, this.productionOrdersService.Object, this.logger.Object);
+            var localService = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, mockRedis.Object, this.kafkaConnector.Object, this.sapServiceLayerService.Object, mockSaDiApi.Object, this.productionOrdersService.Object, this.logger.Object);
 
             // act
             var result = await localService.GetFabOrders(dicParams);
@@ -1105,6 +1222,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var localSapAdapter = new Mock<ISapAdapter>();
             var mockUsers = new Mock<IUsersService>();
+            var mockRedis = new Mock<IRedisService>();
 
             localSapAdapter
                 .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
@@ -1114,9 +1232,13 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetUserModel()));
 
+            mockRedis
+                .Setup(r => r.GetRedisKeys(It.IsAny<List<string>>()))
+                .ReturnsAsync(new List<string>());
+
             var mockSapFile = new Mock<ISapFileService>();
             var mockSaDiApi = new Mock<ISapDiApi>();
-            var localService = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object, this.sapServiceLayerService.Object, mockSaDiApi.Object, this.productionOrdersService.Object, this.logger.Object);
+            var localService = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, mockRedis.Object, this.kafkaConnector.Object, this.sapServiceLayerService.Object, mockSaDiApi.Object, this.productionOrdersService.Object, this.logger.Object);
 
             // act
             var result = await localService.GetFabOrders(dicParams);
@@ -1127,6 +1249,54 @@ namespace Omicron.Pedidos.Test.Services
             Assert.That(response.Count, Is.EqualTo(2));
             Assert.That(response.Any(x => x.FabOrderId == 226274), Is.True);
             Assert.That(response.Any(x => x.FabOrderId == 226277), Is.True);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetFabOrdersOnlyParentsOrComplete()
+        {
+            var dates = new DateTime(2025, 05, 28).ToString("dd/MM/yyyy");
+            var dateFinal = new DateTime(2025, 05, 30).ToString("dd/MM/yyyy");
+            var dicParams = new Dictionary<string, string>
+            {
+                { ServiceConstants.FechaInicio, string.Format("{0}-{1}", dates, dateFinal) },
+                { ServiceConstants.Classifications, "MG" },
+                { ServiceConstants.Parent, "true" },
+            };
+
+            var localSapAdapter = new Mock<ISapAdapter>();
+            var mockUsers = new Mock<IUsersService>();
+            var mockRedis = new Mock<IRedisService>();
+
+            localSapAdapter
+                .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetFabricacionOrderModelOnlyParentsOrComplete()));
+
+            mockUsers
+                .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserModel()));
+
+            mockRedis
+                .Setup(r => r.GetRedisKeys(It.IsAny<List<string>>()))
+                .ReturnsAsync(new List<string>());
+
+            var mockSapFile = new Mock<ISapFileService>();
+            var mockSaDiApi = new Mock<ISapDiApi>();
+            var localService = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, mockRedis.Object, this.kafkaConnector.Object, this.sapServiceLayerService.Object, mockSaDiApi.Object, this.productionOrdersService.Object, this.logger.Object);
+
+            // act
+            var result = await localService.GetFabOrders(dicParams);
+            var response = result.Response as List<CompleteOrderModel>;
+            Console.WriteLine(JsonConvert.SerializeObject(response, Formatting.Indented));
+
+            // assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(response.Count, Is.EqualTo(1));
+            Assert.That(response.Any(x => x.FabOrderId == 226277), Is.True);
+            Assert.That(response.First(x => x.FabOrderId == 226277).OrderRelationType, Is.EqualTo("Padre"));
         }
 
         /// <summary>
@@ -1423,6 +1593,63 @@ namespace Omicron.Pedidos.Test.Services
             Assert.That(response.UserError, Is.Null);
             Assert.That(response.Success);
             Assert.That(response.Code.Equals(200));
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task UpdateStatusOrder_StatusWorkParent()
+        {
+            // Arrange
+            var parentOrderId = 880001;
+            var parentOrderIdStr = parentOrderId.ToString();
+
+            this.context.UserOrderModel.Add(new UserOrderModel
+            {
+                Id = 50001,
+                Userid = "tester",
+                Salesorderid = "SO-TEST",
+                Productionorderid = parentOrderIdStr,
+                Status = ServiceConstants.Cancelled,
+                StatusWorkParent = null,
+                TypeOrder = "FAB",
+                Quantity = 1,
+                StatusForTecnic = ServiceConstants.Asignado,
+            });
+
+            this.context.ProductionOrderSeparationModel.Add(new ProductionOrderSeparationModel
+            {
+                OrderId = parentOrderId,
+                ProductionDetailCount = 0,
+                TotalPieces = 10,
+                AvailablePieces = 10,
+                Status = "statusTest",
+            });
+
+            await this.context.SaveChangesAsync();
+
+            var body = new List<UpdateStatusOrderModel>
+            {
+                new UpdateStatusOrderModel
+                {
+                    OrderId = parentOrderId,
+                    UserId = "tester",
+                    Status = ServiceConstants.Pendiente,
+                    UserRoleType = (int)UserRoleType.Tecnic,
+                },
+            };
+
+            // Act
+            var response = await this.pedidosService.UpdateStatusOrder(body);
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            var updated = await this.context.UserOrderModel.FirstAsync(u => u.Productionorderid == parentOrderIdStr);
+
+            Assert.That(updated.StatusWorkParent, Is.EqualTo(ServiceConstants.Pendiente));
+            Assert.That(updated.Status, Is.EqualTo(ServiceConstants.Cancelled));
         }
     }
 }

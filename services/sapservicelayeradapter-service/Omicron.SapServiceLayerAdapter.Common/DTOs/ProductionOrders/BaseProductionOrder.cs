@@ -6,6 +6,8 @@
 // </copyright>
 // </summary>
 
+using System.Text.Json.Serialization;
+
 namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
 {
     /// <summary>
@@ -47,5 +49,27 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
         /// <value>StartDate.</value>
         [JsonProperty("StartDate")]
         public DateTime StartDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Remarks.
+        /// </summary>
+        /// <value>Remarks.</value>
+        [JsonProperty("Remarks")]
+        public string Remarks { get; set; }
+
+        /// <summary>
+        /// Gets or sets the IsParentRecord.
+        /// </summary>
+        /// <value>IsParentRecord.</value>
+        [JsonProperty("U_OPadre")]
+        [JsonPropertyName("U_OPadre")]
+        public string IsParentRecord { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Remarks.
+        /// </summary>
+        /// <value>Remarks.</value>
+        [JsonProperty("Warehouse")]
+        public string Warehouse { get; set; }
     }
 }

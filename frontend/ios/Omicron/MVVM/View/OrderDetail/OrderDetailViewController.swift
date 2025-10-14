@@ -11,7 +11,7 @@ import RxSwift
 import RxCocoa
 import Resolver
 // swiftlint:disable type_body_length
-class OrderDetailViewController: UIViewController, SelectedPickerInput {
+class OrderDetailViewController: UIViewController, SelectedPickerInput, AcceptButtonPressed {
     
     // Outlets
     @IBOutlet weak var deleteManyButton: UIButton!
@@ -34,6 +34,7 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
     @IBOutlet weak var infoView: UIView!
     @IBOutlet weak var hashtagLabel: UILabel!
     @IBOutlet weak var saveWarehousesChangesButton: UIButton!
+    @IBOutlet weak var splitButton: UIButton!
     // MARK: Outlets from table header
     @IBOutlet weak var htCode: UILabel!
     @IBOutlet weak var htDescription: UILabel!
@@ -53,6 +54,7 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
     @Injected var rootViewModel: RootViewModel
     @Injected var lottieManager: LottieManager
     @Injected var inboxViewModel: InboxViewModel
+    @Injected var splitOrderViewModel: SplitOrderViewModel
     
 
     var disposeBag: DisposeBag = DisposeBag()
@@ -66,6 +68,7 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
     var isolatedOrder = false
     var emptyStockProductId: [String] = []
     var componentsToUpdate: [Component] = []
+    var onGoingSplitProcess: Bool = false
     
     // MARK: Life Cycles
     override func viewDidLoad() {
@@ -81,22 +84,27 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
         infoView.layer.cornerRadius = 10
         setupDismissPickerOnTap()
         initNavigationBar()
+        self.initComponents()
+        self.viewModelBinding()
+        quantityButtonBindind()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        cleanLabels()
-        self.initComponents()
-        self.viewModelBinding()
-        quantityButtonBindind()
         self.orderDetailViewModel.getOrdenDetail()
         self.refreshViewControl()
         self.componentsToUpdate = []
     }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        if self.isMovingFromParent {
+            disposeBag = DisposeBag()
+        }
+    }
+
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        disposeBag = DisposeBag()
-        cleanLabels()
         orderDetailViewModel.tableData.onNext([])
         saveWarehousesChangesButton.isEnabled = false
         self.componentsToUpdate = []
@@ -188,13 +196,6 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
             guard let self = self else { return }
             AlertManager.shared.showAlert(message: message, view: self)
         }).disposed(by: self.disposeBag)
-        orderDetailViewModel.loading.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
-            if showLoading {
-                self?.lottieManager.showLoading()
-            } else {
-                self?.lottieManager.hideLoading()
-            }
-        }).disposed(by: self.disposeBag)
         self.orderDetailViewModel.showSignatureView
             .observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] titleView in
                 let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
@@ -206,6 +207,15 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
                 signatureVC?.modalTransitionStyle = .crossDissolve
                 self?.present(signatureVC ?? SignaturePadViewController(), animated: true, completion: nil)
             }).disposed(by: self.disposeBag)
+        
+        orderDetailViewModel.loading.observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] showLoading in
+            if showLoading {
+                self?.lottieManager.showLoading()
+            } else {
+                self?.lottieManager.hideLoading()
+            }
+        }).disposed(by: self.disposeBag)
     }
     func viewModelBinding1() {
         // Termina la ejecución del refresh control
@@ -312,6 +322,8 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
         UtilsManager.shared.setStyleButtonStatus(button: self.saveWarehousesChangesButton, title: StatusNameConstants.save,
                                                  color: OmicronColors.blue,
                                                  titleColor: OmicronColors.blue)
+        UtilsManager.shared.setStyleButtonStatus(button: self.splitButton, title: StatusNameConstants.splitOrder,
+                                                 color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
         UtilsManager.shared.labelsStyle(label: self.titleLabel, text: CommonStrings.components, fontSize: 22)
         UtilsManager.shared.labelsStyle(label: self.htCode, text: CommonStrings.code, fontSize: 19,
                                         typeFont: CommonStrings.bold)
@@ -327,6 +339,7 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
                                         typeFont: CommonStrings.bold)
         UtilsManager.shared.labelsStyle(label: self.htDescription, text: CommonStrings.description, fontSize: 19,
                                         typeFont: CommonStrings.bold)
+        splitButton.isEnabled = false
     }
     
     func setupDismissPickerOnTap() {
@@ -373,23 +386,23 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
     }
     func showButtonsByStatusType(statusType: String) {
         var hideBtn = HideButtons(
-            process: true, finished: true, pending: true, addComp: true, save: true, seeBatches: true, saveChanges: true)
+            process: true, finished: true, pending: true, addComp: true, save: true, seeBatches: true, saveChanges: true, splitOrder: true)
         switch statusType {
         case StatusNameConstants.assignedStatus:
             hideBtn = HideButtons(process: false, finished: true, pending: false,
-                                  addComp: true, save: true, seeBatches: true, saveChanges: true)
+                                  addComp: true, save: true, seeBatches: true, saveChanges: true, splitOrder: true)
         case StatusNameConstants.inProcessStatus:
             hideBtn = HideButtons(process: true, finished: false, pending: false,
-                                  addComp: false, save: true, seeBatches: false, saveChanges: false)
+                                  addComp: false, save: true, seeBatches: false, saveChanges: false, splitOrder: false)
         case StatusNameConstants.penddingStatus:
             hideBtn = HideButtons(process: false, finished: true, pending: true,
-                                  addComp: true, save: true, seeBatches: false, saveChanges: true)
+                                  addComp: true, save: true, seeBatches: false, saveChanges: true, splitOrder: true)
         case StatusNameConstants.finishedStatus:
             hideBtn = HideButtons(process: true, finished: true, pending: true,
-                                  addComp: false, save: true, seeBatches: false, saveChanges: true)
+                                  addComp: false, save: true, seeBatches: false, saveChanges: true, splitOrder: true)
         case StatusNameConstants.reassignedStatus:
             hideBtn = HideButtons(process: true, finished: false, pending: false,
-                                  addComp: false, save: true, seeBatches: false, saveChanges: false)
+                                  addComp: false, save: true, seeBatches: false, saveChanges: false, splitOrder: false)
         default: break
         }
         self.changeHidePropertyOfButtons(hideBtn)
@@ -403,6 +416,7 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
         self.saveButton.isHidden = hideBtns.save
         self.seeLotsButton.isHidden = hideBtns.seeBatches
         self.saveWarehousesChangesButton.isHidden = hideBtns.saveChanges
+        self.splitButton.isHidden = hideBtns.splitOrder
     }
     func sendIndexToDelete(index: Int) {
         orderDetailViewModel.deleteItemFromTable(indexs: [index])
@@ -477,26 +491,57 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput {
         self.present(alert, animated: true, completion: nil)
     }
     
-    func cleanLabels() {
-        titleLabel.text = ""
-        codeDescriptionLabel.text = ""
-        documentBaseDescriptionLabel.text = ""
-        containerDescriptionLabel.text = ""
-        tagDescriptionLabel.text = ""
-        sumFormulaDescriptionLabel.text = ""
-        quantityPlannedDescriptionLabel.text = ""
-        startDateDescriptionLabel.text = ""
-        finishedDateDescriptionLabel.text = ""
-        productDescritionLabel.text = ""
-        hashtagLabel.text = ""
-        htCode.text = ""
-        htDescription.text = ""
-        htBaseQuantity.text = ""
-        htrequiredQuantity.text = ""
-        htUnit.text = ""
-        htWerehouse.text = ""
-        destinyLabel.text = ""
-        labelSpaceQuantity.text = ""
+    @IBAction func splitOrderAction(_ sender: Any) {
+        let someHasBatches = someComponentHasBatches()
+        let fabOrderId = orderDetail[0].productionOrderID ?? 0
+        if someHasBatches || onGoingSplitProcess {
+            let mssg = someHasBatches
+                ? Constants.Errors.unassignBatches.rawValue.replacingOccurrences(of: "[fabOrder]", with: String(fabOrderId))
+                : Constants.Errors.onGoingSplitProcess.rawValue
+            let alert = UIAlertController(
+                title: mssg,
+                message: nil,
+                preferredStyle: .alert)
+            let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: nil)
+            alert.addAction(okAction)
+            self.present(alert, animated: true, completion: nil)
+            return
+        } else {
+            let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
+            let componentsVC = storyboard.instantiateViewController(
+                withIdentifier: ViewControllerIdentifiers.splitOrderViewController) as? SplitOrderViewController
+            let navigationVC = UINavigationController(rootViewController: componentsVC ?? SplitOrderViewController())
+            navigationVC.modalPresentationStyle = .formSheet
+            let availablePieces = orderDetail[0].availablePieces ?? 0
+            componentsVC?.delegate = self
+            componentsVC?.fabOrderId = fabOrderId
+            componentsVC?.dxpTransactionId = orderDetail[0].shopTransaction
+            componentsVC?.orderId = orderDetail[0].number
+            componentsVC?.totalPieces = NSDecimalNumber(decimal: orderDetail[0].plannedQuantity ?? 0).intValue
+            componentsVC?.availableQuantity = availablePieces
+            let originalQuantity = NSDecimalNumber(decimal: (orderDetail[0].plannedQuantity ?? 0)).intValue
+            componentsVC?.originalQuantityOrder = originalQuantity
+            componentsVC?.orderType = orderDetail[0].orderRelationType ?? OrderRelationTypes.completa
+            componentsVC?.showOnGoingProcessMessage = { value in
+                self.onGoingSplitProcess = value
+                for cell in self.tableView.visibleCells {
+                    if let detailCell = cell as? DetailTableViewCell {
+                        detailCell.pickerContainerView.isUserInteractionEnabled = !value
+                    }
+                }
+                self.disableButtonsForFatherOrder( String() ,onProcess: value)
+            }
+            self.present(navigationVC, animated: true, completion: nil)
+        }
+    }
+    
+    func splitOrderAcceptButton(request: SplitOrderRequest) {
+        splitOrderViewModel.saveChanges(request, section: statusType)
+    }
+    
+    func someComponentHasBatches() -> Bool {
+        let someHasBatches = orderDetail[0].details?.contains{ $0.hasBatches ?? false }
+        return someHasBatches ?? false
     }
     
     func emptyOptions() {

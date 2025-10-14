@@ -163,6 +163,12 @@ namespace Omicron.Pedidos.Entities.Model
         /// Gets or sets a value indicating whether gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
+        public bool HasBatches { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
         public string DestinyAddress { get; set; }
 
         /// <summary>
@@ -194,5 +200,11 @@ namespace Omicron.Pedidos.Entities.Model
         /// </summary>
         /// <value>The code.</value>
         public List<CompleteDetalleFormulaModel> Details { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderRelationType.
+        /// </summary>
+        /// <value>The coOrderRelationTypede.</value>
+        public string OrderRelationType { get; set; }
     }
 }

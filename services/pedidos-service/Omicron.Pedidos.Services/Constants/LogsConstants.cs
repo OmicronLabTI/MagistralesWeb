@@ -283,6 +283,22 @@ namespace Omicron.Pedidos.Services.Constants
         /// <value>
         /// StartFinalizeProductionOrderInSap.
         /// </value>
+        public static string CreateChildOrdersLogBase => "Pedidos Service - Start Create Child Production Order - {ProductionOrdersToCreateO}";
+
+        /// <summary>
+        /// Gets SeparateProductionOrderStart.
+        /// </summary>
+        /// <value>
+        /// SeparateProductionOrderStart.
+        /// </value>
+        public static string CreateChildOrdersLogBaseStart => "{0} - Start Proccess - Pieces: {1} - SeparationID: {2}";
+
+        /// <summary>
+        /// Gets StartFinalizeProductionOrderInSap.
+        /// </summary>
+        /// <value>
+        /// StartFinalizeProductionOrderInSap.
+        /// </value>
         public static string StartCreationPdf => "Pedidos Service - Start Create PDF - {ProductionOrdersToFinalize}";
 
         /// <summary>
@@ -348,5 +364,213 @@ namespace Omicron.Pedidos.Services.Constants
         /// RetryFailedProductionOrderFinalization.
         /// </value>
         public static string RetryFailedProductionOrderFinalization => "{0} - Retry Failed Production Order Finalization";
+
+        /// <summary>
+        /// Gets RetryFailedDivisionOrder.
+        /// </summary>
+        /// <value>
+        /// RetryFailedDivisionOrder.
+        /// </value>
+        public static string RetryFailedDivisionOrder => "{0} - Retry Failed Production Order Division";
+
+        /// <summary>
+        /// Gets UpdateTaskAddedToQueue.
+        /// </summary>
+        /// <value>
+        /// UpdateTaskAddedToQueue.
+        /// </value>
+        public static string UpdateTaskAddedToQueue => "Pedidos - BackgroundTaskQueue - Update Task Added To Queue";
+
+        /// <summary>
+        /// Gets StartingBackgroundProductionOrderSplit.
+        /// </summary>
+        /// <value>
+        /// StartingBackgroundProductionOrderSplit.
+        /// </value>
+        public static string StartingBackgroundProductionOrderSplit => "{SeparationId} - Pedidos Service - Starting Background Production Order Separation - ProductionOrderId: {ProductionOrderId}";
+
+        /// <summary>
+        /// Gets SeparateProductionOrderLogBase.
+        /// </summary>
+        /// <value>
+        /// SeparateProductionOrderLogBase.
+        /// </value>
+        public static string SeparateProductionOrderLogBase => "{0} - Pedidos Service - ProductionOrder: {1} - Separate Production Order";
+
+        /// <summary>
+        /// Gets SeparateProductionOrderStart.
+        /// </summary>
+        /// <value>
+        /// SeparateProductionOrderStart.
+        /// </value>
+        public static string SeparateProductionOrderStart => "{LogBase} - Start Proccess - Pieces: {Pieces}";
+
+        /// <summary>
+        /// Gets SeparateProductionOrderEndSuccessfuly.
+        /// </summary>
+        /// <value>
+        /// SeparateProductionOrderEndSuccessfuly.
+        /// </value>
+        public static string SeparateProductionOrderEndSuccessfuly => "{LogBase} - End Proccess Successfuly";
+
+        /// <summary>
+        /// Gets SeparateProductionOrderEndSuccessfuly.
+        /// </summary>
+        /// <value>
+        /// SeparateProductionOrderEndSuccessfuly.
+        /// </value>
+        public static string SeparateProductionOrderEndWithError => "{0} - End Proccess With Error";
+
+        /// <summary>
+        /// Gets MaximumNumberOfRetriesReached.
+        /// </summary>
+        /// <value>
+        /// MaximumNumberOfRetriesReached.
+        /// </value>
+        public static string MaximumNumberOfRetriesReached => "{0} - End Proccess With Error - Maximum Number Of Retries Reached";
+
+        /// <summary>
+        /// Gets RetryScheduledLog.
+        /// </summary>
+        /// <value>
+        /// RetryScheduledLog.
+        /// </value>
+        public static string RetryScheduledLog => "{LogBase} - Retry scheduled in {Minutes} minutes - RetryAttempt: {RetryAttempt}";
+
+        /// <summary>
+        /// Gets ProductionOrderNotFound.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderNotFound.
+        /// </value>
+        public static string ProductionOrderNotFound => "Production Order Not Found";
+
+        /// <summary>
+        /// Gets ProductionOrderIsAlreadyCancelled.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderIsAlreadyCancelled.
+        /// </value>
+        public static string ProductionOrderIsAlreadyCancelled => "{LogBase} - Production Order Is Already Cancelled";
+
+        /// <summary>
+        /// Gets ProductionOrderCancelledSuccessfully.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderCancelledSuccessfully.
+        /// </value>
+        public static string ProductionOrderCancelledSuccessfully => "{LogBase} - Production Order Cancelled Successfully";
+
+        /// <summary>
+        /// Gets CancellingProductionOrderInSAP.
+        /// </summary>
+        /// <value>
+        /// CancellingProductionOrderInSAP.
+        /// </value>
+        public static string CancellingProductionOrderInSAP => "{LogBase} - Cancelling Production Order In SAP";
+
+        /// <summary>
+        /// Gets FailedToCancelProductionOrderInSAP.
+        /// </summary>
+        /// <value>
+        /// FailedToCancelProductionOrderInSAP.
+        /// </value>
+        public static string FailedToCancelProductionOrderInSAP => "{0} - Failed To Cancel Production Order In SAP";
+
+        /// <summary>
+        /// Gets CancellingProductionOrderInPostgreSQL.
+        /// </summary>
+        /// <value>
+        /// CancellingProductionOrderInPostgreSQL.
+        /// </value>
+        public static string CancellingProductionOrderInPostgreSQL => "{LogBase} - Cancelling Production Order In PostgreSQL";
+
+        /// <summary>
+        /// Gets SaveHistoryOrdersFabLogBase.
+        /// </summary>
+        /// <value>
+        /// SaveHistoryOrdersFabLogBase.
+        /// </value>
+        public static string SaveHistoryOrdersFabLogBase => "Register Order History Service - ChildOrder: {0} - ParentOrder: {1} - Save History Orders Fab";
+
+        /// <summary>
+        /// Gets SaveHistoryOrdersFabLogBase.
+        /// </summary>
+        /// <value>
+        /// SaveHistoryOrdersFabLogBase.
+        /// </value>
+        public static string SaveHistoryParentOrdersFabLogBase => "Register Order History Service - ParentOrder: {0} - Save History Orders Fab";
+
+        /// <summary>
+        /// Gets SaveHistoryOrdersFabStart.
+        /// </summary>
+        /// <value>
+        /// SaveHistoryOrdersFabStart.
+        /// </value>
+        public static string SaveHistoryOrdersFabStart => "{LogBase} - Start Process - Pieces: {Pieces} - User: {User} - SapOrder: {SapOrder}";
+
+        /// <summary>
+        /// Gets SaveHistoryOrdersFabChildExists.
+        /// </summary>
+        /// <value>
+        /// SaveHistoryOrdersFabChildExists.
+        /// </value>
+        public static string SaveHistoryOrdersFabChildExists => "{LogBase} - Child Order Already Exists - Skip Process";
+
+        /// <summary>
+        /// Gets SaveHistoryOrdersFabEndWithError.
+        /// </summary>
+        /// <value>
+        /// SaveHistoryOrdersFabEndWithError.
+        /// </value>
+        public static string SaveHistoryOrdersFabEndWithError => "{0} - End Process With Error";
+
+        /// <summary>
+        /// Gets GetOpenOrderProductions.
+        /// </summary>
+        /// <value>
+        /// GetOpenOrderProductions.
+        /// </value>
+        public static string GetOpenOrderProductions => "{0} - LogsOpenOrderProductions";
+
+        /// <summary>
+        /// Gets GetOpenOrderProductionsStart.
+        /// </summary>
+        /// <value>
+        /// GetOpenOrderProductionsStart.
+        /// </value>
+        public static string GetOpenOrderProductionsStart => "{LogBase} - Start - Orders: [{Orders}] - QfbId: {QfbId} - Count: {OrdersCount}";
+
+        /// <summary>
+        /// Gets GetOpenOrderProductionsCallGetOpenParents.
+        /// </summary>
+        /// <value>
+        /// GetOpenOrderProductionsCallGetOpenParents.
+        /// </value>
+        public static string GetOpenOrderProductionsCallGetOpenParents => "{LogBase} - No specific orders - Using GetOpenParentsForQfb - QfbId: {QfbId}";
+
+        /// <summary>
+        /// Gets GetOpenOrderProductionsNoData.
+        /// </summary>
+        /// <value>
+        /// GetOpenOrderProductionsNoData.
+        /// </value>
+        public static string GetOpenOrderProductionsNoData => "{LogBase} - No data found - Orders: [{Orders}]";
+
+        /// <summary>
+        /// Gets GetOpenOrderProductionsSuccess.
+        /// </summary>
+        /// <value>
+        /// GetOpenOrderProductionsSuccess.
+        /// </value>
+        public static string GetOpenOrderProductionsSuccess => "{LogBase} - Success - ResultOrders: [{ResultOrders}] - Total: {Total} - Returned: {PageSize}";
+
+        /// <summary>
+        /// Gets GetOpenOrderProductionsError.
+        /// </summary>
+        /// <value>
+        /// GetOpenOrderProductionsError.
+        /// </value>
+        public static string GetOpenOrderProductionsError => "{LogBase} - Unexpected error - Orders: [{Orders}";
     }
 }

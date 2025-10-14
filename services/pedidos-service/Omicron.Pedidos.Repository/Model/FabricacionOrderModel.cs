@@ -94,5 +94,13 @@ namespace Omicron.Pedidos.Entities.Model
         /// </summary>
         /// <value>The measurement of unit.</value>
         public string OrderType { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderRelationType.
+        /// </summary>
+        /// <value>
+        /// string OrderRelationType.
+        /// </value>
+        public string OrderRelationType { get; set; }
     }
 }

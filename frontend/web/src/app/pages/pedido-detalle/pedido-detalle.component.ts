@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material';
 import { PedidosService } from '../../services/pedidos.service';
-import { IPedidoDetalleLabelReq, IPedidoDetalleReq, LabelToFinish } from '../../model/http/detallepedidos.model';
+import { ChildrenOrders, IPedidoDetalleLabelReq, IPedidoDetalleReq, LabelToFinish } from '../../model/http/detallepedidos.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../../services/data.service';
 import {
@@ -18,7 +18,8 @@ import {
   RouterPaths,
   TypeToSeeTap,
   constRealLabel,
-  CatalogTypes
+  CatalogTypes,
+  orderRelationTypes
 } from '../../constants/const';
 import { Subscription } from 'rxjs';
 import { Title } from '@angular/platform-browser';
@@ -34,11 +35,21 @@ import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { ObservableService } from '../../services/observable.service';
 import { MessagesService } from 'src/app/services/messages.service';
 import { FiltersService } from '../../services/filters.service';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { childrenOrdersMock } from 'src/mocks/pedidosListMock';
+import { element } from 'protractor';
 
 @Component({
   selector: 'app-pedido-detalle',
   templateUrl: './pedido-detalle.component.html',
-  styleUrls: ['./pedido-detalle.component.scss']
+  styleUrls: ['./pedido-detalle.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4,0.0,0.2,1)')),
+    ]),
+  ],
 })
 export class PedidoDetalleComponent implements OnInit, OnDestroy {
   allComplete = false;
@@ -54,10 +65,12 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     'qtyPlanned',
     'fechaOF',
     'fechaOFFin',
+    'piezasDisponibles',
+    'childrenOrdersqty',
     'qfb',
     'label',
     'statusOF',
-    'actions'
+    'actions',
   ];
   dataSource = new MatTableDataSource<IPedidoDetalleReq>();
   isThereOrdersDetailToPlan = false;
@@ -79,6 +92,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   baseQueryString = CONST_STRING.empty;
   isThereOrdersDetailToDelivered = false;
   patientName = CONST_STRING.empty;
+  expandedElement: IPedidoDetalleReq | null;
+  expandedElementList: IPedidoDetalleReq[] = [];
   constructor(
     private pedidosService: PedidosService,
     private route: ActivatedRoute,
@@ -122,55 +137,57 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.productCodeSplit = [];
     this.paramsDetailOrder.current = response[CONST_NUMBER.zero].pedidoId.toString();
     this.dataSource.data = response;
-    this.dataSource.data.forEach(element => {
-      const productCodeSplit = element.codigoProducto.split(' ');
+    this.dataSource.data.forEach((orders, i) => {
+      const productCodeSplit = orders.codigoProducto.split(' ');
       this.productCodeSplit.push(productCodeSplit[0]);
       this.realLabel = constRealLabel.impresaCliente;
-      const patientName = element.patientName !== CONST_STRING.empty && element.patientName !== undefined ?
-        element.patientName.split(':')[1]
+      const patientName = orders.patientName !== CONST_STRING.empty && orders.patientName !== undefined ?
+        orders.patientName.split(':')[1]
         : CONST_STRING.empty;
       this.patientName = patientName;
-      this.docStatus = element.pedidoStatus;
-      element.fechaOf = element.fechaOf == null ? '' : element.fechaOf.substring(10, 0);
-      element.fechaOfFin = element.fechaOfFin == null ? '' : element.fechaOfFin.substring(10, 0);
-      element.status = element.status === '' ? ConstStatus.abierto : element.status;
-      switch (element.status.toUpperCase()) {
+      this.docStatus = orders.pedidoStatus;
+      orders.fechaOf = orders.fechaOf == null ? '' : orders.fechaOf.substring(10, 0);
+      orders.fechaOfFin = orders.fechaOfFin == null ? '' : orders.fechaOfFin.substring(10, 0);
+      orders.status = orders.status === '' ? ConstStatus.abierto : orders.status;
+      switch (orders.status.toUpperCase()) {
         case ConstStatus.abierto.toUpperCase():
-          element.class = 'abierto';
+          orders.class = 'abierto';
           break;
         case ConstStatus.planificado.toUpperCase():
-          element.class = 'planificado';
+          orders.class = 'planificado';
           break;
         case ConstStatus.asignado.toUpperCase():
-          element.class = 'asignado';
+          orders.class = 'asignado';
           break;
         case ConstStatus.pendiente.toUpperCase():
-          element.class = 'pendiente';
+          orders.class = 'pendiente';
           break;
         case ConstStatus.terminado.toUpperCase():
-          element.class = 'terminado';
+          orders.class = 'terminado';
           break;
         case ConstStatus.enProceso.toUpperCase():
-          element.class = 'proceso';
+          orders.class = 'proceso';
           break;
         case ConstStatus.finalizado.toUpperCase():
-          element.class = 'finalizado';
+          orders.class = 'finalizado';
           break;
         case ConstStatus.cancelado.toUpperCase():
-          element.class = 'cancelado';
+          orders.class = 'cancelado';
           break;
         case ConstStatus.reasingado.toUpperCase():
-          element.class = 'reasignado';
+          orders.class = 'reasignado';
           break;
         case ConstStatus.rechazado.toUpperCase():
-          element.class = 'rechazado';
+          orders.class = 'rechazado';
           break;
         case ConstStatus.entregado.toUpperCase():
         case ConstStatus.almacenado.toUpperCase():
-          element.class = ConstStatus.almacenado.toLowerCase();
+          orders.class = ConstStatus.almacenado.toLowerCase();
           break;
       }
-      element.descripcionProducto = element.descripcionProducto.toUpperCase();
+      orders.descripcionProducto = orders.descripcionProducto.toUpperCase();
+      // orders.childOrders = [];
+      orders.style = this.dataService.calculateTernary(i % 2 === 0, '#f1f2f3', '#fff');
     });
     this.isThereOrdersToViewPdf = false;
     this.isThereOrdersDetailToDelivered = false;
@@ -188,18 +205,47 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
       && order.ordenFabricacionId === CONST_NUMBER.zero);
   }
 
-  updateAllComplete() {
+  toggleExpand(order: IPedidoDetalleReq) {
+    const index = this.expandedElementList.indexOf(order);
+    if (index >= 0) {
+      this.expandedElementList.splice(index, 1);
+    } else {
+      this.expandedElementList.push(order);
+    }
+  }
+
+  isExpanded(row: IPedidoDetalleReq): boolean {
+    return this.expandedElementList.includes(row);
+  }
+
+  updateAllComplete(event: boolean) {
     this.OrderToGenerateQR = false;
-    this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t.isChecked);
-    this.OrderToGenerateQR = this.dataSource.data != null && this.dataSource.data.some(t => t.isChecked);
+    const allChildrenChecked = this.getIfAllChildrenOrdersIsChecked();
+    const someChildrenChecked = this.someChildrenOrderIsChecked();
+    this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t.isChecked) && allChildrenChecked;
+    this.OrderToGenerateQR = this.dataSource.data != null && (this.dataSource.data.some(t => t.isChecked) || someChildrenChecked);
+    this.showOnSplitProcessMessage(event);
     this.getButtonsToUnLooked();
+  }
+
+  getIfAllChildrenOrdersIsChecked(): boolean {
+    const allChlidrenOrdersChecked = this.dataSource.data
+      .every(parentOrder => parentOrder.childOrders.every(childOrder => childOrder.isChecked));
+    return allChlidrenOrdersChecked;
   }
 
   someComplete(): boolean {
     if (this.dataSource.data == null) {
       return false;
     }
-    return this.dataSource.data.filter(t => t.isChecked).length > 0 && !this.allComplete;
+    const someChildrenChecked = this.someChildrenOrderIsChecked();
+    return (this.dataSource.data.filter(t => t.isChecked).length > 0 || someChildrenChecked) && !this.allComplete;
+  }
+
+  someChildrenOrderIsChecked(): boolean {
+    const someChlidrenOrdersChecked = this.dataSource.data
+      .some(parentOrder => parentOrder.childOrders.some(childOrder => childOrder.isChecked));
+    return someChlidrenOrdersChecked;
   }
 
   setAll(completed: boolean) {
@@ -207,9 +253,23 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     if (this.dataSource.data == null) {
       return;
     }
-    this.dataSource.data.forEach(t => t.isChecked = completed);
-    this.OrderToGenerateQR = this.dataSource.data != null && this.dataSource.data.some(t => t.isChecked);
+    this.dataSource.data.forEach(t => {
+      t.isChecked = completed;
+      this.setAllChildrenOrdersChecked(t, completed);
+    });
+    this.OrderToGenerateQR = this.dataService.calculateAndValueList([
+      this.dataSource.data != null,
+      this.dataSource.data.some(t => t.isChecked),
+      this.someChildrenOrderIsChecked()
+    ]);
+    this.showOnSplitProcessMessage(completed);
     this.getButtonsToUnLooked();
+  }
+
+  setAllChildrenOrdersChecked(order: IPedidoDetalleReq, completed: boolean) {
+    order.childOrders.forEach(childOrder => {
+      childOrder.isChecked = completed;
+    });
   }
 
   openPlaceOrderDialog() {
@@ -238,6 +298,22 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.isThereOrdersDetailToReassign = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.reasingado,
       FromToFilter.fromOrderIsolatedReassign);
   }
+
+  showOnSplitProcessMessage(check: boolean) {
+    const dataChecked = this.dataSource.data.filter(t => t.isChecked);
+    const someOnSplitProcess = dataChecked.some(order => order.onSplitProcess);
+    const showMessage = this.dataService.calculateAndValueList([someOnSplitProcess, check]);
+    if (showMessage) {
+      const orders = this.dataSource.data.filter(order =>
+        this.dataService.calculateAndValueList([
+          order.isChecked,
+          order.onSplitProcess
+        ])).map(t => t.ordenFabricacionId);
+      const mssg = `No es posible modificar el estatus de órdenes en proceso de división: ${orders.join(', ')}.`;
+      this.messagesService.presentToastCustom('', 'error', mssg, false, false);
+    }
+  }
+
   ngOnDestroy() {
     this.subscriptionCallHttpDetail.unsubscribe();
   }
@@ -250,6 +326,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
           this.detailsOrderToProcess.userId = this.localStorageService.getUserId();
           this.detailsOrderToProcess.productId =
             this.dataSource.data.filter(t => (t.isChecked && t.status === ConstStatus.abierto)).map(detail => detail.codigoProducto);
+          const childrenProducts = this.getChildrenOrdersProductToPlan(ConstStatus.abierto);
+          this.detailsOrderToProcess.productId = this.detailsOrderToProcess.productId.concat(childrenProducts);
           this.pedidosService.postPlaceOrdersDetail(this.detailsOrderToProcess).subscribe(resultProcessDetail => {
             if (resultProcessDetail.success && resultProcessDetail.response.length > 0) {
               const titleProcessDetailWithError = this.messagesService.getMessageTitle(
@@ -263,6 +341,16 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
           }, error => this.errorService.httpError(error));
         }
       });
+  }
+  getChildrenOrdersProductToPlan(status: string) {
+    return this.dataSource.data.map(parentOrder =>
+      parentOrder.childOrders.filter(childOrder =>
+        this.dataService.calculateAndValueList([
+          childOrder.isChecked,
+          childOrder.status === status
+        ])
+      ).map(order => order.codigoProducto))
+      .reduce((acc, ids) => acc.concat(ids), []);
   }
 
   cancelOrders() {
@@ -280,12 +368,27 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   reassignOrderDetail() {
+    const parentOrdersReasign = this.filtersService.getItemOnDateWithFilter(this.dataSource.data,
+      FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.ordenFabricacionId));
+
+
+    const childrenOrders = this.getChildrenOrdersChecked();
+    const childrenOrderToReasign = this.filtersService.getItemOnDateWithFilter(childrenOrders,
+      FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.ordenFabricacionId));
+
+    const dataRequest = parentOrdersReasign.concat(childrenOrderToReasign);
     this.observableService.setQbfToPlace({
       modalType: MODAL_NAMES.placeOrdersDetail,
-      list: this.filtersService.getItemOnDateWithFilter(this.dataSource.data,
-        FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.ordenFabricacionId))
-      , isFromReassign: true
+      list: dataRequest,
+      isFromReassign: true
     });
+  }
+
+  getChildrenOrdersChecked() {
+    const childrenChecked = this.dataSource.data
+      .map(parentOrder => parentOrder.childOrders.filter(childOrder => childOrder.isChecked))
+      .reduce((acc, children) => acc.concat(children), []);
+    return childrenChecked;
   }
 
   goToOrders(urlPath: string[]) {
@@ -299,16 +402,62 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     CONST_NUMBER.zero]);
   }
   getDataCancel(status: string) {
-    return this.dataSource.data.filter
+    const childrenOrders = this.getChildrenOrdersToCancel(status);
+    const parentsOrders = this.dataSource.data.filter
       (t => (t.isChecked && (t.status !== status && t.status !== ConstStatus.almacenado))).map(order => {
         return this.getCancelOrderReq(order.ordenFabricacionId);
       });
+    const dataRequest = parentsOrders.concat(childrenOrders);
+    return dataRequest;
   }
+
+  getChildrenOrdersToCancel(status: string) {
+    const orders = this.getChildrenOrdersCheckedIdsToCancel(status);
+    return orders.map(order => this.getCancelOrderReq(order));
+  }
+
+  getChildrenOrdersCheckedIdsToCancel(status: string) {
+    const childrenChecked = this.dataSource.data.map(parentOrder =>
+      parentOrder.childOrders.filter(childOrder =>
+        this.dataService.calculateAndValueList([
+          childOrder.isChecked,
+          childOrder.status !== status,
+          childOrder.status !== ConstStatus.almacenado
+        ])
+      ).map(order => order.ordenFabricacionId))
+      .reduce((acc, ids) => acc.concat(ids), []);
+    return childrenChecked;
+  }
+
   getDataCancelFinalize(status: string, isFromFinalize: boolean = false) {
-    return this.dataSource.data.filter
-      (t => (t.isChecked && (isFromFinalize ? t.status === status : t.status !== status))).map(order => {
+    const childrenOrders = this.getChildrenOrdersTiFinalize(status, isFromFinalize);
+    const parentOrders = this.dataSource.data.filter(t =>
+      (t.isChecked && (isFromFinalize ? t.status === status : t.status !== status))).map(order => {
         return this.getCancelOrderReq(order.ordenFabricacionId);
       });
+    const dataRequest = parentOrders.concat(childrenOrders);
+    return dataRequest;
+  }
+
+  getChildrenOrdersTiFinalize(status: string, isFromFinalize: boolean = false) {
+    const orders = this.getChildrenOrdersCheckedIds(status, isFromFinalize);
+    return orders.map(order => this.getCancelOrderReq(order));
+  }
+
+  getChildrenOrdersCheckedIds(status: string, isFromFinalize: boolean = false) {
+    const childrenChecked = this.dataSource.data.map(parentOrder =>
+      parentOrder.childOrders.filter(childOrder =>
+        this.dataService.calculateAndValueList([
+          childOrder.isChecked,
+          this.dataService.calculateTernary(
+            isFromFinalize,
+            childOrder.status === status,
+            childOrder.status !== status,
+          )
+        ])
+      ).map(order => order.ordenFabricacionId))
+      .reduce((acc, ids) => acc.concat(ids), []);
+    return childrenChecked;
   }
 
   getCancelOrderReq(ordenFabricacionId: number): CancelOrderReq {
@@ -356,22 +505,51 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     CatalogTypes.magistralDermocos.toUpperCase(),
     CatalogTypes.magistralMedicament.toUpperCase()];
     if (!isFromRemoveSignature) {
-      return this.dataSource.data.filter(order => order.isChecked &&
-        (order.status !== ConstStatus.abierto && order.status !== ConstStatus.cancelado)
-        && (order.codigoProducto.split(' ')[0] !== this.ProductNoLabel.value
-          || !invalidCatalogGroups.includes(order.catalogGroup.toUpperCase()))
-        && order.finishedLabel !== 1)
-        .map(order => {
-          const labelToFinish = new LabelToFinish();
-          labelToFinish.orderId = order.ordenFabricacionId;
-          labelToFinish.checked = true;
-          return labelToFinish;
-        });
+      const parentOrdersToFinishLabel = this.getParentOrdersToFinishLabels(invalidCatalogGroups);
+      const childrenOrderToFinishLabel = this.getChildrenOrdersToFinisLabel(invalidCatalogGroups);
+
+      const dataRequest = parentOrdersToFinishLabel.concat(childrenOrderToFinishLabel);
+      return dataRequest;
     } else {
       const labelsToFinish: LabelToFinish[] = [];
       labelsToFinish.push({ orderId: this.dataSource.data[index].ordenFabricacionId, checked: false });
       return labelsToFinish;
     }
+  }
+
+  getChildrenOrdersToFinisLabel(invalidCatalogGroups: string[]): LabelToFinish[] {
+    const childrenOrdersChecked = this.getChildrenOrdersChecked();
+
+    return childrenOrdersChecked.filter(order =>
+      this.dataService.calculateAndValueList([
+        order.isChecked,
+        (order.status !== ConstStatus.abierto && order.status !== ConstStatus.cancelado),
+        (order.codigoProducto.split(' ')[0] !== this.ProductNoLabel.value
+          || !invalidCatalogGroups.includes(order.catalogGroup.toUpperCase())),
+        order.finishedLabel !== 1
+      ])).map(order => {
+        const labelToFinish = new LabelToFinish();
+        labelToFinish.orderId = order.ordenFabricacionId;
+        labelToFinish.checked = true;
+        return labelToFinish;
+      });
+  }
+
+  getParentOrdersToFinishLabels(invalidCatalogGroups: string[]): LabelToFinish[] {
+    return this.dataSource.data.filter(order =>
+      this.dataService.calculateAndValueList([
+        order.isChecked,
+        (order.status !== ConstStatus.abierto && order.status !== ConstStatus.cancelado),
+        (order.codigoProducto.split(' ')[0] !== this.ProductNoLabel.value
+          || !invalidCatalogGroups.includes(order.catalogGroup.toUpperCase())),
+        order.finishedLabel !== 1
+      ]))
+      .map(order => {
+        const labelToFinish = new LabelToFinish();
+        labelToFinish.orderId = order.ordenFabricacionId;
+        labelToFinish.checked = true;
+        return labelToFinish;
+      });
   }
 
   removeSignature(index: number) {
@@ -384,6 +562,32 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
           }
         });
     }
+  }
+
+  removeSignatureFromChildren(childOrder: ChildrenOrders) {
+    if (this.localStorageService.getUserRole() === RolesType.design) {
+      const label = childOrder.label;
+      this.messagesService.presentToastCustom(`${Messages.removeLabelFinish} ${label.toLowerCase()}?`,
+        'question', CONST_STRING.empty, true, true)
+        .then((result: any) => {
+          if (result.isConfirmed) {
+            const labelToFinishReq = new IPedidoDetalleLabelReq();
+            labelToFinishReq.details = [{
+              orderId: childOrder.ordenFabricacionId,
+              checked: false
+            }];
+            labelToFinishReq.designerSignature = this.signatureData;
+            labelToFinishReq.userId = this.localStorageService.getUserId();
+            this.finishChilOrder(labelToFinishReq);
+          }
+        });
+    }
+  }
+
+  finishChilOrder(req: IPedidoDetalleLabelReq) {
+    this.pedidosService.finishLabels(req).subscribe(() => {
+      this.reloadOrderDetail();
+    }, error => this.errorService.httpError(error));
   }
 
   viewOrdersWithPdf() {
@@ -400,7 +604,9 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
   ordersToDownloadQr() {
     this.ordersReceivedFromRequest = [];
-    this.ordersToSendAndDownloadQR = this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromDetailOrderQr);
+    const parentOrders = this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromDetailOrderQr);
+    const childrenOrders = this.dataService.getItemOnDataOnlyIds(this.getChildrenOrdersChecked(), FromToFilter.fromDetailOrderQr);
+    this.ordersToSendAndDownloadQR = parentOrders.concat(childrenOrders);
     this.pedidosService.qrByEachOrder(this.ordersToSendAndDownloadQR)
       .subscribe(({ response }) => this.downloadQrByUrl(response), error => this.errorService.httpError(error));
 

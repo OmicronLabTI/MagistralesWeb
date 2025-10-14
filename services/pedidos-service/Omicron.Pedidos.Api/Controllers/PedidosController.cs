@@ -79,6 +79,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Get the user order by Pedido id.
+        /// </summary>
+        /// <param name="listIds">the ids.</param>
+        /// <returns>the data.</returns>
+        [Route("/getUserOrder/salesOrder/detail")]
+        [HttpPost]
+        public async Task<IActionResult> GetUserOrderBySalesOrderWithDetail(List<int> listIds)
+        {
+            var response = await this.pedidoFacade.GetUserOrderBySalesOrderWithDetail(listIds);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Get the user order by fabrication order id.
         /// </summary>
         /// <param name="listIds">the ids.</param>
@@ -621,6 +634,70 @@ namespace Omicron.Pedidos.Api.Controllers
         public async Task<IActionResult> GetUserOrdersByInvoiceId([FromBody] List<int> invoicesid, [FromQuery] string type)
         {
             var response = await this.pedidoFacade.GetUserOrdersByInvoiceId(invoicesid, type);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Retrieves the user orders based on invoice ids and order types.
+        /// </summary>
+        /// <param name="request"> List of invoice ids. </param>
+        /// <returns> A result containing the matching user production orders. </returns>
+        [Route("/separate/order")]
+        [HttpPost]
+        public async Task<IActionResult> SeparateOrder([FromBody] SeparateProductionOrderDto request)
+        {
+            var response = await this.pedidoFacade.SeparateOrder(request);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// GetFailedDivisionOrdersWithError.
+        /// </summary>
+        /// <returns>Failed Division Orders.</returns>
+        [Route("/failed/divisionorders")]
+        [HttpGet]
+        public async Task<IActionResult> GetDetailOrdersWithError()
+        {
+            var response = await this.pedidoFacade.GetFailedDivisionOrdersWithError();
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// RetryFailedProductionOrderDivision.
+        /// </summary>
+        /// <param name="payloadRetry">payloadRetry.</param>
+        /// <returns>Process Result.</returns>
+        [Route("/retry/division/failed/productionorders")]
+        [HttpPost]
+        public async Task<IActionResult> RetryFailedProductionOrderDivision(RetryFailedProductionOrderDivisionDto payloadRetry)
+        {
+            var response = await this.pedidoFacade.RetryFailedProductionOrderDivision(payloadRetry);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// GetFailedDivisionOrdersWithError.
+        /// </summary>
+        /// <param name="fabOrder">fabOrder.</param>
+        /// <returns>Failed Division Orders.</returns>
+        [Route("/parentOrderDetail/{fabOrder}")]
+        [HttpGet]
+        public async Task<IActionResult> GetParentOrderDetail(int fabOrder)
+        {
+            var response = await this.pedidoFacade.GetParentOrderDetail(fabOrder);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Method to GetOpenOrderProdutions all orders.
+        /// </summary>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>List of orders.</returns>
+        [Route("/open/productionorders")]
+        [HttpGet]
+        public async Task<IActionResult> GetOpenOrderProdutions([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.pedidoFacade.GetOpenOrderProdutions(parameters);
             return this.Ok(response);
         }
 

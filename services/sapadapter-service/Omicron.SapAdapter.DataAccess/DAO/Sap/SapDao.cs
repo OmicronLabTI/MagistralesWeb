@@ -490,6 +490,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderItems(List<string> itemCodes, List<int> orderIds)
+        {
+            return await this.RetryQuery(this.databaseContext.BatchTransacitions.Where(x => orderIds.Contains(x.DocNum) && itemCodes.Contains(x.ItemCode)).AsNoTracking());
+        }
+
+        /// <inheritdoc/>
         public async Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderItem(List<int> orderId)
         {
             return await this.RetryQuery(this.databaseContext.BatchTransacitions.Where(x => orderId.Contains(x.DocNum)).AsNoTracking());
@@ -1444,6 +1450,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              IsOmigenomics = string.IsNullOrEmpty(order.IsOmigenomics) ? order.IsSecondary : order.IsOmigenomics == "1" ? "Y" : "N",
                              IsSecondary = order.IsSecondary,
                              ThemeId = p.ThemeId,
+                             IsParentFabOrder = dpf != null ? dpf.OrderRelationType : null,
+                             FabOrder = dpf,
                          });
 
             return (await this.RetryQuery(query)).ToList();
@@ -1694,6 +1702,24 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                         };
 
             return await RetryQuery(query);
+        }
+
+
+        /// <inheritdoc/>
+        public async Task<bool> GetHasAnyChildProductionOrder(List<int> saleOrdersId)
+        {
+            var hasAny = await this.databaseContext.OrdenFabricacionModel
+                .AnyAsync(x => x.PedidoId.HasValue
+                       && saleOrdersId.Contains(x.PedidoId.Value)
+                       && x.OrderRelationType == "N");
+
+            return hasAny;
+        }
+
+        public async Task<List<OrdenFabricacionModel>> GetOrdersWithChildBySaleOrder(List<int> saleOrdersIds)
+        {
+            var query = await this.databaseContext.OrdenFabricacionModel.Where(x => saleOrdersIds.Contains(x.PedidoId.Value) && x.OrderRelationType == "N").AsNoTracking().ToListAsync();
+            return query;
         }
 
         private IQueryable<InvoiceHeaderModel> GetInvoiceHeaderJoinDoctorBaseQuery()

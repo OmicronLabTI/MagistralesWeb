@@ -108,6 +108,12 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                     newDeliveryNote.BatchNumbers.Add(batch);
                 }
             }
+            else
+            {
+                var sameProduct = createDelivery.Where(x => x.ItemCode.Equals(itemCode) && x.SaleOrderId == saleOrderId).ToList();
+                var totalPieces = sameProduct.Sum(x => x.Quantity);
+                newDeliveryNote.Quantity = totalPieces;
+            }
 
             deliveryNote.DeliveryNoteLines.Add(newDeliveryNote);
             return deliveryNote;
@@ -425,6 +431,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             deliveryNote.IsOmigenomics = string.IsNullOrEmpty(saleOrder.IsOmigenomics) ? saleOrder.IsSecundary == "Y" ? "1" : "2" : saleOrder.IsOmigenomics;
             deliveryNote.DeliveryNoteLines = new List<DeliveryNoteLineDto>();
             deliveryNote.IsSecundary = saleOrder.IsSecundary;
+            deliveryNote.DeliveryOrderType = ServiceUtils.CalculateTernary((saleOrder.TypeOrder ?? string.Empty) == "UN", "LN", saleOrder.TypeOrder);
 
             for (var i = 0; i < saleOrder.OrderLines.Count; i++)
             {
@@ -474,6 +481,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             deliveryNote.IsOmigenomics = string.IsNullOrEmpty(saleOrder.IsOmigenomics) ? saleOrder.IsSecundary == "Y" ? "1" : "2" : saleOrder.IsOmigenomics;
             deliveryNote.IsSecundary = saleOrder.IsSecundary;
             deliveryNote.DeliveryNoteLines = new List<DeliveryNoteLineDto>();
+            deliveryNote.DeliveryOrderType = ServiceUtils.CalculateTernary((saleOrder.TypeOrder ?? string.Empty) == "UN", "LN", saleOrder.TypeOrder);
 
             for (var i = 0; i < saleOrder.OrderLines.Count; i++)
             {

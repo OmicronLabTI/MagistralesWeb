@@ -1,4 +1,5 @@
 import {BaseResponseHttp} from './commons';
+import { ChildrenOrders } from './detallepedidos.model';
 
 export class IPedidosRes extends BaseResponseHttp {
     response: any;
@@ -98,6 +99,8 @@ export class IPedidoReq {
     canceled?: string;
     clientType: string;
     color?: string;
+    onSplitProcess: boolean;
+    childOrders?: ChildrenOrders[];
 }
 
 export class CancelOrderReq {

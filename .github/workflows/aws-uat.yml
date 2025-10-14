@@ -243,6 +243,18 @@ jobs:
           axity_aws_access_key_id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
           axity_aws_secret_access_key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
           axity_aws_region: ${{ secrets.AXITY_AWS_REGION }}
+
+      - name: Docker Build and Push Batch Separation Production Orders
+        if: ${{ (contains(steps.changeset.outputs.changes, 'batches')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build
+        with:
+          path: batches/orderdivisionprocess-microbatch
+          environment: uat
+          registry: ${{ env.AZURE_REGISTRY }}
+          axity_aws_user: ${{ vars.AXITY_AWS_USER }}
+          axity_aws_access_key_id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
+          axity_aws_secret_access_key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
+          axity_aws_region: ${{ secrets.AXITY_AWS_REGION }}
           
       - name: Set Context
         uses: azure/k8s-set-context@v4

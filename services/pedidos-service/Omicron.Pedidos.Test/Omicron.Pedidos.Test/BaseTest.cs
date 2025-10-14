@@ -173,6 +173,19 @@ namespace Omicron.Pedidos.Test
                 new UserOrderModel { Id = 146, Userid = "8df154e0-5061-4749-b06e-6bd3a1aebef8", Salesorderid = "175624", Productionorderid = "226275",  Status = "Proceso", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1, FinalizedDate = new DateTime(2025, 5, 28), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), Quantity = 24, InvoiceId = 1, InvoiceLineNum = 1 },
                 new UserOrderModel { Id = 147, Userid = "8df154e0-5061-4749-b06e-6bd3a1aebef8", Salesorderid = "175625", Productionorderid = "226276",  Status = "Proceso", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1, FinalizedDate = new DateTime(2025, 5, 28), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), Quantity = 24, InvoiceId = 1, InvoiceLineNum = 1 },
                 new UserOrderModel { Id = 148, Userid = "8df154e0-5061-4749-b06e-6bd3a1aebef8", Salesorderid = "175626", Productionorderid = "226277",  Status = "Proceso", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1, FinalizedDate = new DateTime(2025, 5, 28), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), Quantity = 24, InvoiceId = 1, InvoiceLineNum = 1 },
+
+                // UserOrderModel for QfbOrders parents
+                new UserOrderModel { Id = 149, Userid = "1a663b91-fffa-4298-80c3-aaae35586dc6", Salesorderid = "171904", Productionorderid = "225305",  Status = "Cancelado", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1, FinalizedDate = new DateTime(2025, 5, 28), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), Quantity = 1, InvoiceId = 1, InvoiceLineNum = 1, ReassignmentDate = new DateTime(2025, 5, 28) },
+                new UserOrderModel { Id = 150, Userid = "1a663b91-fffa-4298-80c3-aaae35586dc6", Salesorderid = "171905", Productionorderid = "225306",  Status = "Cancelado", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1, FinalizedDate = new DateTime(2025, 5, 28), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), Quantity = 1, InvoiceId = 1, InvoiceLineNum = 1 },
+                new UserOrderModel { Id = 151, Userid = "1a663b91-fffa-4298-80c3-aaae35586dc6", Salesorderid = "171906", Productionorderid = "225307",  Status = "Cancelado", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1, FinalizedDate = new DateTime(2025, 5, 28), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), Quantity = 1, InvoiceId = 1, InvoiceLineNum = 1, ReassignmentDate = new DateTime(2025, 5, 28) }, // completamente dividida
+                new UserOrderModel { Id = 152, Userid = "1a663b91-fffa-4298-80c3-aaae35586dc6", Salesorderid = "171907", Productionorderid = "225308",  Status = "Cancelado", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1, FinalizedDate = new DateTime(2025, 5, 28), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), Quantity = 1, InvoiceId = 1, InvoiceLineNum = 1 }, // completamente dividida
+
+                // UserOrderModel for QfbOrders parents ordering
+                new UserOrderModel { Id = 153, Userid = "bd4b2724-3b13-490e-aed2-5c8bfdd7551a", Salesorderid = "171908", Productionorderid = "225309",  Status = "Proceso", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1, FinalizedDate = new DateTime(2025, 5, 28), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), Quantity = 1, InvoiceId = 1, InvoiceLineNum = 1, AreBatchesComplete = 1 }, // completa con batches
+                new UserOrderModel { Id = 154, Userid = "bd4b2724-3b13-490e-aed2-5c8bfdd7551a", Salesorderid = "171909", Productionorderid = "225310",  Status = "Proceso", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1, FinalizedDate = new DateTime(2025, 5, 28), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), Quantity = 1, InvoiceId = 1, InvoiceLineNum = 1, AreBatchesComplete = 1 }, // hija con batches
+                new UserOrderModel { Id = 155, Userid = "bd4b2724-3b13-490e-aed2-5c8bfdd7551a", Salesorderid = "171910", Productionorderid = "225311",  Status = "Cancelado", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1, FinalizedDate = new DateTime(2025, 5, 28), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), Quantity = 1, InvoiceId = 1, InvoiceLineNum = 1, AreBatchesComplete = 0 }, // padre
+                new UserOrderModel { Id = 156, Userid = "bd4b2724-3b13-490e-aed2-5c8bfdd7551a", Salesorderid = "171911", Productionorderid = "225312",  Status = "Proceso", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1, FinalizedDate = new DateTime(2025, 5, 28), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), Quantity = 1, InvoiceId = 1, InvoiceLineNum = 1, AreBatchesComplete = 0 }, // completa sin batches
+                new UserOrderModel { Id = 157, Userid = "bd4b2724-3b13-490e-aed2-5c8bfdd7551a", Salesorderid = "171912", Productionorderid = "225313",  Status = "Proceso", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1, FinalizedDate = new DateTime(2025, 5, 28), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), Quantity = 1, InvoiceId = 1, InvoiceLineNum = 1, AreBatchesComplete = 0 }, // hija sin batches
             };
         }
 
@@ -281,6 +294,32 @@ namespace Omicron.Pedidos.Test
                 new UserOrderSignatureModel { Id = 1000, LogisticSignature = null, TechnicalSignature = null, UserOrderId = 1 },
                 new UserOrderSignatureModel { Id = 1, LogisticSignature = null, TechnicalSignature = Convert.FromBase64String("aG9sYQ=="), UserOrderId = 142 },
                 new UserOrderSignatureModel { Id = 2, LogisticSignature = null, TechnicalSignature = null, UserOrderId = 143 },
+            };
+        }
+
+        /// <summary>
+        /// Gets the signature.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public List<ProductionOrderSeparationModel> GetProductionOrderSeparation()
+        {
+            return new List<ProductionOrderSeparationModel>
+            {
+                new ProductionOrderSeparationModel { Id = 1,  OrderId = 225307, ProductionDetailCount = 2, TotalPieces = 10, AvailablePieces = 0, Status = "Completamente dividida" },
+                new ProductionOrderSeparationModel { Id = 2,  OrderId = 225308, ProductionDetailCount = 2, TotalPieces = 10, AvailablePieces = 0, Status = "Completamente dividida" },
+                new ProductionOrderSeparationModel { Id = 3,  OrderId = 225307, ProductionDetailCount = 1, TotalPieces = 10, AvailablePieces = 1, Status = "Parcialmente dividida" },
+            };
+        }
+
+        /// <summary>
+        /// Gets the ProductionOrderSeparationDetailModel.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public List<ProductionOrderSeparationDetailModel> GetProductionOrderSeparationDetailModel()
+        {
+            return new List<ProductionOrderSeparationDetailModel>
+            {
+                new ProductionOrderSeparationDetailModel { Id = 1, DetailOrderId = 226274, OrderId = 226270, UserId = "user", SapOrder = 5 },
             };
         }
 
@@ -561,6 +600,7 @@ namespace Omicron.Pedidos.Test
             var listUsers = new List<UserModel>
             {
                 new UserModel { Activo = 1, FirstName = "Sutano", Id = "8df154e0-5061-4749-b06e-6bd3a1aebef8", LastName = "Lope", Password = "as", Role = 1, UserName = "sutan", Piezas = 1000, Asignable = 1, TechnicalRequire = true },
+                new UserModel { Activo = 1, FirstName = "usurio", Id = "08faf89b-2f56-47bb-83da-895ba965fad4", LastName = "prueba", Password = "as12", Role = 1, UserName = "user123", Piezas = 1000, Asignable = 1, TechnicalRequire = true },
             };
 
             return new ResultModel
@@ -629,10 +669,31 @@ namespace Omicron.Pedidos.Test
         {
             var listData = new List<FabricacionOrderModel>
             {
-                new FabricacionOrderModel { OrdenId = 226274, PedidoId = 175623, Quantity = 20, ProductoId = "567   30 ML", OrderType = "MG" },
-                new FabricacionOrderModel { OrdenId = 226275, PedidoId = 175624, Quantity = 20, ProductoId = "567   30 ML", OrderType = "MN" },
-                new FabricacionOrderModel { OrdenId = 226276, PedidoId = 175625, Quantity = 20, ProductoId = "567   30 ML", OrderType = "BE" },
-                new FabricacionOrderModel { OrdenId = 226277, PedidoId = null, Quantity = 20, ProductoId = "567   30 ML", OrderType = null },
+                new FabricacionOrderModel { OrdenId = 226274, PedidoId = 175623, Quantity = 20, ProductoId = "567   30 ML", OrderType = "MG", OrderRelationType = "N" },
+                new FabricacionOrderModel { OrdenId = 226275, PedidoId = 175624, Quantity = 20, ProductoId = "567   30 ML", OrderType = "MN", OrderRelationType = "N" },
+                new FabricacionOrderModel { OrdenId = 226276, PedidoId = 175625, Quantity = 20, ProductoId = "567   30 ML", OrderType = "BE", OrderRelationType = "N" },
+                new FabricacionOrderModel { OrdenId = 226277, PedidoId = null, Quantity = 20, ProductoId = "567   30 ML", OrderType = null, OrderRelationType = "Y" },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listData),
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
+        public ResultModel GetFabricacionOrderModelOnlyParentsOrComplete()
+        {
+            var listData = new List<FabricacionOrderModel>
+            {
+                new FabricacionOrderModel { OrdenId = 226277, PedidoId = null, Quantity = 20, ProductoId = "567   30 ML", OrderType = null, OrderRelationType = "Y" },
             };
 
             return new ResultModel
@@ -728,6 +789,37 @@ namespace Omicron.Pedidos.Test
         }
 
         /// <summary>
+        /// the values for the formulas.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultModel GetListFormulaDetalleForOrdersParent()
+        {
+            var listFormula = new List<CompleteFormulaWithDetalle>
+            {
+                new CompleteFormulaWithDetalle { ProductionOrderId = 225305, BaseDocument = 171904, Client = "C001", Code = "Aspirina", Container = "container", CompleteQuantity = 1, Details = new List<CompleteDetalleFormulaModel>(), DueDate = "01/01/2020", EndDate = "01/01/2020", FabDate = "01/01/2020", IsChecked = false, Number = 100, Origin = "PT", PlannedQuantity = 1, ProductDescription = "orden", ProductLabel = "label", RealEndDate = "01/01/2020", StartDate = "01/01/2020", Status = "L", Type = "type", Unit = "KG", User = "manager", Warehouse = "MN", DestinyAddress = "Nuevo Le?n, Mexico, CP. 54715", Comments = "Cooments", HasMissingStock = false, OrderRelationType = "Padre" },
+                new CompleteFormulaWithDetalle { ProductionOrderId = 225306, BaseDocument = 171905, Client = "C001", Code = "Aspirina", Container = "container", CompleteQuantity = 1, Details = new List<CompleteDetalleFormulaModel>(), DueDate = "01/01/2020", EndDate = "01/01/2020", FabDate = "01/01/2020", IsChecked = false, Number = 100, Origin = "PT", PlannedQuantity = 1, ProductDescription = "orden", ProductLabel = "label", RealEndDate = "01/01/2020", StartDate = "01/01/2020", Status = "L", Type = "type", Unit = "KG", User = "manager", Warehouse = "MN", DestinyAddress = "Nuevo Le?n, Mexico, CP. 54715", Comments = "Cooments", HasMissingStock = false, OrderRelationType = "Padre" },
+                new CompleteFormulaWithDetalle { ProductionOrderId = 225307, BaseDocument = 171906, Client = "C001", Code = "Aspirina", Container = "container", CompleteQuantity = 1, Details = new List<CompleteDetalleFormulaModel>(), DueDate = "01/01/2020", EndDate = "01/01/2020", FabDate = "01/01/2020", IsChecked = false, Number = 100, Origin = "PT", PlannedQuantity = 1, ProductDescription = "orden", ProductLabel = "label", RealEndDate = "01/01/2020", StartDate = "01/01/2020", Status = "L", Type = "type", Unit = "KG", User = "manager", Warehouse = "MN", DestinyAddress = "Nuevo Le?n, Mexico, CP. 54715", Comments = "Cooments", HasMissingStock = false, OrderRelationType = "Padre" },
+                new CompleteFormulaWithDetalle { ProductionOrderId = 225308, BaseDocument = 171907, Client = "C001", Code = "Aspirina", Container = "container", CompleteQuantity = 1, Details = new List<CompleteDetalleFormulaModel>(), DueDate = "01/01/2020", EndDate = "01/01/2020", FabDate = "01/01/2020", IsChecked = false, Number = 100, Origin = "PT", PlannedQuantity = 1, ProductDescription = "orden", ProductLabel = "label", RealEndDate = "01/01/2020", StartDate = "01/01/2020", Status = "L", Type = "type", Unit = "KG", User = "manager", Warehouse = "MN", DestinyAddress = "Nuevo Le?n, Mexico, CP. 54715", Comments = "Cooments", HasMissingStock = false, OrderRelationType = "Padre" },
+
+                // for ordering
+                new CompleteFormulaWithDetalle { ProductionOrderId = 225309, BaseDocument = 171908, Client = "C001", Code = "Aspirina", Container = "container", CompleteQuantity = 1, Details = new List<CompleteDetalleFormulaModel>(), DueDate = "01/01/2020", EndDate = "01/01/2020", FabDate = "01/01/2020", IsChecked = false, Number = 100, Origin = "PT", PlannedQuantity = 1, ProductDescription = "orden", ProductLabel = "label", RealEndDate = "01/01/2020", StartDate = "01/01/2020", Status = "L", Type = "type", Unit = "KG", User = "manager", Warehouse = "MN", DestinyAddress = "Nuevo Le?n, Mexico, CP. 54715", Comments = "Cooments", HasMissingStock = false, OrderRelationType = "Completa" },
+                new CompleteFormulaWithDetalle { ProductionOrderId = 225310, BaseDocument = 171909, Client = "C001", Code = "Aspirina", Container = "container", CompleteQuantity = 1, Details = new List<CompleteDetalleFormulaModel>(), DueDate = "01/01/2020", EndDate = "01/01/2020", FabDate = "01/01/2020", IsChecked = false, Number = 100, Origin = "PT", PlannedQuantity = 1, ProductDescription = "orden", ProductLabel = "label", RealEndDate = "01/01/2020", StartDate = "01/01/2020", Status = "L", Type = "type", Unit = "KG", User = "manager", Warehouse = "MN", DestinyAddress = "Nuevo Le?n, Mexico, CP. 54715", Comments = "Cooments", HasMissingStock = false, OrderRelationType = "Hija" },
+                new CompleteFormulaWithDetalle { ProductionOrderId = 225311, BaseDocument = 171910, Client = "C001", Code = "Aspirina", Container = "container", CompleteQuantity = 1, Details = new List<CompleteDetalleFormulaModel>(), DueDate = "01/01/2020", EndDate = "01/01/2020", FabDate = "01/01/2020", IsChecked = false, Number = 100, Origin = "PT", PlannedQuantity = 1, ProductDescription = "orden", ProductLabel = "label", RealEndDate = "01/01/2020", StartDate = "01/01/2020", Status = "L", Type = "type", Unit = "KG", User = "manager", Warehouse = "MN", DestinyAddress = "Nuevo Le?n, Mexico, CP. 54715", Comments = "Cooments", HasMissingStock = false, OrderRelationType = "Padre" },
+                new CompleteFormulaWithDetalle { ProductionOrderId = 225312, BaseDocument = 171911, Client = "C001", Code = "Aspirina", Container = "container", CompleteQuantity = 1, Details = new List<CompleteDetalleFormulaModel>(), DueDate = "01/01/2020", EndDate = "01/01/2020", FabDate = "01/01/2020", IsChecked = false, Number = 100, Origin = "PT", PlannedQuantity = 1, ProductDescription = "orden", ProductLabel = "label", RealEndDate = "01/01/2020", StartDate = "01/01/2020", Status = "L", Type = "type", Unit = "KG", User = "manager", Warehouse = "MN", DestinyAddress = "Nuevo Le?n, Mexico, CP. 54715", Comments = "Cooments", HasMissingStock = false, OrderRelationType = "Completa" },
+                new CompleteFormulaWithDetalle { ProductionOrderId = 225313, BaseDocument = 171912, Client = "C001", Code = "Aspirina", Container = "container", CompleteQuantity = 1, Details = new List<CompleteDetalleFormulaModel>(), DueDate = "01/01/2020", EndDate = "01/01/2020", FabDate = "01/01/2020", IsChecked = false, Number = 100, Origin = "PT", PlannedQuantity = 1, ProductDescription = "orden", ProductLabel = "label", RealEndDate = "01/01/2020", StartDate = "01/01/2020", Status = "L", Type = "type", Unit = "KG", User = "manager", Warehouse = "MN", DestinyAddress = "Nuevo Le?n, Mexico, CP. 54715", Comments = "Cooments", HasMissingStock = false, OrderRelationType = "Hija" },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = listFormula,
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
         /// gets the result from detail orde rmodel.
         /// </summary>
         /// <returns>the data.</returns>
@@ -765,6 +857,28 @@ namespace Omicron.Pedidos.Test
                 Code = 200,
                 ExceptionMessage = string.Empty,
                 Response = users,
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// gets the users by role.
+        /// </summary>
+        /// <returns>the users.</returns>
+        public ResultModel GetUser()
+        {
+            var users = new List<UserModel>
+            {
+                new UserModel { Id = "1a663b91-fffa-4298-80c3-aaae35586dc6", Activo = 1, FirstName = "Victor", LastName = "Sanchez", Password = "pass", Role = 2, UserName = "vicQFB", Piezas = 1000, Asignable = 1, Classification = "MN" },
+                new UserModel { Id = "bd4b2724-3b13-490e-aed2-5c8bfdd7551a", Activo = 1, FirstName = "Victor", LastName = "quimico2", Password = "pass", Role = 2, UserName = "quimico2", Piezas = 1000, Asignable = 1, Classification = "MN" },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(users),
                 Success = true,
                 UserError = string.Empty,
             };
@@ -864,11 +978,21 @@ namespace Omicron.Pedidos.Test
                 },
                 new ProductionOrderProcessingStatusModel
                 {
-                    Id = "778e6a6a-fa1d-4767-95fa-47f3c0cb2377",
+                    Id = "656feb73-35ad-46ae-9e4c-4e708c05205d",
                     ProductionOrderId = 223580,
                     LastStep = "Update UsersOrders in postgres",
                     Status = "In Progress",
                     Payload = "{\"FinalizeProductionOrder\":{\"UserId\":\"7ac2db83-3c31-4042-9d1b-5531753694b4\",\"ProductionOrderId\":223580,\"SourceProcess\":null,\"Batches\":null}}",
+                    CreatedAt = DateTime.Now.AddDays(-1),
+                    LastUpdated = DateTime.Now,
+                },
+                new ProductionOrderProcessingStatusModel
+                {
+                    Id = "6fe84f79-c724-45a3-9588-f3cf947322de",
+                    ProductionOrderId = 223581,
+                    LastStep = "Update UsersOrders in postgres",
+                    Status = "In Progress",
+                    Payload = "{\"FinalizeProductionOrder\":{\"UserId\":\"7ac2db83-3c31-4042-9d1b-5531753694b4\",\"ProductionOrderId\":223581,\"SourceProcess\":null,\"Batches\":null}}",
                     CreatedAt = DateTime.Now.AddDays(-1),
                     LastUpdated = DateTime.Now,
                 },
@@ -928,6 +1052,48 @@ namespace Omicron.Pedidos.Test
         }
 
         /// <summary>
+        /// GetProductionOrderProcessingStatusModel.
+        /// </summary>
+        /// <returns>List ProductionOrderProcessingStatusModel.</returns>
+        public IEnumerable<ProductionOrderSeparationDetailLogsModel> GetProductionOrderSeparationDetailLogsModel()
+        {
+            return new List<ProductionOrderSeparationDetailLogsModel>
+            {
+                // GetFailedProductionOrders test
+                new ProductionOrderSeparationDetailLogsModel
+                {
+                    Id = "fe6e0eea-c279-4a07-b0fb-923dce1b5e31",
+                    ParentProductionOrderId = 123,
+                    LastStep = "CancelPostgres",
+                    IsSuccessful = false,
+                    Payload = "{\"FinalizeProductionOrder\":{\"UserId\":\"5c9700ba-92e1-40ae-91ab-d6d833eb03de\",\"ProductionOrderId\":123,\"SourceProcess\":null,\"Batches\":null}}",
+                    CreatedAt = DateTime.Now.AddDays(-1),
+                    LastUpdated = DateTime.Now,
+                },
+                new ProductionOrderSeparationDetailLogsModel
+                {
+                    Id = "b02abfd6-7c31-420d-bcf5-db99aef35a65",
+                    ParentProductionOrderId = 456,
+                    LastStep = "CancelPostgres",
+                    IsSuccessful = false,
+                    Payload = "{\"FinalizeProductionOrder\":{\"UserId\":\"5c9700ba-92e1-40ae-91ab-d6d833eb03de\",\"ProductionOrderId\":456,\"SourceProcess\":null,\"Batches\":null}}",
+                    CreatedAt = DateTime.Now.AddDays(-1),
+                    LastUpdated = DateTime.Now,
+                },
+                new ProductionOrderSeparationDetailLogsModel
+                {
+                    Id = "7773b512-9eb2-495d-abcf-16de3ac616db",
+                    ParentProductionOrderId = 789,
+                    LastStep = "StartCancelParentOrderProcess",
+                    IsSuccessful = false,
+                    Payload = "{\"FinalizeProductionOrder\":{\"UserId\":\"5c9700ba-92e1-40ae-91ab-d6d833eb03de\",\"ProductionOrderId\":789,\"SourceProcess\":null,\"Batches\":null}}",
+                    CreatedAt = DateTime.Now.AddDays(-1),
+                    LastUpdated = DateTime.Now,
+                },
+            };
+        }
+
+        /// <summary>
         /// Gets user Dto.
         /// </summary>
         /// <returns>the user.</returns>
@@ -943,6 +1109,32 @@ namespace Omicron.Pedidos.Test
 
                 // CREATE PDF
                 new UserOrderModel { Id = 55, Productionorderid = "224896", Salesorderid = null, Status = "Finalizado", Userid = "abc", FinishDate = new DateTime(2025, 4, 22), Quantity = 1 },
+
+                // Separate
+                new UserOrderModel { Id = 56, Productionorderid = "220001", Salesorderid = null, Status = "Almacenado", Userid = "abc", Quantity = 10, MagistralQr = "{\"SaleOrder\":1234,\"ProductionOrder\":220001,\"Quantity\":1.0,\"NeedsCooling\":\"Y\",\"ItemCode\":\"ItemCode\",\"DocNumDxp\":\"DocNumDxp\"}" },
+                new UserOrderModel { Id = 57, Productionorderid = "220002", Salesorderid = null, Status = "Cancelado", Userid = "abc", Quantity = 10, MagistralQr = "{\"SaleOrder\":1234,\"ProductionOrder\":220002,\"Quantity\":1.0,\"NeedsCooling\":\"Y\",\"ItemCode\":\"ItemCode\",\"DocNumDxp\":\"DocNumDxp\"}" },
+                new UserOrderModel { Id = 58, Productionorderid = "220003", Salesorderid = null, Status = "Almacenado", Userid = "abc", Quantity = 10, MagistralQr = "{\"SaleOrder\":1234,\"ProductionOrder\":220003,\"Quantity\":1.0,\"NeedsCooling\":\"Y\",\"ItemCode\":\"ItemCode\",\"DocNumDxp\":\"DocNumDxp\"}" },
+                new UserOrderModel { Id = 59, Productionorderid = "220004", Salesorderid = null, Status = "Almacenado", Userid = "abc", Quantity = 10, MagistralQr = "{\"SaleOrder\":12345,\"ProductionOrder\":220004,\"Quantity\":1.0,\"NeedsCooling\":\"Y\",\"ItemCode\":\"ItemCode\",\"DocNumDxp\":\"DocNumDxp\"}" },
+                new UserOrderModel { Id = 60, Productionorderid = "220005", Salesorderid = null, Status = "Almacenado", Userid = "abc", Quantity = 10, MagistralQr = "{\"SaleOrder\":12345,\"ProductionOrder\":220005,\"Quantity\":1.0,\"NeedsCooling\":\"Y\",\"ItemCode\":\"ItemCode\",\"DocNumDxp\":\"DocNumDxp\"}" },
+                new UserOrderModel { Id = 62, Productionorderid = "220006", Salesorderid = null, Status = "Almacenado", Userid = "abc", Quantity = 10, MagistralQr = "{\"SaleOrder\":12345,\"ProductionOrder\":220006,\"Quantity\":1.0,\"NeedsCooling\":\"Y\",\"ItemCode\":\"ItemCode\",\"DocNumDxp\":\"DocNumDxp\"}" },
+                new UserOrderModel { Id = 63, Productionorderid = "220007", Salesorderid = null, Status = "Almacenado", Userid = "abc", Quantity = 10, MagistralQr = "{\"SaleOrder\":12345,\"ProductionOrder\":220007,\"Quantity\":1.0,\"NeedsCooling\":\"Y\",\"ItemCode\":\"ItemCode\",\"DocNumDxp\":\"DocNumDxp\"}" },
+
+                // Create Child Order
+                new UserOrderModel { Id = 61, Productionorderid = "226744", Salesorderid = null, Status = "Almacenado", Userid = "abc", Quantity = 10, MagistralQr = "{\"SaleOrder\":1234,\"ProductionOrder\":226744,\"Quantity\":1.0,\"NeedsCooling\":\"Y\",\"ItemCode\":\"ItemCode\",\"DocNumDxp\":\"DocNumDxp\"}" },
+            };
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
+        public List<ParentOrderDetailModel> GetParentOrderDetailModel()
+        {
+            return new List<ParentOrderDetailModel>
+            {
+                new ParentOrderDetailModel { DocNum = "176693", FabOrderId = 227323, Quantity = 3, Batch = null, CreateDate = "07/09/2025 23:25:31", FinishDate = "08/09/2025",  UserCreate = "08faf89b-2f56-47bb-83da-895ba965fad4", Qfb = "08faf89b-2f56-47bb-83da-895ba965fad4", Status = "Terminado" },
+                new ParentOrderDetailModel { DocNum = "176693", FabOrderId = 227324, Quantity = 3, Batch = null, CreateDate = "08/09/2025 00:07:23", FinishDate = "08/09/2025",  UserCreate = "08faf89b-2f56-47bb-83da-895ba965fad4", Qfb = "08faf89b-2f56-47bb-83da-895ba965fad4", Status = "Terminado" },
+                new ParentOrderDetailModel { DocNum = "176693", FabOrderId = 227322, Quantity = 3, Batch = null, CreateDate = "07/09/2025 23:24:58", FinishDate = "08/09/2025",  UserCreate = "08faf89b-2f56-47bb-83da-895ba965fad4", Qfb = "08faf89b-2f56-47bb-83da-895ba965fad4", Status = "Terminado" },
             };
         }
 
@@ -968,15 +1160,17 @@ namespace Omicron.Pedidos.Test
         /// <param name="response">the object to send.</param>
         /// <param name="isOk">flag to define if the service returns an error.</param>
         /// <param name="comments">the comments.</param>
+        /// <param name="exceptionMessage">Exception Message.</param>
         /// <returns>the data.</returns>
-        public ResultModel GetResultModelCompl(object response, bool isOk = true, string comments = "")
+        public ResultModel GetResultModelCompl(object response, bool isOk = true, string comments = "", string exceptionMessage = null)
         {
             return new ResultModel
             {
                 Code = isOk ? 200 : 400,
                 Response = JsonConvert.SerializeObject(response),
                 Success = isOk,
-                Comments = string.Empty,
+                Comments = comments,
+                ExceptionMessage = exceptionMessage,
             };
         }
 

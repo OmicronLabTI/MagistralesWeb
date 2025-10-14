@@ -9,6 +9,7 @@
 namespace Omicron.SapAdapter.Services.Redis
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -31,6 +32,13 @@ namespace Omicron.SapAdapter.Services.Redis
         /// <param name="timeToLive">the TTL.</param>
         /// <returns>the data.</returns>
         Task<bool> WriteToRedis(string key, string value, TimeSpan timeToLive);
+
+        /// <summary>
+        /// Gets the redis keys.
+        /// </summary>
+        /// <param name="keys">the keys.</param>
+        /// <returns>the data.</returns>
+        Task<List<string>> GetRedisKeys(List<string> keys);
 
         /// <summary>
         /// return if redis is connected.

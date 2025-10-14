@@ -34,13 +34,41 @@ export class IPedidoDetalleReq {
     patientName?: string;
     realLabel?: string;
     catalogGroup?: string;
+    onSplitProcess: boolean;
+
+    orderRelationType: string;
+    availablePieces: number;
+    childOrdersCount: number;
+    childOrders: ChildrenOrders[];
+
+    style?: string;
 }
+
+export class ChildrenOrders {
+    isChecked: boolean;
+    ordenFabricacionId: number;
+    codigoProducto: string;
+    descripcionProducto: string;
+    assignedPieces: number;
+    fechaOf: string;
+    fechaOfFin: string;
+    qfb: string;
+    status: string;
+    userCreate: string;
+    createDate: string;
+    label: string;
+    realLabel: string;
+    finishedLabel: number;
+    catalogGroup: string;
+}
+
 export class IPedidoDetalleRes extends BaseResponseHttp {
     response: any;
 }
 export class IPedidoDetalleListRes extends BaseResponseHttp {
     response: IPedidoDetalleReq[];
 }
+
 export class IQrByOrdersRes extends BaseResponseHttp {
     response: string[];
 }

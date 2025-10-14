@@ -24,6 +24,7 @@ env:
   SUBNET_ID: subnet-073b7bac3af8d3c53
   SECURITY_GROUP_ID: sg-09c9844682ec712ca
   VOLUME_SIZE_GiB: "20"
+
 jobs:
   start-runner:
     timeout-minutes: 5
@@ -56,7 +57,7 @@ jobs:
           ec2_subnet_id: ${{ env.SUBNET_ID }}
           ec2_security_group_id: ${{ env.SECURITY_GROUP_ID }}
           ec2_root_disk_size_gb: ${{ env.VOLUME_SIZE_GiB }}
-          ec2_spot_instance_strategy: "BestEffort" # Other options are: SpotOnly, BestEffort, MaxPerformance
+          ec2_spot_instance_strategy: "BestEffort"
           manual_stop: true
 
   test:
@@ -64,6 +65,10 @@ jobs:
     needs:
       - start-runner
     runs-on: ${{ github.run_id }}
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -76,7 +81,37 @@ jobs:
 
       - name: Set Environments
         uses: ./.github/actions/environments-aws
-        
+
+      - name: Configure AWS credentials
+        id: creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: "arn:aws:iam::891376991292:role/GithubActionsRole"
+          output-credentials: true
+
+      - name: Generate CodeArtifact token
+        id: codeartifact-token
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ""
+          AWS_DEFAULT_REGION: us-east-1
+        run: |
+          unset AWS_SESSION_TOKEN
+          TOKEN=$(aws codeartifact get-authorization-token \
+            --domain axity \
+            --domain-owner 992382646884 \
+            --region us-east-1 \
+            --query authorizationToken \
+            --output text)
+          echo "token=$TOKEN" >> $GITHUB_OUTPUT
+          aws codeartifact login --tool dotnet \
+            --domain axity \
+            --domain-owner 992382646884 \
+            --repository axity-nuget-repo \
+            --region us-east-1
+
       - name: Test frontend/web
         if: ${{ (contains(steps.changeset.outputs.changes, 'frontend/web')) || (inputs.force_test) }}
         uses: ./.github/actions/sonar-aws-web
@@ -94,6 +129,8 @@ jobs:
           project_name: Catalogos
           sonar_server: ${{ secrets.SONAR_SERVER }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
+          codeartifact_token: ${{ steps.codeartifact-token.outputs.token }}
+          axity_user: aws
 
       - name: Test pedidos-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'pedidos-service')) || (inputs.force_test) }}
@@ -104,6 +141,8 @@ jobs:
           sonar_server: ${{ secrets.SONAR_SERVER }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
           net_version: 6.0.x
+          codeartifact_token: ${{ steps.codeartifact-token.outputs.token }}
+          axity_user: aws
 
       - name: Test reporting-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'reporting-service')) || (inputs.force_test) }}
@@ -113,6 +152,8 @@ jobs:
           project_name: Reporting
           sonar_server: ${{ secrets.SONAR_SERVER }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
+          codeartifact_token: ${{ steps.codeartifact-token.outputs.token }}
+          axity_user: aws
 
       - name: Test sapadapter-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'sapadapter-service')) || (inputs.force_test) }}
@@ -122,6 +163,8 @@ jobs:
           project_name: SapAdapter
           sonar_server: ${{ secrets.SONAR_SERVER }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
+          codeartifact_token: ${{ steps.codeartifact-token.outputs.token }}
+          axity_user: aws
 
       - name: Test usuarios-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'usuarios-service')) || (inputs.force_test) }}
@@ -131,6 +174,8 @@ jobs:
           project_name: Usuarios
           sonar_server: ${{ secrets.SONAR_SERVER }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
+          codeartifact_token: ${{ steps.codeartifact-token.outputs.token }}
+          axity_user: aws
 
       - name: Test warehouses-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'warehouses-service')) || (inputs.force_test) }}
@@ -140,6 +185,8 @@ jobs:
           project_name: Warehouses
           sonar_server: ${{ secrets.SONAR_SERVER }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
+          codeartifact_token: ${{ steps.codeartifact-token.outputs.token }}
+          axity_user: aws
 
       - name: Test sapservicelayeradapter-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'sapservicelayeradapter-service')) || (inputs.force_test) }}
@@ -149,8 +196,9 @@ jobs:
           project_name: SapServiceLayerAdapter
           sonar_server: ${{ secrets.SONAR_SERVER }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
-          nexus_user: ${{ secrets.NEXUS_USER }}
-          nexus_pass: ${{ secrets.NEXUS_PASS }}
+          codeartifact_token: ${{ steps.codeartifact-token.outputs.token }}
+          axity_user: aws
+
   stop-runner:
     name: Stop self-hosted EC2 runner
     needs:
@@ -161,7 +209,7 @@ jobs:
       actions: write
       contents: read
       id-token: write
-    if: ${{ always() }} # required to stop the runner even if the error happened in the previous jobs
+    if: ${{ always() }}
     steps:
       - name: Configure AWS credentials
         id: creds

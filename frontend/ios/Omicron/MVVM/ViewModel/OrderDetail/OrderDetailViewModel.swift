@@ -15,20 +15,20 @@ import Resolver
 class OrderDetailViewModel {
     // MARK: - Variables
     var disposeBag: DisposeBag = DisposeBag()
-    var orderDetailData: BehaviorRelay<[OrderDetail]> = BehaviorRelay<[OrderDetail]>(value: [])
+    var orderDetailData = PublishSubject<[OrderDetail]>()
     weak var tempOrderDetailData: OrderDetail?
-    var tableData: BehaviorSubject<[Detail]> = BehaviorSubject<[Detail]>(value: [])
+    var tableData = PublishSubject<[Detail]>()
     var showAlert: PublishSubject<String> = PublishSubject()
     var showAlertConfirmation = PublishSubject<MessageToChangeStatus>()
     var loading: PublishSubject<Bool> = PublishSubject()
-    var sumFormula: BehaviorRelay<Double> = BehaviorRelay<Double>(value: -1)
+    var sumFormula = PublishSubject<Double>()
     var auxTabledata: [Detail] = []
     var processButtonDidTap = PublishSubject<Void>()
     var finishedButtonDidTap = PublishSubject<Void>()
     var pendingButtonDidTap = PublishSubject<Void>()
     var seeLotsButtonDidTap = PublishSubject<Void>()
     var deleteManyButtonDidTap = PublishSubject<Void>()
-    var deleteManyButtonIsEnable = BehaviorSubject<Bool>(value: false)
+    var deleteManyButtonIsEnable = PublishSubject<Bool>()
     var goToSeeLotsViewController = PublishSubject<Void>()
     let backToInboxView: PublishSubject<Void> = PublishSubject<Void>()
     var showIconComments = PublishSubject<String>()
@@ -52,6 +52,7 @@ class OrderDetailViewModel {
     )
     var warehousesOptions: [String] = []
     var itemCode = String()
+    var splitButtonEnableFlag = PublishSubject<String>()
     @Injected var rootViewModel: RootViewModel
     @Injected var inboxViewModel: InboxViewModel
     @Injected var networkManager: NetworkManager
@@ -105,7 +106,7 @@ class OrderDetailViewModel {
     func getOrdenDetail(isRefresh: Bool = false) {
         itemSelectedDetail = []
         deleteManyButtonIsEnable.onNext(false)
-        if needsRefresh { loading.onNext(true) }
+        loading.onNext(true)
         networkManager.getOrdenDetail(self.orderId)
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: {[weak self] res in
@@ -113,22 +114,24 @@ class OrderDetailViewModel {
                 self.getComponentWarehouses(response: res, isRefresh: isRefresh)
             }, onError: { [weak self] _ in
                 guard let self = self else { return }
+                self.loading.onNext(false)
                 self.onFaliedOrderDetail(isRefresh)
             }).disposed(by: self.disposeBag)
     }
     
     func onSuccessOrderDetail(response: OrderDetailResponse, _ isRefresh: Bool) {
         if let order = response.response, let details = order.details {
-            orderDetailData.accept([order])
+            orderDetailData.onNext([order])
             tableData.onNext(details)
             auxTabledata = details
             tempOrderDetailData = order
             needsRefresh(needsRefresh)
-            sumFormula.accept(self.sum(tableDetails: details))
+            sumFormula.onNext(self.sum(tableDetails: details))
             setComments(order: order)
             endRefreshingAction(isRefresh)
             changeColorLabelsHt.onNext(())
             catalogGroup = order.catalogGroupName ?? String()
+            splitButtonEnableFlag.onNext(order.orderRelationType ?? String())
         }
     }
     
@@ -179,7 +182,6 @@ class OrderDetailViewModel {
     }
     
     func getComponentWarehouses(response: OrderDetailResponse, isRefresh: Bool = false) {
-        loading.onNext(true)
         let itemcode = response.response?.code ?? String()
         self.itemCode = itemcode
         networkManager.getWarehouses(itemcode).subscribe(onNext: {

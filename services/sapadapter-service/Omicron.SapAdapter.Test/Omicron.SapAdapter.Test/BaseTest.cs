@@ -320,11 +320,11 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<OrdenFabricacionModel>
             {
-                new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 100, PostDate = DateTime.Now, Quantity = 2, Status = "L", PedidoId = 100, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 100, CreatedDate = DateTime.Now, DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT" },
+                new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 100, PostDate = DateTime.Now, Quantity = 2, Status = "L", PedidoId = 100, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 100, CreatedDate = DateTime.Now, DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT", OrderRelationType = "Y" },
                 new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 110, PostDate = DateTime.Now, Quantity = 1, Status = "L", PedidoId = 0, User = 1, Type = "S", OriginType = "M", CardCode = string.Empty, CompleteQuantity = 0, CreatedDate = DateTime.Now, DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT", Comments = "token" },
                 new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 120, PostDate = DateTime.Now, Quantity = 2, Status = "L", PedidoId = 100, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 100, CreatedDate = DateTime.Today.AddDays(1), DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT" },
                 new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 130, PostDate = DateTime.Now, Quantity = 1, Status = "L", PedidoId = 0, User = 1, Type = "S", OriginType = "M", CardCode = string.Empty, CompleteQuantity = 0, CreatedDate = DateTime.Today.AddDays(1), DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT", Comments = "token" },
-                new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 103, PostDate = DateTime.Now, Quantity = 2, Status = "L", PedidoId = 103, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 100, CreatedDate = DateTime.Now, DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT" },
+                new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 103, PostDate = DateTime.Now, Quantity = 2, Status = "L", PedidoId = 103, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 100, CreatedDate = DateTime.Now, DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT", OrderRelationType = "SA" },
 
                 // For Almacen
                 new OrdenFabricacionModel { ProductoId = "Magistral1", OrdenId = 1000, PostDate = DateTime.Now, Quantity = 10, Status = "L", PedidoId = 75000, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 10, CreatedDate = DateTime.Now, DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT" },
@@ -620,9 +620,11 @@ namespace Omicron.SapAdapter.Test
         /// <returns>the data.</returns>
         public ResultDto GetUserOrderRemision()
         {
+            var qr = new PedidosMagistralQrModel() { ItemCode = "Linea1" };
             var userOrders = new List<UserOrderModel>
             {
-                new UserOrderModel { Salesorderid = "75000", Comments = "Comments", FinishedLabel = 1, Status = "Almacenado", DeliveryId = 46036 },
+                new UserOrderModel { Salesorderid = "75000", Comments = "Comments", FinishedLabel = 1, Status = "Almacenado", DeliveryId = 46036, MagistralQr = JsonConvert.SerializeObject(qr) },
+                new UserOrderModel { Salesorderid = "75001", Comments = "Comments", FinishedLabel = 1, Status = "Almacenado", DeliveryId = 46037, Productionorderid = "1003", MagistralQr = JsonConvert.SerializeObject(qr) },
             };
 
             return new ResultDto
@@ -884,6 +886,44 @@ namespace Omicron.SapAdapter.Test
         }
 
         /// <summary>
+        /// gets the resultdto for getuserpedidos.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetResultGetUserPedidosForParentOrders()
+        {
+            var response = new UserOrderSeparationModel()
+            {
+                UserOrders = new List<UserOrderModel>
+                {
+                    new UserOrderModel { Id = 1, Productionorderid = "227308", Salesorderid = "176687", Status = "Terminado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20), FinishedLabel = 1 },
+                    new UserOrderModel { Id = 2, Productionorderid = null, Salesorderid = "176687", Status = "Terminado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20), FinishedLabel = 1 },
+                    new UserOrderModel { Id = 3, Productionorderid = "227306", Salesorderid = "176687", Status = "Terminado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20), FinishedLabel = 1 },
+                    new UserOrderModel { Id = 4, Productionorderid = "227307", Salesorderid = "176687", Status = "Cancelado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20), FinishedLabel = 1 },
+                    new UserOrderModel { Id = 5, Productionorderid = "227309", Salesorderid = "176687", Status = "Terminado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20), FinishedLabel = 1 },
+                },
+
+                ProductionOrderSeparations = new List<ProductionOrderSeparationModel>
+                {
+                new ProductionOrderSeparationModel { Id = 2, OrderId = 227307, ProductionDetailCount = 2, TotalPieces = 2, AvailablePieces = 0, Status = "Completamente dividida" },
+                },
+                OnSplitProcess = true,
+                ProductionOrderSeparationsDetail = new List<ProductionOrderSeparationDetailModel>
+                {
+                    new ProductionOrderSeparationDetailModel { DetailOrderId = 227308, OrderId = 227307, UserId = "123", CreatedAt = new DateTime(2020, 1, 20), AssignedPieces = 3 },
+                },
+            };
+
+            return new ResultDto
+            {
+                Code = 200,
+                ExceptionMessage = null,
+                Response = JsonConvert.SerializeObject(response),
+                Success = true,
+                Comments = null,
+            };
+        }
+
+        /// <summary>
         /// the linse products.
         /// </summary>
         /// <returns>the data.</returns>
@@ -1002,6 +1042,38 @@ namespace Omicron.SapAdapter.Test
         }
 
         /// <summary>
+        /// gets the resultdto for getuserpedidos.
+        /// </summary>
+        /// <param name="returnsError">Indicates if pedidos services returns an error.</param>
+        /// <param name="pedidoId">Pedido id.</param>
+        /// <returns>the data.</returns>
+        public ResultDto GetPedidosServiceResponse()
+        {
+            var listUsers = new UserOrderSeparationModel
+            {
+                UserOrders = new List<UserOrderModel>
+                {
+                    new UserOrderModel { Id = 1000, Productionorderid = "100", Salesorderid = "175623", Status = "Finalizado", Userid = "8df154e0-5061-4749-b06e-6bd3a1aebef8", CloseDate = new DateTime(2025, 5, 28), Comments = "comments", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1 },
+                },
+                ProductionOrderSeparations = new List<ProductionOrderSeparationModel>
+                {
+                    new ProductionOrderSeparationModel { Id = 1, OrderId = 100, AvailablePieces = 1 },
+                },
+                OnSplitProcess = true,
+            };
+
+            return new ResultDto
+            {
+                Response = JsonConvert.SerializeObject(listUsers),
+                Code = 200,
+                Comments = string.Empty,
+                ExceptionMessage = string.Empty,
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
         /// Gets the attachments models.
         /// </summary>
         /// <returns>the data.</returns>
@@ -1059,6 +1131,20 @@ namespace Omicron.SapAdapter.Test
                new CompleteOrderModel { DocNum = 175623, Cliente = "LUIS JAVIER GARCIA AQUINO", Codigo = "C02804", FechaInicio = "28/05/2025", FechaFin = "07/06/2025", PedidoStatus = "O", OrderType = "MG", DocNumDxp = "37058e65-2de5-44ae-bb22-a5be0c891ad2", ClientType = "general" },
                new CompleteOrderModel { DocNum = 175627, Cliente = "LUIS JAVIER GARCIA AQUINO", Codigo = "C02804", FechaInicio = "28/05/2025", FechaFin = "07/06/2025", PedidoStatus = "O", OrderType = "MN", DocNumDxp = "37058e65-2de5-44ae-bb22-a5be0c891ad2", ClientType = "general" },
                new CompleteOrderModel { DocNum = 175629, Cliente = "LUIS JAVIER GARCIA AQUINO", Codigo = "C02804", FechaInicio = "28/05/2025", FechaFin = "07/06/2025", PedidoStatus = "O", OrderType = "BE", DocNumDxp = "37058e65-2de5-44ae-bb22-a5be0c891ad2", ClientType = "general" },
+            };
+        }
+
+        /// <summary>
+        /// Gets the attachments models.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public List<CompleteDetailOrderModel> GetCompleteDetailOrderModelForParentOrders()
+        {
+            return new List<CompleteDetailOrderModel>
+            {
+               new CompleteDetailOrderModel { OrdenFabricacionId = 227306, CodigoProducto = "BQ 252", DescripcionProducto = "BiBiest",  QtyPlanned = 1, QtyPlannedDetalle = 1, PedidoId = 176687, OrderRelationType = null, Label = "Genérica", RealLabel = "NA" },
+               new CompleteDetailOrderModel { OrdenFabricacionId = 227307, CodigoProducto = "BQ 250", DescripcionProducto = "BiBiest",  QtyPlanned = 2, QtyPlannedDetalle = 2, PedidoId = 176687, OrderRelationType = "Y", Label = "Genérica", RealLabel = "NA" },
+               new CompleteDetailOrderModel { OrdenFabricacionId = 227308, CodigoProducto = "BQ 250", DescripcionProducto = "BiBiest",  QtyPlanned = 1, QtyPlannedDetalle = 2, PedidoId = 176687, OrderRelationType = "N", Label = "Genérica", RealLabel = "NA" },
             };
         }
 

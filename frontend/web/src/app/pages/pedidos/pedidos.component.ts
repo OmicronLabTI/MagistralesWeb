@@ -175,6 +175,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
           }
           element.classClasification = this.getClassClasification(element.orderType);
           element.color = this.getClasificationColor(element.orderType);
+          element.childOrders = [];
         });
         this.isTherePedidosToViewPdf = false;
         this.isCheckedOrders = false;
@@ -200,8 +201,9 @@ export class PedidosComponent implements OnInit, OnDestroy {
     return clasification !== ClasificationMUConstant.value ? color : ClasificationMUConstant.color;
   }
 
-  updateAllComplete() {
+  updateAllComplete(event: boolean) {
     this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t.isChecked);
+    this.showOnSplitProcessMessage(event);
     this.getButtonsToUnLooked();
   }
 
@@ -215,6 +217,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
       return;
     }
     this.dataSource.data.forEach(t => t.isChecked = completed);
+    this.showOnSplitProcessMessage(completed);
     this.getButtonsToUnLooked();
   }
 
@@ -285,6 +288,22 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.isTherePedidosToViewPdf = this.dataSource.data.filter(order => order.isChecked).length > CONST_NUMBER.zero;
 
   }
+
+  showOnSplitProcessMessage(check: boolean) {
+    const dataChecked = this.dataSource.data.filter(t => t.isChecked);
+    const someOnSplitProcess = dataChecked.some(order => order.onSplitProcess);
+    const showMessage = this.dataService.calculateAndValueList([someOnSplitProcess, check]);
+    if (showMessage) {
+      const orders = this.dataSource.data.filter(order =>
+        this.dataService.calculateAndValueList([
+          order.isChecked,
+          order.onSplitProcess
+        ])).map(t => t.docNum);
+      const mssg = `No es posible modificar el estatus de pedidos que tienen órdenes en proceso de división: ${orders.join(', ')}.`;
+      this.messagesService.presentToastCustom('', 'error', mssg, false, false);
+    }
+  }
+
   getFullQueryString() {
     this.fullQueryString = `${this.queryString}&offset=${this.offset}&limit=${this.limit}&classifications=${this.userClasification}`;
   }

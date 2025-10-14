@@ -359,6 +359,16 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string ErrorUpdateFabOrd = "ErrorUpdateFabOrd";
 
         /// <summary>
+        /// error while updating.
+        /// </summary>
+        public const string FabOrderNotFound = "No se encontró la orden de fabricación {0}";
+
+        /// <summary>
+        /// error while updating.
+        /// </summary>
+        public const string ChildFarOrderComments = "División de piezas de la orden de fabricación {0}";
+
+        /// <summary>
         /// the order was not found.
         /// </summary>
         public const string OrderNotFound = "OrderNotFound";
@@ -434,9 +444,34 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string CreateReceiptStep = "Create Receipt";
 
         /// <summary>
+        /// SaveHistoryStep.
+        /// </summary>
+        public const string SaveHistoryStep = "SaveHistory";
+
+        /// <summary>
+        /// StepCreateChildOrderSap.
+        /// </summary>
+        public const string StepCreateChildOrderSap = "CreateChildOrderSap";
+
+        /// <summary>
+        /// StepCreateChildOrderSap.
+        /// </summary>
+        public const string StepCreateChildOrderWithComponentsSap = "CreateChildOrderSapWithComponents";
+
+        /// <summary>
         /// SuccessfullyClosedInSapStep.
         /// </summary>
         public const string SuccessfullyClosedInSapStep = "Successfully Closed In SAP";
+
+        /// <summary>
+        /// CancelSapStep.
+        /// </summary>
+        public const string StartCancelParentOrderStep = "StartCancelParentOrderProcess";
+
+        /// <summary>
+        /// CancelSapStep.
+        /// </summary>
+        public const string UpdateCancelParentOrderStep = "UpdateCancelParentOrderProcess";
 
         /// <summary>
         /// Gets ManageBatchNumbers.
@@ -483,6 +518,16 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// Gets ProductionOrderClosedStatus.
         /// </summary>
         public static string ProductionOrderClosedStatus => "boposClosed";
+
+        /// <summary>
+        /// Gets ProductionOrderSourceDivisionComment.
+        /// </summary>
+        public static string ProductionOrderSourceDivisionComment => "Orden de fabricación padre, se cancela debido a la división de piezas.";
+
+        /// <summary>
+        /// Gets YesValue.
+        /// </summary>
+        public static string YesValue => "Y";
 
         /// <summary>
         /// Gets the status of the order.

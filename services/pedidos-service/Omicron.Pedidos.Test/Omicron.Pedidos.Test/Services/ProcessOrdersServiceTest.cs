@@ -151,7 +151,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var sapServiceLayer = new Mock<ISapServiceLayerAdapterService>();
             sapServiceLayer
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultCreateOrder()));
 
             var mockRedis = new Mock<IRedisService>();
@@ -159,7 +159,7 @@ namespace Omicron.Pedidos.Test.Services
             mockRedis.Setup(x => x.WriteToRedis(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>()));
             mockRedis.Setup(x => x.DeleteKey(It.IsAny<string>()));
 
-            var pedidosServiceLocal = new ProcessOrdersService(localSapAdapter.Object, this.pedidosDao, this.kafkaConnector.Object, mockRedis.Object, sapServiceLayer.Object);
+            var pedidosServiceLocal = new ProcessOrdersService(localSapAdapter.Object, this.pedidosDao, mockRedis.Object, sapServiceLayer.Object);
 
             // act
             var response = await pedidosServiceLocal.ProcessOrders(process);
@@ -198,7 +198,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var sapServiceLayer = new Mock<ISapServiceLayerAdapterService>();
             sapServiceLayer
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultCreateOrder()));
 
             var mockRedis = new Mock<IRedisService>();
@@ -206,7 +206,7 @@ namespace Omicron.Pedidos.Test.Services
             mockRedis.Setup(x => x.WriteToRedis(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>()));
             mockRedis.Setup(x => x.DeleteKey(It.IsAny<string>()));
 
-            var pedidosServiceLocal = new ProcessOrdersService(localSapAdapter.Object, this.pedidosDao, this.kafkaConnector.Object, mockRedis.Object, sapServiceLayer.Object);
+            var pedidosServiceLocal = new ProcessOrdersService(localSapAdapter.Object, this.pedidosDao, mockRedis.Object, sapServiceLayer.Object);
 
             // act
             var response = await pedidosServiceLocal.ProcessByOrder(process);

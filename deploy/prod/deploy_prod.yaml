@@ -390,7 +390,7 @@ metadata:
   labels:
     app: pedidos
 spec:
-  replicas: 3
+  replicas: 4
   selector:
     matchLabels:
       app: pedidos
@@ -419,11 +419,6 @@ spec:
                 secretKeyRef:
                   name: omicron-prod
                   key: omicron_net_postgress_db
-            - name: EVENHUB_CONNECTION_STRING
-              valueFrom:
-                secretKeyRef:
-                  name: omicron-prod
-                  key: eventhub_net_connection
             - name: SAP_DI_API_URL
               valueFrom:
                 secretKeyRef:
@@ -474,6 +469,26 @@ spec:
                 secretKeyRef:
                   name: omicron-prod
                   key: eventhub_net_connection_productionorderpdfgeneration
+            - name: KAFKA_EH_FQDN_2
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: kafka_eh_fqdn_2
+            - name: KAFKA_RETRYFINALIZEORDER_EH_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: kafka_retryfinalizeorder_eh_name                    
+            - name: KAFKA_RETRYFINALIZEORDER_EH_CONNECTION
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: kafka_retryfinalizeorder_eh_connection
+            - name: KAFKA_RETRYFINALIZEORDER_CONSUMER_GROUP
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: kafka_retryfinalizeorder_consumer_group
           ports:
             - containerPort: 80
           resources:
@@ -510,8 +525,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: pedidos-deployment
-  minReplicas: 2
-  maxReplicas: 4
+  minReplicas: 4
+  maxReplicas: 6
   metrics:
   - type: Resource
     resource:

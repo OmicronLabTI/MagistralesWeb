@@ -9,6 +9,8 @@
 namespace Omicron.Pedidos.Api
 {
     using Omicron.Pedidos.Api.Consumers;
+    using Omicron.Pedidos.Services.MediatR.Handlers;
+    using Omicron.Pedidos.Services.MediatR.Services;
 
     /// <summary>
     /// Class Startup.
@@ -99,9 +101,16 @@ namespace Omicron.Pedidos.Api
 
             webApplication.AddRedis();
             webApplication.AddCorsSvc();
+
+            webApplication.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CancelProductionOrderHandler).Assembly));
+            webApplication.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+            webApplication.Services.AddHostedService<QueuedHostedService>();
+
             webApplication.Services.AddHostedService<KafkaConsumerFinalizeProductionOrderSap>();
             webApplication.Services.AddHostedService<KafkaConsumerFinalizeProductionOrderPostgresql>();
             webApplication.Services.AddHostedService<KafkaConsumerProductionOrderPdfGeneration>();
+            webApplication.Services.AddHostedService<KafkaConsumerRetryFinalizeProductionOrder>();
+
             webApplication.Services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Fastest);
             webApplication.Services.AddResponseCompression();
 

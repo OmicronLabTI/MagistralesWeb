@@ -2,85 +2,156 @@
   display: flex;
   flex-direction: row;
 }
-.seleccion {
-  width: 2% !important;
-}
+
 .detail-order-container {
   display: flex;
   flex-direction: column !important;
   width: 60%;
 }
-.header-page{
+
+.header-page {
   display: flex;
   justify-content: space-between;
   width: 100%;
 }
-.status-container{
+
+.status-container {
   display: flex;
   flex-direction: column !important;
   justify-content: flex-end !important;
   align-items: flex-end !important;
 }
+
 .no-margin {
   margin: 0 !important;
 }
+
 .no-padding {
   padding: 0 !important;
 }
+
 .consecutivo {
   width: 2% !important;
 }
+
 .patient-name,
 .patient-name-bold {
   font-size: 20px;
 }
-.patient-name{
+
+.patient-name {
   padding-top: 10px;
 }
+
 .patient-name-bold {
   font-family: omicron-bold, Arial, Helvetica, sans-serif !important;
   font-weight: bold;
 }
-.of {
-  width: 11% !important;
+
+
+
+// MARK: Estilos tabla de ordenes
+
+.element-detail {
+  overflow: hidden;
+  width: 100%;
+  min-height: 50px;
+
+  .children-order-header {
+    min-height: 50px;
+    background-color: #EDF9FF;
+    font-weight: bold;
+  }
+
+  .child-order-row {
+    min-height: 50px;
+    border-top: 1px solid #9FD9F9;
+    background-color: #EDF9FF;
+  }
+
+  .w-5 {
+    width: 5%;
+  }
+  .w-10 {
+    width: 10%;
+  }
+  .w-15 {
+    width: 15%;
+  }
 }
 
-.codigoproducto {
-  width: 10% !important;
+.example-element-row {
+  height: 0;
 }
 
-.descripcionproducto {
-  width: 14%;
+.element-row {
+  transition: background-color 0.3s ease;
 }
 
-.cantplan {
-  width: 9% !important;
+.element-row.expanded-row {
+  background-color: #9FD9F9 !important;
 }
 
-.fechaorden {
-  width: 11% !important;
+.orders-table-conatiner {
+  width: 100%;
+  overflow-x: auto;
+
+  table {
+    min-width: 1500px;
+
+    .column-orders-table-auto-width {
+      width: auto;
+    }
+
+    .seleccion {
+      width: 2% !important;
+    }
+
+    .of {
+      width: 11% !important;
+    }
+
+    .codigoproducto {
+      width: 10% !important;
+    }
+
+    .descripcionproducto {
+      width: 14%;
+    }
+
+    .cantplan {
+      width: 9% !important;
+    }
+
+    .fechaorden {
+      width: 11% !important;
+    }
+
+    .fechatermino {
+      width: 11% !important;
+    }
+
+    .qfb {
+      width: 11% !important;
+    }
+
+    .status {
+      width: 10% !important;
+    }
+
+    .tdactions {
+      width: 9% !important;
+    }
+
+  }
 }
 
-.fechatermino {
-  width: 11% !important;
-}
-
-.qfb {
-  width: 11% !important;
-}
-
-.status {
-  width: 10% !important;
-}
-
-.tdactions {
-  width: 9% !important;
-}
 .background-color-in-process {
   background-color: #e7515a;
   margin-left: 15px;
   color: white;
 }
+
 // ::ng-deep .mat-focused .mat-form-field-label {
 //     /*change color of label  */
 //     color: #0081C2 !important;
@@ -105,16 +176,25 @@ button.btnToolTip {
   padding: 0 !important;
   cursor: text !important;
 }
+
 .img-comments {
   width: 30px;
   height: 30px;
 }
+
+.typeOrderIcon {
+  width: 25px;
+  height: 25px;
+}
+
 .with-actions-custom {
   width: 40px;
 }
+
 .tdactions-centeres-elements {
   border-bottom-width: 0;
 }
+
 .icons-actions-container {
   width: 95px;
 }
