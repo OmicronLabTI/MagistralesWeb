@@ -89,7 +89,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   constructor(
     private ordersService: OrdersService,
     private dataService: DataService,
-    private localStorageService: LocalStorageService,
+    public localStorageService: LocalStorageService,
     private errorService: ErrorService,
     private titleService: Title,
     private dialog: MatDialog,
