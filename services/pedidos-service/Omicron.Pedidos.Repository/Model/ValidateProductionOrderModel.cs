@@ -16,12 +16,6 @@ namespace Omicron.Pedidos.Entities.Model
     public class ValidateProductionOrderModel
     {
         /// <summary>
-        /// Gets or sets ProductionOrderId.
-        /// </summary>
-        /// <value>The ProductionOrderId.</value>
-        public int ProductionOrderId { get; set; }
-
-        /// <summary>
         /// Gets or sets ProcessId.
         /// </summary>
         /// <value>
@@ -38,9 +32,9 @@ namespace Omicron.Pedidos.Entities.Model
         public string LastStep { get; set; }
 
         /// <summary>
-        /// Gets or sets batches.
+        /// Gets or sets FinalizeProductionOrder.
         /// </summary>
-        /// <value>The order batches.</value>
-        public List<BatchesConfigurationModel> Batches { get; set; }
+        /// <value>The FinalizeProductionOrder.</value>
+        public FinalizeProductionOrderModel FinalizeProductionOrder { get; set; }
     }
 }

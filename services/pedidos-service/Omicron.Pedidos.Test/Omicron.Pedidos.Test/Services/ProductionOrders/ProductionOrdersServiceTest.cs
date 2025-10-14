@@ -97,10 +97,10 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
             {
                 resultMessages = new List<ValidationsToFinalizeProductionOrdersResultModel>
                 {
-                    new ValidationsToFinalizeProductionOrdersResultModel { ProductionOrderId = 100003, ErrorMessage = "La orden de produción 100003 no existe." },
-                    new ValidationsToFinalizeProductionOrdersResultModel { ProductionOrderId = 100004, ErrorMessage = "La orden de producción 100004 no esta liberada." },
-                    new ValidationsToFinalizeProductionOrdersResultModel { ProductionOrderId = 100005, ErrorMessage = "La orden de producción 100005 está cerrada." },
-                    new ValidationsToFinalizeProductionOrdersResultModel { ProductionOrderId = 100006, ErrorMessage = string.Empty },
+                    new ValidationsToFinalizeProductionOrdersResultModel { FinalizeProductionOrder = new FinalizeProductionOrderModel { ProductionOrderId = 100003, }, ErrorMessage = "La orden de produción 100003 no existe." },
+                    new ValidationsToFinalizeProductionOrdersResultModel { FinalizeProductionOrder = new FinalizeProductionOrderModel { ProductionOrderId = 100004, }, ErrorMessage = "La orden de producción 100004 no esta liberada." },
+                    new ValidationsToFinalizeProductionOrdersResultModel { FinalizeProductionOrder = new FinalizeProductionOrderModel { ProductionOrderId = 100005, }, ErrorMessage = "La orden de producción 100005 está cerrada." },
+                    new ValidationsToFinalizeProductionOrdersResultModel { FinalizeProductionOrder = new FinalizeProductionOrderModel { ProductionOrderId = 100006, }, ErrorMessage = string.Empty },
                 };
             }
 
@@ -223,7 +223,7 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
                 {
                     new ValidationsToFinalizeProductionOrdersResultModel
                     {
-                        ProductionOrderId = 100001,
+                        FinalizeProductionOrder = new FinalizeProductionOrderModel { ProductionOrderId = 100001, },
                         ErrorMessage = string.Format(errorMessage, 100001),
                     },
                 };
@@ -606,10 +606,10 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
 
             var resultMessages = new List<ValidationsToFinalizeProductionOrdersResultModel>
                 {
-                    new ValidationsToFinalizeProductionOrdersResultModel { ProductionOrderId = 100003, ErrorMessage = "La orden de produción 100003 no existe." },
-                    new ValidationsToFinalizeProductionOrdersResultModel { ProductionOrderId = 100004, ErrorMessage = "La orden de producción 100004 no esta liberada." },
-                    new ValidationsToFinalizeProductionOrdersResultModel { ProductionOrderId = 100005, ErrorMessage = "La orden de producción 100005 está cerrada." },
-                    new ValidationsToFinalizeProductionOrdersResultModel { ProductionOrderId = 100006, ErrorMessage = string.Empty },
+                    new ValidationsToFinalizeProductionOrdersResultModel { FinalizeProductionOrder = new FinalizeProductionOrderModel { ProductionOrderId = 100003 }, ErrorMessage = "La orden de produción 100003 no existe." },
+                    new ValidationsToFinalizeProductionOrdersResultModel { FinalizeProductionOrder = new FinalizeProductionOrderModel { ProductionOrderId = 100004 }, ErrorMessage = "La orden de producción 100004 no esta liberada." },
+                    new ValidationsToFinalizeProductionOrdersResultModel { FinalizeProductionOrder = new FinalizeProductionOrderModel { ProductionOrderId = 100005 }, ErrorMessage = "La orden de producción 100005 está cerrada." },
+                    new ValidationsToFinalizeProductionOrdersResultModel { FinalizeProductionOrder = new FinalizeProductionOrderModel { ProductionOrderId = 100006 }, ErrorMessage = string.Empty },
                 };
 
             var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();

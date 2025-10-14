@@ -66,8 +66,11 @@ namespace Omicron.SapServiceLayerAdapter.Test
             };
             var item = new CloseProductionOrderDto()
             {
-                ProductionOrderId = orderId,
-                Batches = batches ? new List<BatchesConfigurationDto>() { batch } : null,
+                FinalizeProductionOrder = new FinalizeProductionOrderDto
+                {
+                    ProductionOrderId = orderId,
+                    Batches = batches ? new List<BatchesConfigurationDto>() { batch } : null,
+                },
             };
 
             return item;
@@ -195,8 +198,11 @@ namespace Omicron.SapServiceLayerAdapter.Test
             };
             var item = new CloseProductionOrderDto()
             {
-                ProductionOrderId = orderId,
-                Batches = batches ? new List<BatchesConfigurationDto>() { batch } : null,
+                FinalizeProductionOrder = new FinalizeProductionOrderDto
+                {
+                    ProductionOrderId = orderId,
+                    Batches = batches ? new List<BatchesConfigurationDto>() { batch } : null,
+                },
             };
 
             return item;

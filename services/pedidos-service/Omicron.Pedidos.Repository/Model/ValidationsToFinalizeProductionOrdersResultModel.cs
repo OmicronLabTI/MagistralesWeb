@@ -14,14 +14,6 @@ namespace Omicron.Pedidos.Entities.Model
     public class ValidationsToFinalizeProductionOrdersResultModel
     {
         /// <summary>
-        /// Gets or sets ProductionOrderId.
-        /// </summary>
-        /// <value>
-        /// ProductionOrderId.
-        /// </value>
-        public int ProductionOrderId { get; set; }
-
-        /// <summary>
         /// Gets or sets ErrorMessage.
         /// </summary>
         /// <value>
@@ -36,5 +28,11 @@ namespace Omicron.Pedidos.Entities.Model
         /// LastStep.
         /// </value>
         public string LastStep { get; set; }
+
+        /// <summary>
+        /// Gets or sets FinalizeProductionOrder.
+        /// </summary>
+        /// <value>The FinalizeProductionOrder.</value>
+        public FinalizeProductionOrderModel FinalizeProductionOrder { get; set; }
     }
 }

@@ -27,5 +27,11 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
         /// Gets or sets LastStep.
         /// </summary>
         public string LastStep { get; set; }
+
+        /// <summary>
+        /// Gets or sets FinalizeProductionOrder.
+        /// </summary>
+        /// <value>The FinalizeProductionOrder.</value>
+        public FinalizeProductionOrderDto FinalizeProductionOrder { get; set; }
     }
 }
