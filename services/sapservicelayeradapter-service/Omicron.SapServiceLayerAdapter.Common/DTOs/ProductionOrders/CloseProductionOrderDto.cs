@@ -14,12 +14,6 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
     public class CloseProductionOrderDto
     {
         /// <summary>
-        /// Gets or sets ProductionOrderId.
-        /// </summary>
-        /// <value>The ProductionOrderId.</value>
-        public int ProductionOrderId { get; set; }
-
-        /// <summary>
         /// Gets or sets ProcessId.
         /// </summary>
         /// <value>
@@ -36,9 +30,9 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
         public string LastStep { get; set; }
 
         /// <summary>
-        /// Gets or sets batches.
+        /// Gets or sets FinalizeProductionOrder.
         /// </summary>
-        /// <value>The order batches.</value>
-        public List<BatchesConfigurationDto> Batches { get; set; }
+        /// <value>The FinalizeProductionOrder.</value>
+        public FinalizeProductionOrderDto FinalizeProductionOrder { get; set; }
     }
 }

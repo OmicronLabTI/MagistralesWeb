@@ -60,7 +60,10 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
 
             var item1 = new CloseProductionOrderDto()
             {
-                ProductionOrderId = 1022,
+                FinalizeProductionOrder = new FinalizeProductionOrderDto
+                {
+                    ProductionOrderId = 1022,
+                },
             };
             var request = new List<CloseProductionOrderDto>();
             request.Add(item1);
@@ -619,7 +622,10 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
             {
                 new CloseProductionOrderDto()
                 {
-                    ProductionOrderId = 1022,
+                    FinalizeProductionOrder = new FinalizeProductionOrderDto
+                    {
+                        ProductionOrderId = 1022,
+                    },
                 },
             };
 
@@ -657,7 +663,10 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
             {
                 new CloseProductionOrderDto()
                 {
-                    ProductionOrderId = 1022,
+                    FinalizeProductionOrder = new FinalizeProductionOrderDto
+                    {
+                        ProductionOrderId = 1022,
+                    },
                 },
             };
 
@@ -713,12 +722,15 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
             {
                 new CloseProductionOrderDto()
                 {
-                    ProductionOrderId = 1022,
                     LastStep = lastStep,
                     ProcessId = "4c1e8273-0312-4514-b985-d0a53403d1bb",
-                    Batches = new List<BatchesConfigurationDto>
+                    FinalizeProductionOrder = new FinalizeProductionOrderDto
                     {
-                        new BatchesConfigurationDto { BatchCode = "Batch Code", ExpirationDate = DateTime.Now.AddYears(2), ManufacturingDate = DateTime.Now, Quantity = "2" },
+                        ProductionOrderId = 1022,
+                        Batches = new List<BatchesConfigurationDto>
+                        {
+                            new BatchesConfigurationDto { BatchCode = "Batch Code", ExpirationDate = DateTime.Now.AddYears(2), ManufacturingDate = DateTime.Now, Quantity = "2" },
+                        },
                     },
                 },
             };
@@ -771,12 +783,15 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
             {
                 new CloseProductionOrderDto()
                 {
-                    ProductionOrderId = 1022,
                     LastStep = "Primary Validations",
                     ProcessId = "4c1e8273-0312-4514-b985-d0a53403d1dd",
-                    Batches = new List<BatchesConfigurationDto>
+                    FinalizeProductionOrder = new FinalizeProductionOrderDto
                     {
-                        new BatchesConfigurationDto { BatchCode = "Batch Code", ExpirationDate = DateTime.Now.AddYears(2), ManufacturingDate = DateTime.Now, Quantity = "2" },
+                        ProductionOrderId = 1022,
+                        Batches = new List<BatchesConfigurationDto>
+                        {
+                            new BatchesConfigurationDto { BatchCode = "Batch Code", ExpirationDate = DateTime.Now.AddYears(2), ManufacturingDate = DateTime.Now, Quantity = "2" },
+                        },
                     },
                 },
             };
@@ -833,12 +848,15 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
             {
                 new CloseProductionOrderDto()
                 {
-                    ProductionOrderId = 1022,
                     LastStep = "Primary Validations",
                     ProcessId = "4c1e8273-0312-4514-b985-d0a53403d1dd",
-                    Batches = new List<BatchesConfigurationDto>
+                    FinalizeProductionOrder = new FinalizeProductionOrderDto
                     {
-                        new BatchesConfigurationDto { BatchCode = "Batch Code", ExpirationDate = DateTime.Now.AddYears(2), ManufacturingDate = DateTime.Now, Quantity = "2" },
+                        ProductionOrderId = 1022,
+                        Batches = new List<BatchesConfigurationDto>
+                        {
+                            new BatchesConfigurationDto { BatchCode = "Batch Code", ExpirationDate = DateTime.Now.AddYears(2), ManufacturingDate = DateTime.Now, Quantity = "2" },
+                        },
                     },
                 },
             };
