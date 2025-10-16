@@ -401,7 +401,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                 }
                 else
                 {
-                    var deliveryNoteResponse = JsonConvert.DeserializeObject<DeliveryNoteCreatedDto>(result.Response.ToString());
+                    var deliveryNoteResponse = JsonConvert.DeserializeObject<DeliveryNoteDto>(result.Response.ToString());
                     this.logger.Information($"The saleOrder {saleOrderId} was {typeDelivery} - {result.Code}");
                     dictionaryResult.Add($"{saleOrderId}-{deliveryNoteResponse.DocEntry}-Ok", "Ok");
                 }
