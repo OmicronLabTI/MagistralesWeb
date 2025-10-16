@@ -36,7 +36,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
         /// <param name="productsId">The productsId.</param>
         /// <param name="dictionaryResult">The dictionaryResult.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public delegate Task<DeliveryNoteDto> CreateDeliveryNoteDelegate(OrderDto saleOrder, int saleOrderId, List<CreateDeliveryNoteDto> createDelivery, List<string> productsId, Dictionary<string, string> dictionaryResult);
+        public delegate Task<CreateDNoteDto> CreateDeliveryNoteDelegate(OrderDto saleOrder, int saleOrderId, List<CreateDeliveryNoteDto> createDelivery, List<string> productsId, Dictionary<string, string> dictionaryResult);
 
         /// <inheritdoc/>
         public async Task<ResultModel> CreateDelivery(List<CreateDeliveryNoteDto> createDelivery)
@@ -70,13 +70,13 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
         }
 
-        private static DeliveryNoteDto UpdateDelivery(DeliveryNoteDto deliveryNote, OrderDto saleOrder, int saleOrderId, int i, List<CreateDeliveryNoteDto> createDelivery, string itemCode)
+        private static CreateDNoteDto UpdateDelivery(CreateDNoteDto deliveryNote, OrderDto saleOrder, int saleOrderId, int i, List<CreateDeliveryNoteDto> createDelivery, string itemCode)
         {
             var orderLine = saleOrder.OrderLines[i];
             var product = createDelivery.FirstOrDefault(x => x.ItemCode.Equals(itemCode) && x.SaleOrderId == saleOrderId);
             product = product ?? new CreateDeliveryNoteDto { OrderType = ServiceConstants.Magistral };
 
-            var newDeliveryNote = new DeliveryNoteLineDto()
+            var newDeliveryNote = new BaseDeliveryNoteLineDto()
             {
                 ItemCode = orderLine.ItemCode,
                 Quantity = orderLine.Quantity,
@@ -131,7 +131,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             Dictionary<string, string> dictionaryResult,
             string isOmigenomicsStr,
             OrderDto saleOrder,
-            DeliveryNoteDto deliveryNote)
+            CreateDNoteDto deliveryNote)
         {
             var commentMultiple = new StringBuilder();
             var ordersGrouped = createDelivery.GroupBy(p => p.SaleOrderId).ToList();
@@ -166,7 +166,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                     this.logger.Information($"The price is {price}");
 
                     var correctBaseLineId = await this.GetShippingCostBaseLine(shippingCost?.ShippingCostOrderId ?? 0);
-                    var newDeliveryNote = new DeliveryNoteLineDto()
+                    var newDeliveryNote = new BaseDeliveryNoteLineDto()
                     {
                         ItemCode = shippingCost.ItemCode,
                         Quantity = 1,
@@ -389,6 +389,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
 
                 var saleOrder = JsonConvert.DeserializeObject<OrderDto>(response.Response.ToString());
                 var deliveryNote = await createDeliveryNoteFunction(saleOrder, saleOrderId, createDelivery, productdsId, dictionaryResult);
+                deliveryNote.BillingType = saleOrder.BillingType;
 
                 var deliveryNotesStg = JsonConvert.SerializeObject(deliveryNote);
                 var result = await this.serviceLayerClient.PostAsync(url, deliveryNotesStg);
@@ -413,9 +414,9 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(dictionaryResult), null);
         }
 
-        private async Task<DeliveryNoteDto> CreateDeliveryNoteComplete(OrderDto saleOrder, int saleOrderId, List<CreateDeliveryNoteDto> createDelivery, List<string> productsId, Dictionary<string, string> dictionaryResult)
+        private async Task<CreateDNoteDto> CreateDeliveryNoteComplete(OrderDto saleOrder, int saleOrderId, List<CreateDeliveryNoteDto> createDelivery, List<string> productsId, Dictionary<string, string> dictionaryResult)
         {
-            var deliveryNote = new DeliveryNoteDto();
+            var deliveryNote = new CreateDNoteDto();
             deliveryNote.CustomerCode = saleOrder.CardCode;
             deliveryNote.SalesPersonCode = saleOrder.SalesPersonCode;
             deliveryNote.DocumentsOwner = saleOrder.DocumentsOwner;
@@ -429,7 +430,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             deliveryNote.RemissionComment = $"Basado en pedido: {saleOrderId}";
             deliveryNote.OrderPackage = ServiceUtils.CalculateTernary(createDelivery.Any(x => x.IsPackage == ServiceConstants.IsPackage), ServiceConstants.IsPackage, ServiceConstants.IsNotPackage);
             deliveryNote.IsOmigenomics = string.IsNullOrEmpty(saleOrder.IsOmigenomics) ? saleOrder.IsSecundary == "Y" ? "1" : "2" : saleOrder.IsOmigenomics;
-            deliveryNote.DeliveryNoteLines = new List<DeliveryNoteLineDto>();
+            deliveryNote.DeliveryNoteLines = new List<BaseDeliveryNoteLineDto>();
             deliveryNote.IsSecundary = saleOrder.IsSecundary;
             deliveryNote.DeliveryOrderType = ServiceUtils.CalculateTernary((saleOrder.TypeOrder ?? string.Empty) == "UN", "LN", saleOrder.TypeOrder);
 
@@ -445,7 +446,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                 var correctBaseLineId = await this.GetShippingCostBaseLine(shippingCost.ShippingCostOrderId);
 
                 var price = CastStringToDouble(shippingCost.OrderType);
-                var newDeliveryNote = new DeliveryNoteLineDto()
+                var newDeliveryNote = new BaseDeliveryNoteLineDto()
                 {
                     ItemCode = shippingCost.ItemCode,
                     Quantity = 1,
@@ -464,9 +465,9 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             return deliveryNote;
         }
 
-        private async Task<DeliveryNoteDto> CreateDeliveryNotePartial(OrderDto saleOrder, int saleOrderId, List<CreateDeliveryNoteDto> createDelivery, List<string> productsIds, Dictionary<string, string> dictionaryResult)
+        private async Task<CreateDNoteDto> CreateDeliveryNotePartial(OrderDto saleOrder, int saleOrderId, List<CreateDeliveryNoteDto> createDelivery, List<string> productsIds, Dictionary<string, string> dictionaryResult)
         {
-            var deliveryNote = new DeliveryNoteDto();
+            var deliveryNote = new CreateDNoteDto();
             deliveryNote.DocumentsOwner = saleOrder.DocumentsOwner;
             deliveryNote.CustomerCode = saleOrder.CardCode;
             deliveryNote.SalesPersonCode = saleOrder.SalesPersonCode;
@@ -480,7 +481,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             deliveryNote.RemissionComment = $"Basado en pedido: {saleOrderId}";
             deliveryNote.IsOmigenomics = string.IsNullOrEmpty(saleOrder.IsOmigenomics) ? saleOrder.IsSecundary == "Y" ? "1" : "2" : saleOrder.IsOmigenomics;
             deliveryNote.IsSecundary = saleOrder.IsSecundary;
-            deliveryNote.DeliveryNoteLines = new List<DeliveryNoteLineDto>();
+            deliveryNote.DeliveryNoteLines = new List<BaseDeliveryNoteLineDto>();
             deliveryNote.DeliveryOrderType = ServiceUtils.CalculateTernary((saleOrder.TypeOrder ?? string.Empty) == "UN", "LN", saleOrder.TypeOrder);
 
             for (var i = 0; i < saleOrder.OrderLines.Count; i++)
@@ -505,7 +506,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                 if (shippingOrder == null)
                 {
                     var correctBaseLineId = await this.GetShippingCostBaseLine(shippingCost.ShippingCostOrderId);
-                    var newData = new DeliveryNoteLineDto()
+                    var newData = new BaseDeliveryNoteLineDto()
                     {
                         ItemCode = shippingCost.ItemCode,
                         Quantity = 1,
@@ -522,7 +523,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                     return deliveryNote;
                 }
 
-                var newDeliveryNote = new DeliveryNoteLineDto()
+                var newDeliveryNote = new BaseDeliveryNoteLineDto()
                 {
                     ItemCode = shippingCost.ItemCode,
                     Quantity = 1,
@@ -547,12 +548,12 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             return deliveryNote;
         }
 
-        private async Task<DeliveryNoteDto> CreateDeliveryNoteBatch(OrderDto saleOrder, int saleOrderId, List<CreateDeliveryNoteDto> createDelivery, List<string> productsIds, Dictionary<string, string> dictionaryResult)
+        private async Task<CreateDNoteDto> CreateDeliveryNoteBatch(OrderDto saleOrder, int saleOrderId, List<CreateDeliveryNoteDto> createDelivery, List<string> productsIds, Dictionary<string, string> dictionaryResult)
         {
             var createDeliveryFirst = createDelivery.First();
             var isOmigenomicsStr = ServiceUtils.CalculateTernary(createDeliveryFirst.IsOmigenomics, "Y", "N");
             var listOrderType = new List<string>();
-            var deliveryNote = new DeliveryNoteDto();
+            var deliveryNote = new CreateDNoteDto();
 
             deliveryNote.CustomerCode = saleOrder.CardCode;
             deliveryNote.SalesPersonCode = saleOrder.SalesPersonCode;
@@ -566,7 +567,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             deliveryNote.RemissionComment = $"Basado en pedido: {saleOrderId}";
             deliveryNote.IsOmigenomics = string.IsNullOrEmpty(saleOrder.IsOmigenomics) ? saleOrder.IsSecundary == "Y" ? "1" : "2" : saleOrder.IsOmigenomics;
             deliveryNote.IsSecundary = saleOrder.IsSecundary;
-            deliveryNote.DeliveryNoteLines = new List<DeliveryNoteLineDto>();
+            deliveryNote.DeliveryNoteLines = new List<BaseDeliveryNoteLineDto>();
 
             var commentMultiple = await this.ManageDeliveryNotes(createDelivery, saleOrderId, listOrderType, dictionaryResult, isOmigenomicsStr, saleOrder, deliveryNote);
 
