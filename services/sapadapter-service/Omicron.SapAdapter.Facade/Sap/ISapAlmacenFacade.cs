@@ -250,5 +250,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="docNums">docNums.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetClosedInvoicesByDocNum(List<int> docNums);
+
+        /// <summary>
+        /// Gets the delivery ids.
+        /// </summary>
+        /// <param name="ordersId">the delivery ids.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetDeliveryDetaiByOrders(List<int> ordersId);
     }
 }

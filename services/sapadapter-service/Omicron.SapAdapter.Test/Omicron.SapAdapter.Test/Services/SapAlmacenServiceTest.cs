@@ -1044,5 +1044,22 @@ namespace Omicron.SapAdapter.Test.Services
             // assert
             Assert.That(response, Is.Not.Null);
         }
+
+        /// <summary>
+        /// the test.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetDeliveryDetaiByOrders()
+        {
+            // arrange
+            var ids = new List<int> { 100 };
+
+            // act
+            var response = await this.sapService.GetDeliveryDetaiByOrders(ids);
+
+            // assert
+            Assert.That(response, Is.Not.Null);
+        }
     }
 }

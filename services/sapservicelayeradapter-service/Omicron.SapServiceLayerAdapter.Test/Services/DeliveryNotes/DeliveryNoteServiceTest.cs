@@ -48,6 +48,15 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
               .Setup(x => x.GetAsync(It.IsAny<string>()))
               .Returns(Task.FromResult(serviceLayerClientResult));
 
+            var serviceLayerClientResultSuccess = new ResultModel()
+            {
+                Success = true,
+                UserError = string.Empty,
+            };
+            mockServiceLayerClient
+              .Setup(x => x.PostAsync(ServiceQuerysConstants.QryInvoiceDocument, It.IsAny<string>()))
+              .Returns(Task.FromResult(serviceLayerClientResultSuccess));
+
             var firstDelivery = new CreateDeliveryNoteDto()
             {
                 SaleOrderId = 12,
@@ -151,7 +160,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
             {
                 Success = true,
                 UserError = string.Empty,
-                Response = string.Empty,
+                Response = JsonConvert.SerializeObject(new DeliveryNoteDto() { CustomerCode = "C0001", DocEntry = 1, DeliveryNoteLines = new List<DeliveryNoteLineDto>() { new DeliveryNoteLineDto() } }),
                 Code = 201,
             };
             mockServiceLayerClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<string>()))

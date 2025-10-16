@@ -133,5 +133,11 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// </summary>
         /// <value>The ProductionOrderId.</value>
         public int ProductionOrderId { get; set; }
+
+        /// <summary>
+        /// Gets or sets BillingType.
+        /// </summary>
+        /// <value>The BillingType.</value>
+        public string BillingType { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿// <summary>
+// <summary>
 // <copyright file="CreateInvoiceDto.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior

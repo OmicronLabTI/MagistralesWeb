@@ -101,6 +101,20 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
+        [Column("BaseLine")]
+        public int BaseLine { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("BaseType")]
+        public int BaseType { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
         [NotMapped]
         public ProductoModel Producto { get; set; }
 
