@@ -110,11 +110,9 @@ namespace Omicron.SapServiceLayerAdapter.Test
             new CancelProductionOrderDto(),
             new CreateChildOrderResultDto(),
             new FinalizeProductionOrderDto(),
-            new DeliveryNoteCreatedDto(),
-            new DeliveryNoteLineCreatedDto(),
+            new CreateInvoiceDocumentDto(),
+            new CreateInvoiceDocumentLinesDto(),
             new CreateInvoiceDto(),
-            new CreateInvoiceLineDto(),
-            new ServiceLayerGenericMultipleResultDto<int>(),
         };
 
         /// <summary>

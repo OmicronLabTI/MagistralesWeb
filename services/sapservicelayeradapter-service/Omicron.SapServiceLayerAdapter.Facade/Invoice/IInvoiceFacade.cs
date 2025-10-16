@@ -22,10 +22,10 @@ namespace Omicron.SapServiceLayerAdapter.Facade.Invoice
         Task<ResultDto> UpdateInvoiceTrackingInfo(int invoiceId, TrackingInformationDto packageInformationSend);
 
         /// <summary>
-        /// Method to get the last generated order.
+        /// Method to Create Invoice On SAP.
         /// </summary>
-        /// <param name="deliveriesId">Invoice Id.</param>
+        /// <param name="createInvoiceDocumentInfo">Create Invoice Document Info.</param>
         /// <returns>Last generated order.</returns>
-        Task<ResultDto> CreateInvoiceByDeliveries(List<int> deliveriesId);
+        Task<ResultDto> CreateInvoice(CreateInvoiceDocumentDto createInvoiceDocumentInfo);
     }
 }

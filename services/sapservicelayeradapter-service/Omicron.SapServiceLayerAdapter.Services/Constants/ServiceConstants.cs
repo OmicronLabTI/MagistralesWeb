@@ -530,6 +530,21 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public static string YesValue => "Y";
 
         /// <summary>
+        /// Gets DeliveryBaseTypeForInvoice.
+        /// </summary>
+        public static int DeliveryBaseTypeForInvoice => 15;
+
+        /// <summary>
+        /// Gets CommentForCreatedInvoice.
+        /// </summary>
+        public static string CommentForCreatedInvoice => "Basado en Entregas {0}";
+
+        /// <summary>
+        /// Gets Comma.
+        /// </summary>
+        public static string Comma => ",";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

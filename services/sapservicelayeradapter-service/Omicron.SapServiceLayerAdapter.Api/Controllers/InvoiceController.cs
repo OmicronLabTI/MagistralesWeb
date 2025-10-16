@@ -42,5 +42,15 @@ namespace Omicron.SapServiceLayerAdapter.Api.Controllers
         [HttpPost("/invoice/delivery")]
         public async Task<IActionResult> CreateInvoiceByDeliveries([FromBody] List<int> deliveriesId)
             => this.Ok(await this.invoiceFacade.CreateInvoiceByDeliveries(deliveriesId));
+
+        /// <summary>
+        /// CreateInvoice.
+        /// </summary>
+        /// <param name="createInvoiceDocumentInfo">Invoice Info to create.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("/create/invoice")]
+        public async Task<IActionResult> CreateInvoice([FromBody] CreateInvoiceDocumentDto createInvoiceDocumentInfo)
+            => this.Ok(await this.invoiceFacade.CreateInvoice(createInvoiceDocumentInfo));
     }
 }

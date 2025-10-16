@@ -154,32 +154,102 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
         }
 
         /// <summary>
-        /// InvoiceTrackingInfoTest.
+        /// Test for CreateInvoice method.
         /// </summary>
+        /// <param name="isResponseSuccess">Indicates if the invoice creation in Service Layer is successful.</param>
+        /// <param name="throwsException">Indicates if an exception should be thrown.</param>
+        /// <param name="expectedCode">Expected response code.</param>
+        /// <param name="expectedSuccess">Expected success flag.</param>
+        /// <param name="expectedUserError">Expected user error message.</param>
         /// <returns>the data.</returns>
         [Test]
-        public async Task CreateInvoiceByRemissions()
+        [TestCase(true, false, 200, true, null)]
+        [TestCase(false, false, 500, false, "Service Layer Error: No se pudo crear la factura")]
+        [TestCase(false, true, 500, false, "Unexpected error")]
+        public async Task CreateInvoiceTest(bool isResponseSuccess, bool throwsException, int expectedCode, bool expectedSuccess, string expectedUserError)
         {
-            // arrange
+            // Arrange
+            var createInvoiceDocumentInfo = new CreateInvoiceDocumentDto
+            {
+                CardCode = "C12345",
+                ProcessId = "2c904df4-96db-4a56-bf56-4747c3174106",
+                CfdiDriverVersion = "CFDi40",
+                IdDeliveries = new List<int> { 1001, 1002 },
+            };
+
+            var deliveryMock = new DeliveryNoteDto
+            {
+                DeliveryNoteLines = new List<DeliveryNoteLineDto>
+                {
+                    new DeliveryNoteLineDto { LineNumber = 0 },
+                    new DeliveryNoteLineDto { LineNumber = 1 },
+                },
+            };
+
             var mockServiceLayerClient = new Mock<IServiceLayerClient>();
             var mockLogger = new Mock<ILogger>();
-            var deliveryNote = new DeliveryNoteCreatedDto() { CustomerCode = "C0001", DocumentLines = new List<DeliveryNoteLineCreatedDto>() { new DeliveryNoteLineCreatedDto() { LineNum = 1 } } };
-            var response = new ServiceLayerGenericMultipleResultDto<DeliveryNoteCreatedDto>() { Value = new List<DeliveryNoteCreatedDto>() { deliveryNote } };
-            var responseInvoice = GetGenericResponseModel(200, true, response, null);
+            var deliveryResponseMock = GetGenericResponseModel(200, true, deliveryMock, null);
+
             mockServiceLayerClient
                 .Setup(sl => sl.GetAsync(It.IsAny<string>()))
-                .Returns(Task.FromResult(responseInvoice));
-            mockServiceLayerClient
-                .Setup(sl => sl.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(GetGenericResponseModel(200, true, null, null)));
+                .ReturnsAsync(deliveryResponseMock);
 
-            var invoiceServiceMock = new InvoiceService(mockServiceLayerClient.Object, mockLogger.Object);
-            var result = await invoiceServiceMock.CreateInvoiceByRemissions(new List<int>());
+            if (throwsException)
+            {
+                mockServiceLayerClient
+                    .Setup(sl => sl.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
+                    .ThrowsAsync(new Exception("Unexpected error"));
+            }
+            else
+            {
+                var fakeResponse = isResponseSuccess
+                    ? new InvoiceDto { DocumentEntry = 999 }
+                    : null;
 
-            // assert
+                var invoiceResponseMock = GetGenericResponseModel(
+                    200,
+                    isResponseSuccess,
+                    fakeResponse,
+                    isResponseSuccess ? null : "Service Layer Error: No se pudo crear la factura");
+
+                mockServiceLayerClient
+                    .Setup(sl => sl.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
+                    .ReturnsAsync(invoiceResponseMock);
+            }
+
+            var invoiceService = new InvoiceService(mockServiceLayerClient.Object, mockLogger.Object);
+
+            // Act
+            var result = await invoiceService.CreateInvoice(createInvoiceDocumentInfo);
+
+            // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.InstanceOf<ResultModel>());
-            Assert.That(result.Comments, Is.Null);
+            Assert.That(result.Code, Is.EqualTo(expectedCode));
+            Assert.That(result.Success, Is.EqualTo(expectedSuccess));
+            Assert.That(result.UserError, Is.EqualTo(expectedUserError));
+
+            if (expectedSuccess)
+            {
+                Assert.That(result.Response, Is.Not.Null);
+                Assert.That(Convert.ToInt32(result.Response), Is.EqualTo(999));
+            }
+            else
+            {
+                Assert.That(result.Response, Is.Null);
+            }
+
+            mockLogger.Verify(l => l.Information(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.AtLeastOnce);
+
+            if (throwsException)
+            {
+                mockLogger.Verify(l => l.Error(It.IsAny<Exception>(), It.IsAny<string>(), It.IsAny<string>()), Times.AtLeastOnce);
+            }
+
+            if (!isResponseSuccess && !throwsException)
+            {
+                mockLogger.Verify(l => l.Error(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.AtLeastOnce);
+            }
         }
     }
 }

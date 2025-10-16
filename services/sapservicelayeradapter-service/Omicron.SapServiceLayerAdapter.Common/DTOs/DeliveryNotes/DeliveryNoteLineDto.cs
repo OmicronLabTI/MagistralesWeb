@@ -124,5 +124,12 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.DeliveryNotes
         /// <value>Sales Person Code.</value>
         [JsonProperty("SalesPersonCode")]
         public int SalesPersonCode { get; set; }
+
+        /// <summary>
+        /// Gets or sets the LineNumber.
+        /// </summary>
+        /// <value>LineNumber.</value>
+        [JsonProperty("LineNum")]
+        public int LineNumber { get; set; }
     }
 }
