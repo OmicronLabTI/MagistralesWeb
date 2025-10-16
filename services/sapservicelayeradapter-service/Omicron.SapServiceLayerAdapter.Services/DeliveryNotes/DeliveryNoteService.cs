@@ -389,6 +389,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
 
                 var saleOrder = JsonConvert.DeserializeObject<OrderDto>(response.Response.ToString());
                 var deliveryNote = await createDeliveryNoteFunction(saleOrder, saleOrderId, createDelivery, productdsId, dictionaryResult);
+                deliveryNote.BillingType = saleOrder.BillingType;
 
                 var deliveryNotesStg = JsonConvert.SerializeObject(deliveryNote);
                 var result = await this.serviceLayerClient.PostAsync(url, deliveryNotesStg);
@@ -400,8 +401,9 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                 }
                 else
                 {
+                    var deliveryNoteResponse = JsonConvert.DeserializeObject<DeliveryNoteCreatedDto>(result.Response.ToString());
                     this.logger.Information($"The saleOrder {saleOrderId} was {typeDelivery} - {result.Code}");
-                    dictionaryResult.Add($"{saleOrderId}-Ok", "Ok");
+                    dictionaryResult.Add($"{saleOrderId}-{deliveryNoteResponse.DocEntry}-Ok", "Ok");
                 }
             }
             catch (Exception ex)

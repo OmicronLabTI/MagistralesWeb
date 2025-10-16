@@ -33,5 +33,14 @@ namespace Omicron.SapServiceLayerAdapter.Api.Controllers
         [HttpPatch("/invoice/tracking/{invoiceId}")]
         public async Task<IActionResult> UpdateInvoiceTrackingInfo(int invoiceId, [FromBody] TrackingInformationDto packageInformationSend)
             => this.Ok(await this.invoiceFacade.UpdateInvoiceTrackingInfo(invoiceId, packageInformationSend));
+
+        /// <summary>
+        /// Update tracking process.
+        /// </summary>
+        /// <param name="deliveriesId">Package Information Send.</param>
+        /// <returns>Result.</returns>
+        [HttpPost("/invoice/delivery")]
+        public async Task<IActionResult> CreateInvoiceByDeliveries([FromBody] List<int> deliveriesId)
+            => this.Ok(await this.invoiceFacade.CreateInvoiceByDeliveries(deliveriesId));
     }
 }

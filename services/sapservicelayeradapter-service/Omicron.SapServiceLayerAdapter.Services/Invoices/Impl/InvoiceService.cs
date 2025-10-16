@@ -29,6 +29,38 @@ namespace Omicron.SapServiceLayerAdapter.Services.Invoices.Impl
         }
 
         /// <inheritdoc/>
+        public async Task<ResultModel> CreateInvoiceByRemissions(List<int> deliveryIds)
+        {
+            var query = $"{ServiceQuerysConstants.QryDeliveryNotes}?$filter={string.Join(" or ", deliveryIds.Select(id => $"(DocNum eq {id})"))}";
+            var result = await this.serviceLayerClient.GetAsync(query);
+
+            if (result.Success)
+            {
+                var deliveryNoteResponse = JsonConvert.DeserializeObject<ServiceLayerGenericMultipleResultDto<DeliveryNoteCreatedDto>>(result.Response.ToString());
+                var first = deliveryNoteResponse.Value.FirstOrDefault() ?? new DeliveryNoteCreatedDto() { CustomerCode = string.Empty };
+
+                var createInvoice = new CreateInvoiceDto
+                {
+                    CardCode = first.CustomerCode,
+                    DocumentLines = new List<CreateInvoiceLineDto>(),
+                };
+                deliveryNoteResponse.Value.ForEach(delivery =>
+                {
+                    createInvoice.DocumentLines.AddRange(delivery.DocumentLines.Select(line => new CreateInvoiceLineDto
+                    {
+                        BaseType = 15,
+                        BaseEntry = delivery.DocEntry,
+                        BaseLine = line.LineNum,
+                    }));
+                });
+
+                await this.serviceLayerClient.PostAsync(ServiceQuerysConstants.QryInvoiceDocument, JsonConvert.SerializeObject(createInvoice));
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, null, null);
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultModel> UpdateInvoiceTrackingInfo(int invoiceId, TrackingInformationDto packageInformationSend)
         {
             var dictionaryResult = new Dictionary<string, string>();

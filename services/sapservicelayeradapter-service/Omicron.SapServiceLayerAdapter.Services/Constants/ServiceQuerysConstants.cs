@@ -26,6 +26,11 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
                 /// <summary>
                 /// Query to get invoice document by doc entry.
                 /// </summary>
+                public const string QryInvoiceDocument = "Invoices";
+
+                /// <summary>
+                /// Query to get invoice document by doc entry.
+                /// </summary>
                 public const string QryGetShippingTypesByName = "ShippingTypes?$filter=Name eq '{0}'";
 
                 /// <summary>

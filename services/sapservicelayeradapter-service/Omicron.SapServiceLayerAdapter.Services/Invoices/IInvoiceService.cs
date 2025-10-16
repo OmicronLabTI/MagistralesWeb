@@ -20,5 +20,12 @@ namespace Omicron.SapServiceLayerAdapter.Services.Invoices
         /// <param name="packageInformationSend">Package Information Send.</param>
         /// <returns>Last generated order.</returns>
         Task<ResultModel> UpdateInvoiceTrackingInfo(int invoiceId, TrackingInformationDto packageInformationSend);
+
+        /// <summary>
+        /// Method to get the last generated order.
+        /// </summary>
+        /// <param name="deliveryIds">Invoice Id.</param>
+        /// <returns>Last generated order.</returns>
+        Task<ResultModel> CreateInvoiceByRemissions(List<int> deliveryIds);
     }
 }

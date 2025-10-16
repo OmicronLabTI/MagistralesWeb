@@ -187,5 +187,12 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// <value>TypeOrder.</value>
         [JsonProperty("U_TipoPedido")]
         public string TypeOrder { get; set; }
+
+        /// <summary>
+        /// Gets or sets if is omigenomics.
+        /// </summary>
+        /// <value>Is Omigenomics.</value>
+        [JsonProperty("U_Tipo_Facturacion")]
+        public string BillingType { get; set; }
     }
 }

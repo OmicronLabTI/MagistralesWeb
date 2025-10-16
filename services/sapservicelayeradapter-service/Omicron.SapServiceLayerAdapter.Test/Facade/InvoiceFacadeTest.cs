@@ -58,6 +58,20 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
         }
 
         /// <summary>
+        /// Test for selecting all models.
+        /// </summary>
+        /// <returns>nothing.</returns>
+        [Test]
+        public async Task CreateInvoiceByDeliveries()
+        {
+            // Act
+            var response = await this.invoiceFacade.CreateInvoiceByDeliveries(new List<int>());
+
+            // Assert
+            AssertResponse(response);
+        }
+
+        /// <summary>
         /// Assert response.
         /// </summary>
         /// <param name="response">Response to validate.</param>

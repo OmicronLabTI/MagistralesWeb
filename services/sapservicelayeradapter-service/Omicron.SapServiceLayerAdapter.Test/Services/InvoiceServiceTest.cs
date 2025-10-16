@@ -152,5 +152,34 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
             Assert.That(result.Response, Is.Not.Null);
             Assert.That(result.Comments, Is.Null);
         }
+
+        /// <summary>
+        /// InvoiceTrackingInfoTest.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task CreateInvoiceByRemissions()
+        {
+            // arrange
+            var mockServiceLayerClient = new Mock<IServiceLayerClient>();
+            var mockLogger = new Mock<ILogger>();
+            var deliveryNote = new DeliveryNoteCreatedDto() { CustomerCode = "C0001", DocumentLines = new List<DeliveryNoteLineCreatedDto>() { new DeliveryNoteLineCreatedDto() { LineNum = 1 } } };
+            var response = new ServiceLayerGenericMultipleResultDto<DeliveryNoteCreatedDto>() { Value = new List<DeliveryNoteCreatedDto>() { deliveryNote } };
+            var responseInvoice = GetGenericResponseModel(200, true, response, null);
+            mockServiceLayerClient
+                .Setup(sl => sl.GetAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult(responseInvoice));
+            mockServiceLayerClient
+                .Setup(sl => sl.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(GetGenericResponseModel(200, true, null, null)));
+
+            var invoiceServiceMock = new InvoiceService(mockServiceLayerClient.Object, mockLogger.Object);
+            var result = await invoiceServiceMock.CreateInvoiceByRemissions(new List<int>());
+
+            // assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.InstanceOf<ResultModel>());
+            Assert.That(result.Comments, Is.Null);
+        }
     }
 }
