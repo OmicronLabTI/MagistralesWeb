@@ -210,5 +210,26 @@ namespace Omicron.SapServiceLayerAdapter.Services.Utils
         {
             return listSource == null || !listSource.Any();
         }
+
+        /// <summary>
+        /// Builds a Service Layer query with dynamic filters.
+        /// </summary>
+        /// <param name="entityName">The base entity or route (e.g. "DeliveryNotes").</param>
+        /// <param name="ids">List of IDs to include in the filter.</param>
+        /// <param name="fieldName">The field name to filter on (default: "DocNum").</param>
+        /// <param name="logicalOperator">The logical operator to join filters ("or" / "and").</param>
+        /// <returns>A formatted query string for the Service Layer.</returns>
+        public static string BuildFilteredQueryByIds(
+            string entityName,
+            IEnumerable<int> ids,
+            string fieldName,
+            string logicalOperator)
+        {
+            var filterExpression = string.Join(
+            $" {logicalOperator} ",
+            ids.Select(id => string.Format(ServiceConstants.FilterConditionFormat, fieldName, id)));
+
+            return string.Format(ServiceConstants.QueryFilterFormat, entityName, filterExpression);
+        }
     }
 }

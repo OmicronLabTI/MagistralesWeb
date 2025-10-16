@@ -1368,7 +1368,7 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Doctor
         /// Gets or sets AdditionalData.
         /// </summary>
         /// <value>The AdditionalData.</value>
-        [JsonExtensionData]
+        [Newtonsoft.Json.JsonExtensionData]
         public Dictionary<string, object> AdditionalData { get; set; } = new Dictionary<string, object>();
     }
 }
