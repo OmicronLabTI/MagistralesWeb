@@ -120,7 +120,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Invoices.Impl
                 if (!invoiceResponse.Success)
                 {
                     this.logger.Error(LogsConstants.InvoiceServiceLayerError, logBase, invoiceResponse.UserError);
-                    return ServiceUtils.CreateResult(false, 500, null, null, invoiceResponse.UserError);
+                    return ServiceUtils.CreateResult(false, 500, invoiceResponse.UserError, null, null);
                 }
 
                 var createdInvoice = JsonConvert.DeserializeObject<InvoiceDto>(invoiceResponse.Response.ToString());
@@ -130,7 +130,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Invoices.Impl
             catch (Exception ex)
             {
                 this.logger.Error(ex, LogsConstants.ServiceLayerErrorToCreateInvoice, logBase);
-                return ServiceUtils.CreateResult(false, 500, null, null, ex.Message);
+                return ServiceUtils.CreateResult(false, 500, ex.Message, null, null);
             }
         }
 
