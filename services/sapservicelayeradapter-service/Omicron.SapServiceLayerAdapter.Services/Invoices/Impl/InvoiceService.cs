@@ -92,6 +92,46 @@ namespace Omicron.SapServiceLayerAdapter.Services.Invoices.Impl
             }
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> CreateInvoice(CreateInvoiceDocumentDto createInvoiceDocumentInfo)
+        {
+            var logBase = string.Format(LogsConstants.CreateInvoiceInSapLogBase, createInvoiceDocumentInfo.ProcessId);
+            try
+            {
+                this.logger.Information(LogsConstants.GetDeliveriesForInvoice, logBase, JsonConvert.SerializeObject(createInvoiceDocumentInfo));
+                var (documentLines, comment) = await this.GetDocumentLinesByDeliveries(createInvoiceDocumentInfo.IdDeliveries);
+                var invoiceRequest = new CreateInvoiceDto
+                {
+                    CardCode = createInvoiceDocumentInfo.CardCode,
+                    DocumentDate = DateTime.Now,
+                    DocumentDueDate = DateTime.Now,
+                    DocumentTaxDate = DateTime.Now,
+                    CfdiDriverVersion = createInvoiceDocumentInfo.CfdiDriverVersion,
+                    Comments = comment,
+                    InvoiceDocumentLines = documentLines,
+                };
+
+                this.logger.Information(LogsConstants.CreateInvoiceOnSap, logBase, JsonConvert.SerializeObject(invoiceRequest));
+                var invoiceResponse = await this.serviceLayerClient.PostAsync(
+                        ServiceQuerysConstants.QryInvoiceDocument, JsonConvert.SerializeObject(invoiceRequest));
+
+                if (!invoiceResponse.Success)
+                {
+                    this.logger.Error(LogsConstants.InvoiceServiceLayerError, logBase, invoiceResponse.UserError);
+                    return ServiceUtils.CreateResult(false, 500, invoiceResponse.UserError, null, null);
+                }
+
+                var createdInvoice = JsonConvert.DeserializeObject<InvoiceDto>(invoiceResponse.Response.ToString());
+                this.logger.Information(LogsConstants.InvoiceCreatedSuccessfully, logBase);
+                return ServiceUtils.CreateResult(true, 200, null, createdInvoice.DocumentEntry, null);
+            }
+            catch (Exception ex)
+            {
+                this.logger.Error(ex, LogsConstants.ServiceLayerErrorToCreateInvoice, logBase);
+                return ServiceUtils.CreateResult(false, 500, ex.Message, null, null);
+            }
+        }
+
         private static (string sapTrackingNumber, string sapExtendedTrackingNumbers) UpdateSapTracking(
         int packageId,
         string trackingNumber,
@@ -148,6 +188,35 @@ namespace Omicron.SapServiceLayerAdapter.Services.Invoices.Impl
             }
 
             sb.Append(value);
+        }
+
+        private async Task<(List<CreateInvoiceDocumentLinesDto>, string)> GetDocumentLinesByDeliveries(List<int> idDeliveries)
+        {
+            var query = ServiceUtils.BuildFilteredQueryByIds(
+                ServiceQuerysConstants.QryDeliveryNotes,
+                idDeliveries,
+                ServiceConstants.DocNumFieldName,
+                ServiceConstants.OperatorOr);
+
+            var deliveries = await this.serviceLayerClient.GetAsync(query);
+            var deliveryNoteResponse = JsonConvert.DeserializeObject<ServiceLayerGenericMultipleResultDto<DeliveryNoteDto>>(deliveries.Response.ToString());
+
+            var deliveriesById = idDeliveries
+                .Select(id => (Id: id, Delivery: deliveryNoteResponse.Value.First(x => x.DocEntry == id)))
+                .ToList();
+
+            var documentLines = deliveriesById
+                .SelectMany(r => r.Delivery.DeliveryNoteLines.Select(line => new CreateInvoiceDocumentLinesDto
+                {
+                    DocumentBaseType = ServiceConstants.DeliveryBaseTypeForInvoice,
+                    DocumentBaseEntry = r.Id,
+                    DocumentBaseLine = line.LineNumber,
+                }))
+                .ToList();
+
+            var comment = string.Format(ServiceConstants.CommentForCreatedInvoice, string.Join(ServiceConstants.Comma, deliveriesById.Select(r => r.Id)));
+
+            return (documentLines, comment);
         }
     }
 }

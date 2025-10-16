@@ -252,5 +252,53 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// CancelProductionOrderToCancel.
         /// </value>
         public static string CancelProductionOrderToCancel => "{LogBase} - Cancel Production Order";
+
+        /// <summary>
+        /// Gets CreateInvoiceInSapLogBase.
+        /// </summary>
+        /// <value>
+        /// CreateInvoiceInSapLogBase.
+        /// </value>
+        public static string CreateInvoiceInSapLogBase => "{0} - SapServiceLayerAdapter - Create Invoice";
+
+        /// <summary>
+        /// Gets GetDeliveriesForInvoice.
+        /// </summary>
+        /// <value>
+        /// GetDeliveriesForInvoice.
+        /// </value>
+        public static string GetDeliveriesForInvoice => "{LogBase} - Get Deliveries For Invoice {DeliveryObject}";
+
+        /// <summary>
+        /// Gets CreateInvoiceOnSap.
+        /// </summary>
+        /// <value>
+        /// CreateInvoiceOnSap.
+        /// </value>
+        public static string CreateInvoiceOnSap => "{LogBase} - Create Invoice On SAP - {InvoiceRequest}";
+
+        /// <summary>
+        /// Gets InvoiceCreatedSuccessfully.
+        /// </summary>
+        /// <value>
+        /// InvoiceCreatedSuccessfully.
+        /// </value>
+        public static string InvoiceCreatedSuccessfully => "{LogBase} - Invoice Created Successfully";
+
+        /// <summary>
+        /// Gets ServiceLayerErrorToCreateInvoice.
+        /// </summary>
+        /// <value>
+        /// ServiceLayerErrorToCreateInvoice.
+        /// </value>
+        public static string ServiceLayerErrorToCreateInvoice => "{LogBase} - Service Layer Error To Create Invoice";
+
+        /// <summary>
+        /// Gets InvoiceServiceLayerError.
+        /// </summary>
+        /// <value>
+        /// InvoiceServiceLayerError.
+        /// </value>
+        public static string InvoiceServiceLayerError => "{LogBase} - Service Layer Error: {UserError}";
     }
 }

@@ -530,6 +530,41 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public static string YesValue => "Y";
 
         /// <summary>
+        /// Gets DeliveryBaseTypeForInvoice.
+        /// </summary>
+        public static int DeliveryBaseTypeForInvoice => 15;
+
+        /// <summary>
+        /// Gets CommentForCreatedInvoice.
+        /// </summary>
+        public static string CommentForCreatedInvoice => "Basado en Entregas {0}";
+
+        /// <summary>
+        /// Gets Comma.
+        /// </summary>
+        public static string Comma => ",";
+
+        /// <summary>
+        /// Gets DocNumFieldName.
+        /// </summary>
+        public static string DocNumFieldName => "DocNum";
+
+        /// <summary>
+        /// Gets OpedratorOr.
+        /// </summary>
+        public static string OperatorOr => "or";
+
+        /// <summary>
+        /// Gets QueryFilterFormat.
+        /// </summary>
+        public static string QueryFilterFormat => "{0}?$filter={1}";
+
+        /// <summary>
+        /// Gets OpedratorOr.
+        /// </summary>
+        public static string FilterConditionFormat => "({0} eq {1})";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

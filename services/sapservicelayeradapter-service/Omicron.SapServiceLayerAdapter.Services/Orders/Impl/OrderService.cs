@@ -100,6 +100,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
                     ContactPersonCode = saleOrderModel.TypeClientOrder == ServiceConstants.ClientTypeInstitucional ? 0 : null,
                     ClientTypeOrder = saleOrderModel.TypeClientOrder,
                     TipoPedido = saleOrderModel.ManufacturerClassificationCode,
+                    TipoFactura = saleOrderModel.InvoiceType,
                 };
 
                 AssingValues(order, saleOrderModel, attachmentId);
