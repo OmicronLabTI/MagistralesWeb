@@ -28,6 +28,10 @@ namespace Omicron.SapServiceLayerAdapter.Facade.Invoice.Impl
         }
 
         /// <inheritdoc/>
+        public async Task<ResultDto> CreateInvoice(CreateInvoiceDocumentDto createInvoiceDocumentInfo)
+            => this.mapper.Map<ResultDto>(await this.invoiceService.CreateInvoice(createInvoiceDocumentInfo));
+
+        /// <inheritdoc/>
         public async Task<ResultDto> UpdateInvoiceTrackingInfo(int invoiceId, TrackingInformationDto packageInformationSend)
             => this.mapper.Map<ResultDto>(await this.invoiceService.UpdateInvoiceTrackingInfo(invoiceId, packageInformationSend));
     }
