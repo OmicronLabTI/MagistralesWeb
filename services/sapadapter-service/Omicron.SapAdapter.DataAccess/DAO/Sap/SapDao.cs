@@ -1483,6 +1483,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              DeliveryAddressId = order.ShippingAddressName,
                              IsOmigenomics = order.IsOmigenomics,
                              IsSecondary = order.IsSecondary,
+                             BillingType = order.BillingType, 
                          });
 
             return (await this.RetryQuery(query)).ToList();
