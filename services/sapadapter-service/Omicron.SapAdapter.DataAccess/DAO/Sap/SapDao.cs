@@ -199,6 +199,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             IsSecondary = order.IsSecondary,
                             ProffesionalLicense = doctor.ProffesionalLicense,
                             ClientType = order.ClientType,
+                            BillingType = order.BillingType
                         };
 
             return (await this.RetryQuery(query)).ToList();
@@ -682,6 +683,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             IsPackage = order.IsPackage,
                             IsOmigenomics = string.IsNullOrEmpty(order.IsOmigenomics) ? order.IsSecondary : order.IsOmigenomics == "1" ? "Y" : "N",
                             IsSecondary = order.IsSecondary,
+                            BillingType = order.BillingType,
                             Detalles = new DetallePedidoModel
                             {
                                 PedidoId = detail.PedidoId,
@@ -1720,6 +1722,31 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         {
             var query = await this.databaseContext.OrdenFabricacionModel.Where(x => saleOrdersIds.Contains(x.PedidoId.Value) && x.OrderRelationType == "N").AsNoTracking().ToListAsync();
             return query;
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<DeliveryDetailByOrdersModel>> GetDeliveryDetaiByOrders(List<int> orderIds)
+        {
+            var query = from dl in databaseContext.DeliveryDetailModel
+                        join d in databaseContext.DeliverModel
+                            on dl.DeliveryId equals d.PedidoId
+                        join od in databaseContext.DetallePedido
+                            on new { DocEntry = dl.BaseEntry ?? 0, LineNum = dl.BaseLine }
+                            equals new { DocEntry = od.PedidoId ?? 0, LineNum = od.DetalleId }
+                        join o in databaseContext.OrderModel
+                            on od.PedidoId equals o.PedidoId
+                        where dl.BaseType == 17 && orderIds.Contains(od.PedidoId ?? 0) && d.Canceled == "N"
+                        select new DeliveryDetailByOrdersModel
+                        {
+                            DeliveryId = d.PedidoId,
+                            DeliveryLine = dl.LineNum,
+                            OrderLine = od.DetalleId,
+                            ItemCode = od.ProductoId,
+                            Quantity = dl.Quantity,
+                            OrderId = od.PedidoId ?? 0,
+                        };
+
+            return await this.RetryQuery(query);
         }
 
         private IQueryable<InvoiceHeaderModel> GetInvoiceHeaderJoinDoctorBaseQuery()

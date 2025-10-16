@@ -38,5 +38,13 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// string ProductFirmName.
         /// </value>
         public string ProductFirmName { get; set; }
+
+        /// <summary>
+        /// Gets or sets Pieces.
+        /// </summary>
+        /// <value>
+        /// string Pieces.
+        /// </value>
+        public int Pieces { get; set; }
     }
 }

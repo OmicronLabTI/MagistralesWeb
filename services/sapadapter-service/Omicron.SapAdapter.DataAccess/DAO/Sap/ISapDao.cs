@@ -760,5 +760,11 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="saleOrdersIds">saleOrdersIds.</param>
         /// <returns>the data.</returns>
         Task<List<OrdenFabricacionModel>> GetOrdersWithChildBySaleOrder(List<int> saleOrdersIds);
+        /// <summary>
+        /// GetOrdersWithChildBySaleOrder.
+        /// </summary>
+        /// <param name="orderIds">saleOrdersIds.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<DeliveryDetailByOrdersModel>> GetDeliveryDetaiByOrders(List<int> orderIds);
     }
 }
