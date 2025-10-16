@@ -484,5 +484,19 @@ namespace Omicron.SapAdapter.Test.Facade
             Assert.That(response.Success);
             Assert.That(response.Code == 200);
         }
+
+        /// <summary>
+        /// Test the get Almacen Orders By Doctor.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetDeliveryDetaiByOrders()
+        {
+            var response = await this.almacenFacade.GetDeliveryDetaiByOrders(new List<int> { 123 });
+
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Code == 200);
+        }
     }
 }

@@ -321,6 +321,13 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, objectToReturn, null, null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetDeliveryDetaiByOrders(List<int> ordersId)
+        {
+            var detail = await this.sapDao.GetDeliveryDetaiByOrders(ordersId);
+            return ServiceUtils.CreateResult(true, 200, null, detail.OrderBy(x => x.DeliveryId).ToList(), null, null);
+        }
+
         private async Task<RemittedPiecesModel> CalculateRemissionPieces(int orderId, string itemCode)
         {
             var response = await this.almacenService.GetAlmacenOrders(string.Format(ServiceConstants.GetRemittedPieces, itemCode, orderId));
@@ -824,7 +831,7 @@ namespace Omicron.SapAdapter.Services.Sap
                             {
                                 DocNumDxp = ord.Key,
                                 NumOrders = ord.Where(o => o.IsWorkableProduct == "Y").Select(o => o.DocNum).Distinct().ToList(),
-                                ProductsDetails = ord.Select(o => new CountDxpOrdersDetail { ItemCode = o.Detalles.ProductoId, DocNum = o.DocNum, CatalogGroup = o.Detalles.CatalogGroup, ProductFirmName = o.Detalles.ProductFirmName, }).ToList(),
+                                ProductsDetails = ord.Select(o => new CountDxpOrdersDetail { ItemCode = o.Detalles.ProductoId, DocNum = o.DocNum, CatalogGroup = o.Detalles.CatalogGroup, ProductFirmName = o.Detalles.ProductFirmName, Pieces = (int)o.Detalles.Quantity }).ToList(),
                             });
         }
     }

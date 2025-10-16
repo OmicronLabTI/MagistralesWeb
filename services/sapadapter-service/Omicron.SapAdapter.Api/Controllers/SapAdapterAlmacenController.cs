@@ -193,6 +193,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         /// <summary>
         /// Gets the orders.
         /// </summary>
+        /// <param name="salesOrdersIds">The sales Orders Ids.</param>
+        /// <returns>the data.</returns>
+        [Route("/delivery/detail/byorders")]
+        [HttpPost]
+        public async Task<IActionResult> GetDeliveryDetaiByOrders(List<int> salesOrdersIds)
+        {
+            var response = await this.sapAlmacenFacade.GetDeliveryDetaiByOrders(salesOrdersIds);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
         /// <param name="ordersId">The type of scanned item.</param>
         /// <returns>the data.</returns>
         [Route("/delivery/orderids")]
