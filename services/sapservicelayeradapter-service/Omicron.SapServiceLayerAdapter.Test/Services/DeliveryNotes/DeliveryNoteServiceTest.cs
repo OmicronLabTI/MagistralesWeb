@@ -160,7 +160,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
             {
                 Success = true,
                 UserError = string.Empty,
-                Response = JsonConvert.SerializeObject(new DeliveryNoteCreatedDto() { CustomerCode = "C0001", DocEntry = 1, DocumentLines = new List<DeliveryNoteLineCreatedDto>() { new DeliveryNoteLineCreatedDto() } }),
+                Response = JsonConvert.SerializeObject(new DeliveryNoteDto() { CustomerCode = "C0001", DocEntry = 1, DeliveryNoteLines = new List<DeliveryNoteLineDto>() { new DeliveryNoteLineDto() } }),
                 Code = 201,
             };
             mockServiceLayerClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
