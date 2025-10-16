@@ -17,6 +17,13 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.DeliveryNotes
         /// Gets or sets the Due Date.
         /// </summary>
         /// <value>Due Date.</value>
+        [JsonProperty("DocEntry")]
+        public int DocEntry { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Due Date.
+        /// </summary>
+        /// <value>Due Date.</value>
         [JsonProperty("DocDueDate")]
         public string DueDate { get; set; }
 

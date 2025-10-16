@@ -192,18 +192,20 @@ namespace Omicron.SapServiceLayerAdapter.Services.Invoices.Impl
 
         private async Task<(List<CreateInvoiceDocumentLinesDto>, string)> GetDocumentLinesByDeliveries(List<int> idDeliveries)
         {
-            var results = new List<(int Id, DeliveryNoteDto Delivery)>();
+            var query = ServiceUtils.BuildFilteredQueryByIds(
+                ServiceQuerysConstants.QryDeliveryNotes,
+                idDeliveries,
+                ServiceConstants.DocNumFieldName,
+                ServiceConstants.OperatorOr);
 
-            foreach (var id in idDeliveries)
-            {
-                var response = await this.serviceLayerClient.GetAsync(
-                    string.Format(ServiceQuerysConstants.QryGetDeliveryNoteById, id));
+            var deliveries = await this.serviceLayerClient.GetAsync(query);
+            var deliveryNoteResponse = JsonConvert.DeserializeObject<ServiceLayerGenericMultipleResultDto<DeliveryNoteDto>>(deliveries.Response.ToString());
 
-                var delivery = JsonConvert.DeserializeObject<DeliveryNoteDto>(response.Response.ToString());
-                results.Add((id, delivery));
-            }
+            var deliveriesById = idDeliveries
+                .Select(id => (Id: id, Delivery: deliveryNoteResponse.Value.First(x => x.DocEntry == id)))
+                .ToList();
 
-            var documentLines = results
+            var documentLines = deliveriesById
                 .SelectMany(r => r.Delivery.DeliveryNoteLines.Select(line => new CreateInvoiceDocumentLinesDto
                 {
                     DocumentBaseType = ServiceConstants.DeliveryBaseTypeForInvoice,
@@ -212,7 +214,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Invoices.Impl
                 }))
                 .ToList();
 
-            var comment = string.Format(ServiceConstants.CommentForCreatedInvoice, string.Join(ServiceConstants.Comma, results.Select(r => r.Id)));
+            var comment = string.Format(ServiceConstants.CommentForCreatedInvoice, string.Join(ServiceConstants.Comma, deliveriesById.Select(r => r.Id)));
 
             return (documentLines, comment);
         }

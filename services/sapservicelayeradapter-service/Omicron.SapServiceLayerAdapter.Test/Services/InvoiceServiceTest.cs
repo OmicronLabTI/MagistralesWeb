@@ -174,21 +174,50 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
                 CardCode = "C12345",
                 ProcessId = "2c904df4-96db-4a56-bf56-4747c3174106",
                 CfdiDriverVersion = "CFDi40",
-                IdDeliveries = new List<int> { 1001, 1002 },
-            };
-
-            var deliveryMock = new DeliveryNoteDto
-            {
-                DeliveryNoteLines = new List<DeliveryNoteLineDto>
-                {
-                    new DeliveryNoteLineDto { LineNumber = 0 },
-                    new DeliveryNoteLineDto { LineNumber = 1 },
-                },
+                IdDeliveries = new List<int> { 1001, 1002, 1003 },
             };
 
             var mockServiceLayerClient = new Mock<IServiceLayerClient>();
             var mockLogger = new Mock<ILogger>();
-            var deliveryResponseMock = GetGenericResponseModel(200, true, deliveryMock, null);
+
+            var deliveryMock = new List<DeliveryNoteDto>
+            {
+                new DeliveryNoteDto
+                {
+                    DocEntry = 1001,
+                    DeliveryNoteLines = new List<DeliveryNoteLineDto>
+                    {
+                        new DeliveryNoteLineDto { LineNumber = 0 },
+                        new DeliveryNoteLineDto { LineNumber = 1 },
+                    },
+                },
+                new DeliveryNoteDto
+                {
+                    DocEntry = 1002,
+                    DeliveryNoteLines = new List<DeliveryNoteLineDto>
+                    {
+                        new DeliveryNoteLineDto { LineNumber = 0 },
+                        new DeliveryNoteLineDto { LineNumber = 1 },
+                        new DeliveryNoteLineDto { LineNumber = 2 },
+                        new DeliveryNoteLineDto { LineNumber = 3 },
+                    },
+                },
+                new DeliveryNoteDto
+                {
+                    DocEntry = 1003,
+                    DeliveryNoteLines = new List<DeliveryNoteLineDto>
+                    {
+                        new DeliveryNoteLineDto { LineNumber = 0 },
+                    },
+                },
+            };
+
+            var responseDeliveryMock = new ServiceLayerGenericMultipleResultDto<DeliveryNoteDto>()
+            {
+                Value = deliveryMock,
+            };
+
+            var deliveryResponseMock = GetGenericResponseModel(200, true, responseDeliveryMock, null);
 
             mockServiceLayerClient
                 .Setup(sl => sl.GetAsync(It.IsAny<string>()))
