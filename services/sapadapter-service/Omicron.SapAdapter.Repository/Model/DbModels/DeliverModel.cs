@@ -123,5 +123,12 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// <value>The code.</value>
         [Column("U_Omigenomicstp")]
         public string IsSecondary { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("U_Tipo_Facturacion")]
+        public string BillingType { get; set; }
     }
 }

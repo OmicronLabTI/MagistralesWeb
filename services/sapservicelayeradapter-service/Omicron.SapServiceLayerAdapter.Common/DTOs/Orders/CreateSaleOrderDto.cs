@@ -178,5 +178,13 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// Classification Code.
         /// </value>
         public string ManufacturerClassificationCode { get; set; }
+
+        /// <summary>
+        /// Gets or sets Invoice Type value.
+        /// </summary>
+        /// <value>
+        /// InvoiceType.
+        /// </value>
+        public string InvoiceType { get; set; }
     }
 }

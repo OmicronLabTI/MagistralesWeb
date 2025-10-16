@@ -8,11 +8,10 @@
 
 namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Responses
 {
-    using System.Text.Json.Serialization;
-
     /// <summary>
     /// ServiceLayerGenericMultipleResultDto class.
     /// </summary>
+    /// <typeparam name="T">The Type parameter.</typeparam>
     public class ServiceLayerGenericMultipleResultDto<T>
     {
         /// <summary>
