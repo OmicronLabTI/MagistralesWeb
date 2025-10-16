@@ -6,8 +6,6 @@
 // </copyright>
 // </summary>
 
-using System.Runtime.CompilerServices;
-
 namespace Omicron.SapServiceLayerAdapter.Services.Invoices.Impl
 {
     /// <summary>

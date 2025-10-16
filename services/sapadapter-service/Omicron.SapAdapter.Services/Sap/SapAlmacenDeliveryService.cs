@@ -131,6 +131,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 IsOmigenomics = deliveryDetails.Exists(del => ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(del.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(del.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(del.IsSecondary))),
                 DxpId = ServiceShared.ValidateNull(deliveryDetails.FirstOrDefault().DocNumDxp.GetShortShopTransaction()).ToUpper(),
                 HasChildOrders = hasAnyChildFabOrder,
+                BillingType = deliveryDetails.FirstOrDefault().BillingType,
             };
 
             return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, null);
