@@ -26,6 +26,7 @@ namespace Omicron.SapFile.Services.SapFile
     using iTextSharp.text;
     using iTextSharp.text.pdf;
     using Omicron.SapFile.Dtos.Models;
+    using Newtonsoft.Json;
 
     /// <summary>
     /// Class to create pdfs.
@@ -75,8 +76,10 @@ namespace Omicron.SapFile.Services.SapFile
                 {
                     try
                     {
+                        this._loggerProxy.Info($"Init CreatePdfs: {JsonConvert.SerializeObject(order)}.");
                         if (order.OrderId != 0 && !dictOrdersCreated.ContainsKey(order.OrderId))
                         {
+                            this._loggerProxy.Info($"CreatePdfs - PdfCreated: {ConfigurationManager.AppSettings["PdfCreated"]}.");
                             order.OrderPdfRoute = this.CreateOrderReport(order.OrderId, ServiceConstants.GeneralClientType, ConfigurationManager.AppSettings["PdfCreated"]);
                             dictOrdersCreated.Add(order.OrderId, order.OrderId);
                         }
@@ -238,7 +241,10 @@ namespace Omicron.SapFile.Services.SapFile
 
             var name = $"Order{orderId}.pdf";
             var route = fileRoute;
+            this._loggerProxy.Info($"CreatePdfs - @route: {@route}.");
+            this._loggerProxy.Info($"CreatePdfs - name: {name}.");
             var completeRoute = ServiceUtils.ReplaceUrlToDiscC(@route + name);
+            this._loggerProxy.Info($"CreatePdfs - CompleteRoute: {completeRoute}.");
             this.CreatePdf(report, completeRoute);
             return completeRoute;
         }
