@@ -57,8 +57,8 @@ namespace Omicron.SapFile.Services.Prescription.Impl
                     fileName = routeArray.Last();
                     containerRoute = presurl.AzurePrescriptionUrl.Replace(fileName, string.Empty);
                     routeFile = $"{ConfigurationManager.AppSettings[ServiceConstants.PrescriptionFiles]}{fileName}";
-                    this._loggerProxy.Info($"SaveToPathFromAzure - Url: {containerRoute} - File Name:{fileName} - File Route: {routeFile}");
-                    await azureObj.SaveToPathFromAzure(containerRoute, fileName, routeFile);
+                    this._loggerProxy.Info($"SaveToPathFromAzure - Url: {containerRoute} - File Name:{fileName} - File Route: {ServiceUtils.ReplaceUrlToDiscC(routeFile)}");
+                    await azureObj.SaveToPathFromAzure(containerRoute, fileName, ServiceUtils.ReplaceUrlToDiscC(routeFile));
                     downloadResult.Add(
                         new PrescriptionServerResponseDto
                         {
