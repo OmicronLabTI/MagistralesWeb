@@ -58,7 +58,7 @@ namespace Omicron.SapFile.Services.SapFile
             this.User = ConfigurationManager.AppSettings["Usuario"];
             this.Pwd = ConfigurationManager.AppSettings["UserPwd"];
             this.ProductionDirectoryPath = ConfigurationManager.AppSettings["ProductionFiles"];
-            this.TemporalDirectoryPath = ConfigurationManager.AppSettings["PdfCreated"];
+            this.TemporalDirectoryPath = ServiceUtils.ReplaceUrlToDiscC(ConfigurationManager.AppSettings["PdfCreated"] ?? string.Empty); ;
         }
 
         /// <summary>
