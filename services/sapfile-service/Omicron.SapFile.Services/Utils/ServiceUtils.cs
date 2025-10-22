@@ -104,7 +104,7 @@ namespace Omicron.SapFile.Services.Utils
         /// <returns>the data.</returns>
         public static string ReplaceUrlToDiscC(string url)
         {
-            string ipPattern = @"\b(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\b";
+            string ipPattern = @"\\\\(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)";
             return Regex.Replace(url, ipPattern, "C:");
         }
     }
