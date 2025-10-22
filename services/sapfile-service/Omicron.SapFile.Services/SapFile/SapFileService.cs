@@ -116,18 +116,6 @@ namespace Omicron.SapFile.Services.SapFile
 
             return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
         }
-        
-        /// <summary>
-        /// Creates the pdfs.
-        /// </summary>
-        /// <param name="url">the data to create.</param>
-        /// <returns>the data.</returns>
-        public string ReplaceUrlToDiscC(string url)
-        {
-            string ipPattern = @"\b(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\b";
-            return Regex.Replace(url, ipPattern, "C:");
-        }
-
 
         /// <summary>
         /// Creates the sale order pdf.
@@ -163,13 +151,13 @@ namespace Omicron.SapFile.Services.SapFile
             {
                 try
                 {
-                   if (type == ServiceConstants.Invoice)
+                    if (type == ServiceConstants.Invoice)
                     {
                         var routePDf = this.CreateInvoiceReport(o, ConfigurationManager.AppSettings["SalePdfCreated"]);
                         dictResult.Add($"{o}", $"Ok-{routePDf}");
                     }
-                   
-                   if (type == ServiceConstants.Delivery)
+
+                    if (type == ServiceConstants.Delivery)
                     {
                         var routePDf = this.CreateDeliveryReport(o, ConfigurationManager.AppSettings["SalePdfCreated"]);
                         dictResult.Add($"{o}", $"Ok-{routePDf}");
@@ -230,7 +218,8 @@ namespace Omicron.SapFile.Services.SapFile
             {
                 this._loggerProxy.Debug("Creando pdf de cliente institucional");
                 localRoute = ConfigurationManager.AppSettings["PedidoInstitucionalRtp"];
-            } else
+            }
+            else
             {
                 localRoute = ConfigurationManager.AppSettings["PedidoRtp"];
             }
@@ -240,7 +229,7 @@ namespace Omicron.SapFile.Services.SapFile
             this._loggerProxy.Debug("get current directory");
             var root = Directory.GetCurrentDirectory();
             root += localRoute;
-            
+
             report.Load(root);
             report.DataSourceConnections[0].SetConnection(this.Server, this.DataBase, this.User, this.Pwd);
 
@@ -324,7 +313,7 @@ namespace Omicron.SapFile.Services.SapFile
             report.Load(root);
             report.DataSourceConnections[0].SetConnection(this.Server, this.DataBase, this.User, this.Pwd);
 
-            report.SetParameterValue("DocKey@", orderId);            
+            report.SetParameterValue("DocKey@", orderId);
 
             var name = $"FabOrder{orderId}.pdf";
             var route = ConfigurationManager.AppSettings["PdfCreated"];
