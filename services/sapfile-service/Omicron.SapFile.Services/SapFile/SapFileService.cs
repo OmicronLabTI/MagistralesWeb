@@ -86,11 +86,11 @@ namespace Omicron.SapFile.Services.SapFile
                             order.FabOrderPdfRoute = this.CreateFabOrderReport(order.FabOrderId);
                         }
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         this._loggerProxy.Error(ex.Message, ex);
                         dictResult.Add($"{order.OrderId}-{order.FabOrderId}", "ErrorCreatePdf");
-                    }                    
+                    }
                 });
 
                 finalizaGeneratePdfs.Where(x => x.OrderId.Equals(0)).ToList().ForEach(order =>
@@ -100,13 +100,14 @@ namespace Omicron.SapFile.Services.SapFile
                 });
 
                 var groupedOrders = finalizaGeneratePdfs.Where(order => order.OrderId != 0).GroupBy(order => order.OrderId);
-                groupedOrders.ToList().ForEach(x => {
+                groupedOrders.ToList().ForEach(x =>
+                {
                     var filePath = this.CreateSalesOrderReportWithProductionOrders(x.ToList());
                     this._loggerProxy.Info($"Create file for sales order: {filePath}.");
                     dictResult.Add($"OK-{x.Key}", filePath);
                 });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 this._loggerProxy.Error(ex.Message, ex);
                 dictResult.Add("Error Procesar Pdf - Error Procesar Pdf", "ErrorCreatePdf");
@@ -115,6 +116,18 @@ namespace Omicron.SapFile.Services.SapFile
 
             return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
         }
+        
+        /// <summary>
+        /// Creates the pdfs.
+        /// </summary>
+        /// <param name="url">the data to create.</param>
+        /// <returns>the data.</returns>
+        public string ReplaceUrlToDiscC(string url)
+        {
+            string ipPattern = @"\b(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\b";
+            return Regex.Replace(url, ipPattern, "C:");
+        }
+
 
         /// <summary>
         /// Creates the sale order pdf.
@@ -238,7 +251,7 @@ namespace Omicron.SapFile.Services.SapFile
             var route = fileRoute;
             var completeRoute = @route + name;
             this.CreatePdf(report, completeRoute);
-            return completeRoute;
+            return ServiceUtils.ReplaceUrlToDiscC(completeRoute ?? string.Empty);
         }
 
         /// <summary>
@@ -264,7 +277,7 @@ namespace Omicron.SapFile.Services.SapFile
             var route = fileRoute;
             var completeRoute = @route + name;
             this.CreatePdf(report, completeRoute);
-            return completeRoute;
+            return ServiceUtils.ReplaceUrlToDiscC(completeRoute ?? string.Empty);
         }
 
         /// <summary>
@@ -291,7 +304,7 @@ namespace Omicron.SapFile.Services.SapFile
             var route = fileRoute;
             var completeRoute = @route + name;
             this.CreatePdf(report, completeRoute);
-            return completeRoute;
+            return ServiceUtils.ReplaceUrlToDiscC(completeRoute ?? string.Empty);
         }
 
         /// <summary>
@@ -317,7 +330,8 @@ namespace Omicron.SapFile.Services.SapFile
             var route = ConfigurationManager.AppSettings["PdfCreated"];
             var completeRoute = @route + name;
             this.CreatePdf(report, completeRoute);
-            return completeRoute;
+            completeRoute = ServiceUtils.ReplaceUrlToDiscC(completeRoute ?? string.Empty);
+            return completeRoute.Replace(".pdf", "");
         }
 
         /// <summary>
