@@ -238,9 +238,9 @@ namespace Omicron.SapFile.Services.SapFile
 
             var name = $"Order{orderId}.pdf";
             var route = fileRoute;
-            var completeRoute = @route + name;
+            var completeRoute = ServiceUtils.ReplaceUrlToDiscC(@route + name);
             this.CreatePdf(report, completeRoute);
-            return ServiceUtils.ReplaceUrlToDiscC(completeRoute ?? string.Empty);
+            return completeRoute;
         }
 
         /// <summary>
