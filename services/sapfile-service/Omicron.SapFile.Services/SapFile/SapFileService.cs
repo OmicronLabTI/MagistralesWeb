@@ -76,10 +76,10 @@ namespace Omicron.SapFile.Services.SapFile
                 {
                     try
                     {
-                        this._loggerProxy.Info($"Init CreatePdfs: {JsonConvert.SerializeObject(order)}.");
+                        this._loggerProxy.Error($"Init CreatePdfs: {JsonConvert.SerializeObject(order)}.");
                         if (order.OrderId != 0 && !dictOrdersCreated.ContainsKey(order.OrderId))
                         {
-                            this._loggerProxy.Info($"CreatePdfs - PdfCreated: {ConfigurationManager.AppSettings["PdfCreated"]}.");
+                            this._loggerProxy.Error($"CreatePdfs - PdfCreated: {ConfigurationManager.AppSettings["PdfCreated"]}.");
                             order.OrderPdfRoute = this.CreateOrderReport(order.OrderId, ServiceConstants.GeneralClientType, ConfigurationManager.AppSettings["PdfCreated"]);
                             dictOrdersCreated.Add(order.OrderId, order.OrderId);
                         }
@@ -241,10 +241,11 @@ namespace Omicron.SapFile.Services.SapFile
 
             var name = $"Order{orderId}.pdf";
             var route = fileRoute;
-            this._loggerProxy.Info($"CreatePdfs - @route: {@route}.");
-            this._loggerProxy.Info($"CreatePdfs - name: {name}.");
-            var completeRoute = ServiceUtils.ReplaceUrlToDiscC(@route + name);
-            this._loggerProxy.Info($"CreatePdfs - CompleteRoute: {completeRoute}.");
+            this._loggerProxy.Error($"Omicron.SapFile.SapFiles Service - CreateOrderReport - Name: {name}");
+            this._loggerProxy.Error($"Omicron.SapFile.SapFiles Service - CreateOrderReport - Route: {route}");
+            var routeComplete = @route + name;
+            var completeRoute = ServiceUtils.ReplaceUrlToDiscC(routeComplete ?? string.Empty);
+            this._loggerProxy.Error($"Omicron.SapFile.SapFiles Service - CreateOrderReport - CompleteRoute: {completeRoute}");
             this.CreatePdf(report, completeRoute);
             return completeRoute;
         }
@@ -323,9 +324,12 @@ namespace Omicron.SapFile.Services.SapFile
 
             var name = $"FabOrder{orderId}.pdf";
             var route = ConfigurationManager.AppSettings["PdfCreated"];
-            var completeRoute = @route + name;
+            this._loggerProxy.Error($"Omicron.SapFile.SapFiles Service - CreateFabOrderReport - Name: {name}");
+            this._loggerProxy.Error($"Omicron.SapFile.SapFiles Service - CreateFabOrderReport - Route: {route}");
+            var routeComplete = @route + name;
+            var completeRoute = ServiceUtils.ReplaceUrlToDiscC(routeComplete ?? string.Empty);
+            this._loggerProxy.Error($"Omicron.SapFile.SapFiles Service - CreateFabOrderReport - completeRoute: {completeRoute}");
             this.CreatePdf(report, completeRoute);
-            completeRoute = ServiceUtils.ReplaceUrlToDiscC(completeRoute ?? string.Empty);
             return completeRoute.Replace(".pdf", "");
         }
 
