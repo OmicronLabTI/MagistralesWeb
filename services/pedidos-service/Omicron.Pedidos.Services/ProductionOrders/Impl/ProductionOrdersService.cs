@@ -169,7 +169,6 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             var logBase = string.Format(LogsConstants.FinalizeProductionOrdersOnSapAsync, productionOrderProcessingPayload.Id);
 
             var (productionOrderUpdated, isProcessSuccesfully) = await this.FinalizeProductionOrdersOnSapProcess(productionOrderProcessingPayload, logBase);
-            this.logger.Information(LogsConstants.UpdateProductionOrderProcessingStatus, logBase, JsonConvert.SerializeObject(productionOrderUpdated));
 
             if (!isProcessSuccesfully)
             {
@@ -194,8 +193,6 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             var logBase = string.Format(LogsConstants.UpdateProductionOrdersOnPostgresAsync, productionOrderProcessingPayload.Id);
 
             var (productionOrderUpdated, isProcessSuccesfully) = await this.UpdateProductionOrdersOnPostgresProcess(productionOrderProcessingPayload, logBase);
-            this.logger.Information(LogsConstants.UpdateProductionOrderProcessingStatus, logBase, JsonConvert.SerializeObject(productionOrderUpdated));
-            await this.pedidosDao.UpdatesProductionOrderProcessingStatus([productionOrderUpdated]);
 
             if (!isProcessSuccesfully)
             {
@@ -216,10 +213,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             this.logger.Information(LogsConstants.StartCreationPdf, JsonConvert.SerializeObject(productionOrderProcessingPayload));
             var logBase = string.Format(LogsConstants.GeneratePdfOfProductionOrdersAsync, productionOrderProcessingPayload.Id);
 
-            var (productionOrderUpdated, isProcessSuccesfully) = await this.CreateProductionOrderPdf(productionOrderProcessingPayload, logBase);
-            this.logger.Information(LogsConstants.UpdateProductionOrderProcessingStatus, logBase, JsonConvert.SerializeObject(productionOrderUpdated));
-            await this.pedidosDao.UpdatesProductionOrderProcessingStatus([productionOrderUpdated]);
-            await this.DeleteRedisControlKeyToFinalizeProductionOrder(productionOrderUpdated.ProductionOrderId);
+            var isProcessSuccesfully = await this.CreateProductionOrderPdf(productionOrderProcessingPayload, logBase);
 
             if (!isProcessSuccesfully)
             {
@@ -634,6 +628,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             string id,
             string status,
             string payload,
+            string logBase,
             string errorMessage = null,
             string lastStep = null)
         {
@@ -643,9 +638,11 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             modelToUpdate.LastStep = lastStep;
             modelToUpdate.LastUpdated = DateTime.Now;
             modelToUpdate.Payload = payload;
+
+            this.logger.Information(LogsConstants.UpdateProductionOrderProcessingStatus, logBase, JsonConvert.SerializeObject(modelToUpdate));
             await this.pedidosDao.UpdatesProductionOrderProcessingStatus([modelToUpdate]);
 
-            if (status == ServiceConstants.FinalizeProcessFailedStatus)
+            if (ServiceUtils.CalculateOr(status == ServiceConstants.FinalizeProcessFailedStatus, status == ServiceConstants.FinalizeProcessInSuccessStatus))
             {
                 await this.DeleteRedisControlKeyToFinalizeProductionOrder(modelToUpdate.ProductionOrderId);
             }
@@ -824,6 +821,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                         productionOrderProcessingPayload.Id,
                         ServiceConstants.FinalizeProcessFailedStatus,
                         productionOrderProcessingPayload.Payload,
+                        logBase,
                         ServiceConstants.ErrorOccurredWhileCommunicatingWithServiceLayerAdapter,
                         productionOrderProcessingPayload.LastStep);
                     return (productionOrderProcessingPayload, false);
@@ -844,6 +842,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                         productionOrderProcessingPayload.Id,
                         ServiceConstants.FinalizeProcessFailedStatus,
                         productionOrderProcessingPayload.Payload,
+                        logBase,
                         finalizeProcessResult.ErrorMessage,
                         finalizeProcessResult.LastStep);
                     return (productionOrderProcessingPayload, false);
@@ -853,6 +852,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                         productionOrderProcessingPayload.Id,
                         ServiceConstants.FinalizeProcessInProgressStatus,
                         productionOrderProcessingPayload.Payload,
+                        logBase,
                         productionOrderProcessingPayload.ErrorMessage,
                         finalizeProcessResult.LastStep);
                 return (productionOrderProcessingPayload, true);
@@ -866,6 +866,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                         productionOrderProcessingPayload.Id,
                         ServiceConstants.FinalizeProcessFailedStatus,
                         productionOrderProcessingPayload.Payload,
+                        logBase,
                         string.Format(LogsConstants.GenericErrorLog, ex.Message, ex.InnerException),
                         productionOrderProcessingPayload.LastStep);
                 return (productionOrderProcessingPayload, false);
@@ -989,6 +990,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                     productionOrderProcessingPayload.Id,
                     ServiceConstants.FinalizeProcessInProgressStatus,
                     productionOrderProcessingPayload.Payload,
+                    logBase,
                     productionOrderProcessingPayload.ErrorMessage,
                     ServiceConstants.StepUpdatePostgres);
 
@@ -1003,13 +1005,14 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                         productionOrderProcessingPayload.Id,
                         ServiceConstants.FinalizeProcessFailedStatus,
                         productionOrderProcessingPayload.Payload,
+                        logBase,
                         string.Format(LogsConstants.GenericErrorLog, ex.Message, ex.InnerException),
                         productionOrderProcessingPayload.LastStep);
                 return (productionOrderProcessingPayload, false);
             }
         }
 
-        private async Task<(ProductionOrderProcessingStatusModel, bool)> CreateProductionOrderPdf(ProductionOrderProcessingStatusModel productionOrderProcessingPayload, string logBase)
+        private async Task<bool> CreateProductionOrderPdf(ProductionOrderProcessingStatusModel productionOrderProcessingPayload, string logBase)
         {
             var payloadJson = JsonConvert.DeserializeObject<FinalizeProductionOrderPayload>(productionOrderProcessingPayload.Payload);
             try
@@ -1039,23 +1042,26 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                     productionOrderProcessingPayload.Id,
                     ServiceConstants.FinalizeProcessInSuccessStatus,
                     productionOrderProcessingPayload.Payload,
+                    logBase,
                     productionOrderProcessingPayload.ErrorMessage,
                     ServiceConstants.StepCreatePdf);
 
-                return (productionOrderProcessingPayload, true);
+                return true;
             }
             catch (Exception ex)
             {
                 var error = string.Format(LogsConstants.EndCreatePdfWithError, ex.Message, ex.InnerException);
                 this.logger.Error(ex, error);
 
-                productionOrderProcessingPayload = await this.UpdateProcessStatus(
+                await this.UpdateProcessStatus(
                     productionOrderProcessingPayload.Id,
                     ServiceConstants.FinalizeProcessFailedStatus,
                     productionOrderProcessingPayload.Payload,
+                    logBase,
                     string.Format(LogsConstants.GenericErrorLog, ex.Message, ex.InnerException),
                     productionOrderProcessingPayload.LastStep);
-                return (productionOrderProcessingPayload, false);
+
+                return false;
             }
         }
 
