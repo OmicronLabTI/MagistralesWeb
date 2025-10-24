@@ -193,5 +193,12 @@ namespace Omicron.SapAdapter.Entities.Model
         /// <value>The code.</value>
         [Column("U_Tipo_Facturacion")]
         public string BillingType { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets IsChecked.
+        /// </summary>
+        /// <value>The IsChecked.</value>
+        [NotMapped]
+        public DetallePedidoModel Detalles { get; set; }
     }
 }
