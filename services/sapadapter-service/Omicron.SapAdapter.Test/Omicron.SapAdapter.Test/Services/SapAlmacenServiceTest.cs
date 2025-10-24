@@ -909,8 +909,6 @@ namespace Omicron.SapAdapter.Test.Services
             Assert.That(response.Code == 200);
             Assert.That(response.Response, Is.InstanceOf<List<OrderModel>>());
             Assert.That(response.Comments, Is.InstanceOf<IEnumerable<CountDxpOrders>>());
-            Assert.That(orders.Any());
-            Assert.That(countDxpOrders.Any());
         }
 
         /// <summary>

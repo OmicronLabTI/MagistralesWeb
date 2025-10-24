@@ -174,6 +174,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         {
             var query = from order in this.databaseContext.OrderModel.Where(x => pedidoID.Contains(x.PedidoId))
                         join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
+                        join detail in this.databaseContext.DetallePedido on order.DocNum equals detail.PedidoId
+                        join product in this.databaseContext.ProductoModel on detail.ProductoId equals product.ProductoId
+                        join firm in this.databaseContext.ProductFirmModel on product.ProductFirmCode equals firm.ProductFirmCode
                         select new OrderModel
                         {
                             Address = order.Address,
@@ -199,7 +202,24 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             IsSecondary = order.IsSecondary,
                             ProffesionalLicense = doctor.ProffesionalLicense,
                             ClientType = order.ClientType,
-                            BillingType = order.BillingType
+                            BillingType = order.BillingType,
+                            Detalles = new DetallePedidoModel
+                            {
+                                PedidoId = detail.PedidoId,
+                                DetalleId = detail.DetalleId,
+                                ProductoId = detail.ProductoId,
+                                Description = detail.Description,
+                                Quantity = detail.Quantity,
+                                Label = detail.Label,
+                                Container = detail.Container,
+                                DestinyAddress = detail.DestinyAddress,
+                                HasRecipe = detail.HasRecipe,
+                                LineStatus = detail.LineStatus,
+                                DocDate = detail.DocDate,
+                                WhsCode = detail.WhsCode,
+                                CatalogGroup = string.Empty,
+                                ProductFirmName = firm == default ? string.Empty : firm.ProductFirmName,
+                            },
                         };
 
             return (await this.RetryQuery(query)).ToList();
