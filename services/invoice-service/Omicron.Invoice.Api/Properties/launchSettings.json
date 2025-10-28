@@ -15,7 +15,8 @@
       "launchUrl": "swagger",
       "applicationUrl": "http://localhost:5219",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Local"
+        "ASPNETCORE_ENVIRONMENT": "Local",
+        "POSTGRESS_NET_CONNECTION_STRING": "Server=localhost;Port=5432;Uid=omicronuser;Pwd=Axity2020;Database=omicrondev"
       }
     }
   }

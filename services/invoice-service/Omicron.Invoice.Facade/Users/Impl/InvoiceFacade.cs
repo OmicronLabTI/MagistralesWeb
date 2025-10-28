@@ -25,22 +25,5 @@ namespace Omicron.Invoice.Facade.Users.Impl
         /// <inheritdoc/>
         public async Task<IEnumerable<UserDto>> GetAllAsync()
             => await this.invoiceService.GetAllAsync();
-
-        /// <inheritdoc/>
-        public async Task<UserDto> GetByIdAsync(int id)
-            => await this.invoiceService.GetByIdAsync(id);
-
-        /// <inheritdoc/>
-        public async Task<UserDto> InsertAsync(string user, CreateUserDto userRequest)
-            => await this.invoiceService.InsertAsync(user, userRequest);
-
-        /// <inheritdoc/>
-        public async Task<UserDto> UpdateAsync(
-            int id, string user, UpdateUserDto userRequest)
-            => await this.invoiceService.UpdateAsync(id, user, userRequest);
-
-        /// <inheritdoc/>
-        public async Task DeleteAsync(int id)
-            => await this.invoiceService.DeleteAsync(id);
     }
 }

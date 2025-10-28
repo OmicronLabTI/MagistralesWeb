@@ -26,51 +26,7 @@ namespace Omicron.Invoice.Services.Invoice.Impl
 
         /// <inheritdoc/>
         public async Task<IEnumerable<UserDto>> GetAllAsync()
-            => mapper.Map<IEnumerable<UserDto>>(
-                await invoiceDao.GetAllAsync());
-
-        /// <inheritdoc/>
-        public async Task<UserDto> GetByIdAsync(int id)
-        {
-            var model = await invoiceDao.GetByIdAsync(id);
-            model.ThrowExceptionIfNull<NotFoundException>(
-                string.Format(ErrorMessages.NotFoundIdFormat, id));
-            return mapper.Map<UserDto>(model);
-        }
-
-        /// <inheritdoc/>
-        public async Task<UserDto> InsertAsync(string user, CreateUserDto userRequest)
-        {
-            var model = mapper.Map<UserModel>(userRequest);
-            model.Active = true;
-            await invoiceDao.InsertAsync(model);
-            return mapper.Map<UserDto>(model);
-        }
-
-        /// <inheritdoc/>
-        public async Task<UserDto> UpdateAsync(
-            int id, string user, UpdateUserDto usersRequest)
-        {
-            var model = await invoiceDao.GetByIdAsync(id);
-            model.ThrowExceptionIfNull<NotFoundException>(
-                string.Format(ErrorMessages.NotFoundIdFormat, id));
-
-            model.Name = usersRequest.Name;
-            model.UserName = usersRequest.UserName;
-            model.Email = usersRequest.Email;
-            model.Active = usersRequest.Active;
-            invoiceDao.Update(model);
-            return mapper.Map<UserDto>(model);
-        }
-
-        /// <inheritdoc/>
-        public async Task DeleteAsync(int id)
-        {
-            var model = await invoiceDao.GetByIdAsync(id);
-            model.ThrowExceptionIfNull<NotFoundException>(
-                string.Format(ErrorMessages.NotFoundIdFormat, id));
-            invoiceDao.Delete(model);
-            await invoiceDao.SaveChangesAsync();
-        }
+            => this.mapper.Map<IEnumerable<UserDto>>(
+                await this.invoiceDao.GetAllAsync());
     }
 }
