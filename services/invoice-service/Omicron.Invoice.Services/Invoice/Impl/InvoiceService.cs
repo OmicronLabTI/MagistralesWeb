@@ -1,57 +1,57 @@
 // <summary>
-// <copyright file="UsersService.cs" company="Axity">
+// <copyright file="InvoiceService.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
 
-namespace Omicron.Invoice.Services.Users.Impl
+namespace Omicron.Invoice.Services.Invoice.Impl
 {
     /// <summary>
-    /// UsersService class.
+    /// InvoiceService class.
     /// </summary>
-    public class UsersService : IUsersService
+    public class InvoiceService : IInvoiceService
     {
-        private readonly IUsersDao usersDao;
+        private readonly IInvoiceDao invoiceDao;
         private readonly IMapper mapper;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UsersService"/> class.
+        /// Initializes a new instance of the <see cref="InvoiceService"/> class.
         /// </summary>
         /// <param name="mapper">Mapper.</param>
-        /// <param name="usersDao">Users dao.</param>
-        public UsersService(IMapper mapper, IUsersDao usersDao)
-            => (this.mapper, this.usersDao) = (mapper, usersDao);
+        /// <param name="invoiceDao">Users dao.</param>
+        public InvoiceService(IMapper mapper, IInvoiceDao invoiceDao)
+            => (this.mapper, this.invoiceDao) = (mapper, invoiceDao);
 
         /// <inheritdoc/>
         public async Task<IEnumerable<UserDto>> GetAllAsync()
-            => this.mapper.Map<IEnumerable<UserDto>>(
-                await this.usersDao.GetAllAsync());
+            => mapper.Map<IEnumerable<UserDto>>(
+                await invoiceDao.GetAllAsync());
 
         /// <inheritdoc/>
         public async Task<UserDto> GetByIdAsync(int id)
         {
-            var model = await this.usersDao.GetByIdAsync(id);
+            var model = await invoiceDao.GetByIdAsync(id);
             model.ThrowExceptionIfNull<NotFoundException>(
                 string.Format(ErrorMessages.NotFoundIdFormat, id));
-            return this.mapper.Map<UserDto>(model);
+            return mapper.Map<UserDto>(model);
         }
 
         /// <inheritdoc/>
         public async Task<UserDto> InsertAsync(string user, CreateUserDto userRequest)
         {
-            var model = this.mapper.Map<UserModel>(userRequest);
+            var model = mapper.Map<UserModel>(userRequest);
             model.Active = true;
-            await this.usersDao.InsertAsync(model);
-            return this.mapper.Map<UserDto>(model);
+            await invoiceDao.InsertAsync(model);
+            return mapper.Map<UserDto>(model);
         }
 
         /// <inheritdoc/>
         public async Task<UserDto> UpdateAsync(
             int id, string user, UpdateUserDto usersRequest)
         {
-            var model = await this.usersDao.GetByIdAsync(id);
+            var model = await invoiceDao.GetByIdAsync(id);
             model.ThrowExceptionIfNull<NotFoundException>(
                 string.Format(ErrorMessages.NotFoundIdFormat, id));
 
@@ -59,18 +59,18 @@ namespace Omicron.Invoice.Services.Users.Impl
             model.UserName = usersRequest.UserName;
             model.Email = usersRequest.Email;
             model.Active = usersRequest.Active;
-            this.usersDao.Update(model);
-            return this.mapper.Map<UserDto>(model);
+            invoiceDao.Update(model);
+            return mapper.Map<UserDto>(model);
         }
 
         /// <inheritdoc/>
         public async Task DeleteAsync(int id)
         {
-            var model = await this.usersDao.GetByIdAsync(id);
+            var model = await invoiceDao.GetByIdAsync(id);
             model.ThrowExceptionIfNull<NotFoundException>(
                 string.Format(ErrorMessages.NotFoundIdFormat, id));
-            this.usersDao.Delete(model);
-            await this.usersDao.SaveChangesAsync();
+            invoiceDao.Delete(model);
+            await invoiceDao.SaveChangesAsync();
         }
     }
 }

@@ -1,17 +1,17 @@
 // <summary>
-// <copyright file="IUsersService.cs" company="Axity">
+// <copyright file="IInvoiceFacade.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
 
-namespace Omicron.Invoice.Services.Users
+namespace Omicron.Invoice.Facade.Users
 {
     /// <summary>
-    /// Interface IProjectService.
+    /// Interface IInvoiceFacade.
     /// </summary>
-    public interface IUsersService
+    public interface IInvoiceFacade
     {
         /// <summary>
         /// Method for get all users.

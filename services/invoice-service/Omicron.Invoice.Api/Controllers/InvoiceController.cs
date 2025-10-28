@@ -1,5 +1,5 @@
 // <summary>
-// <copyright file="UsersController.cs" company="Axity">
+// <copyright file="InvoiceController.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -9,20 +9,20 @@
 namespace Omicron.Invoice.Api.Controllers
 {
     /// <summary>
-    /// UsersController class.
+    /// InvoiceController class.
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class InvoiceController : ControllerBase
     {
-        private readonly IUsersFacade usersFacade;
+        private readonly IInvoiceFacade invoiceFacade;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UsersController"/> class.
+        /// Initializes a new instance of the <see cref="InvoiceController"/> class.
         /// </summary>
         /// <param name="usersFacade">User Facade.</param>
-        public UsersController(IUsersFacade usersFacade)
-            => this.usersFacade = usersFacade ?? throw new ArgumentNullException(nameof(usersFacade));
+        public InvoiceController(IInvoiceFacade usersFacade)
+            => this.invoiceFacade = usersFacade ?? throw new ArgumentNullException(nameof(usersFacade));
 
         /// <summary>
         /// Method for get all users.
@@ -30,7 +30,7 @@ namespace Omicron.Invoice.Api.Controllers
         /// <returns>A <see cref="Task{IEnumerable{UserDto}}"/> representing the result of the asynchronous operation.</returns>
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
-            => this.Ok(await this.usersFacade.GetAllAsync());
+            => this.Ok(await this.invoiceFacade.GetAllAsync());
 
         /// <summary>
         /// Method for get a user by id.
@@ -39,7 +39,7 @@ namespace Omicron.Invoice.Api.Controllers
         /// <returns>A <see cref="Task{UserDto}"/> representing the result of the asynchronous operation.</returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByIdAsync([FromRoute] int id)
-            => this.Ok(await this.usersFacade.GetByIdAsync(id));
+            => this.Ok(await this.invoiceFacade.GetByIdAsync(id));
 
         /// <summary>
         /// Method for insert a user.
@@ -50,7 +50,7 @@ namespace Omicron.Invoice.Api.Controllers
         public async Task<IActionResult> InsertAsync([FromBody] CreateUserDto userRequest)
         {
             string user = "userToken";
-            var response = await this.usersFacade.InsertAsync(user, userRequest);
+            var response = await this.invoiceFacade.InsertAsync(user, userRequest);
             return this.Created($"/api/Users/{response.Id}", response);
         }
 
@@ -64,7 +64,7 @@ namespace Omicron.Invoice.Api.Controllers
         public async Task<IActionResult> UpdateAsync([FromRoute] int id, [FromBody] UpdateUserDto userRequest)
         {
             string user = "userToken";
-            var response = await this.usersFacade.UpdateAsync(id, user, userRequest);
+            var response = await this.invoiceFacade.UpdateAsync(id, user, userRequest);
             return this.Ok(response);
         }
 
@@ -76,7 +76,7 @@ namespace Omicron.Invoice.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync([FromRoute] int id)
         {
-            await this.usersFacade.DeleteAsync(id);
+            await this.invoiceFacade.DeleteAsync(id);
             return this.Ok();
         }
 

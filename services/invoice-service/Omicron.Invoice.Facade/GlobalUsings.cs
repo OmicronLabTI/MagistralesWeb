@@ -3,5 +3,5 @@ global using Omicron.Invoice.Common.DTOs.Requests.Users;
 global using Omicron.Invoice.Common.DTOs.Responses.Users;
 global using Omicron.Invoice.Facade.Users;
 global using Omicron.Invoice.Facade.Users.Impl;
-global using Omicron.Invoice.Services.Users;
+global using Omicron.Invoice.Services.Invoice;
 global using Microsoft.Extensions.DependencyInjection;

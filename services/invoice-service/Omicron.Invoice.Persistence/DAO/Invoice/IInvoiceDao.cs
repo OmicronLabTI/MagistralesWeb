@@ -1,17 +1,17 @@
 // <summary>
-// <copyright file="IUsersDao.cs" company="Axity">
+// <copyright file="IInvoiceDao.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
 
-namespace Omicron.Invoice.Persistence.DAO.Users
+namespace Omicron.Invoice.Persistence.DAO.Invoice
 {
     /// <summary>
-    /// Interface IUsersDao.
+    /// Interface IInvoiceDao.
     /// </summary>
-    public interface IUsersDao
+    public interface IInvoiceDao
     {
         /// <summary>
         /// Method for GetAllAsync.

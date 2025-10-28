@@ -11,7 +11,7 @@ namespace Omicron.Invoice.Test.Facade
     using Omicron.Invoice.Common.DTOs.Responses.Users;
     using Omicron.Invoice.Facade.Users;
     using Omicron.Invoice.Facade.Users.Impl;
-    using Omicron.Invoice.Services.Users;
+    using Omicron.Invoice.Services.Invoice;
 
     /// <summary>
     /// Class ProjectFacadeTest.
@@ -19,8 +19,8 @@ namespace Omicron.Invoice.Test.Facade
     [TestFixture]
     public class UserFacadeTest : BaseTest
     {
-        private IUsersFacade projectFacade;
-        private IUsersService projectService;
+        private IInvoiceFacade projectFacade;
+        private IInvoiceService projectService;
 
         /// <summary>
         /// The init.
@@ -33,7 +33,7 @@ namespace Omicron.Invoice.Test.Facade
                 .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
                 .Options;
 
-            var mockProject = new Mock<IUsersService>();
+            var mockProject = new Mock<IInvoiceService>();
             var userResponse = new UserDto
             {
                 Name = "User 1",
@@ -63,7 +63,7 @@ namespace Omicron.Invoice.Test.Facade
                 .Setup(m => m.DeleteAsync(It.IsAny<int>()));
 
             this.projectService = mockProject.Object;
-            this.projectFacade = new UsersFacade(this.projectService);
+            this.projectFacade = new InvoiceFacade(this.projectService);
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace Omicron.Invoice.Test.Facade
         [Test]
         public void ValidateConstructorInvalids()
         {
-            Assert.Throws<ArgumentNullException>(() => new UsersFacade(null));
+            Assert.Throws<ArgumentNullException>(() => new InvoiceFacade(null));
         }
 
         /// <summary>
@@ -133,12 +133,12 @@ namespace Omicron.Invoice.Test.Facade
         public void ValidateUpdateAsyncBusinessException()
         {
             var messageError = "Ha ocurrido un error.";
-            var mockProject = new Mock<IUsersService>();
+            var mockProject = new Mock<IInvoiceService>();
             mockProject
                 .Setup(m => m.UpdateAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<UpdateUserDto>()))
                 .ThrowsAsync(new BusinessException(messageError));
 
-            var facade = new UsersFacade(mockProject.Object);
+            var facade = new InvoiceFacade(mockProject.Object);
             var request = new UpdateUserDto() { Name = "User 1", UserName = "user1" };
             Assert.ThrowsAsync<BusinessException>(
                 async () => await facade.UpdateAsync(1, "userToken", request),

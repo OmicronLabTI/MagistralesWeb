@@ -13,6 +13,10 @@
     <EmbeddedResource Remove="Enums\**" />
     <None Remove="Enums\**" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Jose.Espinosa\.nuget\packages\axity.commons\1.1.9\contentFiles\any\netstandard2.1\logo_axity-192x192.png" />
+  </ItemGroup>
   <ItemGroup>
     <AdditionalFiles Include="$(SolutionDir)\StyleCop\stylecop.json" Link="stylecop.json" />
   </ItemGroup>

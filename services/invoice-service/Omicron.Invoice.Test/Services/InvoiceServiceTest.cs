@@ -1,27 +1,22 @@
 // <summary>
-// <copyright file="UserServiceTest.cs" company="Axity">
+// <copyright file="InvoiceServiceTest.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
+
+
 namespace Omicron.Invoice.Test.Services
 {
-    using Omicron.Invoice.Common.DTOs.Requests.Users;
-    using Omicron.Invoice.Persistence.DAO.Users;
-    using Omicron.Invoice.Persistence.DAO.Users.Impl;
-    using Omicron.Invoice.Services.Mapping;
-    using Omicron.Invoice.Services.Users;
-    using Omicron.Invoice.Services.Users.Impl;
-
     /// <summary>
     /// Class ProjectServiceTest.
     /// </summary>
     [TestFixture]
-    public class UserServiceTest : BaseTest
+    public class InvoiceServiceTest : BaseTest
     {
-        private IUsersService userService;
-        private IUsersDao usersDao;
+        private IInvoiceService userService;
+        private IInvoiceDao usersDao;
         private IMapper mapper;
 
         private DatabaseContext context;
@@ -48,8 +43,8 @@ namespace Omicron.Invoice.Test.Services
             this.context.Users.AddRange(this.GetAllUserModel());
             this.context.SaveChanges();
 
-            this.usersDao = new UsersDao(this.context);
-            this.userService = new UsersService(this.mapper, this.usersDao);
+            this.usersDao = new InvoiceDao(this.context);
+            this.userService = new InvoiceService(this.mapper, this.usersDao);
         }
 
         /// <summary>

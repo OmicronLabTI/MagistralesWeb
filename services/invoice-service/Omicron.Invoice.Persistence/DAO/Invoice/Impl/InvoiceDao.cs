@@ -1,25 +1,25 @@
 // <summary>
-// <copyright file="UsersDao.cs" company="Axity">
+// <copyright file="InvoiceDao.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
 
-namespace Omicron.Invoice.Persistence.DAO.Users.Impl
+namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
 {
     /// <summary>
     /// Class UsersDao.
     /// </summary>
-    public class UsersDao : IUsersDao
+    public class InvoiceDao : IInvoiceDao
     {
         private readonly DatabaseContext context;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UsersDao"/> class.
+        /// Initializes a new instance of the <see cref="InvoiceDao"/> class.
         /// </summary>
         /// <param name="context">DataBase Context.</param>
-        public UsersDao(DatabaseContext context)
+        public InvoiceDao(DatabaseContext context)
         {
             ArgumentNullException.ThrowIfNull(context);
             this.context = context;

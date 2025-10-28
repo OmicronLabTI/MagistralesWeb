@@ -6,6 +6,9 @@
 // </copyright>
 // </summary>
 
+using Omicron.Invoice.Persistence.DAO.Invoice;
+using Omicron.Invoice.Persistence.DAO.Invoice.Impl;
+
 namespace Omicron.Invoice.Persistence
 {
     /// <summary>
@@ -35,7 +38,7 @@ namespace Omicron.Invoice.Persistence
                     });
             });
 
-            services.AddScoped<IUsersDao, UsersDao>();
+            services.AddScoped<IInvoiceDao, InvoiceDao>();
             return services;
         }
     }

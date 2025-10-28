@@ -6,6 +6,9 @@
 // </copyright>
 // </summary>
 
+using Omicron.Invoice.Services.Invoice;
+using Omicron.Invoice.Services.Invoice.Impl;
+
 namespace Omicron.Invoice.Services
 {
     /// <summary>
@@ -36,7 +39,7 @@ namespace Omicron.Invoice.Services
         /// <returns>Service collection.</returns>
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
-            services.AddScoped<IUsersService, UsersService>();
+            services.AddScoped<IInvoiceService, InvoiceService>();
             return services;
         }
     }
