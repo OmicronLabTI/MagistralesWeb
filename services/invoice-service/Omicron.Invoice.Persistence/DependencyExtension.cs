@@ -24,14 +24,14 @@ namespace Omicron.Invoice.Persistence
         {
             services.AddDbContextPool<DatabaseContext>(options =>
             {
-                options.UseSqlServer(
+                options.UseNpgsql(
                     configuration.GetConnectionString(nameof(DatabaseContext)),
-                    sqlServerOptionsAction: sqlOptions =>
+                    npgsqlOptionsAction: options =>
                     {
-                        sqlOptions.EnableRetryOnFailure(
-                        maxRetryCount: 5,
-                        maxRetryDelay: TimeSpan.FromSeconds(15),
-                        errorNumbersToAdd: null);
+                        options.EnableRetryOnFailure(
+                            maxRetryCount: 5,
+                            maxRetryDelay: TimeSpan.FromSeconds(15),
+                            errorCodesToAdd: null);
                     });
             });
 
