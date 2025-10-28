@@ -219,6 +219,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                 WhsCode = detail.WhsCode,
                                 CatalogGroup = string.Empty,
                                 ProductFirmName = firm == default ? string.Empty : firm.ProductFirmName,
+                                IsMuestra = product.IsMuestra
                             },
                         };
 
@@ -693,6 +694,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                         select new CompleteAlmacenOrderModel
                         {
                             Cliente = dop.Address2 ?? string.Empty,
+                            PedidoMuestra = order.PedidoMuestra,
                             DocNum = order.DocNum,
                             FechaInicio = order.FechaInicio,
                             Medico = doctor.AliasName,
@@ -720,6 +722,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                 WhsCode = detail.WhsCode,
                                 CatalogGroup = string.Empty,
                                 ProductFirmName = fm == default ? string.Empty : fm.ProductFirmName,
+                                IsMuestra = product.IsMuestra,
                             },
                         };
             return await this.RetryQuery(query);
@@ -757,6 +760,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                  WhsCode = detail.WhsCode,
                                  CatalogGroup = catalog.CatalogName,
                                  ProductFirmName = fm == default ? string.Empty : fm.ProductFirmName,
+                                 IsMuestra = product.IsMuestra,
                              },
                              IsWorkableProduct = product.IsWorkableProduct
                          });
