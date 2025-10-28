@@ -84,8 +84,8 @@ namespace Omicron.Invoice.Test.Facade
         {
             var response = await this.projectFacade.GetAllAsync();
 
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Any());
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Any());
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace Omicron.Invoice.Test.Facade
             int id = 1;
             var response = await this.projectFacade.GetByIdAsync(id);
 
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace Omicron.Invoice.Test.Facade
             var request = new CreateUserDto() { Name = "User 1", UserName = "user1", Email = "user1@yopmail.com", };
             var response = await this.projectFacade.InsertAsync("userToken", request);
 
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace Omicron.Invoice.Test.Facade
         {
             var request = new UpdateUserDto() { Name = "User 1", UserName = "user1" };
             var response = await this.projectFacade.UpdateAsync(1, "userToken", request);
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>

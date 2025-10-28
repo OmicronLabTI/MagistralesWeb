@@ -30,7 +30,7 @@ namespace Omicron.Invoice.Test.Mapper
 
             var result = mapper.Map<DateTime>(fecha);
             Type typeDateType2 = result.GetType();
-            Assert.AreEqual(typeDateType, typeDateType2);
+            Assert.That(typeDateType.Equals(typeDateType2));
         }
     }
 }

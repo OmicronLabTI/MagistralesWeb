@@ -36,7 +36,6 @@ namespace Omicron.Invoice.Persistence
             });
 
             services.AddScoped<IUsersDao, UsersDao>();
-            
             return services;
         }
     }

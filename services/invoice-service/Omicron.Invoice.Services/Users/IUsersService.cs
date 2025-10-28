@@ -30,7 +30,7 @@ namespace Omicron.Invoice.Services.Users
         /// Method for insert a user.
         /// </summary>
         /// <param name="user">User.</param>
-        /// <param name="CreateUserDto">Object to insert.</param>
+        /// <param name="userRequest">Object to insert.</param>
         /// <returns>A <see cref="Task{UserDto}"/> representing the result of the asynchronous operation.</returns>
         Task<UserDto> InsertAsync(string user, CreateUserDto userRequest);
 
@@ -39,7 +39,7 @@ namespace Omicron.Invoice.Services.Users
         /// </summary>
         /// <param name="id">User Id.</param>
         /// <param name="user">User name.</param>
-        /// <param name="UpdateUserDto">Object to update.</param>
+        /// <param name="userRequest">Object to update.</param>
         /// <returns>A <see cref="Task{UserDto}"/> representing the result of the asynchronous operation.</returns>
         Task<UserDto> UpdateAsync(int id, string user, UpdateUserDto userRequest);
 

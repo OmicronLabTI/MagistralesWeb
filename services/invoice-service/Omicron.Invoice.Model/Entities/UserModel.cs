@@ -52,7 +52,7 @@ namespace Omicron.Invoice.Model.Entities
         public string Email { get; set; }
 
         /// <summary>
-        /// Gets or sets Active.
+        /// Gets or sets a value indicating whether gets or sets Active.
         /// </summary>
         /// <value>
         /// bool Active.

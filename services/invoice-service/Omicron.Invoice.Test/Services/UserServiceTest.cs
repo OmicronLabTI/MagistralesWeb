@@ -61,9 +61,9 @@ namespace Omicron.Invoice.Test.Services
         {
             var response = await this.userService.GetAllAsync();
 
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Any());
-            Assert.AreEqual(8, response.Count());
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Any());
+            Assert.That(response.Count().Equals(8));
         }
 
         /// <summary>
@@ -76,8 +76,8 @@ namespace Omicron.Invoice.Test.Services
             int id = 1;
             var response = await this.userService.GetByIdAsync(id);
 
-            Assert.IsNotNull(response);
-            Assert.AreEqual(id, response.Id);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Id.Equals(id));
         }
 
         /// <summary>
@@ -97,16 +97,16 @@ namespace Omicron.Invoice.Test.Services
 
             var response = await this.userService.InsertAsync(user, request);
 
-            Assert.NotNull(response.Id);
-            Assert.AreEqual(request.Name, response.Name);
-            Assert.AreEqual(request.UserName, response.UserName);
-            Assert.AreEqual(request.Email, response.Email);
+            Assert.That(response.Id, Is.Not.Null);
+            Assert.That(response.Name.Equals(request.Name));
+            Assert.That(response.UserName.Equals(request.UserName));
+            Assert.That(response.Email.Equals(request.Email));
         }
 
         /// <summary>
         /// Method Validate UpdateAsync.
         /// </summary>
-        /// <param name="id">Project Id</param>
+        /// <param name="id">Project Id.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [TestCase(1)]
         public async Task ValidateUpdateAsync(int id)
@@ -121,10 +121,10 @@ namespace Omicron.Invoice.Test.Services
             var before = await this.userService.GetByIdAsync(id);
             var response = await this.userService.UpdateAsync(id, user, request);
 
-            Assert.AreEqual(before.Id, response.Id);
-            Assert.AreEqual(request.Name, response.Name);
-            Assert.AreEqual(request.UserName, response.UserName);
-            Assert.AreNotEqual(before.Email, response.Email);
+            Assert.That(response.Id.Equals(before.Id));
+            Assert.That(response.Name.Equals(request.Name));
+            Assert.That(response.UserName.Equals(request.UserName));
+            Assert.That(!response.Email.Equals(before.Email));
         }
 
         /// <summary>
@@ -138,7 +138,7 @@ namespace Omicron.Invoice.Test.Services
             var before = await this.userService.GetByIdAsync(id);
             await this.userService.DeleteAsync(id);
 
-            Assert.IsNotNull(before);
+            Assert.That(before, Is.Not.Null);
             Assert.ThrowsAsync<NotFoundException>(async () => await this.userService.GetByIdAsync(id));
         }
     }
