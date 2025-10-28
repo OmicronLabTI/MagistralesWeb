@@ -831,7 +831,7 @@ namespace Omicron.SapAdapter.Services.Sap
                             {
                                 DocNumDxp = ord.Key,
                                 NumOrders = ord.Where(o => o.IsWorkableProduct == "Y").Select(o => o.DocNum).Distinct().ToList(),
-                                ProductsDetails = ord.Select(o => new CountDxpOrdersDetail { ItemCode = o.Detalles.ProductoId, DocNum = o.DocNum, CatalogGroup = o.Detalles.CatalogGroup, ProductFirmName = o.Detalles.ProductFirmName, Pieces = (int)o.Detalles.Quantity }).ToList(),
+                                ProductsDetails = ord.Select(o => new CountDxpOrdersDetail { ItemCode = o.Detalles.ProductoId, DocNum = o.DocNum, CatalogGroup = o.Detalles.CatalogGroup, ProductFirmName = o.Detalles.ProductFirmName, Pieces = (int)o.Detalles.Quantity, IsWorkableProduct = o.IsWorkableProduct == "Y", IsMuestra = o.Detalles.IsMuestra == "Y" }).ToList(),
                             });
         }
     }
