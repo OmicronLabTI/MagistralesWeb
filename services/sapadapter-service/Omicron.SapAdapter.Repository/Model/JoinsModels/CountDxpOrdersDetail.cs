@@ -46,5 +46,21 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// string Pieces.
         /// </value>
         public int Pieces { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets Pieces.
+        /// </summary>
+        /// <value>
+        /// string Pieces.
+        /// </value>
+        public bool IsWorkableProduct { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets Pieces.
+        /// </summary>
+        /// <value>
+        /// string Pieces.
+        /// </value>
+        public bool IsMuestra { get; set; }
     }
 }
