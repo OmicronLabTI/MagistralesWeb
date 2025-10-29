@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:5219",
+      "applicationUrl": "http://localhost:5220",
       "sslPort": 0
     }
   },
@@ -13,7 +13,7 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "http://localhost:5219",
+      "applicationUrl": "http://localhost:5220",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Local",
         "POSTGRESS_NET_CONNECTION_STRING": "Server=localhost;Port=5432;Uid=omicronuser;Pwd=Axity2020;Database=omicrondev"
