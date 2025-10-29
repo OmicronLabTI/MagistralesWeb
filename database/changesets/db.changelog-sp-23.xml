@@ -54,8 +54,6 @@
 				<constraints primaryKey="true" nullable="false"/>
 			</column>
 			<column name="pedidodxp" type="VARCHAR(40)"/>
-			<column name="idpedidosap" type="bigint"/>
-			<column name="idremission" type="bigint"/>
 			<column name="idinvoiceerror" type="integer">
 				<constraints primaryKey="false" nullable="true"/>
 			</column>
