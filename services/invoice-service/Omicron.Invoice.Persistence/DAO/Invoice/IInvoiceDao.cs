@@ -14,6 +14,20 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice
     public interface IInvoiceDao
     {
         /// <summary>
+        /// Method for GetInvoiceModelById.
+        /// </summary>
+        /// <param name="id">Id.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<InvoiceModel> GetInvoiceModelById(string id);
+
+        /// <summary>
+        /// Method for UpdateInvoiceAsync.
+        /// </summary>
+        /// <param name="invoiceModel">The model.</param>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
+        Task UpdateInvoiceAsync(InvoiceModel invoiceModel);
+
+        /// <summary>
         /// Method for GetAllAsync.
         /// </summary>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>

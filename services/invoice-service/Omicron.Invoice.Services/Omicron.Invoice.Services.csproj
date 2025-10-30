@@ -23,4 +23,8 @@
     <ProjectReference Include="..\Omicron.Invoice.Persistence\Omicron.Invoice.Persistence.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="InvoiceRetry\Impl\" />
+  </ItemGroup>
+
 </Project>

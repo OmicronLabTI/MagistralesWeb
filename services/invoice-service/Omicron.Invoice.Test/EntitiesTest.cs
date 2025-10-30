@@ -6,9 +6,6 @@
 // </copyright>
 // </summary>
 
-using AutoFixture;
-using Omicron.Invoice.Common.DTOs.Responses.Common;
-
 namespace Omicron.Invoice.Test
 {
     /// <summary>
@@ -23,6 +20,8 @@ namespace Omicron.Invoice.Test
         private static readonly object[] TypeCases =
         {
             new ResultDto(),
+            new InvoiceRetryRequestDto(),
+            new InvoiceRetryResponseDto(),
         };
 
         /// <summary>

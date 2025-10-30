@@ -47,5 +47,18 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
 
         /// <inheritdoc/>
         public async Task<int> SaveChangesAsync() => await this.context.SaveChangesAsync();
+
+        /// <inheritdoc/>
+        public async Task<InvoiceModel> GetInvoiceModelById(string id)
+        {
+            return await this.context.Invoice.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        /// <inheritdoc/>
+        public async Task UpdateInvoiceAsync(InvoiceModel invoiceModel)
+        {
+            this.context.Invoice.Update(invoiceModel);
+            await ((DatabaseContext)this.context).SaveChangesAsync();
+        }
     }
 }
