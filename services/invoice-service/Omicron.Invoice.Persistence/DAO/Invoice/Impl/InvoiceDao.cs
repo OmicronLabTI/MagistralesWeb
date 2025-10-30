@@ -6,6 +6,7 @@
 // </copyright>
 // </summary>
 
+
 namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
 {
     /// <summary>
@@ -26,26 +27,9 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<UserModel>> GetAllAsync()
-            => await this.context.Users.ToListAsync();
-
-        /// <inheritdoc/>
-        public async Task<UserModel> GetByIdAsync(int id)
-            => await this.context.Users.FindAsync(id);
-
-        /// <inheritdoc/>
-        public async Task InsertAsync(UserModel model)
-            => await this.context.AddAsync(model);
-
-        /// <inheritdoc/>
-        public UserModel Update(UserModel model)
-            => this.context.Update(model).Entity;
-
-        /// <inheritdoc/>
-        public void Delete(UserModel model)
-            => this.context.Remove(model);
-
-        /// <inheritdoc/>
-        public async Task<int> SaveChangesAsync() => await this.context.SaveChangesAsync();
+        public async Task InsertInvoices(List<InvoiceModel> invoices)
+        {
+            this.context.Invoices.AddRange(invoices);
+        }
     }
 }

@@ -26,9 +26,9 @@ namespace Omicron.Invoice.Persistence.Context
         /// Gets or sets Users.
         /// </summary>
         /// <value>
-        /// <see cref="DbSet{UserModel}"/> Users.
+        /// <see cref="DbSet{InvoiceModel}"/> Users.
         /// </value>
-        public DbSet<UserModel> Users { get; set; }
+        public DbSet<InvoiceModel> Invoices { get; set; }
 
         /// <summary>
         /// Gets or sets Invoice.

@@ -39,8 +39,12 @@ namespace Omicron.Invoice.Api
             webApplication.Services.AddSwaggerGen();
 
             webApplication.Services.AddKafka(webApplication.Configuration, Log.Logger);
+            webApplication.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+            webApplication.Services.AddHostedService<QueuedHostedService>();
 
             webApplication.Services.AddApplicationInsightsTelemetry();
+            webApplication.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(DependencyExtension).Assembly));
+            webApplication.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateInvoiceHandler).Assembly));
 
             try
             {

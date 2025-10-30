@@ -2,9 +2,7 @@
 global using Axity.Commons.Filters;
 global using Axity.Kafka;
 global using Omicron.Invoice.Api;
-global using Omicron.Invoice.Common.DTOs.Requests.Users;
 global using Omicron.Invoice.Facade;
-global using Omicron.Invoice.Facade.Users;
 global using Omicron.Invoice.Persistence;
 global using Omicron.Invoice.Services;
 global using Microsoft.AspNetCore.Mvc;
@@ -12,3 +10,8 @@ global using Serilog;
 global using Serilog.Events;
 global using StackExchange.Redis;
 global using Steeltoe.Extensions.Configuration.Placeholder;
+global using Omicron.Invoice.Services.BackgroundTaskQueue;
+global using Omicron.Invoice.Services.BackgroundTaskQueue.Impl;
+global using Omicron.Invoice.Services.MediatR;
+global using Omicron.Invoice.Common.DTOs.Requests.Invoices;
+global using Omicron.Invoice.Facade.Users;

@@ -6,9 +6,6 @@
 // </copyright>
 // </summary>
 
-using Omicron.Invoice.Persistence.DAO.Invoice;
-using Omicron.Invoice.Persistence.DAO.Invoice.Impl;
-
 namespace Omicron.Invoice.Persistence
 {
     /// <summary>

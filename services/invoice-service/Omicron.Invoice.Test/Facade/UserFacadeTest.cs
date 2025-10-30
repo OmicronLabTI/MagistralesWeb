@@ -53,18 +53,5 @@ namespace Omicron.Invoice.Test.Facade
         {
             Assert.Throws<ArgumentNullException>(() => new InvoiceFacade(null));
         }
-
-        /// <summary>
-        /// Test for validate GetAllAsync.
-        /// </summary>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        [Test]
-        public async Task ValidateGetAllAsync()
-        {
-            var response = await this.projectFacade.GetAllAsync();
-
-            Assert.That(response, Is.Not.Null);
-            Assert.That(response.Any());
-        }
     }
 }

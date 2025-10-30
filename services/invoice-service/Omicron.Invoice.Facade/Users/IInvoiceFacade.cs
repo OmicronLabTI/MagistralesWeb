@@ -14,9 +14,10 @@ namespace Omicron.Invoice.Facade.Users
     public interface IInvoiceFacade
     {
         /// <summary>
-        /// Method for get all users.
+        /// Method to Create invoice.
         /// </summary>
-        /// <returns>A representing the result of the asynchronous operation.</returns>
-        Task<IEnumerable<UserDto>> GetAllAsync();
+        /// <param name="request"> request invoice. </param>
+        /// <returns> order data. </returns>
+        Task<ResultDto> CreateInvoice(CreateInvoiceDto request);
     }
 }

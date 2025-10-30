@@ -14,9 +14,10 @@ namespace Omicron.Invoice.Services.Invoice
     public interface IInvoiceService
     {
         /// <summary>
-        /// Method for get all users.
+        /// Method to carry out the order process.
         /// </summary>
-        /// <returns>A representing the result of the asynchronous operation.</returns>
-        Task<IEnumerable<UserDto>> GetAllAsync();
+        /// <param name="request"> request order. </param>
+        /// <returns> order data. </returns>
+        Task<ResultDto> CreateInvoice(CreateInvoiceDto request);
     }
 }

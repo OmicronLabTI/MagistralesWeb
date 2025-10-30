@@ -14,42 +14,10 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice
     public interface IInvoiceDao
     {
         /// <summary>
-        /// Method for GetAllAsync.
+        /// Create invoice.
         /// </summary>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        Task<IEnumerable<UserModel>> GetAllAsync();
-
-        /// <summary>
-        /// Method for GetByIdAsync.
-        /// </summary>
-        /// <param name="id">The id.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        Task<UserModel> GetByIdAsync(int id);
-
-        /// <summary>
-        /// Method for InsertAsync.
-        /// </summary>
-        /// <param name="model">The model.</param>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
-        Task InsertAsync(UserModel model);
-
-        /// <summary>
-        /// Method for UpdateAsync.
-        /// </summary>
-        /// <param name="model">The model.</param>
-        /// <returns>A <see cref="UserModel"/> representing the result of the operation.</returns>
-        UserModel Update(UserModel model);
-
-        /// <summary>
-        /// Method for DeleteAsync.
-        /// </summary>
-        /// <param name="model">The model.</param>
-        void Delete(UserModel model);
-
-        /// <summary>
-        /// Method for SaveChangesAsync.
-        /// </summary>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the operation.</returns>
-        Task<int> SaveChangesAsync();
+        /// <param name="invoices">the invoices.</param>
+        /// <returns>the data.</returns>
+        Task InsertInvoices(List<InvoiceModel> invoices);
     }
 }
