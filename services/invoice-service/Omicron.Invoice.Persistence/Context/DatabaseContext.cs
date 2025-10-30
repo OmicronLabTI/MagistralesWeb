@@ -31,6 +31,14 @@ namespace Omicron.Invoice.Persistence.Context
         public DbSet<UserModel> Users { get; set; }
 
         /// <summary>
+        /// Gets or sets Invoice.
+        /// </summary>
+        /// <value>
+        /// <see cref="DbSet{InvoiceModel}"/> Invoice.
+        /// </value>
+        public DbSet<InvoiceModel> Invoice { get; set; }
+
+        /// <summary>
         /// Metho On Model Creating.
         /// </summary>
         /// <param name="modelBuilder">ModelBuilder.</param>
