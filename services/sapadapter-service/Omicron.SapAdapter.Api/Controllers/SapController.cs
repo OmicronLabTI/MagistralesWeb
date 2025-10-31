@@ -523,5 +523,18 @@ namespace Omicron.SapAdapter.Api.Controllers
             var response = await this.sapFacade.GetProductFirmName(itemCodes);
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// Gets the matching warehouses.
+        /// </summary>
+        /// <param name="remissions"> itemCodes collection to search. </param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        [Route("/remissions/invoices")]
+        [HttpPost]
+        public async Task<IActionResult> GetInvoicesByRemissionId([FromBody] List<int> remissions)
+        {
+            var response = await this.sapFacade.GetInvoicesByRemissionId(remissions);
+            return this.Ok(response);
+        }
     }
 }

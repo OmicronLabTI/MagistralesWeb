@@ -247,5 +247,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="itemCode"> warehouse collection to search. </param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<ResultDto> GetProductFirmName(string itemCode);
+
+        /// <summary>
+        /// Gets the matching warehouse.
+        /// </summary>
+        /// <param name="remissions"> warehouse collection to search. </param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultDto> GetInvoicesByRemissionId(List<int> remissions);
     }
 }

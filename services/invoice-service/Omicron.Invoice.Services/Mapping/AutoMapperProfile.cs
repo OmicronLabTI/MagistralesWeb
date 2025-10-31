@@ -18,9 +18,6 @@ namespace Omicron.Invoice.Services.Mapping
         /// </summary>
         public AutoMapperProfile()
         {
-            this.CreateMap<UserModel, UserDto>();
-            this.CreateMap<CreateUserDto, UserModel>();
-
             this.CreateMap<DateTime, string>().ConvertUsing(date => date.ToString("yyyy-MM-ddTHH:mm:ss.fff"));
             this.CreateMap<string, DateTime>().ConvertUsing(dateStr => DateTime.Parse(dateStr));
         }

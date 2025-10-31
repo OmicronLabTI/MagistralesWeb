@@ -19,6 +19,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
+    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
@@ -991,6 +992,25 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var product = await this.sapDao.GetFullProductInfo(itemCode);
             return ServiceUtils.CreateResult(true, 200, null, product, null, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetInvoicesByRemissionId(List<int> remissions)
+        {
+            var result = new InvoicesDataDto()
+            {
+                HasInvoice = false,
+                InvoiceId = 0,
+            };
+
+            var invoice = await this.sapDao.GetInvoicesByRemissions(remissions);
+            if (invoice != default)
+            {
+                result.HasInvoice = true;
+                result.InvoiceId = invoice.InvoiceId;
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, result, null, null);
         }
 
         private static string NormalizeAndToUpper(string input)

@@ -20,18 +20,18 @@ namespace Omicron.Invoice.Api.Controllers
         /// <summary>
         /// Initializes a new instance of the <see cref="InvoiceController"/> class.
         /// </summary>
-        /// <param name="usersFacade">User Facade.</param>
-        public InvoiceController(IInvoiceFacade usersFacade)
-            => this.invoiceFacade = usersFacade ?? throw new ArgumentNullException(nameof(usersFacade));
+        /// <param name="invoiceFacade">Invoice Facade.</param>
+        public InvoiceController(IInvoiceFacade invoiceFacade)
+            => this.invoiceFacade = invoiceFacade ?? throw new ArgumentNullException(nameof(invoiceFacade));
 
         /// <summary>
         /// Method for get all users.
         /// </summary>
         /// <returns>A representing the result of the asynchronous operation.</returns>
-        [HttpGet]
-        [Route("/sample/getallasync")]
-        public async Task<IActionResult> GetAllAsync()
-            => this.Ok(await this.invoiceFacade.GetAllAsync());
+        [HttpPost]
+        [Route("/create")]
+        public async Task<IActionResult> CreateInvoice([FromBody] CreateInvoiceDto request)
+            => this.Ok(await this.invoiceFacade.CreateInvoice(request));
 
         /// <summary>
         /// Method Ping.

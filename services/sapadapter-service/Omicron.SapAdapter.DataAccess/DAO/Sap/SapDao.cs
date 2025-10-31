@@ -1774,6 +1774,18 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return await this.RetryQuery(query);
         }
 
+        /// <inheritdoc/>
+        public async Task<InvoiceDetails> GetInvoicesByRemissions(List<int> orderIds)
+        {
+            return await (from invoice in this.databaseContext.InvoiceHeaderModel
+                    join detail in this.databaseContext.InvoiceDetailModel on invoice.InvoiceId equals detail.InvoiceId
+                    where orderIds.Contains(detail.BaseEntry ?? 0)
+                    select new InvoiceDetails()
+                    {
+                        InvoiceId = invoice.DocNum,
+                    }).FirstOrDefaultAsync();
+        }
+
         private IQueryable<InvoiceHeaderModel> GetInvoiceHeaderJoinDoctorBaseQuery()
         {
             return from invoice in this.databaseContext.InvoiceHeaderModel

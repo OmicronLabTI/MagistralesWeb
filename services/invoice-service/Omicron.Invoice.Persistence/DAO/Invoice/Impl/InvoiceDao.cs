@@ -6,6 +6,7 @@
 // </copyright>
 // </summary>
 
+
 namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
 {
     /// <summary>
@@ -26,12 +27,17 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<UserModel>> GetAllAsync()
-            => await this.context.Users.ToListAsync();
+        public async Task InsertInvoices(List<InvoiceModel> invoices)
+        {
+            this.context.Invoices.AddRange(invoices);
+            await ((DatabaseContext)this.context).SaveChangesAsync();
+        }
 
         /// <inheritdoc/>
-        public async Task<UserModel> GetByIdAsync(int id)
-            => await this.context.Users.FindAsync(id);
+        public async Task<InvoiceModel> GetInvoiceById(string id)
+        {
+            return await this.context.Invoice.Where(x => x.Id == id).FirstOrDefaultAsync();
+        }
 
         /// <inheritdoc/>
         public async Task InsertAsync(UserModel model)
@@ -72,6 +78,11 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
                                     err.RequireManualChange == false
                                     || (err.RequireManualChange == true && fac.ManualChangeApplied == true))
                           select fac).ToListAsync();
+        }
+        public async Task UpdateInvoices(List<InvoiceModel> invoices)
+        {
+            this.context.Invoices.UpdateRange(invoices);
+            await ((DatabaseContext)this.context).SaveChangesAsync();
         }
     }
 }

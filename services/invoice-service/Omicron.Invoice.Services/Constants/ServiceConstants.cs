@@ -81,5 +81,18 @@ namespace Omicron.Invoice.Services.Constants
         /// <param name="executionType">Execution Type.</param>
         /// <returns>Redis Key.</returns>
         public static string GetRetryInvoiceLockValue(string id, string executionType) => $"{id}:{executionType}:{Guid.NewGuid()}";
+        /// Gets const for the status enviada a crear.
+        /// </summary>
+        public static string SendToCreateInvoice => "Enviada a crear";
+
+        /// <summary>
+        /// Gets const for the status enviada a crear.
+        /// </summary>
+        public static string ValidateInvoiceUrl => "remissions/invoices";
+
+        /// <summary>
+        /// Gets const for the status enviada a crear.
+        /// </summary>
+        public static string SLCreateInvoiceUrl => "create/invoice";
     }
 }
