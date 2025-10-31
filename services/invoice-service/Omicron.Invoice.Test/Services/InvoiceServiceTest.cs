@@ -34,25 +34,10 @@ namespace Omicron.Invoice.Test.Services
                 .Options;
 
             this.context = new DatabaseContext(options);
-            this.context.Users.AddRange(this.GetAllUserModel());
             this.context.SaveChanges();
 
             this.usersDao = new InvoiceDao(this.context);
             this.userService = new InvoiceService(this.mapper, this.usersDao);
-        }
-
-        /// <summary>
-        /// Method Validate GetAllAsync.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Test]
-        public async Task ValidateGetAllAsync()
-        {
-            var response = await this.userService.GetAllAsync();
-
-            Assert.That(response, Is.Not.Null);
-            Assert.That(response.Any());
-            Assert.That(response.Count().Equals(9));
         }
     }
 }

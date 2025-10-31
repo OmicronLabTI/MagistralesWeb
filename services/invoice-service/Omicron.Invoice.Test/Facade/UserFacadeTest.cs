@@ -28,19 +28,6 @@ namespace Omicron.Invoice.Test.Facade
                 .Options;
 
             var mockProject = new Mock<IInvoiceService>();
-            var userResponse = new UserDto
-            {
-                Name = "User 1",
-                UserName = "user1",
-                Email = "user1@yopmail.com",
-            };
-            IEnumerable<UserDto> listUserResponse =
-                new List<UserDto> { userResponse };
-
-            mockProject
-                .Setup(m => m.GetAllAsync())
-                .Returns(Task.FromResult(listUserResponse));
-
             this.projectService = mockProject.Object;
             this.projectFacade = new InvoiceFacade(this.projectService);
         }

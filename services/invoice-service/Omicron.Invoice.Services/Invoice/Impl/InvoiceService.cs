@@ -21,6 +21,7 @@ namespace Omicron.Invoice.Services.Invoice.Impl
         private readonly Serilog.ILogger logger;
         private readonly ISapServiceLayerAdapterService serviceLayerService;
         private readonly ISapAdapter sapAdapter;
+        private IInvoiceDao usersDao;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InvoiceService"/> class.
@@ -51,6 +52,12 @@ namespace Omicron.Invoice.Services.Invoice.Impl
             this.logger = logger.ThrowIfNull(nameof(logger));
             this.sapAdapter = sapAdapter.ThrowIfNull(nameof(sapAdapter));
             this.serviceLayerService = serviceLayerService.ThrowIfNull(nameof(serviceLayerService));
+        }
+
+        public InvoiceService(IMapper mapper, IInvoiceDao usersDao)
+        {
+            this.mapper = mapper;
+            this.usersDao = usersDao;
         }
 
         /// <inheritdoc/>

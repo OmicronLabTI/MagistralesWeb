@@ -40,21 +40,6 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
         }
 
         /// <inheritdoc/>
-        public async Task InsertAsync(UserModel model)
-            => await this.context.AddAsync(model);
-
-        /// <inheritdoc/>
-        public UserModel Update(UserModel model)
-            => this.context.Update(model).Entity;
-
-        /// <inheritdoc/>
-        public void Delete(UserModel model)
-            => this.context.Remove(model);
-
-        /// <inheritdoc/>
-        public async Task<int> SaveChangesAsync() => await this.context.SaveChangesAsync();
-
-        /// <inheritdoc/>
         public async Task<InvoiceModel> GetInvoiceModelById(string id)
         {
             return await this.context.Invoice.FirstOrDefaultAsync(x => x.Id == id);
@@ -79,6 +64,8 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
                                     || (err.RequireManualChange == true && fac.ManualChangeApplied == true))
                           select fac).ToListAsync();
         }
+
+        /// <inheritdoc/>
         public async Task UpdateInvoices(List<InvoiceModel> invoices)
         {
             this.context.Invoices.UpdateRange(invoices);
