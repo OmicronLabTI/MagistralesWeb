@@ -171,8 +171,15 @@ namespace Omicron.Invoice.Services.InvoiceRetry.Impl
         {
             foreach (InvoiceModel invoice in invoiceData)
             {
-                this.logger.Information(LogsConstants.RetrySendToCreateInvoice(logBase, invoice.Id, invoice.Payload));
-                this.invoiceService.CreateInvoice(JsonConvert.DeserializeObject<CreateInvoiceDto>(invoice.Payload));
+                try
+                {
+                    this.logger.Information(LogsConstants.RetrySendToCreateInvoice(logBase, invoice.Id, invoice.Payload));
+                    this.invoiceService.CreateInvoice(JsonConvert.DeserializeObject<CreateInvoiceDto>(invoice.Payload));
+                }
+                catch (Exception ex)
+                {
+                    this.logger.Error(LogsConstants.RetryErrorSendingToCreateTheInvoice(logBase, invoice.Id), ex);
+                }
             }
         }
     }

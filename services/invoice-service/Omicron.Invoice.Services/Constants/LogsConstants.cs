@@ -172,5 +172,16 @@ namespace Omicron.Invoice.Services.Constants
         /// <param name="payload">Payload.</param>
         /// <returns>Redis Key.</returns>
         public static string RetrySendToCreateInvoice(string logBase, string id, string payload) => $"{logBase} - Send to create invoice - Id: {id} - Payload: {payload}";
+
+        /// <summary>
+        /// Gets RetryErrorSendingToCreateTheInvoice.
+        /// </summary>
+        /// <value>
+        /// String RetryErrorSendingToCreateTheInvoice.
+        /// </value>
+        /// <param name="logBase">Log Base.</param>
+        /// <param name="id">Id.</param>
+        /// <returns>Redis Key.</returns>
+        public static string RetryErrorSendingToCreateTheInvoice(string logBase, string id) => $"{logBase} - Error sending to create the invoice for id: {id}";
     }
 }
