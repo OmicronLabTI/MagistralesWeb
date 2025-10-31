@@ -186,13 +186,5 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// InvoiceType.
         /// </value>
         public string InvoiceType { get; set; }
-
-        /// <summary>
-        /// Gets or sets Need Invoice value.
-        /// </summary>
-        /// <value>
-        /// NeedInvoice.
-        /// </value>
-        public int NeedInvoice { get; set; }
     }
 }

@@ -84,9 +84,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
                     DocumentDate = DateTime.Now,
                     DueDate = DateTime.Now.AddDays(10),
                     ShippingCode = saleOrderModel.ShippinAddress,
-                    PayToCode = saleOrderModel.NeedInvoice == 1
-                        ? saleOrderModel.BillingAddress
-                        : ServiceConstants.GenericAddressAliasID,
+                    PayToCode = saleOrderModel.BillingAddress,
                     ReferenceNumber = saleOrderModel.ProfecionalLicense,
                     OrderLines = new List<CreateOrderLineDto>(),
                     TaxId = saleOrderModel.UserRfc,
