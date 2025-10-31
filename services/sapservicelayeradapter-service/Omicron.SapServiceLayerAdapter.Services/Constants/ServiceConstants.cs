@@ -474,6 +474,11 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string UpdateCancelParentOrderStep = "UpdateCancelParentOrderProcess";
 
         /// <summary>
+        /// GenericAddressAliasID.
+        /// </summary>
+        public const string GenericAddressAliasID = "GENERICO";
+        
+        /// <summary>
         /// Gets ManageBatchNumbers.
         /// </summary>
         /// <value>
