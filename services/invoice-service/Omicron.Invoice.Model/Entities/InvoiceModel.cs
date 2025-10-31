@@ -151,6 +151,14 @@ namespace Omicron.Invoice.Model.Entities
         public bool IsProcessing { get; set; }
 
         /// <summary>
+        /// Gets or sets the Payload.
+        /// </summary>
+        /// <value>
+        /// Type string.
+        /// </value>
+        public string Payload { get; set; }
+
+        /// <summary>
         /// Gets or sets navigation property to invoice error.
         /// </summary>
         /// <value>

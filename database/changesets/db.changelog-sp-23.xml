@@ -88,5 +88,11 @@
 		<!-- SapOrders → Invoices -->
 		<addForeignKeyConstraint baseTableName="saporders" baseColumnNames="idinvoice" referencedTableName="invoices" referencedColumnNames="id" constraintName="fk_saporders_invoices" onDelete="CASCADE"/>
 	</changeSet>
-
+	<changeSet author="jarturoep" id="changelog-1.6">
+		<addColumn tableName="invoices">
+			<column name="payload" type="JSON">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
