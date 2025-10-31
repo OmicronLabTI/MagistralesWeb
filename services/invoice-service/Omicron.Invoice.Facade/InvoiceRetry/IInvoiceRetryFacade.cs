@@ -1,17 +1,17 @@
 ﻿// <summary>
-// <copyright file="IInvoiceRetryService.cs" company="Axity">
+// <copyright file="IInvoiceRetryFacade.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
 
-namespace Omicron.Invoice.Services.InvoiceRetry
+namespace Omicron.Invoice.Facade.InvoiceRetry
 {
     /// <summary>
-    /// Interface IInvoiceRetryService.
+    /// Interface IInvoiceRetryFacade.
     /// </summary>
-    public interface IInvoiceRetryService
+    public interface IInvoiceRetryFacade
     {
         /// <summary>
         /// Get Data To Retry Create Invoices Async.

@@ -28,6 +28,13 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice
         Task UpdateInvoiceAsync(InvoiceModel invoiceModel);
 
         /// <summary>
+        /// Method for GetInvoicesForRetryProcessAsync.
+        /// </summary>
+        /// <param name="status">Status.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<IEnumerable<InvoiceModel>> GetInvoicesForRetryProcessAsync(string status);
+
+        /// <summary>
         /// Method for GetAllAsync.
         /// </summary>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>

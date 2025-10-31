@@ -44,13 +44,5 @@ namespace Omicron.Invoice.Common.DTOs.Requests.InvoiceRetry
         /// string RequestingUser.
         /// </value>
         public string RequestingUser { get; set; }
-
-        /// <summary>
-        /// Gets or sets ExecutionType.
-        /// </summary>
-        /// <value>
-        /// string ExecutionType.
-        /// </value>
-        public string ExecutionType { get; set; }
     }
 }

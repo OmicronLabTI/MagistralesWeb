@@ -27,46 +27,78 @@ namespace Omicron.Invoice.Services.InvoiceRetry.Impl
         /// <inheritdoc/>
         public async Task<ResultDto> GetDataToRetryCreateInvoicesAsync()
         {
-            var lockKey = "invoices:automaticretry";
-            var lockValue = Guid.NewGuid().ToString();
-            bool locked = await this.redisService.SetKeyIfNotExists(lockKey, lockValue, TimeSpan.FromMinutes(60));
+            var processId = Guid.NewGuid().ToString();
+            var logBase = LogsConstants.GetDataToRetryCreateInvoicesAsyncLogBase(processId);
+
+            bool locked = await this.redisService.SetKeyIfNotExists(
+                ServiceConstants.InvoiceLockAutomaticRetryKey,
+                processId,
+                TimeSpan.FromMinutes(60));
+
             if (!locked)
             {
-                this.logger.Information("El proceso automático ya se encuentra en proceso");
+                this.logger.Information(LogsConstants.AutomaticProcessAlreadyRunning(logBase));
                 return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, 0, null, null);
             }
 
+            var invoicesToProcess = await this.invoiceDao.GetInvoicesForRetryProcessAsync(ServiceConstants.InvoiceCreationErrorStatus);
 
+            if (invoicesToProcess.Any())
+            {
+                await this.redisService.StoreListAsync(
+                    ServiceConstants.InvoiceToProcessAutomaticRetryKey,
+                    invoicesToProcess.OrderBy(x => x.CreateDate).Select(x => x.Id),
+                    new TimeSpan(2, 0, 0));
+            }
 
-
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null, null);
+            this.logger.Information(LogsConstants.RetryWillProcessRecords(logBase, invoicesToProcess.Count()));
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, invoicesToProcess.Count(), null, null);
         }
 
         /// <inheritdoc/>
-        public async Task<ResultDto> RetryCreateInvoicesAsync(InvoiceRetryRequestDto invoiceRetry)
+        public async Task<ResultDto> RetryCreateInvoicesAsync(InvoiceRetryRequestDto invoiceRetry, string executionType)
         {
+            var processId = Guid.NewGuid().ToString();
+            var logBase = LogsConstants.RetryCreateInvoicesAsync(processId);
             var idsToProcess = await this.GetIdsToProcess(invoiceRetry);
-            if (idsToProcess.Count > 0)
+            if (idsToProcess.Count <= 0)
             {
-                this.logger.Information("No hay información que procesar.");
+                this.logger.Information(LogsConstants.ThereIsNoInformationToProcess(logBase));
             }
 
-            var result = new InvoiceRetryResponseDto();
+            var result = new InvoiceRetryResponseDto
+            {
+                ProcessedIds = new List<string>(),
+                SkippedIds = new List<string>(),
+            };
+
             var invoicesToProcess = new List<InvoiceModel>();
             foreach (var id in idsToProcess)
             {
-                var lockKey = $"lock:retryinvoice:{id}";
-                var lockValue = $"{id}:{invoiceRetry.ExecutionType}:{Guid.NewGuid()}";
-                await this.ValidateTheRetryDataAndUpdateFoProcess(id, lockKey, lockValue, invoiceRetry.ExecutionType, result, invoicesToProcess);
+                var lockKey = ServiceConstants.GetRetryInvoiceLockKey(id);
+                var lockValue = ServiceConstants.GetRetryInvoiceLockValue(id, executionType);
+                await this.ValidateTheRetryDataAndUpdateFoProcess(
+                    id,
+                    lockKey,
+                    lockValue,
+                    executionType,
+                    invoiceRetry.RequestingUser,
+                    result,
+                    invoicesToProcess,
+                    logBase);
             }
 
+            this.logger.Information(LogsConstants.InvoicesToBeRetried(logBase, JsonConvert.SerializeObject(invoicesToProcess.Select(x => x.Id).ToList())));
             await this.RetryInvoiceCreationAsync(invoicesToProcess);
 
-            if (idsToProcess.Count < invoiceRetry.Limit)
+            if (idsToProcess.Count < invoiceRetry.Limit && executionType.Equals(ServiceConstants.AutomaticExecutionType, StringComparison.CurrentCultureIgnoreCase))
             {
-                await this.redisService.DeleteKey("invoices:automaticretry");
+                this.logger.Information(LogsConstants.RedisKeysAreDeletedForRetryControl(logBase));
+                await this.redisService.DeleteKey(ServiceConstants.InvoiceToProcessAutomaticRetryKey);
+                await this.redisService.DeleteKey(ServiceConstants.InvoiceLockAutomaticRetryKey);
             }
 
+            this.logger.Information(LogsConstants.RetryProcessCompletedSuccessfully(logBase, JsonConvert.SerializeObject(result)));
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, result, null, null);
         }
 
@@ -77,7 +109,7 @@ namespace Omicron.Invoice.Services.InvoiceRetry.Impl
                 return invoiceRetry.InvoiceIds;
             }
 
-            return await this.redisService.ReadListAsync<string>("invoices:automaticretry", invoiceRetry.Offset, invoiceRetry.Limit);
+            return await this.redisService.ReadListAsync<string>(ServiceConstants.InvoiceToProcessAutomaticRetryKey, invoiceRetry.Offset, invoiceRetry.Limit);
         }
 
         private async Task<(List<InvoiceModel>, InvoiceRetryResponseDto)> ValidateTheRetryDataAndUpdateFoProcess(
@@ -85,38 +117,48 @@ namespace Omicron.Invoice.Services.InvoiceRetry.Impl
             string lockKey,
             string lockValue,
             string executionType,
+            string requestingUser,
             InvoiceRetryResponseDto result,
-            List<InvoiceModel> invoicesToProcess)
+            List<InvoiceModel> invoicesToProcess,
+            string logBase)
         {
             try
             {
-                bool locked = await this.redisService.SetKeyIfNotExists(lockKey, lockValue, TimeSpan.FromMinutes(5));
+                bool locked = await this.redisService.SetKeyIfNotExists(lockKey, lockValue, TimeSpan.FromMinutes(60));
 
                 if (!locked)
                 {
+                    this.logger.Information(LogsConstants.TheIdIsAlreadyBeingProcessed(logBase, id));
                     result.SkippedIds.Add(id);
                     return (invoicesToProcess, result);
                 }
 
                 var invoiceData = await this.invoiceDao.GetInvoiceModelById(id);
 
-                if (invoiceData.IsProcessing || invoiceData.IdFacturaSap.HasValue || invoiceData.Status == "Creación exitosa")
+                if (invoiceData.IsProcessing || invoiceData.IdFacturaSap.HasValue || invoiceData.Status == ServiceConstants.SuccessfulInvoiceCreationStatus)
                 {
+                    this.logger.Information(LogsConstants.AlreadyInARetryProcessOrTheInvoiceWasSuccessfullyCreated(
+                        logBase,
+                        id,
+                        invoiceData.IsProcessing,
+                        invoiceData.Status,
+                        invoiceData.IdFacturaSap.HasValue));
+
                     result.SkippedIds.Add(id);
                     await this.redisService.DeleteKey(lockKey);
                     return (invoicesToProcess, result);
                 }
 
-                invoiceData.IsProcessing = true;
                 invoiceData.Type = executionType;
-                invoiceData.Status = "Creando factura";
+                invoiceData.AlmacenUser = requestingUser;
                 await this.invoiceDao.UpdateInvoiceAsync(invoiceData);
                 result.ProcessedIds.Add(id);
                 invoicesToProcess.Add(invoiceData);
                 return (invoicesToProcess, result);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                this.logger.Error(LogsConstants.RetryProcessCompletedWithAnError(logBase, id), ex);
                 await this.redisService.DeleteKey(lockKey);
                 return (invoicesToProcess, result);
             }

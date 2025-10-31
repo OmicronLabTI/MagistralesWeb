@@ -60,5 +60,18 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
             this.context.Invoice.Update(invoiceModel);
             await ((DatabaseContext)this.context).SaveChangesAsync();
         }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<InvoiceModel>> GetInvoicesForRetryProcessAsync(string status)
+        {
+            return await (from fac in this.context.Invoice
+                          join err in this.context.InvoiceError on fac.IdInvoiceError equals err.Id
+                          where fac.IsProcessing == false
+                                && fac.Status == status
+                                && (
+                                    err.RequireManualChange == false
+                                    || (err.RequireManualChange == true && fac.ManualChangeApplied == true))
+                          select fac).ToListAsync();
+        }
     }
 }

@@ -38,6 +38,7 @@ namespace Omicron.Invoice.Services
         {
             services.AddScoped<IInvoiceService, InvoiceService>();
             services.AddScoped<IRedisService, RedisService>();
+            services.AddScoped<IInvoiceRetryService, InvoiceRetryService>();
             return services;
         }
     }
