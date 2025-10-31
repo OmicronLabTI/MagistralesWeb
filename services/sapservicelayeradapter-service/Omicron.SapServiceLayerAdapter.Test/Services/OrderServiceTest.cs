@@ -455,6 +455,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
                 EmployeeId = 1,
                 Items = new List<ShoppingCartItemDto>(),
                 ManufacturerClassificationCode = "LN",
+                NeedInvoice = 1,
             };
             request.Items.Add(item);
 
