@@ -57,6 +57,17 @@ namespace Omicron.Invoice.Api
                 Log.Logger.Error("No se encontro Redis");
             }
 
+            webApplication.Services.AddHttpClient("sapadapter", c =>
+            {
+                c.BaseAddress = new Uri(webApplication.Configuration["SapAdapterUrl"]);
+            })
+            .AddTypedClient<ISapAdapter, SapAdapter>();
+            webApplication.Services.AddHttpClient("service layer adapter", c =>
+            {
+                c.BaseAddress = new Uri(webApplication.Configuration["SapServiceLayerAdapterUrl"]);
+            })
+            .AddTypedClient<ISapServiceLayerAdapterService, SapServiceLayerAdapterService>();
+
             return webApplication.Build();
         }
 

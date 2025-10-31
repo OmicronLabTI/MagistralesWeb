@@ -19,5 +19,19 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice
         /// <param name="invoices">the invoices.</param>
         /// <returns>the data.</returns>
         Task InsertInvoices(List<InvoiceModel> invoices);
+
+        /// <summary>
+        /// Get invoice.
+        /// </summary>
+        /// <param name="id">the id.</param>
+        /// <returns>the data.</returns>
+        Task<InvoiceModel> GetInvoiceById(string id);
+
+        /// <summary>
+        /// Update invoice.
+        /// </summary>
+        /// <param name="invoices">the id.</param>
+        /// <returns>the data.</returns>
+        Task UpdateInvoices(List<InvoiceModel> invoices);
     }
 }

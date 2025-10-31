@@ -21,10 +21,10 @@
 
 	<changeSet id="changelog-1.2" author="daniel.vargas">
 		<createTable tableName="remissions">
-			<column name="id" type="bigint">
+			<column name="id" type="bigint" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false"/>
 			</column>
-			<column name="idremission" type="varchar(100)">
+			<column name="idremission" type="integer">
 				<constraints nullable="false"/>
 			</column>
 			<column name="idinvoice" type="varchar(100)">
@@ -36,10 +36,10 @@
 
 	<changeSet id="changelog-1.3" author="daniel.vargas">
 		<createTable tableName="saporders">
-			<column name="id" type="bigint">
+			<column name="id" type="bigint" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false"/>
 			</column>
-			<column name="idpedidosap" type="varchar(100)">
+			<column name="idpedidosap" type="integer">
 				<constraints nullable="false"/>
 			</column>
 			<column name="idinvoice" type="varchar(100)">

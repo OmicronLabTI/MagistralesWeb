@@ -30,6 +30,20 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
         public async Task InsertInvoices(List<InvoiceModel> invoices)
         {
             this.context.Invoices.AddRange(invoices);
+            await ((DatabaseContext)this.context).SaveChangesAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<InvoiceModel> GetInvoiceById(string id)
+        {
+            return await this.context.Invoice.Where(x => x.Id == id).FirstOrDefaultAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task UpdateInvoices(List<InvoiceModel> invoices)
+        {
+            this.context.Invoices.UpdateRange(invoices);
+            await ((DatabaseContext)this.context).SaveChangesAsync();
         }
     }
 }

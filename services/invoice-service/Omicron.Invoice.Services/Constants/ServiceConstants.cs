@@ -36,5 +36,20 @@ namespace Omicron.Invoice.Services.Constants
         /// String InvoiceCreationErrorStatus.
         /// </value>
         public static string InvoiceCreationErrorStatus => "Error al crear";
+
+        /// <summary>
+        /// Gets const for the status enviada a crear.
+        /// </summary>
+        public static string SendToCreateInvoice => "Enviada a crear";
+
+        /// <summary>
+        /// Gets const for the status enviada a crear.
+        /// </summary>
+        public static string ValidateInvoiceUrl => "remissions/invoices";
+
+        /// <summary>
+        /// Gets const for the status enviada a crear.
+        /// </summary>
+        public static string SLCreateInvoiceUrl => "create/invoice";
     }
 }

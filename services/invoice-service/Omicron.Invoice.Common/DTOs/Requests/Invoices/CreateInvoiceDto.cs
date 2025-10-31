@@ -36,5 +36,37 @@ namespace Omicron.Invoice.Common.DTOs.Requests.Invoices
         /// </summary>
         /// <value>IdDeliveries.</value>
         public List<int> IdDeliveries { get; set; }
+
+        /// <summary>
+        /// Gets or sets the IdDeliveries.
+        /// </summary>
+        /// <value>IdDeliveries.</value>
+        public List<int> IdSapOrders { get; set; }
+
+        /// <summary>
+        /// Gets or sets the CreateUserId.
+        /// </summary>
+        /// <value>CreateUserId.</value>
+        public string CreateUserId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the DxpOrderId.
+        /// </summary>
+        /// <value>DxpOrderId.</value>
+        public string DxpOrderId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the InvoiceType.
+        /// </summary>
+        /// <value>InvoiceType.</value>
+        public string InvoiceType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the billing type (complete or partial).
+        /// </summary>
+        /// <value>
+        /// Billing type string.
+        /// </value>
+        public string BillingType { get; set; }
     }
 }

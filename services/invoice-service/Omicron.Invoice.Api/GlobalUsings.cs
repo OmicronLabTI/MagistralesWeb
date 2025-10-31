@@ -15,3 +15,5 @@ global using Omicron.Invoice.Services.BackgroundTaskQueue.Impl;
 global using Omicron.Invoice.Services.MediatR;
 global using Omicron.Invoice.Common.DTOs.Requests.Invoices;
 global using Omicron.Invoice.Facade.Users;
+global using Omicron.Invoice.Services.SapAdapter;
+global using Omicron.Invoice.Services.ServiceLayer;

@@ -25,7 +25,7 @@ namespace Omicron.Invoice.Facade.Users.Impl
         /// <inheritdoc/>
         public async Task<ResultDto> CreateInvoice(CreateInvoiceDto request)
         {
-            return await this.invoiceService.CreateInvoice(request);
+            return await this.invoiceService.RegisterInvoice(request);
         }
     }
 }
