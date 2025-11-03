@@ -31,3 +31,5 @@ global using System.Net;
 global using System.Net.Http;
 global using System.Text;
 global using System.Threading.Tasks;
+global using Omicron.Invoice.Services.Catalog;
+global using Axity.Commons.Exceptions;

@@ -8,48 +8,37 @@
 
 namespace Omicron.Almacen.Services.Utils
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Linq;
-    using System.Net.Http;
-    using System.Threading.Tasks;
-    using Axity.Commons.Exceptions;
-    using Newtonsoft.Json;
-    using Serilog;
-
     /// <summary>
     /// Utils for the response.
     /// </summary>
     public static class ResponseUtils
     {
-
         /// <summary>
         /// Gets the CFDi version from Redis cache or database.
         /// </summary>
         /// <param name="redisService">The redis service.</param>
         /// <param name="catalogService">The catalog service.</param>
         /// <returns>The CFDi version string.</returns>
-        // public static async Task<string> GetCfdiVersion(IRedisService redisService, ICatalogsService catalogService)
-        // {
-        //         var cdfiVersion = await redisService.GetRedisKey(ServiceContants.CdfiKey);
+        public static async Task<string> GetCfdiVersion(IRedisService redisService, ICatalogsService catalogService)
+        {
+                var cdfiVersion = await redisService.GetRedisKey(ServiceConstants.CdfiKey);
 
-        //         if (!string.IsNullOrEmpty(cdfiVersion))
-        //         {
-        //             return cdfiVersion;
-        //         }
+                if (!string.IsNullOrEmpty(cdfiVersion))
+                {
+                    return cdfiVersion;
+                }
 
-        //         var parameters = await GetParams(new List<string> { ServiceContants.CfdiVersion }, catalogService);
-        //         var cfdiParameter = parameters?.FirstOrDefault();
-        //         if (cfdiParameter == null || string.IsNullOrEmpty(cfdiParameter.Value))
-        //         {
-        //             return ServiceContants.DefaultVersion;
-        //         }
+                var parameters = await GetParams(new List<string> { ServiceConstants.CfdiVersion }, catalogService);
+                var cfdiParameter = parameters?.FirstOrDefault();
+                if (cfdiParameter == null || string.IsNullOrEmpty(cfdiParameter.Value))
+                {
+                    return ServiceConstants.DefaultVersion;
+                }
 
-        //         await redisService.WriteToRedis(ServiceContants.CdfiKey, cfdiParameter.Value, TimeSpan.FromHours(16));
+                await redisService.WriteToRedis(ServiceConstants.CdfiKey, cfdiParameter.Value, TimeSpan.FromHours(16));
 
-        //         return cfdiParameter.Value;
-        // }
+                return cfdiParameter.Value;
+        }
 
         /// <summary>
         /// Calculate value from validation.
@@ -82,6 +71,20 @@ namespace Omicron.Almacen.Services.Utils
             }
 
             return JsonConvert.DeserializeObject<ResultDto>(jsonString);
+        }
+
+        /// <summary>
+        /// Get Params from catalog.
+        /// </summary>
+        /// <param name="parameterNames">the parameters.</param>
+        /// <param name="catalogService">the service.</param>
+        /// <returns>the data.</returns>
+        public static async Task<List<ParametersDto>> GetParams(List<string> parameterNames, ICatalogsService catalogService)
+        {
+            var query = $"{string.Join("=v&", parameterNames)}=v";
+            var route = $"{ServiceConstants.GetParams}?{query}";
+            var resultModel = await catalogService.GetParams(route);
+            return JsonConvert.DeserializeObject<List<ParametersDto>>(resultModel.Response.ToString());
         }
     }
 }

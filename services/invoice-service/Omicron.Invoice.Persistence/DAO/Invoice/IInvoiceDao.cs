@@ -55,5 +55,11 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice
         /// <param name="invoices">the id.</param>
         /// <returns>the data.</returns>
         Task UpdateInvoices(List<InvoiceModel> invoices);
+
+        /// <summary>
+        /// Method for GetInvoicesForRetryProcessAsync.
+        /// </summary>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<IEnumerable<InvoiceErrorModel>> GetAllErrors();
     }
 }

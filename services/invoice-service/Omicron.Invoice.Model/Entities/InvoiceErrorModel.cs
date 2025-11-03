@@ -17,7 +17,7 @@ namespace Omicron.Invoice.Model.Entities
         /// </summary>
         public InvoiceErrorModel()
         {
-            Invoices = new HashSet<InvoiceModel>();
+            this.Invoices = new HashSet<InvoiceModel>();
         }
 
         /// <summary>

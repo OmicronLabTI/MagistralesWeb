@@ -70,5 +70,11 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
             this.context.Invoices.UpdateRange(invoices);
             await ((DatabaseContext)this.context).SaveChangesAsync();
         }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<InvoiceErrorModel>> GetAllErrors()
+        {
+            return this.context.InvoiceError;
+        }
     }
 }

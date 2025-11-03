@@ -26,5 +26,12 @@ namespace Omicron.Invoice.Services.Invoice
         /// <param name="request"> request order. </param>
         /// <returns> order data. </returns>
         Task<ResultDto> CreateInvoice(CreateInvoiceDto request);
+
+        /// <summary>
+        /// Method to carry out the order process.
+        /// </summary>
+        /// <param name="request"> request order. </param>
+        /// <returns> order data. </returns>
+        bool PublishProcessToMediatR(CreateInvoiceDto request);
     }
 }

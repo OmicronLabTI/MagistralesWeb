@@ -14,6 +14,26 @@ namespace Omicron.Invoice.Services.Constants
     public static class ServiceConstants
     {
         /// <summary>
+        /// Gets parámetro para obtener la key Redis.
+        /// </summary>
+        public static string CdfiKey => "Cdfi-Version";
+
+        /// <summary>
+        /// Gets parámetro para obtener la default Value.
+        /// </summary>
+        public static string DefaultVersion => "CFDi40";
+
+        /// <summary>
+        /// Gets parámetro para obtener la versión de CFDI.
+        /// </summary>
+        public static string CfdiVersion => "CdfiVersion";
+
+        /// <summary>
+        /// Gets get the params.
+        /// </summary>
+        public static string GetParams => "params/contains/field";
+
+        /// <summary>
         /// Gets SuccessfulInvoiceCreationStatus.
         /// </summary>
         /// <value>

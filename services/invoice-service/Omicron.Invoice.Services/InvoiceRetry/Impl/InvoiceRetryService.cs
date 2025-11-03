@@ -174,7 +174,7 @@ namespace Omicron.Invoice.Services.InvoiceRetry.Impl
                 try
                 {
                     this.logger.Information(LogsConstants.RetrySendToCreateInvoice(logBase, invoice.Id, invoice.Payload));
-                    this.invoiceService.CreateInvoice(JsonConvert.DeserializeObject<CreateInvoiceDto>(invoice.Payload));
+                    this.invoiceService.PublishProcessToMediatR(JsonConvert.DeserializeObject<CreateInvoiceDto>(invoice.Payload));
                 }
                 catch (Exception ex)
                 {
