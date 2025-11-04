@@ -152,7 +152,8 @@ namespace Omicron.Invoice.Services.Invoice.Impl
             {
                 invoice.IsProcessing = false;
                 invoice.Status = ServiceConstants.InvoiceCreationErrorStatus;
-                if (invoice.IdInvoiceError != null)
+                invoice.UpdateDate = DateTime.Now;
+                if (invoice.ErrorMessage != null)
                 {
                     invoice.RetryNumber = invoice.RetryNumber++;
                 }

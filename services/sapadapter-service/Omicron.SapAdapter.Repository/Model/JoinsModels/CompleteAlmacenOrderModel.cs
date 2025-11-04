@@ -139,5 +139,11 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// </summary>
         /// <value>The BillingType.</value>
         public string BillingType { get; set; }
+
+        /// <summary>
+        /// Gets or sets BillingType.
+        /// </summary>
+        /// <value>The BillingType.</value>
+        public string InvoiceId { get; set; }
     }
 }
