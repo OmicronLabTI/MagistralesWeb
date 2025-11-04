@@ -37,7 +37,8 @@ namespace Omicron.Invoice.Test.Services
             this.context.SaveChanges();
 
             this.usersDao = new InvoiceDao(this.context);
-            this.userService = new InvoiceService(this.mapper, this.usersDao);
+
+            // this.userService = new InvoiceService(this.mapper, this.usersDao);
         }
     }
 }

@@ -14,22 +14,65 @@ namespace Omicron.Invoice.Test
     /// </summary>
     public abstract class BaseTest
     {
-        // /// <summary>
-        // /// Get UserModel.
-        // /// </summary>
-        // /// <returns>The UserModel.</returns>
-        // public IEnumerable<UserModel> GetAllUserModel()
-        //     => new List<UserModel>()
-        //     {
-        //         new UserModel { Id = 1, Name = "User 1", UserName = "user1", Email = "user1@yopmail.com",  Active = true },
-        //         new UserModel { Id = 2, Name = "User 2", UserName = "user2", Email = "user2@yopmail.com",  Active = true },
-        //         new UserModel { Id = 3, Name = "User 3", UserName = "user3", Email = "user3@yopmail.com",  Active = true },
-        //         new UserModel { Id = 4, Name = "User 4", UserName = "user4", Email = "user4@yopmail.com",  Active = true },
-        //         new UserModel { Id = 5, Name = "User 5", UserName = "user5", Email = "user5@yopmail.com",  Active = true },
-        //         new UserModel { Id = 6, Name = "User 6", UserName = "user6", Email = "user6@yopmail.com",  Active = true },
-        //         new UserModel { Id = 7, Name = "User 7", UserName = "user7", Email = "user7@yopmail.com",  Active = true },
-        //         new UserModel { Id = 8, Name = "User 8", UserName = "user8", Email = "user8@yopmail.com",  Active = true },
-        //         new UserModel { Id = 9, Name = "User 9", UserName = "user9", Email = "user9@yopmail.com",  Active = true },
-        //     };
+        /// <summary>
+        /// Get GetInvoiceModel.
+        /// </summary>
+        /// <returns>The GetInvoiceModel.</returns>
+        public IEnumerable<InvoiceModel> GetInvoiceModel()
+            => new List<InvoiceModel>()
+            {
+                // RETRY
+                new ()
+                {
+                    Id = "bc261af6-682b-4f29-ac3d-74a1b69129fd", CreateDate = DateTime.UtcNow, Payload = @"{""CardCode"": ""C000123"",
+                      ""ProcessId"": ""bc261af6-682b-4f29-ac3d-74a1b69129fd"",
+                      ""CfdiDriverVersion"": ""4.0"",
+                      ""IdDeliveries"": [ 10, 11, 12 ],
+                      ""IdSapOrders"": [ 555, 556, 557 ],
+                      ""CreateUserId"": """",
+                      ""DxpOrderId"": ""58550c92-f0fc-4528-80ef-f4cfa93a095f"",
+                      ""InvoiceType"": ""complete"",
+                      ""BillingType"": ""complete""
+                    }", IsProcessing = false, Status = "Error al crear", IdInvoiceError = 1,
+                },
+                new ()
+                {
+                    Id = "eb3aa587-775f-43ce-ac3d-e09dd0f4bdc2", CreateDate = DateTime.UtcNow.AddMinutes(-1), Payload = @"{""CardCode"": ""C000123"",
+                      ""ProcessId"": ""eb3aa587-775f-43ce-ac3d-e09dd0f4bdc2"",
+                      ""CfdiDriverVersion"": ""4.0"",
+                      ""IdDeliveries"": [ 10, 11, 12 ],
+                      ""IdSapOrders"": [ 555, 556, 557 ],
+                      ""CreateUserId"": """",
+                      ""DxpOrderId"": ""02573ead-7cae-4654-8ba0-3edbd441904d"",
+                      ""InvoiceType"": ""complete"",
+                      ""BillingType"": ""complete""
+                    }", IsProcessing = false, Status = "Error al crear", IdInvoiceError = 2, ManualChangeApplied = true,
+                },
+                new ()
+                {
+                    Id = "28d8520c-c4f7-4c2a-8df5-586adb7c0c94", CreateDate = DateTime.UtcNow.AddMinutes(-1), Payload = @"{""CardCode"": ""C000123"",
+                      ""ProcessId"": ""28d8520c-c4f7-4c2a-8df5-586adb7c0c94"",
+                      ""CfdiDriverVersion"": ""4.0"",
+                      ""IdDeliveries"": [ 10, 11, 12 ],
+                      ""IdSapOrders"": [ 555, 556, 557 ],
+                      ""CreateUserId"": """",
+                      ""DxpOrderId"": ""8f11d8a2-bc17-42cb-998a-86c5040a8f6d"",
+                      ""InvoiceType"": ""complete"",
+                      ""BillingType"": ""complete""
+                    }", IsProcessing = false, Status = "Error al crear", IdInvoiceError = 2, ManualChangeApplied = false,
+                },
+            };
+
+        /// <summary>
+        /// Get GetInvoiceErrorModel.
+        /// </summary>
+        /// <returns>The GetInvoiceErrorModel.</returns>
+        public IEnumerable<InvoiceErrorModel> GetInvoiceErrorModel()
+            => new List<InvoiceErrorModel>()
+            {
+                // RETRY
+                new () { Id = 1, Code = "55P03", Error = "lock_not_available – could not obtain lock on row/table because another transaction holds it", ErrorMessage = "Otro proceso está usando esta información. Espera unos segundos e inténtalo de nuevo.", RequireManualChange = false },
+                new () { Id = 2, Code = "301", Error = "No matching records found (ODBC -2028)", ErrorMessage = "Uno de los datos enviados (cliente o producto) no existe. Verifica la información.", RequireManualChange = true },
+            };
     }
 }
