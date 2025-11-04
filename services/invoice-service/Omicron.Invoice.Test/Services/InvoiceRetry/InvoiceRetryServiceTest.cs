@@ -106,6 +106,7 @@ namespace Omicron.Invoice.Test.Services.InvoiceRetry
                 redisResult.Add("bc261af6-682b-4f29-ac3d-74a1b69129fd");
                 redisResult.Add("eb3aa587-775f-43ce-ac3d-e09dd0f4bdc2");
                 redisResult.Add("28d8520c-c4f7-4c2a-8df5-586adb7c0c94");
+                redisResult.Add("283ba6a5-e3c1-4810-9c88-a7e66053cf77");
             }
 
             redis.Setup(x => x.ReadListAsync<string>(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()))
@@ -130,6 +131,62 @@ namespace Omicron.Invoice.Test.Services.InvoiceRetry
             else
             {
                 invoiceService.Verify(x => x.PublishProcessToMediatR(It.IsAny<CreateInvoiceDto>()), Times.Never);
+            }
+        }
+
+        /// <summary>
+        /// RetryCreateInvoicesAsyncCatchTest.
+        /// </summary>
+        /// <param name="throwOnValidation">Throw on validation.</param>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task RetryCreateInvoicesAsyncCatchTest(bool throwOnValidation)
+        {
+            // arrange
+            var redis = new Mock<IRedisService>();
+            var invoiceService = new Mock<IInvoiceService>();
+
+            redis.Setup(x => x.SetKeyIfNotExists(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>()))
+                .ReturnsAsync(true);
+
+            var invoiceRetry = new InvoiceRetryRequestDto
+            {
+                InvoiceIds = new List<string> { "bc261af6-682b-4f29-ac3d-74a1b69129fd" },
+                Offset = 0,
+                Limit = 10,
+                RequestingUser = "User CatchTest",
+            };
+
+            if (throwOnValidation)
+            {
+                var mockDao = new Mock<IInvoiceDao>();
+                mockDao.Setup(x => x.GetInvoiceModelById(It.IsAny<string>()))
+                       .ThrowsAsync(new Exception("DB error test"));
+
+                var sut = new InvoiceRetryService(this.logger.Object, mockDao.Object, redis.Object, invoiceService.Object);
+
+                // act
+                var result = await sut.RetryCreateInvoicesAsync(invoiceRetry, "manual");
+
+                // assert
+                Assert.That(result.Success, Is.True);
+                invoiceService.Verify(x => x.PublishProcessToMediatR(It.IsAny<CreateInvoiceDto>()), Times.Never);
+            }
+            else
+            {
+                invoiceService.Setup(x => x.PublishProcessToMediatR(It.IsAny<CreateInvoiceDto>()))
+                    .Throws(new Exception("Publish error test"));
+
+                var sut = new InvoiceRetryService(this.logger.Object, this.invoiceDao, redis.Object, invoiceService.Object);
+
+                // act
+                var result = await sut.RetryCreateInvoicesAsync(invoiceRetry, "manual");
+
+                // assert
+                Assert.That(result.Success, Is.True);
+                invoiceService.Verify(x => x.PublishProcessToMediatR(It.IsAny<CreateInvoiceDto>()), Times.Once);
             }
         }
     }

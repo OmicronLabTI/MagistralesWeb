@@ -61,6 +61,20 @@ namespace Omicron.Invoice.Test
                       ""BillingType"": ""complete""
                     }", IsProcessing = false, Status = "Error al crear", IdInvoiceError = 2, ManualChangeApplied = false,
                 },
+                new ()
+                {
+                    Id = "283ba6a5-e3c1-4810-9c88-a7e66053cf77", CreateDate = DateTime.UtcNow.AddMinutes(-1), Payload = @"{""CardCode"": ""C000123"",
+                      ""ProcessId"": ""283ba6a5-e3c1-4810-9c88-a7e66053cf77"",
+                      ""CfdiDriverVersion"": ""4.0"",
+                      ""IdDeliveries"": [ 10, 11, 12 ],
+                      ""IdSapOrders"": [ 555, 556, 557 ],
+                      ""CreateUserId"": """",
+                      ""DxpOrderId"": ""23a0c066-1360-476f-a921-216a009cdd4"",
+                      ""InvoiceType"": ""complete"",
+                      ""BillingType"": ""complete""
+                    }", IsProcessing = false, Status = "Error al crear", IdInvoiceError = 2, ManualChangeApplied = false, IdFacturaSap = 1234,
+                },
+
             };
 
         /// <summary>
