@@ -13,6 +13,7 @@ import RxDataSources
 extension InboxViewModel {
 
     func postOrderPDf(orders: [Int]) {
+        self.loading.onNext(true)
         networkManager.postOrdersPDF(orders)
             .subscribe(onNext: { [weak self] response in
             guard let self = self, response.response?.count ?? 0 > 0 else { return }
@@ -50,16 +51,7 @@ extension InboxViewModel {
     }
 
     func downloadPDF(_ ordersId: [Int]) {
-        self.loading.onNext(true)
-        networkManager.getConnect()
-            .subscribe(onNext: { [weak self] _ in
-            guard let self = self else { return }
-                self.postOrderPDf(orders: ordersId)
-        }, onError: { [weak self] _ in
-            guard let self = self else { return }
-            self.loading.onNext(false)
-            self.showAlert.onNext(CommonStrings.errorPDF)
-        }).disposed(by: disposeBag)
+        self.postOrderPDf(orders: ordersId)
     }
 
     func finishOrderService(qfbSignature: String, technicalSignature: String) {
