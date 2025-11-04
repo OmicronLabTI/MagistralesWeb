@@ -138,13 +138,13 @@ namespace Omicron.SapFile.Services.SapFile
                 try
                 {
                     var routePDf = this.CreateOrderReport(o.OrderId, o.ClientType, ConfigurationManager.AppSettings["SalePdfCreated"]);
-                    dictResult.Add($"{o}", $"Ok-{routePDf}");
+                    dictResult.Add($"{o.OrderId}", $"Ok-{routePDf}");
                 }
                 catch (Exception ex)
                 {
                     this._loggerProxy.Error(ex.StackTrace, ex);
                     this._loggerProxy.Error(ex.Message, ex);
-                    dictResult.Add($"Error-{o}", "ErrorCreatePdf");
+                    dictResult.Add($"Error-{o.OrderId}", "ErrorCreatePdf");
                 }
             });
 
