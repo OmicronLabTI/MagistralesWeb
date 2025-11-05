@@ -18,10 +18,10 @@ namespace Omicron.Invoice.Services.InvoiceRetry.Impl
     /// <param name="invoiceDao">Invoice Dao.</param>
     /// <param name="redisService">Redis Service.</param>
     /// <param name="invoiceService">Invoice Service.</param>
-    public class InvoiceRetryService(ILogger logger, IInvoiceDao invoiceDao, IRedisService redisService, IInvoiceService invoiceService)
+    public class InvoiceRetryService(Serilog.ILogger logger, IInvoiceDao invoiceDao, IRedisService redisService, IInvoiceService invoiceService)
         : IInvoiceRetryService
     {
-        private readonly ILogger logger = logger.ThrowIfNull(nameof(logger));
+        private readonly Serilog.ILogger logger = logger.ThrowIfNull(nameof(logger));
         private readonly IInvoiceDao invoiceDao = invoiceDao.ThrowIfNull(nameof(invoiceDao));
         private readonly IRedisService redisService = redisService.ThrowIfNull(nameof(redisService));
         private readonly IInvoiceService invoiceService = invoiceService.ThrowIfNull(nameof(invoiceService));

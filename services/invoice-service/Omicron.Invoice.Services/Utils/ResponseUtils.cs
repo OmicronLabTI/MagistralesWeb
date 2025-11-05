@@ -60,7 +60,7 @@ namespace Omicron.Almacen.Services.Utils
         /// <param name="logger">The logger.</param>
         /// <param name="error">the error.</param>
         /// <returns>the data.</returns>
-        public static async Task<ResultDto> GetResponse(HttpResponseMessage response, ILogger logger, string error)
+        public static async Task<ResultDto> GetResponse(HttpResponseMessage response, Serilog.ILogger logger, string error)
         {
             var jsonString = await response.Content.ReadAsStringAsync();
 
