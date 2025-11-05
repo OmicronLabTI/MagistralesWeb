@@ -474,6 +474,26 @@ spec:
                 secretKeyRef:
                   name: omicron-prod
                   key: eventhub_net_connection_productionorderpdfgeneration
+            - name: KAFKA_EH_FQDN_2
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: kafka_eh_fqdn_2
+            - name: KAFKA_RETRYFINALIZEORDER_EH_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: kafka_retryfinalizeorder_eh_name                    
+            - name: KAFKA_EVENTHUB_NET_CONNECTION_RETRYFINALIZEORDER
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: kafka_eventhub_net_connection_retryfinalizeorder
+            - name: KAFKA_RETRYFINALIZEORDER_CONSUMER_GROUP
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: kafka_retryfinalizeorder_consumer_group
           ports:
             - containerPort: 80
           resources:
