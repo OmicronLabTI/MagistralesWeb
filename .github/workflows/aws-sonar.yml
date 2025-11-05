@@ -199,6 +199,16 @@ jobs:
           codeartifact_token: ${{ steps.codeartifact-token.outputs.token }}
           axity_user: aws
 
+      - name: Test invoice-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'invoice-service')) || (inputs.force_test) }}
+        uses: ./.github/actions/sonar-aws-net-v2
+        with:
+          path: services/invoice-service
+          project_name: Invoice
+          sonar_server: ${{ secrets.SONAR_SERVER }}
+          sonar_token: ${{ secrets.SONAR_TOKEN }}
+          codeartifact_token: ${{ steps.codeartifact-token.outputs.token }}
+
   stop-runner:
     name: Stop self-hosted EC2 runner
     needs:

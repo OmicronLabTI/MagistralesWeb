@@ -82,3 +82,10 @@ spec:
                   number: 80
             path: /api/sapservicelayeradapter(/|$)(.*)
             pathType: Prefix
+          - backend:
+              service:
+                name: invoice-svc
+                port:
+                  number: 80
+            path: /api/invoice(/|$)(.*)
+            pathType: Prefix
