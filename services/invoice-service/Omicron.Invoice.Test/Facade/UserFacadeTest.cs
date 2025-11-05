@@ -5,6 +5,7 @@
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
+
 namespace Omicron.Invoice.Test.Facade
 {
     /// <summary>
@@ -13,7 +14,7 @@ namespace Omicron.Invoice.Test.Facade
     [TestFixture]
     public class UserFacadeTest : BaseTest
     {
-        private IInvoiceFacade projectFacade;
+        private IInvoiceFacade invoiceFacade;
         private IInvoiceService projectService;
 
         /// <summary>
@@ -26,10 +27,20 @@ namespace Omicron.Invoice.Test.Facade
                 .UseInMemoryDatabase(databaseName: "ProjectFacadeDB")
                 .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
                 .Options;
+            var response = new ResultDto
+            {
+                Success = true,
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = string.Empty,
+                UserError = string.Empty,
+            };
 
             var mockProject = new Mock<IInvoiceService>();
             this.projectService = mockProject.Object;
-            this.projectFacade = new InvoiceFacade(this.projectService);
+            mockProject.SetReturnsDefault(Task.FromResult(response));
+
+            this.invoiceFacade = new InvoiceFacade(this.projectService);
         }
 
         /// <summary>
@@ -39,6 +50,23 @@ namespace Omicron.Invoice.Test.Facade
         public void ValidateConstructorInvalids()
         {
             Assert.Throws<ArgumentNullException>(() => new InvoiceFacade(null));
+        }
+
+                /// <summary>
+        /// Test for selecting all models.
+        /// </summary>
+        /// <returns>nothing.</returns>
+        [Test]
+        public async Task CreateInvoice()
+        {
+            // arrange
+            var model = new CreateInvoiceDto();
+
+            // Act
+            var response = await this.invoiceFacade.CreateInvoice(model);
+
+            // Assert
+            ClassicAssert.IsNotNull(response);
         }
     }
 }

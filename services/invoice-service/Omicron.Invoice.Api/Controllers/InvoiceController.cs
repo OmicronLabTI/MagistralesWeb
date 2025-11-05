@@ -27,6 +27,7 @@ namespace Omicron.Invoice.Api.Controllers
         /// <summary>
         /// Method for get all users.
         /// </summary>
+        /// <param name="request">the request.</param>
         /// <returns>A representing the result of the asynchronous operation.</returns>
         [HttpPost]
         [Route("/create")]

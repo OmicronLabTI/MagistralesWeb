@@ -6,6 +6,10 @@
 // </copyright>
 // </summary>
 
+using Omicron.Invoice.Services.Catalog;
+using Omicron.Invoice.Services.Redis;
+using Omicron.Invoice.Services.ServiceLayer;
+
 namespace Omicron.Invoice.Test.Services
 {
     /// <summary>
@@ -36,8 +40,16 @@ namespace Omicron.Invoice.Test.Services
             this.context = new DatabaseContext(options);
             this.context.SaveChanges();
 
+            var taskQueue = new Mock<IBackgroundTaskQueue>();
+            var serviceScopeFactoryMock = new Mock<IServiceScopeFactory>();
+            var sapAdapterServiceMock = new Mock<ISapAdapter>();
+            var servicelayerServiceMock = new Mock<ISapServiceLayerAdapterService>();
+            var logger = new Mock<Serilog.ILogger>();
+            var catalogServiceMock = new Mock<ICatalogsService>();
+            var redisServiceMock = new Mock<IRedisService>();
+
             this.usersDao = new InvoiceDao(this.context);
-            this.userService = new InvoiceService(this.mapper, this.usersDao);
+            this.userService = new InvoiceService(this.usersDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object);
         }
     }
 }

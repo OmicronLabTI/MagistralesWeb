@@ -22,6 +22,12 @@ namespace Omicron.Invoice.Test
             new ResultDto(),
             new InvoiceRetryRequestDto(),
             new InvoiceRetryResponseDto(),
+            new InvoiceErrorModel(),
+            new InvoiceModel(),
+            new InvoiceRemissionModel(),
+            new InvoiceSapOrderModel(),
+            new ParametersDto(),
+            new InvoicesDataDto(),
         };
 
         /// <summary>
