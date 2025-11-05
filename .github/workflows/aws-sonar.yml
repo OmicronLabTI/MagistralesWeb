@@ -208,7 +208,8 @@ jobs:
           sonar_server: ${{ secrets.SONAR_SERVER }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
           codeartifact_token: ${{ steps.codeartifact-token.outputs.token }}
-
+          axity_user: aws
+          
   stop-runner:
     name: Stop self-hosted EC2 runner
     needs:
