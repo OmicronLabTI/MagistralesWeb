@@ -289,19 +289,6 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             };
         }
 
-        private static ProductionOrderProcessingStatusModel UpdateProcessingStatusAsync(
-            ProductionOrderProcessingStatusModel model,
-            string status,
-            string errorMessage = null,
-            string lastStep = null)
-        {
-            model.Status = status;
-            model.ErrorMessage = errorMessage;
-            model.LastStep = lastStep;
-            model.LastUpdated = DateTime.Now;
-            return model;
-        }
-
         private async Task<ProductionOrderProcessingStatusModel> UpdateProcessStatus(
             string id,
             string status,
