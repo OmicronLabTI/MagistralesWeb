@@ -27,7 +27,7 @@ namespace Omicron.Invoice.Model.Entities
         /// <summary>
         /// Gets or sets the remission identifier.
         /// </summary>
-        public string RemissionId { get; set; }
+        public int RemissionId { get; set; }
 
         /// <summary>
         /// Gets or sets the foreign key to the invoice.

@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="MediatR" Version="12.4.1" />
     <PackageReference Include="Axity.Commons" Version="1.1.9" />
     <PackageReference Include="Axity.Kafka" Version="1.0.23" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">

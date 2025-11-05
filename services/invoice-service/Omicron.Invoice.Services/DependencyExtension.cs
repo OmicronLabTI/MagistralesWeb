@@ -38,6 +38,10 @@ namespace Omicron.Invoice.Services
         {
             services.AddScoped<IInvoiceService, InvoiceService>();
             services.AddScoped<IRedisService, RedisService>();
+            services.AddScoped<IInvoiceRetryService, InvoiceRetryService>();
+            services.AddScoped<ISapServiceLayerAdapterService, SapServiceLayerAdapterService>();
+            services.AddScoped<ISapAdapter, SapAdapter.SapAdapter>();
+            services.AddScoped<ICatalogsService, CatalogsService>();
             return services;
         }
     }

@@ -26,26 +26,55 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<UserModel>> GetAllAsync()
-            => await this.context.Users.ToListAsync();
+        public async Task InsertInvoices(List<InvoiceModel> invoices)
+        {
+            this.context.Invoices.AddRange(invoices);
+            await ((DatabaseContext)this.context).SaveChangesAsync();
+        }
 
         /// <inheritdoc/>
-        public async Task<UserModel> GetByIdAsync(int id)
-            => await this.context.Users.FindAsync(id);
+        public async Task<InvoiceModel> GetInvoiceById(string id)
+        {
+            return await this.context.Invoice.Where(x => x.Id == id).FirstOrDefaultAsync();
+        }
 
         /// <inheritdoc/>
-        public async Task InsertAsync(UserModel model)
-            => await this.context.AddAsync(model);
+        public async Task<InvoiceModel> GetInvoiceModelById(string id)
+        {
+            return await this.context.Invoice.FirstOrDefaultAsync(x => x.Id == id);
+        }
 
         /// <inheritdoc/>
-        public UserModel Update(UserModel model)
-            => this.context.Update(model).Entity;
+        public async Task UpdateInvoiceAsync(InvoiceModel invoiceModel)
+        {
+            this.context.Invoice.Update(invoiceModel);
+            await ((DatabaseContext)this.context).SaveChangesAsync();
+        }
 
         /// <inheritdoc/>
-        public void Delete(UserModel model)
-            => this.context.Remove(model);
+        public async Task<IEnumerable<InvoiceModel>> GetInvoicesForRetryProcessAsync(string status)
+        {
+            return await (from fac in this.context.Invoice
+                          join err in this.context.InvoiceError on fac.IdInvoiceError equals err.Id
+                          where fac.IsProcessing == false
+                                && fac.Status == status
+                                && (
+                                    err.RequireManualChange == false
+                                    || (err.RequireManualChange == true && fac.ManualChangeApplied == true))
+                          select fac).ToListAsync();
+        }
 
         /// <inheritdoc/>
-        public async Task<int> SaveChangesAsync() => await this.context.SaveChangesAsync();
+        public async Task UpdateInvoices(List<InvoiceModel> invoices)
+        {
+            this.context.Invoices.UpdateRange(invoices);
+            await ((DatabaseContext)this.context).SaveChangesAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<InvoiceErrorModel>> GetAllErrors()
+        {
+            return this.context.InvoiceError;
+        }
     }
 }

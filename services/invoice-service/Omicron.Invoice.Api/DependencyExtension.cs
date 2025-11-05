@@ -39,8 +39,12 @@ namespace Omicron.Invoice.Api
             webApplication.Services.AddSwaggerGen();
 
             webApplication.Services.AddKafka(webApplication.Configuration, Log.Logger);
+            webApplication.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+            webApplication.Services.AddHostedService<QueuedHostedService>();
 
             webApplication.Services.AddApplicationInsightsTelemetry();
+            webApplication.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(DependencyExtension).Assembly));
+            webApplication.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateInvoiceHandler).Assembly));
 
             try
             {
@@ -52,6 +56,22 @@ namespace Omicron.Invoice.Api
             {
                 Log.Logger.Error("No se encontro Redis");
             }
+
+            webApplication.Services.AddHttpClient("sapadapter", c =>
+            {
+                c.BaseAddress = new Uri(webApplication.Configuration["SapAdapterUrl"]);
+            })
+            .AddTypedClient<ISapAdapter, SapAdapter>();
+            webApplication.Services.AddHttpClient("service layer adapter", c =>
+            {
+                c.BaseAddress = new Uri(webApplication.Configuration["SapServiceLayerAdapterUrl"]);
+            })
+            .AddTypedClient<ISapServiceLayerAdapterService, SapServiceLayerAdapterService>();
+            webApplication.Services.AddHttpClient("catalogs", c =>
+            {
+                c.BaseAddress = new Uri(webApplication.Configuration["CatalogUrl"]);
+            })
+            .AddTypedClient<ICatalogsService, CatalogsService>();
 
             return webApplication.Build();
         }

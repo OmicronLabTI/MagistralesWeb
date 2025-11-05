@@ -57,5 +57,12 @@ namespace Omicron.Invoice.Services.Redis
         /// <param name="timeToLive">Time to live.</param>
         /// <returns>the data.</returns>
         Task<bool> SetKeyIfNotExists(string key, string value, TimeSpan timeToLive);
+
+        /// <summary>
+        /// Gets the redis key.
+        /// </summary>
+        /// <param name="key">the key.</param>
+        /// <returns>the data.</returns>
+        Task<string> GetRedisKey(string key);
     }
 }

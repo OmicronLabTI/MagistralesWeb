@@ -23,7 +23,9 @@ namespace Omicron.Invoice.Facade.Users.Impl
             this.invoiceService = invoiceService ?? throw new ArgumentNullException(nameof(invoiceService));
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<UserDto>> GetAllAsync()
-            => await this.invoiceService.GetAllAsync();
+        public async Task<ResultDto> CreateInvoice(CreateInvoiceDto request)
+        {
+            return await this.invoiceService.RegisterInvoice(request);
+        }
     }
 }

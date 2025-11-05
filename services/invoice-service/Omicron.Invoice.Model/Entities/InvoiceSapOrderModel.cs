@@ -27,7 +27,7 @@ namespace Omicron.Invoice.Model.Entities
         /// <summary>
         /// Gets or sets the SAP order identifier.
         /// </summary>
-        public string SapOrderId { get; set; }
+        public int SapOrderId { get; set; }
 
         /// <summary>
         /// Gets or sets the foreign key to the invoice.

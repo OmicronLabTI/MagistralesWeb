@@ -5,6 +5,7 @@
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
+
 namespace Omicron.Invoice.Test.Facade
 {
     /// <summary>
@@ -13,7 +14,7 @@ namespace Omicron.Invoice.Test.Facade
     [TestFixture]
     public class UserFacadeTest : BaseTest
     {
-        private IInvoiceFacade projectFacade;
+        private IInvoiceFacade invoiceFacade;
         private IInvoiceService projectService;
 
         /// <summary>
@@ -26,23 +27,20 @@ namespace Omicron.Invoice.Test.Facade
                 .UseInMemoryDatabase(databaseName: "ProjectFacadeDB")
                 .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
                 .Options;
+            var response = new ResultDto
+            {
+                Success = true,
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = string.Empty,
+                UserError = string.Empty,
+            };
 
             var mockProject = new Mock<IInvoiceService>();
-            var userResponse = new UserDto
-            {
-                Name = "User 1",
-                UserName = "user1",
-                Email = "user1@yopmail.com",
-            };
-            IEnumerable<UserDto> listUserResponse =
-                new List<UserDto> { userResponse };
-
-            mockProject
-                .Setup(m => m.GetAllAsync())
-                .Returns(Task.FromResult(listUserResponse));
-
             this.projectService = mockProject.Object;
-            this.projectFacade = new InvoiceFacade(this.projectService);
+            mockProject.SetReturnsDefault(Task.FromResult(response));
+
+            this.invoiceFacade = new InvoiceFacade(this.projectService);
         }
 
         /// <summary>
@@ -54,17 +52,21 @@ namespace Omicron.Invoice.Test.Facade
             Assert.Throws<ArgumentNullException>(() => new InvoiceFacade(null));
         }
 
-        /// <summary>
-        /// Test for validate GetAllAsync.
+                /// <summary>
+        /// Test for selecting all models.
         /// </summary>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        /// <returns>nothing.</returns>
         [Test]
-        public async Task ValidateGetAllAsync()
+        public async Task CreateInvoice()
         {
-            var response = await this.projectFacade.GetAllAsync();
+            // arrange
+            var model = new CreateInvoiceDto();
 
-            Assert.That(response, Is.Not.Null);
-            Assert.That(response.Any());
+            // Act
+            var response = await this.invoiceFacade.CreateInvoice(model);
+
+            // Assert
+            ClassicAssert.IsNotNull(response);
         }
     }
 }

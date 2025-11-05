@@ -14,42 +14,52 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice
     public interface IInvoiceDao
     {
         /// <summary>
-        /// Method for GetAllAsync.
+        /// Method for GetInvoiceModelById.
         /// </summary>
+        /// <param name="id">Id.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        Task<IEnumerable<UserModel>> GetAllAsync();
+        Task<InvoiceModel> GetInvoiceModelById(string id);
 
         /// <summary>
-        /// Method for GetByIdAsync.
+        /// Method for UpdateInvoiceAsync.
         /// </summary>
-        /// <param name="id">The id.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        Task<UserModel> GetByIdAsync(int id);
-
-        /// <summary>
-        /// Method for InsertAsync.
-        /// </summary>
-        /// <param name="model">The model.</param>
+        /// <param name="invoiceModel">The model.</param>
         /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
-        Task InsertAsync(UserModel model);
+        Task UpdateInvoiceAsync(InvoiceModel invoiceModel);
 
         /// <summary>
-        /// Method for UpdateAsync.
+        /// Method for GetInvoicesForRetryProcessAsync.
         /// </summary>
-        /// <param name="model">The model.</param>
-        /// <returns>A <see cref="UserModel"/> representing the result of the operation.</returns>
-        UserModel Update(UserModel model);
+        /// <param name="status">Status.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<IEnumerable<InvoiceModel>> GetInvoicesForRetryProcessAsync(string status);
 
         /// <summary>
-        /// Method for DeleteAsync.
+        /// Method for GetAllAsync.
+        /// Create invoice.
         /// </summary>
-        /// <param name="model">The model.</param>
-        void Delete(UserModel model);
+        /// <param name="invoices">the invoices.</param>
+        /// <returns>the data.</returns>
+        Task InsertInvoices(List<InvoiceModel> invoices);
 
         /// <summary>
-        /// Method for SaveChangesAsync.
+        /// Get invoice.
         /// </summary>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the operation.</returns>
-        Task<int> SaveChangesAsync();
+        /// <param name="id">the id.</param>
+        /// <returns>the data.</returns>
+        Task<InvoiceModel> GetInvoiceById(string id);
+
+        /// <summary>
+        /// Update invoice.
+        /// </summary>
+        /// <param name="invoices">the id.</param>
+        /// <returns>the data.</returns>
+        Task UpdateInvoices(List<InvoiceModel> invoices);
+
+        /// <summary>
+        /// Method for GetInvoicesForRetryProcessAsync.
+        /// </summary>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<IEnumerable<InvoiceErrorModel>> GetAllErrors();
     }
 }

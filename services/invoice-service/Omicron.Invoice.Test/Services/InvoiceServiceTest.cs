@@ -34,25 +34,174 @@ namespace Omicron.Invoice.Test.Services
                 .Options;
 
             this.context = new DatabaseContext(options);
-            this.context.Users.AddRange(this.GetAllUserModel());
+            this.context.Invoices.AddRange(this.GetAllInvoices());
+            this.context.InvoiceError.AddRange(this.GetAllErrors());
             this.context.SaveChanges();
 
+            var taskQueue = new Mock<IBackgroundTaskQueue>();
+            var serviceScopeFactoryMock = new Mock<IServiceScopeFactory>();
+            var sapAdapterServiceMock = new Mock<ISapAdapter>();
+            var servicelayerServiceMock = new Mock<ISapServiceLayerAdapterService>();
+            var logger = new Mock<Serilog.ILogger>();
+            var catalogServiceMock = new Mock<ICatalogsService>();
+            var redisServiceMock = new Mock<IRedisService>();
+
             this.usersDao = new InvoiceDao(this.context);
-            this.userService = new InvoiceService(this.mapper, this.usersDao);
+            this.userService = new InvoiceService(this.usersDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object);
         }
 
         /// <summary>
-        /// Method Validate GetAllAsync.
+        /// Method to verify carry out the order process.
         /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        /// <returns> A <see cref="Task"/> representing the asynchronous unit test. </returns>
         [Test]
-        public async Task ValidateGetAllAsync()
+        public async Task RegisterInvoice()
         {
-            var response = await this.userService.GetAllAsync();
+            var taskQueue = new Mock<IBackgroundTaskQueue>();
+            var serviceScopeFactoryMock = new Mock<IServiceScopeFactory>();
+            var sapAdapterServiceMock = new Mock<ISapAdapter>();
+            var servicelayerServiceMock = new Mock<ISapServiceLayerAdapterService>();
+            var logger = new Mock<Serilog.ILogger>();
+            var catalogServiceMock = new Mock<ICatalogsService>();
+            var redisServiceMock = new Mock<IRedisService>();
 
-            Assert.That(response, Is.Not.Null);
-            Assert.That(response.Any());
-            Assert.That(response.Count().Equals(9));
+            this.userService = new InvoiceService(this.usersDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object);
+            var request = new CreateInvoiceDto()
+            {
+                CardCode = "C03865",
+                ProcessId = "XXXXXXXXXXXX1",
+                CfdiDriverVersion = string.Empty,
+                IdDeliveries = new List<int>() { 1, 2, 3 },
+                IdSapOrders = new List<int>() { 1, 2, 3 },
+                CreateUserId = "1",
+                DxpOrderId = "XXXXXXX23",
+                InvoiceType = "GENERICO",
+                BillingType = "Completa",
+            };
+
+            var response = await this.userService.RegisterInvoice(request);
+
+            // Assert
+            Assert.That(response.Code.Equals(200));
+        }
+
+        /// <summary>
+        /// Method to verify carry out the order process.
+        /// </summary>
+        /// <param name="generateCatchException">GenerateCatchException.</param>
+        /// <returns> A <see cref="Task"/> representing the asynchronous unit test. </returns>
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task PublishProcessToMediatR(bool generateCatchException)
+        {
+            var taskQueue = new Mock<IBackgroundTaskQueue>();
+            var serviceScopeFactoryMock = new Mock<IServiceScopeFactory>();
+            var sapAdapterServiceMock = new Mock<ISapAdapter>();
+            var servicelayerServiceMock = new Mock<ISapServiceLayerAdapterService>();
+            var logger = new Mock<Serilog.ILogger>();
+            var catalogServiceMock = new Mock<ICatalogsService>();
+            var redisServiceMock = new Mock<IRedisService>();
+
+            this.userService = new InvoiceService(this.usersDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object);
+            var request = new CreateInvoiceDto()
+            {
+                CardCode = "C03865",
+                ProcessId = "XXXXXXXXXXXX1",
+                CfdiDriverVersion = string.Empty,
+                IdDeliveries = new List<int>() { 1, 2, 3 },
+                IdSapOrders = new List<int>() { 1, 2, 3 },
+                CreateUserId = "1",
+                DxpOrderId = "XXXXXXX23",
+                InvoiceType = "GENERICO",
+                BillingType = "Completa",
+            };
+
+            if (generateCatchException)
+            {
+                taskQueue
+                .Setup(x => x.QueueBackgroundWorkItem(It.IsAny<Func<CancellationToken, Task>>()))
+                .Throws(new Exception("Invoice Service - Error sending to queue"));
+            }
+
+            var response = this.userService.PublishProcessToMediatR(request);
+
+            // Assert
+            Assert.That(response.Equals(!generateCatchException));
+        }
+
+        /// <summary>
+        /// Method to verify carry out the order process.
+        /// </summary>
+        /// <param name="sucess">GenerateCatchException.</param>
+        /// <param name="errorMessage">error message.</param>
+        /// <param name="processId">the process id.</param>
+        /// <param name="hasInvoice">has invoice.</param>
+        /// <param name="cfdiVersion">Cfdi version.</param>
+        /// <param name="redisValue">redis value.</param>
+        /// <returns> A <see cref="Task"/> representing the asynchronous unit test. </returns>
+        [Test]
+        [TestCase(false, "No se encontró la factura con el id 100", "100")]
+        [TestCase(false, "Ya se encuentra procesandose la factura 1", "1")]
+        [TestCase(true, null, "2", true)]
+        [TestCase(true, null, "2", false)]
+        [TestCase(true, null, "2", false, "XXX", "")]
+        [TestCase(true, null, "2", false, "", "")]
+        [TestCase(false, "C01", "2", false, "", "")]
+        public async Task CreateInvoice(bool sucess, string errorMessage, string processId, bool hasInvoice = false, string cfdiVersion = "XXXXXX1", string redisValue = "XXXXXX1")
+        {
+            var taskQueue = new Mock<IBackgroundTaskQueue>();
+            var serviceScopeFactoryMock = new Mock<IServiceScopeFactory>();
+            var sapAdapterServiceMock = new Mock<ISapAdapter>();
+            var servicelayerServiceMock = new Mock<ISapServiceLayerAdapterService>();
+            var logger = new Mock<Serilog.ILogger>();
+            var catalogServiceMock = new Mock<ICatalogsService>();
+
+            var catalogResult = catalogServiceMock
+                .Setup(x => x.GetParams(It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResultModel(new List<ParametersDto> { new ParametersDto() { Value = cfdiVersion } })));
+            var redisServiceMock = new Mock<IRedisService>();
+            redisServiceMock
+                .Setup(x => x.GetRedisKey(It.IsAny<string>()))
+                .Returns(Task.FromResult(redisValue));
+
+            sapAdapterServiceMock
+                .Setup(x => x.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResultModel(new InvoicesDataDto() { HasInvoice = hasInvoice, InvoiceId = 1 })));
+
+            servicelayerServiceMock
+                .Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResultModel(1)));
+
+            if (!sucess)
+            {
+                servicelayerServiceMock
+                .Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .ThrowsAsync(new System.Exception("C01"));
+            }
+
+            this.userService = new InvoiceService(this.usersDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object);
+            var request = new CreateInvoiceDto()
+            {
+                CardCode = "C03865",
+                ProcessId = processId,
+                CfdiDriverVersion = string.Empty,
+                IdDeliveries = new List<int>() { 1, 2, 3 },
+                IdSapOrders = new List<int>() { 1, 2, 3 },
+                CreateUserId = "1",
+                DxpOrderId = "XXXXXXX23",
+                InvoiceType = "GENERICO",
+                BillingType = "Completa",
+            };
+
+            var response = await this.userService.CreateInvoice(request);
+
+            // Assert
+            Assert.That(response.Success.Equals(sucess));
+            if (!sucess)
+            {
+                Assert.That(response.UserError.Equals(errorMessage));
+            }
         }
     }
 }

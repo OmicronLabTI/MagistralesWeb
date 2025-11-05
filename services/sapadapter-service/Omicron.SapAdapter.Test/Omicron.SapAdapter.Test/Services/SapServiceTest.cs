@@ -51,6 +51,8 @@ namespace Omicron.SapAdapter.Test.Services
             this.context.WarehouseModel.AddRange(this.GetWarehouse());
             this.context.LblContainerModel.AddRange(this.GetLblContainer());
             this.context.UnitCatalogModel.AddRange(this.GetBaseUnitProducts());
+            this.context.InvoiceHeaderModel.AddRange(this.GetInvoiceHeader());
+            this.context.InvoiceDetailModel.AddRange(this.GetInvoiceDetails());
 
             this.context.SaveChanges();
             var mockPedidoService = new Mock<IPedidosService>();
@@ -1783,6 +1785,20 @@ namespace Omicron.SapAdapter.Test.Services
         {
             // act
             var response = await this.sapService.GetProductFirmName("TEST 1");
+
+            // assert
+            Assert.That(response, Is.Not.Null);
+        }
+
+        /// <summary>
+        /// Test to get classifications.
+        /// </summary>
+        /// <returns> The data. </returns>
+        [Test]
+        public async Task GetInvoicesByRemissionId()
+        {
+            // act
+            var response = await this.sapService.GetInvoicesByRemissionId(new List<int> { 1 });
 
             // assert
             Assert.That(response, Is.Not.Null);

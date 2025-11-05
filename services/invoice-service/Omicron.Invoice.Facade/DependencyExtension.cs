@@ -21,6 +21,7 @@ namespace Omicron.Invoice.Facade
         public static IServiceCollection AddFacade(this IServiceCollection services)
         {
             services.AddScoped<IInvoiceFacade, InvoiceFacade>();
+            services.AddScoped<IInvoiceRetryFacade, InvoiceRetryFacade>();
             return services;
         }
     }
