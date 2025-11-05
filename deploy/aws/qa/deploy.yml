@@ -591,3 +591,70 @@ spec:
   selector:
     app: sapservicelayeradapter
   type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: invoice-deployment
+  labels:
+    app: invoice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: invoice
+  template:
+    metadata:
+      labels:
+        app: invoice
+    spec:
+      containers:
+        - name: invoice
+          image: 891376991292.dkr.ecr.us-east-2.amazonaws.com/invoicemagistrales:latest
+          imagePullPolicy: Always
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Staging
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
+            - name: POSTGRESS_NET_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: omicron_net_postgress_db
+            - name: REDIS_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: redis_connection_string
+            - name: SEQLOG_SVC_SERVICE_HOST_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: seqlog_svc_service_host_name
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: 50m
+              memory: 100Mi
+            requests:
+              cpu: 1m
+              memory: 40Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: invoice-svc
+  labels:
+    app: invoice
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+  selector:
+    app: invoice
+  type: ClusterIP
