@@ -226,7 +226,6 @@ namespace Omicron.Invoice.Services.Invoice.Impl
             }
 
             await this.invoiceDao.UpdateInvoices(new List<InvoiceModel> { invoice });
-            await this.redisService.DeleteKey(ServiceConstants.GetRetryInvoiceLockKey(invoice.Id));
         }
 
         private async Task<InvoicesDataDto> ValidateHasInvoice(List<int> remissions)

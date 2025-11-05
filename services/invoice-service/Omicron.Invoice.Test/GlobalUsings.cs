@@ -26,3 +26,7 @@ global using NUnit.Framework.Legacy;
 global using Microsoft.Extensions.DependencyInjection;
 global using Omicron.Invoice.Services.BackgroundTaskQueue;
 global using Omicron.Invoice.Services.SapAdapter;
+global using System.Threading;
+global using Omicron.Invoice.Services.Catalog;
+global using Omicron.Invoice.Services.Redis;
+global using Omicron.Invoice.Services.ServiceLayer;
