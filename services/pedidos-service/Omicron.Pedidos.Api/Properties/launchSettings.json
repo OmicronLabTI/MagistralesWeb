@@ -14,7 +14,10 @@
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Local",
-        "POSTGRESS_NET_CONNECTION_STRING": "Server=localhost;Port=5432;Uid=omicronuser;Pwd=Axity2020;Database=omicrondev"
+        "POSTGRESS_NET_CONNECTION_STRING": "Server=localhost;Port=5432;Uid=omicronuser;Pwd=Axity2020;Database=omicrondev",
+        "KAFKA_RETRYFINALIZEORDER_FQDN": "localhost:9092",
+        "KAFKA_RETRYFINALIZEORDER_CONSUMER_GROUP": "retryfinalizeproductionorder",
+        "KAFKA_RETRYFINALIZEORDER_EH_NAME": "retryfinalizeproductionorder"
       },
       "applicationUrl": "http://localhost:5103"
     },

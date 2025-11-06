@@ -74,5 +74,17 @@ namespace Omicron.ProductionOrder.Batch.Utils
                 Limit = Math.Min(batchSize, total - (i * batchSize)),
             });
         }
+
+        /// <summary>
+        ///    test.
+        /// </summary>
+        /// <typeparam name="T">s.</typeparam>
+        /// <param name="obj">sfr.</param>
+        /// <param name="name">name of param.</param>
+        /// <returns>ca.</returns>
+        public static T ThrowIfNull<T>(this T obj, string name)
+        {
+            return obj ?? throw new ArgumentNullException(name);
+        }
     }
 }

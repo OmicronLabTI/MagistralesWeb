@@ -21,7 +21,7 @@ namespace Omicron.ProductionOrder.Batch.Handlers.Impl
 
         private readonly Settings settings;
 
-        private readonly IServiceScopeFactory serviceScopeFactory;
+        private readonly IKafkaConnector kafkaConnector;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FinalizeProductionOrderHandler"/> class.
@@ -30,19 +30,19 @@ namespace Omicron.ProductionOrder.Batch.Handlers.Impl
         /// <param name="pedidosService">PedidosService</param>
         /// <param name="redisService">redisService</param>
         /// <param name="settings">Settings.</param>
-        /// <param name="serviceScopeFactory">IServiceScopeFactory.</param>
+        /// <param name="kafkaConnector">Kafka Connector.</param>
         public FinalizeProductionOrderHandler(
             ILogger logger,
             IPedidosService pedidosService,
             IRedisService redisService,
             IOptionsSnapshot<Settings> settings,
-            IServiceScopeFactory serviceScopeFactory)
+            IKafkaConnector kafkaConnector)
         {
             this.logger = logger;
             this.pedidosService = pedidosService;
             this.redisService = redisService;
             this.settings = settings.Value;
-            this.serviceScopeFactory = serviceScopeFactory;
+            this.kafkaConnector = kafkaConnector;
         }
 
         /// <inheritdoc />
@@ -127,29 +127,8 @@ namespace Omicron.ProductionOrder.Batch.Handlers.Impl
                 ProductionOrderProcessingPayload = paginatedList,
             };
 
-            this.SendPedidosRequestInBackgroundAsync(requestPedidos, logBase);
+            await this.kafkaConnector.PushMessage(requestPedidos, logBase);
             this.logger.Information(BatchConstants.EndProductionOrdersAreSentForRetry, logBase);
-        }
-
-        private void SendPedidosRequestInBackgroundAsync(
-                RetryFailedProductionOrderFinalizationModel requestPedidos,
-                string logBase)
-        {
-            try
-            {
-                _ = this.pedidosService.PostAsync(
-                    BatchConstants.PostRetryFinalizeFailedProductionOrdersEndpoint,
-                    requestPedidos,
-                    logBase);
-
-                this.logger.Information($"{logBase} - Send Batch To Retry - {JsonConvert.SerializeObject(requestPedidos)}");
-            }
-            catch (Exception ex)
-            {
-                var error = string.Format(
-                    BatchConstants.ErrorSendPedidosRequestInBackgroundAsync, logBase, ex.Message, ex.InnerException);
-                this.logger.Error(error);
-            }
         }
 
         private async Task<List<T>> GetValueFromRedisByKeyAndOffsetAndLimit<T>(string key, int offset, int limit)
