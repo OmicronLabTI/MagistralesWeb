@@ -203,6 +203,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             ProffesionalLicense = doctor.ProffesionalLicense,
                             ClientType = order.ClientType,
                             BillingType = order.BillingType,
+                            InvoiceId = order.InvoiceId,
                             Detalles = new DetallePedidoModel
                             {
                                 PedidoId = detail.PedidoId,
@@ -706,6 +707,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             IsOmigenomics = string.IsNullOrEmpty(order.IsOmigenomics) ? order.IsSecondary : order.IsOmigenomics == "1" ? "Y" : "N",
                             IsSecondary = order.IsSecondary,
                             BillingType = order.BillingType,
+                            InvoiceId = order.InvoiceId,
                             Detalles = new DetallePedidoModel
                             {
                                 PedidoId = detail.PedidoId,
@@ -1772,6 +1774,18 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                         };
 
             return await this.RetryQuery(query);
+        }
+
+        /// <inheritdoc/>
+        public async Task<InvoiceDetails> GetInvoicesByRemissions(List<int> orderIds)
+        {
+            return await (from invoice in this.databaseContext.InvoiceHeaderModel
+                    join detail in this.databaseContext.InvoiceDetailModel on invoice.InvoiceId equals detail.InvoiceId
+                    where orderIds.Contains(detail.BaseEntry ?? 0)
+                    select new InvoiceDetails()
+                    {
+                        InvoiceId = invoice.DocNum,
+                    }).FirstOrDefaultAsync();
         }
 
         private IQueryable<InvoiceHeaderModel> GetInvoiceHeaderJoinDoctorBaseQuery()

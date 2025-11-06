@@ -323,5 +323,11 @@ namespace Omicron.SapAdapter.Facade.Sap
         {
             return this.mapper.Map<ResultDto>(await this.sapService.GetProductFirmName(itemCode));
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetInvoicesByRemissionId(List<int> remissions)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetInvoicesByRemissionId(remissions));
+        }
     }
 }

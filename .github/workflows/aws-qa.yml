@@ -135,7 +135,6 @@ jobs:
             bucket_name: ${{ secrets.AWS_BUCKET_MAGISTRALES }}
             environment: qa-aws
             working_directory: ./frontend/web
-     
       - name: Login to AWS ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
@@ -247,7 +246,18 @@ jobs:
           axity_aws_access_key_id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
           axity_aws_secret_access_key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
           axity_aws_region: ${{ secrets.AXITY_AWS_REGION }}
-
+      - name: Docker Build an Push Invoice
+        if: ${{ (contains(steps.changeset.outputs.changes, 'invoice-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build-aws
+        with:
+          working_directory: ./services/invoice-service
+          registry: ${{ env.AWS_ECR_REGISTRY }}
+          repository: invoicemagistrales
+          tag: ${{ github.sha }}
+          axity_aws_user: ${{ vars.AXITY_AWS_USER }}
+          axity_aws_access_key_id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
+          axity_aws_secret_access_key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
+          axity_aws_region: ${{ secrets.AXITY_AWS_REGION }}
       - name: Docker Build and Push Batch Finalize Production Orders
         if: ${{ (contains(steps.changeset.outputs.changes, 'batches')) || (inputs.force_build) }}
         uses: ./.github/actions/docker-build-aws
@@ -273,7 +283,6 @@ jobs:
           axity_aws_access_key_id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
           axity_aws_secret_access_key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
           axity_aws_region: ${{ secrets.AXITY_AWS_REGION }}
-
       - name: Configure AWS credentials Omicron
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -324,6 +333,9 @@ jobs:
       - name: Rollout sapservicelayeradapter-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'sapservicelayeradapter-service')) || (inputs.force_build) }}
         run: kubectl rollout restart deploy sapservicelayeradapter-deployment
+      - name: Rollout invoice-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'invoice-service')) || (inputs.force_build) }}
+        run: kubectl rollout restart deploy invoice-deployment
 
       - name: Docker prune
         run: |
