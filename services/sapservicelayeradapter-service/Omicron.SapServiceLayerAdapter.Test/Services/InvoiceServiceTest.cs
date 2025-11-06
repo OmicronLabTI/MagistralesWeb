@@ -232,7 +232,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
             else
             {
                 var fakeResponse = isResponseSuccess
-                    ? new InvoiceDto { DocumentEntry = 999 }
+                    ? new InvoiceDto { DocumentEntry = 999, DocumentNumber = 999 }
                     : null;
 
                 var invoiceResponseMock = GetGenericResponseModel(
