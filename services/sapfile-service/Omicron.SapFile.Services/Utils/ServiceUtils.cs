@@ -9,6 +9,7 @@ namespace Omicron.SapFile.Services.Utils
 {
     using System;
     using System.IO;
+    using System.Text.RegularExpressions;
     using Omicron.SapFile.Entities.Models;
 
     /// <summary>
@@ -94,6 +95,17 @@ namespace Omicron.SapFile.Services.Utils
                     // file is currently locked
                 }
             }
+        }
+
+        /// <summary>
+        /// Creates the pdfs.
+        /// </summary>
+        /// <param name="url">the data to create.</param>
+        /// <returns>the data.</returns>
+        public static string ReplaceUrlToDiscC(string url)
+        {
+            string ipPattern = @"\\\\(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)";
+            return Regex.Replace(url, ipPattern, "C:");
         }
     }
 }
