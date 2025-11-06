@@ -309,11 +309,11 @@ spec:
                 secretKeyRef:
                   name: omicron-uat
                   key: kafka_retryfinalizeorder_eh_name
-            - name: KAFKA_RETRYFINALIZEORDER_EH_CONNECTION
+            - name: KAFKA_EVENTHUB_NET_CONNECTION_RETRYFINALIZEORDER
               valueFrom:
                 secretKeyRef:
                   name: omicron-uat
-                  key: kafka_retryfinalizeorder_eh_connection
+                  key: kafka_eventhub_net_connection_retryfinalizeorder
             - name: KAFKA_RETRYFINALIZEORDER_CONSUMER_GROUP
               valueFrom:
                 secretKeyRef:
