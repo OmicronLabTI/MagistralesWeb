@@ -474,6 +474,11 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string UpdateCancelParentOrderStep = "UpdateCancelParentOrderProcess";
 
         /// <summary>
+        /// ProcessCertification.
+        /// </summary>
+        public const string ProcessCertification = "P";
+
+        /// <summary>
         /// Gets ManageBatchNumbers.
         /// </summary>
         /// <value>

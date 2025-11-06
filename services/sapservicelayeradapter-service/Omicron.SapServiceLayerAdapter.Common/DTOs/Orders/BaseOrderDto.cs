@@ -96,5 +96,12 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// <value>CFDIProvisional.</value>
         [JsonProperty("U_CFDI_Provisional")]
         public string CFDIProvisional { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Timbrado status.
+        /// </summary>
+        /// <value>U_BXP_TIMBRADO.</value>
+        [JsonProperty("U_BXP_TIMBRADO")]
+        public string TimbradoStatus { get; set; }
     }
 }
