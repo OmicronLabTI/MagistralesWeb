@@ -94,7 +94,7 @@ namespace Omicron.Invoice.Services.InvoiceRetry.Impl
 
             this.RetryInvoiceCreationAsync(invoicesToProcess, logBase);
 
-            if (idsToProcess.Count < invoiceRetry.Limit && executionType.Equals(ServiceConstants.AutomaticExecutionType, StringComparison.CurrentCultureIgnoreCase))
+            if (idsToProcess.Count < invoiceRetry.Limit && executionType.ToUpper() == ServiceConstants.AutomaticExecutionType.ToUpper())
             {
                 this.logger.Information(LogsConstants.RedisKeysAreDeletedForRetryControl(logBase));
                 await this.redisService.DeleteKey(ServiceConstants.InvoiceToProcessAutomaticRetryKey);
