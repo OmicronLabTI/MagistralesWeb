@@ -390,7 +390,7 @@ metadata:
   labels:
     app: pedidos
 spec:
-  replicas: 4
+  replicas: 5
   selector:
     matchLabels:
       app: pedidos
@@ -479,11 +479,11 @@ spec:
                 secretKeyRef:
                   name: omicron-prod
                   key: kafka_retryfinalizeorder_eh_name                    
-            - name: KAFKA_RETRYFINALIZEORDER_EH_CONNECTION
+            - name: KAFKA_EVENTHUB_NET_CONNECTION_RETRYFINALIZEORDER
               valueFrom:
                 secretKeyRef:
                   name: omicron-prod
-                  key: kafka_retryfinalizeorder_eh_connection
+                  key: kafka_eventhub_net_connection_retryfinalizeorder
             - name: KAFKA_RETRYFINALIZEORDER_CONSUMER_GROUP
               valueFrom:
                 secretKeyRef:
@@ -525,8 +525,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: pedidos-deployment
-  minReplicas: 4
-  maxReplicas: 6
+  minReplicas: 5
+  maxReplicas: 8
   metrics:
   - type: Resource
     resource:
@@ -749,7 +749,7 @@ metadata:
   labels:
     app: sapservicelayeradapter
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: sapservicelayeradapter
@@ -834,8 +834,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: sapservicelayeradapter-deployment
-  minReplicas: 2
-  maxReplicas: 3
+  minReplicas: 3
+  maxReplicas: 5
   metrics:
   - type: Resource
     resource:
