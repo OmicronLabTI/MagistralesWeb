@@ -26,6 +26,7 @@ namespace Omicron.SapFile.Services.SapFile
     using iTextSharp.text;
     using iTextSharp.text.pdf;
     using Omicron.SapFile.Dtos.Models;
+    using Newtonsoft.Json;
 
     /// <summary>
     /// Class to create pdfs.
@@ -57,7 +58,7 @@ namespace Omicron.SapFile.Services.SapFile
             this.User = ConfigurationManager.AppSettings["Usuario"];
             this.Pwd = ConfigurationManager.AppSettings["UserPwd"];
             this.ProductionDirectoryPath = ConfigurationManager.AppSettings["ProductionFiles"];
-            this.TemporalDirectoryPath = ConfigurationManager.AppSettings["PdfCreated"];
+            this.TemporalDirectoryPath = ServiceUtils.ReplaceUrlToDiscC(ConfigurationManager.AppSettings["PdfCreated"] ?? string.Empty); ;
         }
 
         /// <summary>
@@ -75,39 +76,47 @@ namespace Omicron.SapFile.Services.SapFile
                 {
                     try
                     {
+                        this._loggerProxy.Info($"Init CreatePdfs: {JsonConvert.SerializeObject(order)}.");
                         if (order.OrderId != 0 && !dictOrdersCreated.ContainsKey(order.OrderId))
                         {
+                            this._loggerProxy.Info($"CreatePdfs - PdfCreated: {ConfigurationManager.AppSettings["PdfCreated"]}.");
                             order.OrderPdfRoute = this.CreateOrderReport(order.OrderId, ServiceConstants.GeneralClientType, ConfigurationManager.AppSettings["PdfCreated"]);
                             dictOrdersCreated.Add(order.OrderId, order.OrderId);
                         }
 
                         if (order.FabOrderId != 0)
                         {
+                            this._loggerProxy.Info($"CreatePdfs - CreateFabOrderReport.");
                             order.FabOrderPdfRoute = this.CreateFabOrderReport(order.FabOrderId);
                         }
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
+                        this._loggerProxy.Error("Primer catch.");
                         this._loggerProxy.Error(ex.Message, ex);
                         dictResult.Add($"{order.OrderId}-{order.FabOrderId}", "ErrorCreatePdf");
-                    }                    
+                    }
                 });
 
                 finalizaGeneratePdfs.Where(x => x.OrderId.Equals(0)).ToList().ForEach(order =>
                 {
+                    this._loggerProxy.Info($"CreateFabOrderReportWithSignatures.");
                     var filePath = this.CreateFabOrderReportWithSignatures(order, true);
                     this._loggerProxy.Info($"Create file for production order: {filePath}.");
                 });
 
                 var groupedOrders = finalizaGeneratePdfs.Where(order => order.OrderId != 0).GroupBy(order => order.OrderId);
-                groupedOrders.ToList().ForEach(x => {
+                groupedOrders.ToList().ForEach(x =>
+                {
+                    this._loggerProxy.Info($"CreateSalesOrderReportWithProductionOrders.");
                     var filePath = this.CreateSalesOrderReportWithProductionOrders(x.ToList());
                     this._loggerProxy.Info($"Create file for sales order: {filePath}.");
                     dictResult.Add($"OK-{x.Key}", filePath);
                 });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
+                this._loggerProxy.Error("Segundo catch.");
                 this._loggerProxy.Error(ex.Message, ex);
                 dictResult.Add("Error Procesar Pdf - Error Procesar Pdf", "ErrorCreatePdf");
                 return ServiceUtils.CreateResult(true, 200, null, dictResult, ex.StackTrace);
@@ -129,13 +138,13 @@ namespace Omicron.SapFile.Services.SapFile
                 try
                 {
                     var routePDf = this.CreateOrderReport(o.OrderId, o.ClientType, ConfigurationManager.AppSettings["SalePdfCreated"]);
-                    dictResult.Add($"{o}", $"Ok-{routePDf}");
+                    dictResult.Add($"{o.OrderId}", $"Ok-{routePDf}");
                 }
                 catch (Exception ex)
                 {
                     this._loggerProxy.Error(ex.StackTrace, ex);
                     this._loggerProxy.Error(ex.Message, ex);
-                    dictResult.Add($"Error-{o}", "ErrorCreatePdf");
+                    dictResult.Add($"Error-{o.OrderId}", "ErrorCreatePdf");
                 }
             });
 
@@ -150,13 +159,13 @@ namespace Omicron.SapFile.Services.SapFile
             {
                 try
                 {
-                   if (type == ServiceConstants.Invoice)
+                    if (type == ServiceConstants.Invoice)
                     {
                         var routePDf = this.CreateInvoiceReport(o, ConfigurationManager.AppSettings["SalePdfCreated"]);
                         dictResult.Add($"{o}", $"Ok-{routePDf}");
                     }
-                   
-                   if (type == ServiceConstants.Delivery)
+
+                    if (type == ServiceConstants.Delivery)
                     {
                         var routePDf = this.CreateDeliveryReport(o, ConfigurationManager.AppSettings["SalePdfCreated"]);
                         dictResult.Add($"{o}", $"Ok-{routePDf}");
@@ -217,7 +226,8 @@ namespace Omicron.SapFile.Services.SapFile
             {
                 this._loggerProxy.Debug("Creando pdf de cliente institucional");
                 localRoute = ConfigurationManager.AppSettings["PedidoInstitucionalRtp"];
-            } else
+            }
+            else
             {
                 localRoute = ConfigurationManager.AppSettings["PedidoRtp"];
             }
@@ -227,7 +237,7 @@ namespace Omicron.SapFile.Services.SapFile
             this._loggerProxy.Debug("get current directory");
             var root = Directory.GetCurrentDirectory();
             root += localRoute;
-            
+
             report.Load(root);
             report.DataSourceConnections[0].SetConnection(this.Server, this.DataBase, this.User, this.Pwd);
 
@@ -236,8 +246,13 @@ namespace Omicron.SapFile.Services.SapFile
 
             var name = $"Order{orderId}.pdf";
             var route = fileRoute;
-            var completeRoute = @route + name;
+            this._loggerProxy.Info($"Omicron.SapFile.SapFiles Service - CreateOrderReport - Name: {name}");
+            this._loggerProxy.Info($"Omicron.SapFile.SapFiles Service - CreateOrderReport - Route: {route}");
+            var routeComplete = @route + name;
+            var completeRoute = ServiceUtils.ReplaceUrlToDiscC(routeComplete ?? string.Empty);
+            this._loggerProxy.Info($"Omicron.SapFile.SapFiles Service - CreateOrderReport - CompleteRoute: {completeRoute}");
             this.CreatePdf(report, completeRoute);
+            this._loggerProxy.Info($"Omicron.SapFile.SapFiles Service - CreateOrderReport - CreatePdf Finalizado");
             return completeRoute;
         }
 
@@ -264,7 +279,7 @@ namespace Omicron.SapFile.Services.SapFile
             var route = fileRoute;
             var completeRoute = @route + name;
             this.CreatePdf(report, completeRoute);
-            return completeRoute;
+            return ServiceUtils.ReplaceUrlToDiscC(completeRoute ?? string.Empty);
         }
 
         /// <summary>
@@ -291,7 +306,7 @@ namespace Omicron.SapFile.Services.SapFile
             var route = fileRoute;
             var completeRoute = @route + name;
             this.CreatePdf(report, completeRoute);
-            return completeRoute;
+            return ServiceUtils.ReplaceUrlToDiscC(completeRoute ?? string.Empty);
         }
 
         /// <summary>
@@ -301,6 +316,7 @@ namespace Omicron.SapFile.Services.SapFile
         /// <returns>the data.</returns>
         private string CreateFabOrderReport(int orderId)
         {
+            this._loggerProxy.Info($"Omicron.SapFile.SapFiles Service - Inicio");
             var report = new ReportDocument();
             var localRoute = ConfigurationManager.AppSettings["OrderRtp"];
 
@@ -311,13 +327,18 @@ namespace Omicron.SapFile.Services.SapFile
             report.Load(root);
             report.DataSourceConnections[0].SetConnection(this.Server, this.DataBase, this.User, this.Pwd);
 
-            report.SetParameterValue("DocKey@", orderId);            
+            report.SetParameterValue("DocKey@", orderId);
 
             var name = $"FabOrder{orderId}.pdf";
             var route = ConfigurationManager.AppSettings["PdfCreated"];
-            var completeRoute = @route + name;
+            this._loggerProxy.Info($"Omicron.SapFile.SapFiles Service - CreateFabOrderReport - Name: {name}");
+            this._loggerProxy.Info($"Omicron.SapFile.SapFiles Service - CreateFabOrderReport - Route: {route}");
+            var routeComplete = @route + name;
+            var completeRoute = ServiceUtils.ReplaceUrlToDiscC(routeComplete ?? string.Empty);
+            this._loggerProxy.Info($"Omicron.SapFile.SapFiles Service - CreateFabOrderReport - completeRoute: {completeRoute}");
             this.CreatePdf(report, completeRoute);
-            return completeRoute;
+            this._loggerProxy.Info($"Omicron.SapFile.SapFiles Service - CreateFabOrderReport - Finalizado");
+            return completeRoute.Replace(".pdf", "");
         }
 
         /// <summary>

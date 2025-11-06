@@ -261,7 +261,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             foreach (var payloadRequest in payloadRetry.ProductionOrderProcessingPayload)
             {
                 var redisKey = string.Format(ServiceConstants.ProductionOrderFinalizingKey, payloadRequest.ProductionOrderId);
-                await this.redisService.WriteToRedis(redisKey, JsonConvert.SerializeObject(payloadRequest), new TimeSpan(12, 0, 0));
+                await this.redisService.WriteToRedis(redisKey, JsonConvert.SerializeObject(payloadRequest), new TimeSpan(2, 0, 0));
                 var payload = this.mapper.Map<ProductionOrderProcessingStatusModel>(payloadRequest);
                 await this.RetryFailedProductionOrderFinalizationProcess(payload, logBase);
             }
@@ -1060,7 +1060,6 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                     logBase,
                     string.Format(LogsConstants.GenericErrorLog, ex.Message, ex.InnerException),
                     productionOrderProcessingPayload.LastStep);
-
                 return false;
             }
         }

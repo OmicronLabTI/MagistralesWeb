@@ -59,9 +59,11 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
                           where fac.IsProcessing == false
                                 && fac.Status == status
                                 && (
-                                    err.RequireManualChange == false
-                                    || (err.RequireManualChange == true && fac.ManualChangeApplied == true))
-                          select fac).ToListAsync();
+                                      (err.RequireManualChange == true
+                                          && (fac.ManualChangeApplied == true || fac.ManualChangeApplied == null))
+                                   || err.RequireManualChange == false)
+                          select fac)
+                   .ToListAsync();
         }
 
         /// <inheritdoc/>
