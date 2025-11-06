@@ -123,7 +123,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Invoices.Impl
 
                 var createdInvoice = JsonConvert.DeserializeObject<InvoiceDto>(invoiceResponse.Response.ToString());
                 this.logger.Information(LogsConstants.InvoiceCreatedSuccessfully, logBase);
-                return ServiceUtils.CreateResult(true, 200, null, createdInvoice.DocumentEntry, null);
+                return ServiceUtils.CreateResult(true, 200, null, createdInvoice.DocumentNumber, null);
             }
             catch (Exception ex)
             {
