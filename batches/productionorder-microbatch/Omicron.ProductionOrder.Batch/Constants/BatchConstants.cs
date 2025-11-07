@@ -134,14 +134,6 @@ namespace Omicron.ProductionOrder.Batch.Constants
         public static string StartProductionOrdersAreSentForRetry => "{LogBase} - Start - Production Orders Are Sent For Retry - {Object}";
 
         /// <summary>
-        /// Gets EndProductionOrdersAreSentForRetry.
-        /// </summary>
-        /// <value>
-        /// EndProductionOrdersAreSentForRetry.
-        /// </value>
-        public static string EndProductionOrdersAreSentForRetry => "{LogBase} - End - Production Orders Are Sent For Retry";
-
-        /// <summary>
         /// Gets EndCronJobProcess.
         /// </summary>
         /// <value>
@@ -180,5 +172,13 @@ namespace Omicron.ProductionOrder.Batch.Constants
         /// ErrorCallingPostPedidosService.
         /// </value>
         public static string ErrorCallingPostPedidosService => "{0} - Error calling POST Pedidos Service";
+
+        /// <summary>
+        /// Gets GetResponseErrorTemplate.
+        /// </summary>
+        /// <value>
+        /// GetResponseErrorTemplate.
+        /// </value>
+        public static string GetResponseErrorTemplate => "{0} {1}";
     }
 }
