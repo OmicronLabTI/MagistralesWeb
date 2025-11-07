@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <packageSources>
+         <add key="CodeArtifact" value="https://axity-992382646884.d.codeartifact.us-east-1.amazonaws.com/nuget/axity-nuget-repo/v3/index.json" />
+         <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+    </packageSources>
+    <packageSourceCredentials>
+        <CodeArtifact>
+            <add key="Username" value="PLACEHOLDER_USERNAME" />
+            <add key="ClearTextPassword" value="PLACEHOLDER_PASSWORD" />
+        </CodeArtifact>
+    </packageSourceCredentials>
+</configuration>
