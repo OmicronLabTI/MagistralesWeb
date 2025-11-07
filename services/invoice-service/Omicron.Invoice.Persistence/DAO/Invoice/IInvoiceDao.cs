@@ -61,5 +61,12 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice
         /// </summary>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<IEnumerable<InvoiceErrorModel>> GetAllErrors();
+
+        /// <summary>
+        /// Method for GetInvoicesByRemissionId.
+        /// </summary>
+        /// <param name="remissionId">the ids.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<IEnumerable<InvoiceRemissionJoinModel>> GetInvoicesByRemissionId(List<long> remissionId);
     }
 }
