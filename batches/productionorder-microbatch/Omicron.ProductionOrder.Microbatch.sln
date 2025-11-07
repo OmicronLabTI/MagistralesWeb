@@ -20,8 +20,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Omicron.ProductionOrder.Test", "Omicron.ProductionOrder.Test\Omicron.ProductionOrder.Test.csproj", "{61AEE7CF-39A6-7EA9-B919-0580EAAD3850}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Commons", "Commons", "{6C58B469-ABC1-4A5B-B87F-1DD64D9E2893}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
