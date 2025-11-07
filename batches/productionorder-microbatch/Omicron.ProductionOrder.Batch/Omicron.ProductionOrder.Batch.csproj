@@ -7,6 +7,9 @@
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<InvariantGlobalization>false</InvariantGlobalization>
 	</PropertyGroup>
+	<ItemGroup>
+	  <Content Remove="C:\Users\Jose.Espinosa\.nuget\packages\axity.commons\1.1.9\contentFiles\any\netstandard2.1\logo_axity-192x192.png" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<Content Include="appsettings.json">
