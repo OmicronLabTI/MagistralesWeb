@@ -215,7 +215,7 @@ jobs:
         uses: ./.github/actions/sonar-aws-net-microbatch
         with:
           path: batches/productionorder-microbatch
-          project_name: FinalizeProductionOrder
+          project_name: ProductionOrder
           sonar_server: ${{ secrets.SONAR_SERVER }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
           codeartifact_token: ${{ steps.codeartifact-token.outputs.token }}
