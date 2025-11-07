@@ -120,6 +120,7 @@ namespace Omicron.SapAdapter.Test
             new DeliveryDetailByOrdersModel(),
             new InvoiceDetails(),
             new InvoicesDataDto(),
+            new DeliveryInvoiceDto(),
         };
 
         /// <summary>
