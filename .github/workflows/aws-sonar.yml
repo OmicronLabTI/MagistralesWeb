@@ -212,7 +212,7 @@ jobs:
           axity_user: aws
       - name: Test productionorder-microbatch
         if: ${{ (contains(steps.changeset.outputs.changes, 'productionorder-microbatch')) || (inputs.force_test) }}
-        uses: ./.github/actions/sonar-aws-net-v2
+        uses: ./.github/actions/sonar-aws-net-microbatch
         with:
           path: batches/productionorder-microbatch
           project_name: FinalizeProductionOrder
