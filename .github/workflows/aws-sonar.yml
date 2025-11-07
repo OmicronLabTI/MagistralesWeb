@@ -209,6 +209,16 @@ jobs:
           sonar_token: ${{ secrets.SONAR_TOKEN }}
           codeartifact_token: ${{ steps.codeartifact-token.outputs.token }}
           axity_user: aws
+      - name: Test productionorder-microbatch
+        if: ${{ (contains(steps.changeset.outputs.changes, 'productionorder-microbatch')) || (inputs.force_test) }}
+        uses: ./.github/actions/sonar-aws-net-v2
+        with:
+          path: batches/productionorder-microbatch
+          project_name: FinalizeProductionOrder
+          sonar_server: ${{ secrets.SONAR_SERVER }}
+          sonar_token: ${{ secrets.SONAR_TOKEN }}
+          codeartifact_token: ${{ steps.codeartifact-token.outputs.token }}
+          axity_user: aws
           
   stop-runner:
     name: Stop self-hosted EC2 runner
