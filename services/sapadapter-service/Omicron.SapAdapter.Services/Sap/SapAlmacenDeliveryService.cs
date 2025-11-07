@@ -145,19 +145,6 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, null);
         }
 
-        private async Task<bool> GetHasProcessingInvoice(int deliveryId, bool hasInvoiceCreated)
-        {
-            if (hasInvoiceCreated)
-            {
-                return false;
-            }
-
-            var invoiceResponse = await this.invoiceService.PostAsync(new List<int> { deliveryId }, ServiceConstants.GetDeliveryInvoice);
-            var invoices = JsonConvert.DeserializeObject<List<DeliveryInvoiceDto>>(invoiceResponse.Response.ToString());
-
-            return invoices.Any();
-        }
-
         /// <inheritdoc/>
         public async Task<ResultModel> GetDeliveryIdsByInvoice(int invoiceId)
         {
@@ -210,6 +197,19 @@ namespace Omicron.SapAdapter.Services.Sap
                 .Where(lp => itemCode.Contains(lp.ItemCode, StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(lp.BatchName) && lp.DeliveryId != 0)
                 .SelectMany(lp => ServiceShared.DeserializeObject(lp.BatchName, new List<AlmacenBatchModel>()))
                 .Sum(b => b.BatchQty);
+        }
+
+        private async Task<bool> GetHasProcessingInvoice(int deliveryId, bool hasInvoiceCreated)
+        {
+            if (hasInvoiceCreated)
+            {
+                return false;
+            }
+
+            var invoiceResponse = await this.invoiceService.PostAsync(new List<int> { deliveryId }, ServiceConstants.GetDeliveryInvoice);
+            var invoices = JsonConvert.DeserializeObject<List<DeliveryInvoiceDto>>(invoiceResponse.Response.ToString());
+
+            return invoices.Any();
         }
 
         private async Task<List<UserOrderModel>> GetUserOrdersRemision(Dictionary<string, string> parameters, DateTime startDate, DateTime endDate)
