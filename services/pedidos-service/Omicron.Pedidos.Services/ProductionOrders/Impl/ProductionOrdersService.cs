@@ -217,29 +217,24 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
         public async Task<ResultModel> GetFailedProductionOrders()
         {
             var allFailedProductionOrders =
-                await this.pedidosDao.GetAllProductionOrderProcessingStatusByStatus([ServiceConstants.FinalizeProcessFailedStatus]);
+                (await this.pedidosDao.GetAllProductionOrderProcessingStatusByStatus([ServiceConstants.FinalizeProcessFailedStatus]))
+                .ToList();
 
-            var productionOrdersToRetry = new List<ProductionOrderProcessingStatusModel>();
             foreach (var po in allFailedProductionOrders)
             {
                 var redisKey = string.Format(ServiceConstants.ProductionOrderFinalizingKey, po.ProductionOrderId);
-                var existingValue = await this.redisService.GetRedisKey(redisKey);
-
-                if (string.IsNullOrEmpty(existingValue))
-                {
-                    productionOrdersToRetry.Add(po);
-                }
+                await this.redisService.WriteToRedis(redisKey, po.Payload, new TimeSpan(2, 0, 0));
             }
 
-            if (productionOrdersToRetry.Count != 0)
+            if (allFailedProductionOrders.Count != 0)
             {
                 await this.redisService.StoreListAsync(
                 ServiceConstants.ProductionOrderFinalizingToProcessKey,
-                productionOrdersToRetry.OrderBy(x => x.LastUpdated),
+                allFailedProductionOrders.OrderBy(x => x.CreatedAt),
                 ServiceConstants.DefaultRedisValueTimeToLive);
             }
 
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, (int)productionOrdersToRetry.Count, null);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, (int)allFailedProductionOrders.Count, null);
         }
 
         /// <inheritdoc/>
