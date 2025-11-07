@@ -133,7 +133,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 Remision = deliveryId,
                 InvoiceType = ServiceUtils.CalculateTypeShip(ServiceConstants.NuevoLeon, localNeigbors, deliveryDetails.FirstOrDefault().Address, payment),
                 TypeOrder = deliveryDetails.FirstOrDefault().TypeOrder,
-                HasInvoice = invoices.Any() && invoices.FirstOrDefault().Canceled == "N",
+                HasInvoice = hasInvoice,
                 HasProcessingInvoice = hasProcessingInvoice,
                 IsPackage = deliveryDetails.FirstOrDefault().IsPackage == ServiceConstants.IsPackage,
                 IsOmigenomics = deliveryDetails.Exists(del => ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(del.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(del.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(del.IsSecondary))),
