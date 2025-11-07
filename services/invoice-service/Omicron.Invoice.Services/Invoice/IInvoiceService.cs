@@ -33,5 +33,12 @@ namespace Omicron.Invoice.Services.Invoice
         /// <param name="request"> request order. </param>
         /// <returns> order data. </returns>
         bool PublishProcessToMediatR(CreateInvoiceDto request);
+
+        /// <summary>
+        /// Method to Create invoice.
+        /// </summary>
+        /// <param name="remissions"> request invoice. </param>
+        /// <returns> order data. </returns>
+        Task<ResultDto> GetInvoicesByRemissionId(List<int> remissions);
     }
 }

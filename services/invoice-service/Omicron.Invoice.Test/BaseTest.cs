@@ -51,5 +51,15 @@ namespace Omicron.Invoice.Test
             {
                 new InvoiceErrorModel { Id = 1, Code = "C01", Error = "Error", ErrorMessage = "Error", RequireManualChange = true },
             };
+
+        /// <summary>
+        /// Get UserModel.
+        /// </summary>
+        /// <returns>The UserModel.</returns>
+        public IEnumerable<InvoiceRemissionModel> GetAllRemissions()
+            => new List<InvoiceRemissionModel>()
+            {
+                new InvoiceRemissionModel { Id = 1, IdInvoice = "1", RemissionId = 1 },
+            };
     }
 }

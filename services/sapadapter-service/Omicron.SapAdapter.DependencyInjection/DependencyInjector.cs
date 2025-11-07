@@ -18,6 +18,7 @@ namespace Omicron.SapAdapter.DependencyInjection
     using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Doctors;
+    using Omicron.SapAdapter.Services.Invoice;
     using Omicron.SapAdapter.Services.Mapping;
     using Omicron.SapAdapter.Services.ProccessPayments;
     using Omicron.SapAdapter.Services.Redis;
@@ -60,6 +61,7 @@ namespace Omicron.SapAdapter.DependencyInjection
             Services.AddTransient<IAlmacenOrderDxpService, AlmacenOrderDxpService>();
             Services.AddTransient<IProccessPayments, ProccessPayments>();
             Services.AddTransient<IDoctorService, DoctorService>();
+            Services.AddTransient<IInvoiceService, InvoiceService>();
             return Services;
         }
 

@@ -52,7 +52,7 @@ namespace Omicron.Invoice.Test.Facade
             Assert.Throws<ArgumentNullException>(() => new InvoiceFacade(null));
         }
 
-                /// <summary>
+        /// <summary>
         /// Test for selecting all models.
         /// </summary>
         /// <returns>nothing.</returns>
@@ -64,6 +64,23 @@ namespace Omicron.Invoice.Test.Facade
 
             // Act
             var response = await this.invoiceFacade.CreateInvoice(model);
+
+            // Assert
+            ClassicAssert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test for selecting all models.
+        /// </summary>
+        /// <returns>nothing.</returns>
+        [Test]
+        public async Task GetInvoicesByRemissionId()
+        {
+            // arrange
+            var model = new List<int>();
+
+            // Act
+            var response = await this.invoiceFacade.GetInvoicesByRemissionId(model);
 
             // Assert
             ClassicAssert.IsNotNull(response);

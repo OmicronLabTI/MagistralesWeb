@@ -47,6 +47,14 @@ namespace Omicron.Invoice.Persistence.Context
         public DbSet<InvoiceErrorModel> InvoiceError { get; set; }
 
         /// <summary>
+        /// Gets or sets InvoiceError.
+        /// </summary>
+        /// <value>
+        /// <see cref="DbSet{InvoiceModel}"/> InvoiceError.
+        /// </value>
+        public DbSet<InvoiceRemissionModel> Remissions { get; set; }
+
+        /// <summary>
         /// Metho On Model Creating.
         /// </summary>
         /// <param name="modelBuilder">ModelBuilder.</param>

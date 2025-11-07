@@ -35,6 +35,7 @@ namespace Omicron.Invoice.Test.Services
 
             this.context = new DatabaseContext(options);
             this.context.Invoices.AddRange(this.GetAllInvoices());
+            this.context.Remissions.AddRange(this.GetAllRemissions());
             this.context.InvoiceError.AddRange(this.GetAllErrors());
             this.context.SaveChanges();
 
@@ -202,6 +203,29 @@ namespace Omicron.Invoice.Test.Services
             {
                 Assert.That(response.UserError.Equals(errorMessage));
             }
+        }
+
+        /// <summary>
+        /// Method to verify carry out the order process.
+        /// </summary>
+        /// <returns> A <see cref="Task"/> representing the asynchronous unit test. </returns>
+        [Test]
+        public async Task GetInvoicesByRemissionId()
+        {
+            var taskQueue = new Mock<IBackgroundTaskQueue>();
+            var serviceScopeFactoryMock = new Mock<IServiceScopeFactory>();
+            var sapAdapterServiceMock = new Mock<ISapAdapter>();
+            var servicelayerServiceMock = new Mock<ISapServiceLayerAdapterService>();
+            var logger = new Mock<Serilog.ILogger>();
+            var catalogServiceMock = new Mock<ICatalogsService>();
+            var redisServiceMock = new Mock<IRedisService>();
+
+            this.userService = new InvoiceService(this.usersDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object);
+
+            var response = await this.userService.GetInvoicesByRemissionId(new List<int> { 1 });
+
+            // Assert
+            Assert.That(response.Success.Equals(true));
         }
     }
 }
