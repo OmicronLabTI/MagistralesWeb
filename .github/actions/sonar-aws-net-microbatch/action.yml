@@ -54,7 +54,7 @@ runs:
             /d:sonar.coverage.exclusions='**Test*.cs, **/Controllers/**/*, **DependencyInjector.cs, **Startup.cs, **Program.cs, Omicron.${{ inputs.project_name }}.Api/**' \
             /d:sonar.branch.name='${{ github.head_ref || github.ref_name }}'
           
-          dotnet build Omicron.${{ inputs.project_name }}.Microservice.sln
+          dotnet build Omicron.${{ inputs.project_name }}.Microbatch.sln
           
           dotnet test Omicron.${{ inputs.project_name }}.Test/Omicron.${{ inputs.project_name }}.Test.csproj \
             /p:CollectCoverage=true \
