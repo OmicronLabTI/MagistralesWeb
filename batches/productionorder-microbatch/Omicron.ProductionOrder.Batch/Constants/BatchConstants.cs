@@ -179,6 +179,6 @@ namespace Omicron.ProductionOrder.Batch.Constants
         /// <value>
         /// GetResponseErrorTemplate.
         /// </value>
-        public static string GetResponseErrorTemplate => "{0} {1}";
+        public static string GetResponseErrorTemplate => "{Error} {Jsonstring}";
     }
 }

@@ -29,7 +29,7 @@ namespace Omicron.ProductionOrder.Batch.Utils
 
             if ((int)response.StatusCode >= 300)
             {
-                logger.Error(string.Format(BatchConstants.GetResponseErrorTemplate, error, jsonString));
+                logger.Error(BatchConstants.GetResponseErrorTemplate, error, jsonString);
                 throw new CustomServiceException(jsonString, System.Net.HttpStatusCode.NotFound);
             }
 
