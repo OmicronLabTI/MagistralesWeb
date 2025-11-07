@@ -29,8 +29,8 @@ namespace Omicron.ProductionOrder.Batch.Utils
 
             if ((int)response.StatusCode >= 300)
             {
-                logger.Error($"{error} {jsonString}");
-                throw new Exception(error);
+                logger.Error(string.Format(BatchConstants.GetResponseErrorTemplate, error, jsonString));
+                throw new CustomServiceException(jsonString, System.Net.HttpStatusCode.NotFound);
             }
 
             return JsonConvert.DeserializeObject<ResultDto>(jsonString);

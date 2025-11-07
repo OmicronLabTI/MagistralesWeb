@@ -15,6 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Axity.Commons" Version="1.1.9" />
 		<PackageReference Include="Confluent.Kafka" Version="2.11.1" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.7" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

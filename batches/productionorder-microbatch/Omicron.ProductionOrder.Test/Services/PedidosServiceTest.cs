@@ -40,7 +40,7 @@ namespace Omicron.ProductionOrder.Test.Services
             var client = this.CreateClientFailure();
 
             // Assert
-            Assert.ThrowsAsync<Exception>(async () => await client.GetAsync("GetEndpoint", "Log Base"));
+            Assert.ThrowsAsync<CustomServiceException>(async () => await client.GetAsync("GetEndpoint", "Log Base"));
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace Omicron.ProductionOrder.Test.Services
             var client = this.CreateClientFailure();
 
             // Assert
-            Assert.ThrowsAsync<Exception>(async () => await client.PostAsync("PostEndpoint", new object(), "Log Base"));
+            Assert.ThrowsAsync<CustomServiceException>(async () => await client.PostAsync("PostEndpoint", new object(), "Log Base"));
         }
     }
 }

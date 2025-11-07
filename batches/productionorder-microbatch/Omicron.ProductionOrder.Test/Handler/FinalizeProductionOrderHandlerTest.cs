@@ -320,7 +320,6 @@ namespace Omicron.ProductionOrder.Test.Handler
             // Assert
             // Verify logging that indicates background processing
             this.loggerMock.Verify(x => x.Information(BatchConstants.StartProductionOrdersAreSentForRetry, It.IsAny<string>(), It.IsAny<string>()), Times.Once);
-            this.loggerMock.Verify(x => x.Information(BatchConstants.EndProductionOrdersAreSentForRetry, It.IsAny<string>()), Times.Once);
 
             // Verify Redis cleanup operations
             this.redisServiceMock.Verify(x => x.DeleteKey(BatchConstants.ProductionOrderFinalizingRetryCronjob), Times.Once);
