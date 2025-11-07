@@ -25,6 +25,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Doctors;
+    using Omicron.SapAdapter.Services.Invoice;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.ProccessPayments;
     using Omicron.SapAdapter.Services.Redis;
@@ -49,6 +50,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private readonly IDoctorService doctorService;
 
+        private readonly IInvoiceService invoiceService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapAlmacenDeliveryService"/> class.
         /// </summary>
@@ -59,7 +62,8 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="redisService">thre redis service.</param>
         /// <param name="proccessPayments">the proccess payments.</param>
         /// <param name="doctorService">The doctor service.</param>
-        public SapAlmacenDeliveryService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService, IProccessPayments proccessPayments, IDoctorService doctorService)
+        /// <param name="invoiceService">The invoice service.</param>
+        public SapAlmacenDeliveryService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService, IProccessPayments proccessPayments, IDoctorService doctorService, IInvoiceService invoiceService)
         {
             this.sapDao = sapDao.ThrowIfNull(nameof(sapDao));
             this.pedidosService = pedidosService.ThrowIfNull(nameof(pedidosService));
@@ -68,6 +72,7 @@ namespace Omicron.SapAdapter.Services.Sap
             this.redisService = redisService.ThrowIfNull(nameof(redisService));
             this.proccessPayments = proccessPayments.ThrowIfNull(nameof(proccessPayments));
             this.doctorService = doctorService.ThrowIfNull(nameof(doctorService));
+            this.invoiceService = invoiceService.ThrowIfNull(nameof(invoiceService));
         }
 
         /// <inheritdoc/>
@@ -114,6 +119,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var dataToReturn = new SalesModel();
             dataToReturn.SalesOrders = await this.CreateSaleCard(deliveryDetails, pedidos, sapSaleOrders, details.ToList());
+            var hasInvoice = invoices.Any() && invoices.FirstOrDefault().Canceled == "N";
+            var hasProcessingInvoice = await this.GetHasProcessingInvoice(deliveryId, hasInvoice);
             dataToReturn.AlmacenHeader = new AlmacenSalesHeaderModel
             {
                 Client = ServiceShared.CalculateTernary(string.IsNullOrEmpty(doctorsData.Contact), deliveryDetails.FirstOrDefault().Medico, doctorsData.Contact),
@@ -126,7 +133,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 Remision = deliveryId,
                 InvoiceType = ServiceUtils.CalculateTypeShip(ServiceConstants.NuevoLeon, localNeigbors, deliveryDetails.FirstOrDefault().Address, payment),
                 TypeOrder = deliveryDetails.FirstOrDefault().TypeOrder,
-                HasInvoice = invoices.Any() && invoices.FirstOrDefault().Canceled == "N",
+                HasInvoice = hasInvoice,
+                HasProcessingInvoice = hasProcessingInvoice,
                 IsPackage = deliveryDetails.FirstOrDefault().IsPackage == ServiceConstants.IsPackage,
                 IsOmigenomics = deliveryDetails.Exists(del => ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(del.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(del.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(del.IsSecondary))),
                 DxpId = ServiceShared.ValidateNull(deliveryDetails.FirstOrDefault().DocNumDxp.GetShortShopTransaction()).ToUpper(),
@@ -189,6 +197,19 @@ namespace Omicron.SapAdapter.Services.Sap
                 .Where(lp => itemCode.Contains(lp.ItemCode, StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(lp.BatchName) && lp.DeliveryId != 0)
                 .SelectMany(lp => ServiceShared.DeserializeObject(lp.BatchName, new List<AlmacenBatchModel>()))
                 .Sum(b => b.BatchQty);
+        }
+
+        private async Task<bool> GetHasProcessingInvoice(int deliveryId, bool hasInvoiceCreated)
+        {
+            if (hasInvoiceCreated)
+            {
+                return false;
+            }
+
+            var invoiceResponse = await this.invoiceService.PostAsync(new List<int> { deliveryId }, ServiceConstants.GetDeliveryInvoice);
+            var invoices = JsonConvert.DeserializeObject<List<DeliveryInvoiceDto>>(invoiceResponse.Response.ToString());
+
+            return invoices.Any();
         }
 
         private async Task<List<UserOrderModel>> GetUserOrdersRemision(Dictionary<string, string> parameters, DateTime startDate, DateTime endDate)

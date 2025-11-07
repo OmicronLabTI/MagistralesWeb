@@ -136,6 +136,12 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         public bool HasInvoice { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether has invoice.
+        /// </summary>
+        /// <value>The code.</value>
+        public bool HasProcessingInvoice { get; set; }
+
+        /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>

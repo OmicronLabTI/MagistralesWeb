@@ -35,6 +35,16 @@ namespace Omicron.Invoice.Api.Controllers
             => this.Ok(await this.invoiceFacade.CreateInvoice(request));
 
         /// <summary>
+        /// Method for get all users.
+        /// </summary>
+        /// <param name="remissions">the request.</param>
+        /// <returns>A representing the result of the asynchronous operation.</returns>
+        [HttpPost]
+        [Route("/invoices/byremissions")]
+        public async Task<IActionResult> GetInvoicesByRemissionId([FromBody] List<int> remissions)
+            => this.Ok(await this.invoiceFacade.GetInvoicesByRemissionId(remissions));
+
+        /// <summary>
         /// Method Ping.
         /// </summary>
         /// <returns>Pong.</returns>

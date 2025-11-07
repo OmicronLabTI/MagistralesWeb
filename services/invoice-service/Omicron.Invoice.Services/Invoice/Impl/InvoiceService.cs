@@ -193,6 +193,13 @@ namespace Omicron.Invoice.Services.Invoice.Impl
             }
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetInvoicesByRemissionId(List<int> remissions)
+        {
+            var invoices = await this.invoiceDao.GetInvoicesByRemissionId(remissions.Select(x => (long)x).ToList());
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, invoices, null, null);
+        }
+
         private async Task<(InvoiceErrorModel, bool)> GetDataBaseInvoiceError(string exceptionMessage)
         {
             var errors = await this.invoiceDao.GetAllErrors();

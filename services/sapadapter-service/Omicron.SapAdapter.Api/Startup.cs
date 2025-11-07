@@ -27,6 +27,7 @@ namespace Omicron.SapAdapter.Api
     using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Doctors;
+    using Omicron.SapAdapter.Services.Invoice;
     using Omicron.SapAdapter.Services.Mediator.Handlers;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.ProccessPayments;
@@ -149,6 +150,12 @@ namespace Omicron.SapAdapter.Api
                 c.BaseAddress = new Uri(this.Configuration["DoctorsService"]);
             })
             .AddTypedClient<IDoctorService, DoctorService>();
+
+            services.AddHttpClient("invoice", c =>
+            {
+                c.BaseAddress = new Uri(this.Configuration["InvoiceUrl"]);
+            })
+            .AddTypedClient<IInvoiceService, InvoiceService>();
 
             this.AddRedis(services, Log.Logger);
             this.AddCorsSvc(services);
