@@ -101,6 +101,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
                     ClientTypeOrder = saleOrderModel.TypeClientOrder,
                     TipoPedido = saleOrderModel.ManufacturerClassificationCode,
                     TipoFactura = saleOrderModel.InvoiceType,
+                    TimbradoStatus = ServiceConstants.ProcessCertification,
                 };
 
                 AssingValues(order, saleOrderModel, attachmentId);

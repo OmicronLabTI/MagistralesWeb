@@ -27,11 +27,22 @@ namespace Omicron.Invoice.Api.Controllers
         /// <summary>
         /// Method for get all users.
         /// </summary>
+        /// <param name="request">the request.</param>
         /// <returns>A representing the result of the asynchronous operation.</returns>
         [HttpPost]
         [Route("/create")]
         public async Task<IActionResult> CreateInvoice([FromBody] CreateInvoiceDto request)
             => this.Ok(await this.invoiceFacade.CreateInvoice(request));
+
+        /// <summary>
+        /// Method for get all users.
+        /// </summary>
+        /// <param name="remissions">the request.</param>
+        /// <returns>A representing the result of the asynchronous operation.</returns>
+        [HttpPost]
+        [Route("/invoices/byremissions")]
+        public async Task<IActionResult> GetInvoicesByRemissionId([FromBody] List<int> remissions)
+            => this.Ok(await this.invoiceFacade.GetInvoicesByRemissionId(remissions));
 
         /// <summary>
         /// Method Ping.

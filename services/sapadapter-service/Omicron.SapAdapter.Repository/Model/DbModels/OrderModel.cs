@@ -195,6 +195,13 @@ namespace Omicron.SapAdapter.Entities.Model
         public string BillingType { get; set; }
 
         /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("PayToCode")]
+        public string InvoiceId { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether gets or sets IsChecked.
         /// </summary>
         /// <value>The IsChecked.</value>

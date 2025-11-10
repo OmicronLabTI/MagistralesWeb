@@ -7,6 +7,9 @@
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<InvariantGlobalization>false</InvariantGlobalization>
 	</PropertyGroup>
+	<ItemGroup>
+	  <Content Remove="C:\Users\Jose.Espinosa\.nuget\packages\axity.commons\1.1.9\contentFiles\any\netstandard2.1\logo_axity-192x192.png" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<Content Include="appsettings.json">
@@ -15,6 +18,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Axity.Commons" Version="1.1.9" />
 		<PackageReference Include="Confluent.Kafka" Version="2.11.1" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.7" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

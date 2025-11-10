@@ -203,6 +203,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             ProffesionalLicense = doctor.ProffesionalLicense,
                             ClientType = order.ClientType,
                             BillingType = order.BillingType,
+                            InvoiceId = order.InvoiceId,
                             Detalles = new DetallePedidoModel
                             {
                                 PedidoId = detail.PedidoId,
@@ -706,6 +707,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             IsOmigenomics = string.IsNullOrEmpty(order.IsOmigenomics) ? order.IsSecondary : order.IsOmigenomics == "1" ? "Y" : "N",
                             IsSecondary = order.IsSecondary,
                             BillingType = order.BillingType,
+                            InvoiceId = order.InvoiceId,
                             Detalles = new DetallePedidoModel
                             {
                                 PedidoId = detail.PedidoId,

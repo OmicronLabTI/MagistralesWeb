@@ -14,15 +14,11 @@ namespace Omicron.Invoice.Services.Invoice.Impl
     public class InvoiceService : IInvoiceService
     {
         private readonly IInvoiceDao invoiceDao;
-        private readonly IMapper mapper;
-        private readonly IMediator mediator;
         private readonly IBackgroundTaskQueue taskQueue;
         private readonly IServiceScopeFactory serviceScopeFactory;
         private readonly Serilog.ILogger logger;
         private readonly ISapServiceLayerAdapterService serviceLayerService;
         private readonly ISapAdapter sapAdapter;
-        private IInvoiceDao usersDao;
-
         private ICatalogsService catalogsService;
 
         private IRedisService redisService;
@@ -30,9 +26,7 @@ namespace Omicron.Invoice.Services.Invoice.Impl
         /// <summary>
         /// Initializes a new instance of the <see cref="InvoiceService"/> class.
         /// </summary>
-        /// <param name="mapper">Mapper.</param>
         /// <param name="invoiceDao">Users dao.</param>
-        /// <param name="mediator">mediator.</param>
         /// <param name="taskQueue">task queue.</param>
         /// <param name="serviceScopeFactory">serviceScopeFactory.</param>
         /// <param name="logger">logger.</param>
@@ -41,9 +35,7 @@ namespace Omicron.Invoice.Services.Invoice.Impl
         /// <param name="catalogsService">the catalog.</param>
         /// <param name="redisService">the redis.</param>
         public InvoiceService(
-            IMapper mapper,
             IInvoiceDao invoiceDao,
-            IMediator mediator,
             IBackgroundTaskQueue taskQueue,
             IServiceScopeFactory serviceScopeFactory,
             Serilog.ILogger logger,
@@ -52,14 +44,14 @@ namespace Omicron.Invoice.Services.Invoice.Impl
             ICatalogsService catalogsService,
             IRedisService redisService)
         {
-            this.mapper = mapper;
             this.invoiceDao = invoiceDao;
-            this.mediator = mediator.ThrowIfNull(nameof(mediator));
             this.taskQueue = taskQueue.ThrowIfNull(nameof(taskQueue));
             this.serviceScopeFactory = serviceScopeFactory.ThrowIfNull(nameof(serviceScopeFactory));
             this.logger = logger.ThrowIfNull(nameof(logger));
             this.sapAdapter = sapAdapter.ThrowIfNull(nameof(sapAdapter));
             this.serviceLayerService = serviceLayerService.ThrowIfNull(nameof(serviceLayerService));
+            this.catalogsService = catalogsService.ThrowIfNull(nameof(catalogsService));
+            this.redisService = redisService.ThrowIfNull(nameof(redisService));
         }
 
         /// <inheritdoc/>
@@ -89,6 +81,7 @@ namespace Omicron.Invoice.Services.Invoice.Impl
                 RetryNumber = 0,
                 Type = "Automático",
                 IsProcessing = false,
+                Payload = JsonConvert.SerializeObject(request),
             };
 
             invoice.Remissions = request.IdDeliveries.Select(x => new InvoiceRemissionModel()
@@ -152,9 +145,10 @@ namespace Omicron.Invoice.Services.Invoice.Impl
             {
                 invoice.IsProcessing = false;
                 invoice.Status = ServiceConstants.InvoiceCreationErrorStatus;
-                if (invoice.IdInvoiceError != null)
+                if (invoice.ErrorMessage != null)
                 {
                     invoice.RetryNumber = invoice.RetryNumber++;
+                    invoice.UpdateDate = DateTime.Now;
                 }
 
                 var error = await this.GetDataBaseInvoiceError(ex.Message);
@@ -170,7 +164,7 @@ namespace Omicron.Invoice.Services.Invoice.Impl
             }
             finally
             {
-                   await this.redisService.DeleteKey(ServiceConstants.GetRetryInvoiceLockKey(request.ProcessId));
+                await this.redisService.DeleteKey(ServiceConstants.GetRetryInvoiceLockKey(request.ProcessId));
             }
         }
 
@@ -197,6 +191,13 @@ namespace Omicron.Invoice.Services.Invoice.Impl
                 this.logger.Error(string.Format(LogsConstants.PublishProcessInvoiceToMediatrQueueError, request.ProcessId, ex.Message));
                 return false;
             }
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetInvoicesByRemissionId(List<int> remissions)
+        {
+            var invoices = await this.invoiceDao.GetInvoicesByRemissionId(remissions.Select(x => (long)x).ToList());
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, invoices, null, null);
         }
 
         private async Task<(InvoiceErrorModel, bool)> GetDataBaseInvoiceError(string exceptionMessage)
@@ -226,9 +227,12 @@ namespace Omicron.Invoice.Services.Invoice.Impl
             invoice.IsProcessing = false;
             invoice.IdFacturaSap = invoiceId;
             invoice.Status = ServiceConstants.SuccessfulInvoiceCreationStatus;
+            if (invoice.ErrorMessage != null)
+            {
+                invoice.UpdateDate = DateTime.Now;
+            }
 
             await this.invoiceDao.UpdateInvoices(new List<InvoiceModel> { invoice });
-            await this.redisService.DeleteKey(ServiceConstants.GetRetryInvoiceLockKey(invoice.Id));
         }
 
         private async Task<InvoicesDataDto> ValidateHasInvoice(List<int> remissions)

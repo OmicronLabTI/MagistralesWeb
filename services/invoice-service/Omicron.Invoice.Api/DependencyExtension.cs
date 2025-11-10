@@ -67,6 +67,11 @@ namespace Omicron.Invoice.Api
                 c.BaseAddress = new Uri(webApplication.Configuration["SapServiceLayerAdapterUrl"]);
             })
             .AddTypedClient<ISapServiceLayerAdapterService, SapServiceLayerAdapterService>();
+            webApplication.Services.AddHttpClient("catalogs", c =>
+            {
+                c.BaseAddress = new Uri(webApplication.Configuration["CatalogUrl"]);
+            })
+            .AddTypedClient<ICatalogsService, CatalogsService>();
 
             return webApplication.Build();
         }

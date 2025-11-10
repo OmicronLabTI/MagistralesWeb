@@ -50,8 +50,9 @@ runs:
             /k:'20_Omicron_AppiOSFormulas_${{ inputs.project_name }}' \
             /d:sonar.host.url='${{ inputs.sonar_server }}' \
             /d:sonar.token='${{ inputs.sonar_token }}' \
-            /d:sonar.cs.opencover.reportsPaths='Omicron.${{ inputs.project_name }}.Test/Omicron.${{ inputs.project_name }}.Test/TestResults/coverage.opencover.xml' \
-            /d:sonar.coverage.exclusions='**Test*.cs, **/Controllers/**/*, **DependencyInjector.cs, **Startup.cs, **Program.cs, Omicron.${{ inputs.project_name }}.Api/**'
+            /d:sonar.cs.opencover.reportsPaths='**/TestResults/**/coverage.opencover.xml*' \
+            /d:sonar.coverage.exclusions='**/*Test*.cs, **/Controllers/**/*, **DependencyInjector.cs, **/Startup.cs, **/Program.cs, Omicron.${{ inputs.project_name }}.Api/**' \
+            /d:sonar.branch.name='${{ github.head_ref || github.ref_name }}'
           
           dotnet build Omicron.${{ inputs.project_name }}.Microservice.sln
           

@@ -415,7 +415,7 @@ namespace Omicron.Pedidos.Services.Utils
 
                 if (!existsInRedis)
                 {
-                    await redisService.WriteToRedis(redisKey, JsonConvert.SerializeObject(productionOrder), new TimeSpan(12, 0, 0));
+                    await redisService.WriteToRedis(redisKey, JsonConvert.SerializeObject(productionOrder), new TimeSpan(2, 0, 0));
                 }
 
                 var productionOrderExistsInDatabase = productionOrderInBD != null;

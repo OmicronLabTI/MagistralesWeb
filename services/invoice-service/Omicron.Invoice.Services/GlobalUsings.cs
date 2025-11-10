@@ -33,3 +33,4 @@ global using System.Text;
 global using System.Threading.Tasks;
 global using Omicron.Invoice.Services.Catalog;
 global using Axity.Commons.Exceptions;
+global using Microsoft.Extensions.Logging;

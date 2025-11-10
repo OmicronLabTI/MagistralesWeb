@@ -8,6 +8,8 @@
 namespace Omicron.Invoice.Test
 {
     using System.Collections.Generic;
+    using Newtonsoft.Json;
+    using Omicron.Invoice.Services.Constants;
 
     /// <summary>
     /// Class Base Test.
@@ -85,8 +87,51 @@ namespace Omicron.Invoice.Test
             => new List<InvoiceErrorModel>()
             {
                 // RETRY
-                new () { Id = 1, Code = "55P03", Error = "lock_not_available – could not obtain lock on row/table because another transaction holds it", ErrorMessage = "Otro proceso está usando esta información. Espera unos segundos e inténtalo de nuevo.", RequireManualChange = false },
-                new () { Id = 2, Code = "301", Error = "No matching records found (ODBC -2028)", ErrorMessage = "Uno de los datos enviados (cliente o producto) no existe. Verifica la información.", RequireManualChange = true },
+                new () { Id = 1, Code = "55P03", Error = "lock_not_available ï¿½ could not obtain lock on row/table because another transaction holds it", ErrorMessage = "Otro proceso estï¿½ usando esta informaciï¿½n. Espera unos segundos e intï¿½ntalo de nuevo.", RequireManualChange = false },
+                new () { Id = 2, Code = "301", Error = "No matching records found (ODBC -2028)", ErrorMessage = "Uno de los datos enviados (cliente o producto) no existe. Verifica la informaciï¿½n.", RequireManualChange = true },
+        /// Creates a result.
+        /// </summary>
+        /// <param name="response"> the object to send. </param>
+        /// <returns> data. </returns>
+        public static ResultDto GetResultModel(object response)
+        {
+            return new ResultDto
+            {
+                Code = 200,
+                Response = JsonConvert.SerializeObject(response),
+                Success = true,
+            };
+        }
+
+        /// <summary>
+        /// Get UserModel.
+        /// </summary>
+        /// <returns>The UserModel.</returns>
+        public IEnumerable<InvoiceModel> GetAllInvoices()
+            => new List<InvoiceModel>()
+            {
+                new InvoiceModel { Id = "1", DxpOrderId = "XXXX", AlmacenUser = "Test", CreateDate = DateTime.Now, Status = ServiceConstants.SendToCreateInvoice, RetryNumber = 0, IsProcessing = true, Payload = string.Empty },
+                new InvoiceModel { Id = "2", DxpOrderId = "XXXX", AlmacenUser = "Test", CreateDate = DateTime.Now, Status = ServiceConstants.SendToCreateInvoice, RetryNumber = 0, IsProcessing = false, Payload = string.Empty },
+            };
+
+        /// <summary>
+        /// Get UserModel.
+        /// </summary>
+        /// <returns>The UserModel.</returns>
+        public IEnumerable<InvoiceErrorModel> GetAllErrors()
+            => new List<InvoiceErrorModel>()
+            {
+                new InvoiceErrorModel { Id = 1, Code = "C01", Error = "Error", ErrorMessage = "Error", RequireManualChange = true },
+            };
+
+        /// <summary>
+        /// Get UserModel.
+        /// </summary>
+        /// <returns>The UserModel.</returns>
+        public IEnumerable<InvoiceRemissionModel> GetAllRemissions()
+            => new List<InvoiceRemissionModel>()
+            {
+                new InvoiceRemissionModel { Id = 1, IdInvoice = "1", RemissionId = 1 },
             };
     }
 }

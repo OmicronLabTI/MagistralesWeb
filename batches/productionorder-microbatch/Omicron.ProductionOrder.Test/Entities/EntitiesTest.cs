@@ -34,16 +34,15 @@ namespace Omicron.ProductionOrder.Test.Entities
         /// <summary>
         /// Validate instance for type.
         /// </summary>
-        /// <typeparam name="T">Generic type.</typeparam>
         /// <param name="instance">Type.</param>
         /// [AutoData]
         [Test]
         [TestCaseSource("TypeCases")]
-        public void TestInstance<T>(T instance)
-            where T : class
+        public void TestInstance(object instance)
         {
             // Arrange
-            instance = this.fixture.Create<T>();
+            var context = new SpecimenContext(this.fixture);
+            instance = context.Resolve(instance.GetType());
 
             // Assert
             Assert.That(IsValid(instance));

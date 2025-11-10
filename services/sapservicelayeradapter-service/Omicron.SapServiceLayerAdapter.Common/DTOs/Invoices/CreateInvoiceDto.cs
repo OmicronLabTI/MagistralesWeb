@@ -56,6 +56,13 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Invoices
         public string CfdiDriverVersion { get; set; }
 
         /// <summary>
+        /// Gets or sets the BxpTimbrado.
+        /// </summary>
+        /// <value>BxpTimbrado.</value>
+        [JsonProperty("U_BXP_TIMBRADO")]
+        public string BxpTimbrado { get; set; } = "P";
+
+        /// <summary>
         /// Gets or sets the Invoice Lines.
         /// </summary>
         /// <value>Invoice Lines.</value>

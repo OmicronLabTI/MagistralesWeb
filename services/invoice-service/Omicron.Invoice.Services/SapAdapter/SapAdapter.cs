@@ -21,14 +21,14 @@ namespace Omicron.Invoice.Services.SapAdapter
         /// <summary>
         /// The logger.
         /// </summary>
-        private readonly ILogger logger;
+        private readonly Serilog.ILogger logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SapAdapter" /> class.
         /// </summary>
         /// <param name="httpClient">Client Http.</param>
         /// <param name="logger">the logger.</param>
-        public SapAdapter(HttpClient httpClient, ILogger logger)
+        public SapAdapter(HttpClient httpClient, Serilog.ILogger logger)
         {
             this.httpClient = httpClient;
             this.logger = logger;

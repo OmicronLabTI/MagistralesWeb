@@ -59,9 +59,11 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
                           where fac.IsProcessing == false
                                 && fac.Status == status
                                 && (
-                                    err.RequireManualChange == false
-                                    || (err.RequireManualChange == true && fac.ManualChangeApplied == true))
-                          select fac).ToListAsync();
+                                      (err.RequireManualChange == true
+                                          && (fac.ManualChangeApplied == true || fac.ManualChangeApplied == null))
+                                   || err.RequireManualChange == false)
+                          select fac)
+                   .ToListAsync();
         }
 
         /// <inheritdoc/>
@@ -74,7 +76,22 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
         /// <inheritdoc/>
         public async Task<IEnumerable<InvoiceErrorModel>> GetAllErrors()
         {
-            return this.context.InvoiceError;
+            return await this.context.InvoiceError.ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<InvoiceRemissionJoinModel>> GetInvoicesByRemissionId(List<long> remissionId)
+        {
+            return await (from invoice in this.context.Invoice
+                          join remission in this.context.Remissions on invoice.Id equals remission.IdInvoice
+                          where remissionId.Contains(remission.RemissionId)
+                          select new InvoiceRemissionJoinModel
+                          {
+                              RemissionId = remission.RemissionId,
+                              Status = invoice.Status,
+                              InvoiceId = invoice.IdFacturaSap,
+                              ProcessId = invoice.Id,
+                          }).ToListAsync();
         }
     }
 }

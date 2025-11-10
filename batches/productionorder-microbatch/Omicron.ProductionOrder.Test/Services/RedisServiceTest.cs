@@ -95,7 +95,7 @@ namespace Omicron.ProductionOrder.Test.Services
 
             var redisService = new RedisService(redisMock.Object);
 
-            var key = "testKey";
+            var key = "testKeyredis";
             var storedItems = new List<string> { "Item1", "Item2", "Item3" };
             var redisValues = storedItems.Select(item => (RedisValue)JsonConvert.SerializeObject(item)).ToArray();
 
@@ -132,7 +132,7 @@ namespace Omicron.ProductionOrder.Test.Services
 
             redisDataBase
                 .Setup(db => db.ListRangeAsync(key, 0, 2, It.IsAny<CommandFlags>()))
-                .ReturnsAsync(new RedisValue[0]); // Simula que Redis devuelve una lista vacía.
+                .ReturnsAsync(Array.Empty<RedisValue>());
 
             // Act
             var result = await redisService.ReadListAsync<string>(key, 0, 3);

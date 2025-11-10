@@ -15,14 +15,14 @@ namespace Omicron.Invoice.Services.ServiceLayer
     public class SapServiceLayerAdapterService : ISapServiceLayerAdapterService
     {
         private readonly HttpClient httpClient;
-        private readonly ILogger logger;
+        private readonly Serilog.ILogger logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SapServiceLayerAdapterService"/> class with the specified HttpClient instance.
         /// </summary>
         /// <param name="httpClient">The HttpClient instance to use for sending requests.</param>
         /// <param name="logger">The ILogger instance to logg information.</param>
-        public SapServiceLayerAdapterService(HttpClient httpClient, ILogger logger)
+        public SapServiceLayerAdapterService(HttpClient httpClient, Serilog.ILogger logger)
         {
             this.httpClient = httpClient.ThrowIfNull(nameof(httpClient));
             this.logger = logger.ThrowIfNull(nameof(logger));

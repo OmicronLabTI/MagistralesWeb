@@ -27,5 +27,11 @@ namespace Omicron.Invoice.Facade.Users.Impl
         {
             return await this.invoiceService.RegisterInvoice(request);
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetInvoicesByRemissionId(List<int> remissions)
+        {
+            return await this.invoiceService.GetInvoicesByRemissionId(remissions);
+        }
     }
 }

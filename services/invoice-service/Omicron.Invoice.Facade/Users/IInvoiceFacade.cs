@@ -19,5 +19,12 @@ namespace Omicron.Invoice.Facade.Users
         /// <param name="request"> request invoice. </param>
         /// <returns> order data. </returns>
         Task<ResultDto> CreateInvoice(CreateInvoiceDto request);
+
+        /// <summary>
+        /// Method to Create invoice.
+        /// </summary>
+        /// <param name="remissions"> request invoice. </param>
+        /// <returns> order data. </returns>
+        Task<ResultDto> GetInvoicesByRemissionId(List<int> remissions);
     }
 }

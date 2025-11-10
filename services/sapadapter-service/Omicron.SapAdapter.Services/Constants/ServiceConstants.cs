@@ -18,6 +18,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// the filter for orders.
         /// </summary>
+        public const string GetDeliveryInvoice = "invoices/byremissions";
+
+        /// <summary>
+        /// the filter for orders.
+        /// </summary>
         public const string DocNum = "docNum";
 
         /// <summary>
