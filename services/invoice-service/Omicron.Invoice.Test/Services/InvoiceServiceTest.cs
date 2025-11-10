@@ -222,7 +222,7 @@ namespace Omicron.Invoice.Test.Services
 
             this.userService = new InvoiceService(this.usersDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object);
 
-            var response = await this.userService.GetInvoicesByRemissionId(new List<int> { 1 });
+            var response = await this.userService.GetInvoicesByRemissionId(new List<int> { 1 });
 
             // Assert
             Assert.That(response.Success.Equals(true));

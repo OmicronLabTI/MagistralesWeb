@@ -66,6 +66,7 @@ namespace Omicron.Invoice.Services.InvoiceRetry.Impl
             if (idsToProcess.Count <= 0)
             {
                 this.logger.Information(LogsConstants.ThereIsNoInformationToProcess(logBase));
+                return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null, null);
             }
 
             var result = new InvoiceRetryResponseDto
