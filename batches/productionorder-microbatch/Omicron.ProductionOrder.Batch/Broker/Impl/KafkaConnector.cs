@@ -11,23 +11,26 @@ namespace Omicron.ProductionOrder.Batch.Broker.Impl
     /// <summary>
     /// Class for kafka connectors.
     /// </summary>
-    public class KafkaConnector : IKafkaConnector
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="KafkaConnector"/> class.
+    /// </remarks>
+    /// <param name="configuration">The configuration.</param>
+    /// <param name="logger">The logger.</param>
+    public class KafkaConnector(IConfiguration configuration, ILogger logger)
+        : IKafkaConnector
     {
-        private readonly IConfiguration configuration;
-        private readonly ILogger logger;
+        private readonly IConfiguration configuration = configuration.ThrowIfNull(nameof(configuration));
+        private readonly ILogger logger = logger.ThrowIfNull(nameof(logger));
         private ProducerConfig producer;
         private string topic;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="KafkaConnector"/> class.
+        /// Gets or sets buildProducerFunc.
         /// </summary>
-        /// <param name="configuration">The configuration.</param>
-        /// <param name="logger">The logger.</param>
-        public KafkaConnector(IConfiguration configuration, ILogger logger)
-        {
-            this.configuration = configuration.ThrowIfNull(nameof(configuration));
-            this.logger = logger.ThrowIfNull(nameof(logger));
-        }
+        public Func<ProducerConfig, IProducer<long, string>> BuildProducerFunc { get; set; } = cfg => new ProducerBuilder<long, string>(cfg)
+                .SetKeySerializer(Serializers.Int64)
+                .SetValueSerializer(Serializers.Utf8)
+                .Build();
 
         /// <inheritdoc/>
         public async Task<bool> PushMessage(object message, string logBase)
@@ -35,11 +38,7 @@ namespace Omicron.ProductionOrder.Batch.Broker.Impl
             try
             {
                 this.ConfigureRetryFinalizeOrderKafka();
-                using var localProducer = new ProducerBuilder<long, string>(this.producer)
-                    .SetKeySerializer(Serializers.Int64)
-                    .SetValueSerializer(Serializers.Utf8)
-                    .Build();
-
+                using var localProducer = this.BuildProducerFunc(this.producer);
                 var kafkaMessage = new Message<long, string>
                 {
                     Key = DateTime.UtcNow.Ticks,

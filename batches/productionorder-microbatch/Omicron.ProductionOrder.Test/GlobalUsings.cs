@@ -2,12 +2,15 @@
 global using AutoFixture;
 global using AutoFixture.Kernel;
 global using Axity.Commons.Exceptions;
+global using Confluent.Kafka;
+global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.Options;
 global using Moq;
 global using Moq.Protected;
 global using Newtonsoft.Json;
 global using NUnit.Framework;
 global using Omicron.ProductionOrder.Batch.Broker;
+global using Omicron.ProductionOrder.Batch.Broker.Impl;
 global using Omicron.ProductionOrder.Batch.Configuration;
 global using Omicron.ProductionOrder.Batch.Constants;
 global using Omicron.ProductionOrder.Batch.Handlers.Impl;
