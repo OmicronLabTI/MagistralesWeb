@@ -6,9 +6,6 @@
 // </copyright>
 // </summary>
 
-using Omicron.Invoice.Facade.InvoiceRetry.Impl;
-using Omicron.Invoice.Services.InvoiceRetry;
-
 namespace Omicron.Invoice.Test.Facade
 {
     /// <summary>
