@@ -76,7 +76,6 @@ namespace Omicron.Invoice.Test
                       ""BillingType"": ""complete""
                     }", IsProcessing = false, Status = "Error al crear", IdInvoiceError = 2, ManualChangeApplied = false, IdFacturaSap = 1234,
                 },
-
             };
 
         /// <summary>
@@ -89,6 +88,9 @@ namespace Omicron.Invoice.Test
                 // RETRY
                 new () { Id = 1, Code = "55P03", Error = "lock_not_available � could not obtain lock on row/table because another transaction holds it", ErrorMessage = "Otro proceso est� usando esta informaci�n. Espera unos segundos e int�ntalo de nuevo.", RequireManualChange = false },
                 new () { Id = 2, Code = "301", Error = "No matching records found (ODBC -2028)", ErrorMessage = "Uno de los datos enviados (cliente o producto) no existe. Verifica la informaci�n.", RequireManualChange = true },
+            };
+
+        /// <summary>
         /// Creates a result.
         /// </summary>
         /// <param name="response"> the object to send. </param>
