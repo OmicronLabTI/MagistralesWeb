@@ -128,7 +128,6 @@ namespace Omicron.ProductionOrder.Batch.Handlers.Impl
             };
 
             await this.kafkaConnector.PushMessage(requestPedidos, logBase);
-            this.logger.Information(BatchConstants.EndProductionOrdersAreSentForRetry, logBase);
         }
 
         private async Task<List<T>> GetValueFromRedisByKeyAndOffsetAndLimit<T>(string key, int offset, int limit)

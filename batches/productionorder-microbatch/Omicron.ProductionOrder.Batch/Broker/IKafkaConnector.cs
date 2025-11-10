@@ -16,9 +16,9 @@ namespace Omicron.ProductionOrder.Batch.Broker
         /// <summary>
         /// push message to kafka.
         /// </summary>
-        /// <param name="messaje">the message.</param>
-        /// <param name="logbase">Log Base.</param>
+        /// <param name="message">the message.</param>
+        /// <param name="logBase">Log Base.</param>
         /// <returns>the data.</returns>
-        Task<bool> PushMessage(object messaje, string logbase);
+        Task<bool> PushMessage(object message, string logBase);
     }
 }
