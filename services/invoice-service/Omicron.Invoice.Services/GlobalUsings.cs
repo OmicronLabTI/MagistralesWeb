@@ -18,6 +18,8 @@ global using Omicron.Invoice.Services.Invoice;
 global using Omicron.Invoice.Services.Invoice.Impl;
 global using Omicron.Invoice.Services.InvoiceRetry;
 global using Omicron.Invoice.Services.InvoiceRetry.Impl;
+global using Omicron.Invoice.Services.CatalogsInvoice;
+global using Omicron.Invoice.Services.CatalogsInvoice.Impl;
 global using Omicron.Invoice.Services.Mapping;
 global using Omicron.Invoice.Services.Redis;
 global using Omicron.Invoice.Services.Redis.Impl;

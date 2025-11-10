@@ -7,6 +7,7 @@ global using Omicron.Invoice.Common.DTOs.Requests.InvoiceRetry;
 global using Omicron.Invoice.Common.DTOs.Requests.Invoices;
 global using Omicron.Invoice.Facade;
 global using Omicron.Invoice.Facade.InvoiceRetry;
+global using Omicron.Invoice.Facade.CatalogsInvoice;
 global using Omicron.Invoice.Facade.Users;
 global using Omicron.Invoice.Persistence;
 global using Omicron.Invoice.Services;

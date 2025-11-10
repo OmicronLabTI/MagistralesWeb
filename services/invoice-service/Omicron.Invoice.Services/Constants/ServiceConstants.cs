@@ -14,6 +14,11 @@ namespace Omicron.Invoice.Services.Constants
     public static class ServiceConstants
     {
         /// <summary>
+        /// the container file.
+        /// </summary>
+        public const string InvoiceErrorsCatalogsFileUrl = "InvoiceErrorsCatalogsFileUrl";
+
+        /// <summary>
         /// Gets parámetro para obtener la key Redis.
         /// </summary>
         public static string CdfiKey => "Cdfi-Version";
