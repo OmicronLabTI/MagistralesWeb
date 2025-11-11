@@ -6,9 +6,6 @@
 // </copyright>
 // </summary>
 
-using Omicron.Invoice.Services.Users;
-using Omicron.Invoice.Services.Users.Impl;
-
 namespace Omicron.Invoice.Api
 {
     /// <summary>
