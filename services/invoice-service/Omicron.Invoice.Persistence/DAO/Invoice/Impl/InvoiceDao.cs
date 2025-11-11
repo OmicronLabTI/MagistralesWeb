@@ -33,6 +33,40 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
         }
 
         /// <inheritdoc/>
+        public async Task<List<InvoiceModel>> GetInvoicesNotCreatedByStatus(List<string> status, int offset, int limit)
+        {
+            return await this.context.Invoice
+                .Where(x => status.Contains(x.Status))
+                .OrderBy(x => x.CreateDate)
+                .Skip(offset)
+                .Take(limit)
+                .Include(x => x.Remissions)
+                .Include(x => x.SapOrders)
+                .Include(x => x.InvoiceError)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<int> GetInvoicesCount(List<string> status)
+        {
+            return await this.context.Invoice
+                .Where(x => status.Contains(x.Status))
+                .CountAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<InvoiceModel>> GetInvoicesById(List<string> id)
+        {
+            return await this.context.Invoice
+                .Where(x => id.Contains(x.Id))
+                .ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<int> SaveChangesAsync() => await this.context.SaveChangesAsync();
+
+        /// <inheritdoc/>
         public async Task<InvoiceModel> GetInvoiceById(string id)
         {
             return await this.context.Invoice.Where(x => x.Id == id).FirstOrDefaultAsync();

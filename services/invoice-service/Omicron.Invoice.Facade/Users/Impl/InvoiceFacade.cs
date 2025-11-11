@@ -29,6 +29,14 @@ namespace Omicron.Invoice.Facade.Users.Impl
         }
 
         /// <inheritdoc/>
+        public async Task<ResultDto> GetInvoices(Dictionary<string, string> parameters)
+            => await this.invoiceService.GetInvoices(parameters);
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> UpdateManualChange(string id)
+            => await this.invoiceService.UpdateManualChange(id);
+
+        /// <inheritdoc/>
         public async Task<ResultDto> GetInvoicesByRemissionId(List<int> remissions)
         {
             return await this.invoiceService.GetInvoicesByRemissionId(remissions);

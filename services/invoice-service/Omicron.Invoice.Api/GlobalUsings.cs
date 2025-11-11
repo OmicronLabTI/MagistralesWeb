@@ -20,3 +20,5 @@ global using Serilog.Events;
 global using StackExchange.Redis;
 global using Steeltoe.Extensions.Configuration.Placeholder;
 global using Omicron.Invoice.Services.Catalog;
+global using Omicron.Invoice.Services.Users;
+global using Omicron.Invoice.Services.Users.Impl;

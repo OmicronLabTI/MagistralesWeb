@@ -21,6 +21,20 @@ namespace Omicron.Invoice.Facade.Users
         Task<ResultDto> CreateInvoice(CreateInvoiceDto request);
 
         /// <summary>
+        /// Method for get invoices.
+        /// </summary>
+        /// <param name="parameters">parameters.</param>
+        /// <returns>A representing the result of the asynchronous operation.</returns>
+        Task<ResultDto> GetInvoices(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Method for update colum manualchangeapplied.
+        /// </summary>
+        /// <param name="id">id invoice.</param>
+        /// <returns>A representing the result of the asynchronous operation.</returns>
+        Task<ResultDto> UpdateManualChange(string id);
+
+        /// <summary>
         /// Method to Create invoice.
         /// </summary>
         /// <param name="remissions"> request invoice. </param>
