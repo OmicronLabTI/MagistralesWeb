@@ -15,7 +15,7 @@ namespace Omicron.Invoice.Api.Controllers
     /// Initializes a new instance of the <see cref="InvoiceRetryController"/> class.
     /// </remarks>
     /// <param name="invoiceRetryFacade">Invoice Retry Facade.</param>
-    [Route("api/[controller]")]
+    [Route("/")]
     [ApiController]
     public class InvoiceRetryController(IInvoiceRetryFacade invoiceRetryFacade)
         : ControllerBase
@@ -27,7 +27,7 @@ namespace Omicron.Invoice.Api.Controllers
         /// </summary>
         /// <returns>A representing the result of the asynchronous operation.</returns>
         [HttpGet]
-        [Route("/data/automatic/retry/createinvoice")]
+        [Route("data/automatic/retry/createinvoice")]
         public async Task<IActionResult> GetDataToRetryCreateInvoicesAsync()
             => this.Ok(await this.invoiceRetryFacade.GetDataToRetryCreateInvoicesAsync());
 
@@ -38,7 +38,7 @@ namespace Omicron.Invoice.Api.Controllers
         /// <param name="executionType">Execution Type (Automatic - Manual).</param>
         /// <returns>A representing the result of the asynchronous operation.</returns>
         [HttpPost]
-        [Route("/retry/{executionType}/createinvoice")]
+        [Route("retry/{executionType}/createinvoice")]
         public async Task<IActionResult> RetryCreateInvoicesAsync([FromBody] InvoiceRetryRequestDto invoiceRetry, string executionType)
             => this.Ok(await this.invoiceRetryFacade.RetryCreateInvoicesAsync(invoiceRetry, executionType));
     }
