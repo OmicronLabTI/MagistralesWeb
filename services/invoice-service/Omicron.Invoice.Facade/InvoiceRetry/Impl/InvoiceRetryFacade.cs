@@ -18,7 +18,7 @@ namespace Omicron.Invoice.Facade.InvoiceRetry.Impl
     public class InvoiceRetryFacade(IInvoiceRetryService invoiceRetryService)
         : IInvoiceRetryFacade
     {
-        private readonly IInvoiceRetryService invoiceRetryService = invoiceRetryService ?? throw new ArgumentNullException(nameof(invoiceRetryService));
+        private readonly IInvoiceRetryService invoiceRetryService = invoiceRetryService;
 
         /// <inheritdoc/>
         public async Task<ResultDto> GetDataToRetryCreateInvoicesAsync()
