@@ -44,7 +44,6 @@ global using System.Net;
 global using System.Net.Http;
 global using System.Threading;
 global using System.Threading.Tasks;
-global using Newtonsoft.Json;
 global using Omicron.Invoice.Model.Model.JoinsModels;
-global using Omicron.Invoice.Services.Constants;
-global using System.Collections.Generic;
+global using Omicron.Invoice.Services.BackgroundTaskQueue.Impl;
+ 
