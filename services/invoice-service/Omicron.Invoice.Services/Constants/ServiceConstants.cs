@@ -19,6 +19,16 @@ namespace Omicron.Invoice.Services.Constants
         public const string InvoiceErrorsCatalogsFileUrl = "InvoiceErrorsCatalogsFileUrl";
 
         /// <summary>
+        /// Azure Account Name.
+        /// </summary>
+        public const string AzureAccountName = "AzureAccountName";
+
+        /// <summary>
+        /// Azure Account Key.
+        /// </summary>
+        public const string AzureAccountKey = "AzureAccountKey";
+
+        /// <summary>
         /// Gets parámetro para obtener la key Redis.
         /// </summary>
         public static string CdfiKey => "Cdfi-Version";
