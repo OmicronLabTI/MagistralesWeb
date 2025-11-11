@@ -1,0 +1,38 @@
+/* ============================================================
+   TABLE SCROLL CONTAINER
+   Enables horizontal scrolling only when the table overflows.
+   ============================================================ */
+.table-scroll-container {
+  width: 100%;
+  overflow-x: auto;                  /* Enables horizontal scrolling */
+  overflow-y: hidden;                /* Prevents vertical overflow */
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on mobile */
+  scrollbar-width: thin;             /* Firefox scrollbar size */
+  scrollbar-color: #b0b0b0 #f7f7f7;  /* Firefox scrollbar colors */
+}
+
+/* Scrollbar customization for WebKit browsers (Chrome, Edge, Safari) */
+.table-scroll-container::-webkit-scrollbar {
+  height: 8px;
+}
+.table-scroll-container::-webkit-scrollbar-track {
+  background: #f7f7f7;
+  border-radius: 8px;
+}
+.table-scroll-container::-webkit-scrollbar-thumb {
+  background-color: #b0b0b0;
+  border-radius: 8px;
+}
+
+/* ============================================================
+   BILLING TABLE CORE
+   Keep same look and force min-width to trigger scroll when needed
+   ============================================================ */
+.billing-table {
+  width: 100%;
+  min-width: 1000px; /* Forces horizontal scroll on smaller screens */
+  border-collapse: collapse;
+  border: none;
+  margin: 0;
+  padding: 0;
+}

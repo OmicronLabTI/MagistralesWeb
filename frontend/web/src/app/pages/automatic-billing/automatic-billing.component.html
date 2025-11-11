@@ -1,0 +1,340 @@
+<!--
+===============================================================================
+COMPONENT: Automatic Billing History Dashboard (OM-7160)
+===============================================================================
+This Angular template renders the dashboard that displays the historical records
+of invoices automatically created from the warehouse (Magistrales Web).
+
+According to HU OM-7160, this view must:
+- Display invoices with the status "Creación exitosa" (Successful creation).
+- By default, show invoices from the last 5 days including the current day.
+- Present detailed information for each invoice:
+  • Request / Invoice ID
+  • SAP creation date and last update
+  • Invoice type (Generic / Non-generic)
+  • Billing form (Complete / Partial)
+  • Shop order and SAP order references
+  • Associated remissions
+  • Warehouse user responsible
+  • Retry count and last error message
+- Provide user actions:
+  • View related SAP orders
+  • View related remissions
+  • Trigger manual retry
+
+This template is used within the AutoBillingComponent in Angular.
+===============================================================================
+-->
+
+<div class="container-list-page mt-3">
+
+  <!-- =============================================================== -->
+  <!-- Filter section (currently disabled, reserved for future filters) -->
+  <!-- =============================================================== -->
+  <div class="filter-section" *ngIf="false">
+    <button mat-raised-button class="button-blue-user-list">
+      Clear Filters
+    </button>
+  </div>
+
+  <!-- =============================================================== -->
+  <!-- Main table container -->
+  <!-- =============================================================== -->
+  <div class="list-users-container">
+    <div class="billing-table-container mt-15">
+
+      <!-- =============================================================== -->
+      <!-- Automatic Billing History Table -->
+      <!-- Displays a list of automatically generated invoices -->
+      <!-- =============================================================== -->
+      <table mat-table [dataSource]="dataSource" aria-describedby>
+
+        <!-- =============================================================== -->
+        <!-- COLUMN: Request ID -->
+        <!-- Displays the invoice/request identifier (last 6 characters only) -->
+        <!-- Tooltip shows the full ID -->
+        <!-- =============================================================== -->
+        <ng-container matColumnDef="id">
+          <th scope="row" mat-header-cell *matHeaderCellDef class="tdcell-center tdcell">
+            ID Petición
+          </th>
+          <td mat-cell *matCellDef="let element"
+              [matTooltip]="element.id"
+              matTooltipClass="custom-tooltip"
+              class="id-column color-text-intables tdcell-center tdcell">
+            {{ element.id.slice(-6) }}
+          </td>
+        </ng-container>
+
+        <!-- =============================================================== -->
+        <!-- COLUMN: Request Date -->
+        <!-- Displays when the SAP invoice was requested -->
+        <!-- Format: dd/MM/yy HH:mm:ss -->
+        <!-- =============================================================== -->
+        <ng-container matColumnDef="requestDate">
+          <th scope="row" mat-header-cell *matHeaderCellDef>
+            Fecha de solicitud
+          </th>
+          <td mat-cell *matCellDef="let element"
+              class="request-date-column color-text-intables tdcell-center tdcell">
+            {{ element.createDate }}
+          </td>
+        </ng-container>
+
+        <!-- =============================================================== -->
+        <!-- COLUMN: Status -->
+        <!-- Shows the current invoice process status -->
+        <!-- Includes visual icons for: Error, Sent, Creating -->
+        <!-- Dropdown menu allows filtering by multiple statuses -->
+        <!-- =============================================================== -->
+        <ng-container matColumnDef="status">
+          <th scope="row" mat-header-cell *matHeaderCellDef>
+            Estatus
+            <button mat-icon-button [matMenuTriggerFor]="menu">
+              <mat-icon>expand_more</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu" yPosition="below" (closed)="getData()">
+              <mat-selection-list [(ngModel)]="selectedOptions" (selectionChange)="onSelectionChenge()">
+                <mat-list-option (click)="$event.stopPropagation()" *ngFor="let filter of filters"
+                  [value]="filter" [disabled]="isLastStatusFilter(filter)">
+                  {{ filter }}
+                </mat-list-option>
+              </mat-selection-list>
+            </mat-menu>
+          </th>
+          <td mat-cell *matCellDef="let element"
+              class="status-column color-text-intables tdcell-center tdcell">
+
+            <!-- Status: Error -->
+            <ng-container *ngIf="element.status === automaticBillingStatus.error">
+              <div class="status-column-content">
+                <img src="assets/icons/billing_history_error.svg" alt="Error">
+                <p class="status-error">{{ element.status }}</p>
+              </div>
+            </ng-container>
+
+            <!-- Status: Sent -->
+            <ng-container *ngIf="element.status === automaticBillingStatus.sent">
+              <div class="status-column-content">
+                <img src="assets/icons/billing_history_sent.svg" alt="Sent">
+                <p class="status-sent">{{ element.status }}</p>
+              </div>
+            </ng-container>
+
+            <!-- Status: Creating -->
+            <ng-container *ngIf="element.status === automaticBillingStatus.creating">
+              <div class="status-column-content">
+                <img src="assets/icons/billing_history_on_process.svg" alt="Creating">
+                <p class="status-creating">{{ element.status }}</p>
+              </div>
+            </ng-container>
+          </td>
+        </ng-container>
+
+        <!-- =============================================================== -->
+        <!-- COLUMN: Invoice Type -->
+        <!-- Displays whether the invoice is Generic or Non-generic -->
+        <!-- (based on whether it requires fiscal data) -->
+        <!-- =============================================================== -->
+        <ng-container matColumnDef="invoiceType">
+          <th scope="row" mat-header-cell *matHeaderCellDef>
+            Tipo Factura
+          </th>
+          <td mat-cell *matCellDef="let element"
+              class="invoice-type-column color-text-intables tdcell-center tdcell">
+            {{ element.typeInvoice }}
+          </td>
+        </ng-container>
+
+        <!-- =============================================================== -->
+        <!-- COLUMN: Billing Form -->
+        <!-- Indicates whether billing was complete or partial -->
+        <!-- =============================================================== -->
+        <ng-container matColumnDef="invoiceForm">
+          <th scope="row" mat-header-cell *matHeaderCellDef>
+            Forma facturación
+          </th>
+          <td mat-cell *matCellDef="let element"
+              class="billing-type-column color-text-intables tdcell-center tdcell">
+            {{ element.billingType }}
+          </td>
+        </ng-container>
+
+        <!-- =============================================================== -->
+        <!-- COLUMN: Warehouse User -->
+        <!-- Displays the warehouse user who triggered the billing -->
+        <!-- Example: klopezAlm -->
+        <!-- =============================================================== -->
+        <ng-container matColumnDef="almacenUser">
+          <th scope="row" mat-header-cell *matHeaderCellDef>
+            Usuario Almacén
+          </th>
+          <td mat-cell *matCellDef="let element"
+              class="almacen-user-column color-text-intables tdcell-center tdcell">
+            {{ element.almacenUser }}
+          </td>
+        </ng-container>
+
+        <!-- =============================================================== -->
+        <!-- COLUMN: Shop Order -->
+        <!-- Displays the related shop order ID (last 6 chars only) -->
+        <!-- Tooltip shows the complete order ID -->
+        <!-- =============================================================== -->
+        <ng-container matColumnDef="orderShop">
+          <th scope="row" mat-header-cell *matHeaderCellDef>
+            Pedido Shop
+          </th>
+          <td mat-cell *matCellDef="let element"
+              [matTooltip]="element.dxpOrderId"
+              matTooltipClass="custom-tooltip"
+              class="shop-order-column color-text-intables tdcell-center tdcell">
+            {{ element.dxpOrderId?.slice(-6) }}
+          </td>
+        </ng-container>
+
+        <!-- =============================================================== -->
+        <!-- COLUMN: SAP Order -->
+        <!-- Displays one or more related SAP order IDs -->
+        <!-- =============================================================== -->
+        <ng-container matColumnDef="orderSAP">
+          <th scope="row" mat-header-cell *matHeaderCellDef>
+            Pedido SAP
+          </th>
+          <td mat-cell *matCellDef="let element"
+              class="sap-order-column color-text-intables tdcell-center tdcell">
+            {{ element.sapOrderId[0] }}
+          </td>
+        </ng-container>
+
+        <!-- =============================================================== -->
+        <!-- COLUMN: Remissions -->
+        <!-- Displays remission IDs (delivery notes) related to the invoice -->
+        <!-- =============================================================== -->
+        <ng-container matColumnDef="remissions">
+          <th scope="row" mat-header-cell *matHeaderCellDef>
+            Remisiones
+          </th>
+          <td mat-cell *matCellDef="let element"
+              class="remissions-column color-text-intables tdcell-center tdcell">
+            {{ element.remissionId[0] }}
+          </td>
+        </ng-container>
+
+        <!-- =============================================================== -->
+        <!-- COLUMN: Last Update Date -->
+        <!-- Displays the most recent status update or retry timestamp -->
+        <!-- =============================================================== -->
+        <ng-container matColumnDef="updateDate">
+          <th scope="row" mat-header-cell *matHeaderCellDef>
+            Fecha actualización
+          </th>
+          <td mat-cell *matCellDef="let element"
+              class="update-date-column color-text-intables tdcell-center tdcell">
+            {{ element.updateDate }}
+          </td>
+        </ng-container>
+
+        <!-- =============================================================== -->
+        <!-- COLUMN: Error Message -->
+        <!-- Displays the last creation error message or 'NO APLICA' -->
+        <!-- Uses conditional styling for non-applicable entries -->
+        <!-- =============================================================== -->
+        <ng-container matColumnDef="errorMessage">
+          <th scope="row" mat-header-cell *matHeaderCellDef class="tdcell-center tdcell">
+            Mensajes de error
+          </th>
+          <td mat-cell *matCellDef="let element"
+              class="error-message-column color-text-intables tdcell-center tdcell">
+            <p [ngClass]="element.errorMessage === 'NO APLICA' ? 'no-applicable' : ''">
+              {{ element.errorMessage }}
+            </p>
+          </td>
+        </ng-container>
+
+        <!-- =============================================================== -->
+        <!-- COLUMN: Retry Count -->
+        <!-- Displays how many times the invoice creation was retried -->
+        <!-- =============================================================== -->
+        <ng-container matColumnDef="retries">
+          <th scope="row" mat-header-cell *matHeaderCellDef>
+            Reintentos
+          </th>
+          <td mat-cell *matCellDef="let element"
+              class="retries-column color-text-intables tdcell-center tdcell">
+            {{ element.retryNumber }}
+          </td>
+        </ng-container>
+
+        <!-- =============================================================== -->
+        <!-- COLUMN: Manual Adjustment -->
+        <!-- Displays manual correction status toggle -->
+        <!-- States: Not applicable, Required, Completed -->
+        <!-- =============================================================== -->
+        <ng-container matColumnDef="manualAdjustment">
+          <th scope="row" mat-header-cell *matHeaderCellDef>
+            Ajuste manual
+          </th>
+          <td mat-cell *matCellDef="let element"
+              class="manual-adjusment-column color-text-intables tdcell-center tdcell">
+            <div class="manual-adjusment-column-content">
+              <mat-slide-toggle [(ngModel)]="element.manualChangeApplied"
+                (change)="manualChangesApplied(element)"
+                [disabled]="element.manualChangeApplied === null || element.manualChangeApplied">
+              </mat-slide-toggle>
+              <p *ngIf="element.manualChangeApplied === null" class="no-applicable">No aplica</p>
+              <p *ngIf="!element.manualChangeApplied && element.manualChangeApplied !== null">Requerido</p>
+              <p *ngIf="element.manualChangeApplied" class="no-applicable">Realizado</p>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- =============================================================== -->
+        <!-- COLUMN: Actions -->
+        <!-- Provides contextual options per row (retry, SAP orders, remissions) -->
+        <!-- =============================================================== -->
+        <ng-container matColumnDef="actions">
+          <th scope="row" mat-header-cell *matHeaderCellDef>
+            Acciones
+          </th>
+          <td mat-cell *matCellDef="let element"
+              class="actions-column color-text-intables tdcell-center tdcell">
+            <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Actions Menu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              <button [disabled]="disableManualRetry(element)" mat-menu-item (click)="manualRetry(element.id)">
+                <span>Ejecutar reintento</span>
+              </button>
+              <button mat-menu-item (click)="seeDetail(element, true)">
+                <span>Ver pedidos SAP</span>
+              </button>
+              <button mat-menu-item (click)="seeDetail(element, false)">
+                <span>Ver remisiones</span>
+              </button>
+            </mat-menu>
+          </td>
+        </ng-container>
+
+        <!-- =============================================================== -->
+        <!-- Header and row definitions -->
+        <!-- =============================================================== -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+
+    <!-- =============================================================== -->
+    <!-- Pagination section -->
+    <!-- Supports dynamic page size and navigation -->
+    <!-- =============================================================== -->
+    <div *ngIf="dataSource.data.length !== 0" class="paginator-container">
+      <mat-paginator
+        [pageSizeOptions]="[5, 10, 15, 20]"
+        [pageSize]="pageSize"
+        [length]="lengthPaginator"
+        [pageIndex]="pageIndex"
+        (page)="pageEvent = changeDataEvent($event)">
+      </mat-paginator>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,151 @@
+.filter-section {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+}
+
+.button-blue-user-list {
+    background-color: #0081C2 !important;
+    color: #fff !important;
+}
+
+.list-users-container {
+    margin-bottom: 30px !important;
+}
+
+.billing-table-container {
+    width: 100%;
+    overflow-x: auto;
+
+    table {
+        min-width: 1600px;
+
+        th {
+            text-align: start;
+            color: #000 !important;
+        }
+
+        td {
+            height: 50px;
+            color: #000 !important;
+            font-size: 12px !important;
+            text-align: start;
+        }
+
+        .id-column {
+            width: 5.25%;
+        }
+
+        .request-date-column {
+            width: 7.5%;
+        }
+
+        .status-column {
+            width: 8.5%;
+
+            .status-column-content {
+                display: flex;
+                justify-content: start;
+                column-gap: 5px;
+
+                p.status-error {
+                    color: #E2062E;
+                }
+
+                p.status-sent {
+                    color: #1876AB;
+                }
+
+                p.status-creating {
+                    color: #AD8B12;
+                }
+            }
+        }
+
+        .invoice-type-column {
+            width: 7.25%;
+        }
+
+        .billing-type-column {
+            width: 7%;
+        }
+
+        .almacen-user-column,
+        .shop-order-column,
+        .sap-order-column,
+        .remissions-column {
+            width: 6.38%;
+        }
+
+        .update-date-column {
+            width: 7.63%;
+        }
+
+        .error-message-column {
+            width: 13.75%;
+
+            .no-applicable {
+                color: #B3B3B3;
+                text-align: center;
+            }
+        }
+
+        .retries-column {
+            width: 5%;
+        }
+
+        .manual-adjusment-column {
+            width: 8.31%;
+
+            .manual-adjusment-column-content {
+                display: flex;
+                justify-content: start;
+                align-items: center;
+                column-gap: 5px;
+
+                p.no-applicable {
+                    color: #B3B3B3;
+                }
+            }
+        }
+
+        .actions-column {
+            width: 4.31%;
+        }
+    }
+}
+
+::ng-deep .custom-tooltip {
+    min-width: fit-content !important;
+}
+
+::ng-deep .mat-slide-toggle-bar {
+    background-color: #F5A623;
+}
+
+::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-bar {
+    background-color: #4CAF50;
+}
+
+::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
+    background-color: #FFF;
+}
+
+::ng-deep .mat-slide-toggle.mat-disabled .mat-slide-toggle-bar {
+    background-color: #B3B3B3;
+}
+
+::ng-deep .mat-slide-toggle.mat-disabled.mat-checked .mat-slide-toggle-bar {
+    background-color: #4CAF50;
+}
+
+::ng-deep .mat-pseudo-checkbox-checked {
+    background-color: #0081c2 !important;
+    border-color: #0081c2 !important;
+}
+
+::ng-deep .mat-pseudo-checkbox-disabled {
+    background-color: #B3B3B3 !important;
+    border-color: #B3B3B3 !important;
+}
