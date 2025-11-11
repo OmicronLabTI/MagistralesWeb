@@ -28,6 +28,20 @@ namespace Omicron.Invoice.Services.Invoice
         Task<ResultDto> CreateInvoice(CreateInvoiceDto request);
 
         /// <summary>
+        /// Method for get all users.
+        /// </summary>
+        /// <param name="parameters">parameters.</param>
+        /// <returns>A representing the result of the asynchronous operation.</returns>
+        Task<ResultDto> GetInvoices(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Method for update colum manualchangeapplied.
+        /// </summary>
+        /// <param name="id">id invoice.</param>
+        /// <returns>A representing the result of the asynchronous operation.</returns>
+        Task<ResultDto> UpdateManualChange(string id);
+
+        /// <summary>
         /// Method to carry out the order process.
         /// </summary>
         /// <param name="request"> request order. </param>

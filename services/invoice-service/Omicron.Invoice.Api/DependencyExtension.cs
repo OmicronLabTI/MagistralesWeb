@@ -72,6 +72,11 @@ namespace Omicron.Invoice.Api
                 c.BaseAddress = new Uri(webApplication.Configuration["CatalogUrl"]);
             })
             .AddTypedClient<ICatalogsService, CatalogsService>();
+            webApplication.Services.AddHttpClient("users", c =>
+            {
+                c.BaseAddress = new Uri(webApplication.Configuration["UserService"]);
+            })
+            .AddTypedClient<IUsersService, UsersService>();
 
             return webApplication.Build();
         }
