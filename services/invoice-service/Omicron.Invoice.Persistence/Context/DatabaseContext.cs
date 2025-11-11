@@ -55,6 +55,14 @@ namespace Omicron.Invoice.Persistence.Context
         public DbSet<InvoiceRemissionModel> Remissions { get; set; }
 
         /// <summary>
+        /// Gets or sets Users.
+        /// </summary>
+        /// <value>
+        /// <see cref="DbSet{InvoiceSapOrderModel}"/> Invoice Sap Order.
+        /// </value>
+        public DbSet<InvoiceSapOrderModel> InvoiceSapOrderModel { get; set; }
+
+        /// <summary>
         /// Metho On Model Creating.
         /// </summary>
         /// <param name="modelBuilder">ModelBuilder.</param>

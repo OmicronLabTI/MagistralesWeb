@@ -34,3 +34,7 @@ global using System.Threading.Tasks;
 global using Omicron.Invoice.Services.Catalog;
 global using Axity.Commons.Exceptions;
 global using Microsoft.Extensions.Logging;
+global using Omicron.Invoice.Common.DTOs.Responses.Invoices;
+global using Omicron.Invoice.Model.Model.JoinsModels;
+global using System.Globalization;
+global using Omicron.Invoice.Services.Users;

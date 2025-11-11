@@ -14,6 +14,46 @@ namespace Omicron.Invoice.Services.Constants
     public static class ServiceConstants
     {
         /// <summary>
+        /// Gets Const for offset.
+        /// </summary>
+        public static string Offset => "offset";
+
+        /// <summary>
+        /// Gets Const for the limit.
+        /// </summary>
+        public static string Limit => "limit";
+
+        /// <summary>
+        /// Gets const for default offset.
+        /// </summary>
+        public static string OffsetDefault => "0";
+
+        /// <summary>
+        /// Gets Const for the default limit.
+        /// </summary>
+        public static string LimitDefault => "10";
+
+        /// <summary>
+        /// Gets Const for the date for search.
+        /// </summary>
+        public static string Date => "date";
+
+        /// <summary>
+        /// Gets Const for the date for search.
+        /// </summary>
+        public static string Status => "status";
+
+        /// <summary>
+        /// Gets error update.
+        /// </summary>
+        public static string ErrorUpdateInvoice => "No es posible actializar el registro. No requiere ajuste manual o ya se actualizo";
+
+        /// <summary>
+        /// Gets users by id.
+        /// </summary>
+        public static string GetUsersById => "getUsersById";
+
+        /// <summary>
         /// Gets parámetro para obtener la key Redis.
         /// </summary>
         public static string CdfiKey => "Cdfi-Version";
@@ -95,6 +135,19 @@ namespace Omicron.Invoice.Services.Constants
         /// String InvoiceToProcessAutomaticRetryKey.
         /// </value>
         public static string InvoiceToProcessAutomaticRetryKey => "invoices:toprocess:automaticretry";
+
+        /// <summary>
+        /// Gets the Order Relation.
+        /// </summary>
+        /// <value>
+        /// the OrderRelation.
+        /// </value>
+        public static Dictionary<string, int> StatusOrder { get; } = new Dictionary<string, int>
+        {
+            { SendToCreateInvoice, 1 },
+            { CreatingInvoiceStatus, 2 },
+            { InvoiceCreationErrorStatus, 3 },
+        };
 
         /// <summary>
         /// Gets GetRetryInvoiceLockKey.
