@@ -19,7 +19,7 @@ import { Endpoints } from 'src/environments/endpoints';
  *
  * @see Endpoints.invoices.historyBilling
  * @since November 2025
- * @version 1.4
+ * @version 1.5
  * @author
  * Victor Alfonso Tánori Ruiz
  */
@@ -32,11 +32,11 @@ export class AutoBillingService {
   constructor(private consume: ConsumeService) {}
 
   /**
-   * Retrieves Auto-Billing records from the backend according to OM-7160 specification.
-   *
-   * @returns Observable<AutoBillingModel[]> - List of automatic billing records.
+   * Retrieves Auto-Billing records with pagination and filtering.
+   * @param offset current page index * pageSize
+   * @param limit number of records per page
    */
-  getAllAutoBilling(): Observable<AutoBillingModel[]> {
+  getAllAutoBilling(offset = 0, limit = 20): Observable<AutoBillingModel[]> {
     const today = new Date();
     const fiveDaysAgo = new Date(today);
     fiveDaysAgo.setDate(today.getDate() - 5);
@@ -44,8 +44,8 @@ export class AutoBillingService {
     const format = (d: Date): string => d.toISOString().split('T')[0];
 
     const params = {
-      offset: '0',
-      limit: '50',
+      offset: String(offset),
+      limit: String(limit),
       status: 'Creación exitosa',
       startDate: format(fiveDaysAgo),
       endDate: format(today),
@@ -53,11 +53,10 @@ export class AutoBillingService {
       sortOrder: 'asc'
     };
 
-    // ✅ Simplified: No error handling here, handled globally by interceptor or ConsumeService.
+    // ✅ No manejamos errores locales; ConsumeService los captura automáticamente.
     return this.consume.httpGet<{ response: any[] }>(this.API_URL, params).pipe(
       map(apiResponse => {
-        const data = (apiResponse && apiResponse.response) ? apiResponse.response : [];
-
+        const data = apiResponse && apiResponse.response ? apiResponse.response : [];
         data.sort((a, b) => (a.id || '').localeCompare(b.id || ''));
 
         return data.map((item): AutoBillingModel => {

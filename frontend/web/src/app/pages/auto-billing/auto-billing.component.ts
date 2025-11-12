@@ -15,22 +15,11 @@ import { HttpServiceTOCall } from 'src/app/constants/const';
   styleUrls: ['./auto-billing.component.scss']
 })
 export class AutoBillingComponent implements OnInit, AfterViewInit {
-  /** Columns displayed in the billing dashboard */
   displayedColumns: string[] = [
-    'sapInvoiceId',
-    'sapCreationDate',
-    'invoiceType',
-    'billingMode',
-    'originUser',
-    'shopOrder',
-    'shopTransaction',
-    'sapOrder',
-    'shipments',
-    'retries',
-    'actions'
+    'sapInvoiceId', 'sapCreationDate', 'invoiceType', 'billingMode',
+    'originUser', 'shopOrder', 'shopTransaction', 'sapOrder', 'shipments', 'retries', 'actions'
   ];
 
-  /** Data source for Angular Material table */
   dataSource = new MatTableDataSource<AutoBillingModel>([]);
 
   @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
@@ -44,16 +33,22 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.loadData();
+    this.loadData(0, 20);
   }
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
+
+    this.paginator.page.subscribe(() => {
+      const offset = this.paginator.pageIndex * this.paginator.pageSize;
+      const limit = this.paginator.pageSize;
+      this.loadData(offset, limit);
+    });
   }
 
-  /** Loads records from backend */
-  loadData(): void {
-    this.autoBillingService.getAllAutoBilling().subscribe({
+  /** Loads records from backend with pagination */
+  loadData(offset: number, limit: number): void {
+    this.autoBillingService.getAllAutoBilling(offset, limit).subscribe({
       next: data => {
         this.dataSource.data = data;
       }
