@@ -1,0 +1,84 @@
+.dialog-content {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    width: 400px;
+    max-height: 240px;
+    max-width: 100vw;
+
+    img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .title-box {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .title-dialog {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 10px 0px;
+            width: 80%;
+            line-height: 150%;
+        }
+    }
+
+    .subtitle-box {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .subtitle {
+            margin-top: 0;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 145%;
+            text-align: center;
+        }
+    }
+
+    .actions-content {
+        gap: 10px;
+        flex-direction: column;
+        justify-content: space-evenly;
+        align-items: center;
+
+        button {
+            max-width: 100% !important;
+        }
+    }
+}
+
+.btn-cancel-modal {
+    width: 136px;
+    height: 36px;
+    color: #0081C2;
+    background-color: #fff;
+    border: 1px solid #0081C2;
+    font-weight: 500;
+    border-radius: 0.25rem;
+}
+
+.btn-add-modal {
+    width: 136px;
+    height: 36px;
+    color: #fff !important;
+    background-color: #0081C2 !important;
+    border: 0.1px solid #0081C2;
+    font-weight: 500;
+    border-radius: 0.25rem;
+}
+
+@media (min-width: 992px) {
+    .actions-content {
+        gap: 10px;
+        flex-direction: row !important;
+
+        button {
+            max-width: calc(32% - 5px) !important;
+            padding: 0 10px !important;
+        }
+    }
+}

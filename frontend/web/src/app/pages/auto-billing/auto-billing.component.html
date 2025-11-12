@@ -1,0 +1,110 @@
+<div class="auto-billing-page">
+  <div class="header-fixed"></div>
+
+  <div class="table-section">
+    <!-- ============================================================
+         TABLE SCROLL CONTAINER
+         Enables horizontal scrolling when table content overflows
+         ============================================================ -->
+    <div class="table-scroll-container">
+      <table
+        mat-table
+        [dataSource]="dataSource"
+        class="billing-table mat-elevation-z2"
+      >
+        <!-- ID Factura SAP -->
+        <ng-container matColumnDef="sapInvoiceId">
+          <th mat-header-cell *matHeaderCellDef>ID Factura SAP</th>
+          <td mat-cell *matCellDef="let e">{{ e.sapInvoiceId }}</td>
+        </ng-container>
+
+        <!-- Fecha creación SAP -->
+        <ng-container matColumnDef="sapCreationDate">
+          <th mat-header-cell *matHeaderCellDef>Fecha creación SAP</th>
+          <td mat-cell *matCellDef="let e">{{ e.sapCreationDate }}</td>
+        </ng-container>
+
+        <!-- Tipo de Factura -->
+        <ng-container matColumnDef="invoiceType">
+          <th mat-header-cell *matHeaderCellDef>Tipo Factura</th>
+          <td mat-cell *matCellDef="let e">{{ e.invoiceType }}</td>
+        </ng-container>
+
+        <!-- Forma de facturación -->
+        <ng-container matColumnDef="billingMode">
+          <th mat-header-cell *matHeaderCellDef>Forma facturación</th>
+          <td mat-cell *matCellDef="let e">{{ e.billingMode }}</td>
+        </ng-container>
+
+        <!-- Usuario Almacén -->
+        <ng-container matColumnDef="originUser">
+          <th mat-header-cell *matHeaderCellDef>Usuario Almacén</th>
+          <td mat-cell *matCellDef="let e">{{ e.originUser }}</td>
+        </ng-container>
+
+        <!-- Pedido Shop -->
+        <ng-container matColumnDef="shopOrder">
+          <th mat-header-cell *matHeaderCellDef>Pedido Shop</th>
+          <td mat-cell *matCellDef="let e">{{ e.shopOrder }}</td>
+        </ng-container>
+
+        <!-- Transacción Shop -->
+        <ng-container matColumnDef="shopTransaction">
+          <th mat-header-cell *matHeaderCellDef>Transacción Shop</th>
+          <td mat-cell *matCellDef="let e">
+            <span matTooltip="{{ e.shopTransaction | uppercase }}">
+              {{ e.shopTransaction?.slice(-6) }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Pedidos SAP -->
+        <ng-container matColumnDef="sapOrder">
+          <th mat-header-cell *matHeaderCellDef>Pedidos SAP</th>
+          <td mat-cell *matCellDef="let e">{{ e.sapOrders?.length || 0 }}</td>
+        </ng-container>
+
+        <!-- Remisiones -->
+        <ng-container matColumnDef="shipments">
+          <th mat-header-cell *matHeaderCellDef>Remisiones</th>
+          <td mat-cell *matCellDef="let e">{{ e.remissions?.length || 0 }}</td>
+        </ng-container>
+
+        <!-- Reintentos -->
+        <ng-container matColumnDef="retries">
+          <th mat-header-cell *matHeaderCellDef>Reintentos</th>
+          <td mat-cell *matCellDef="let e">{{ e.retries }}</td>
+        </ng-container>
+
+        <!-- Acciones -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let e">
+            <button mat-icon-button [matMenuTriggerFor]="menu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item (click)="openSapOrdersDialog(e)">
+                Ver pedidos SAP
+              </button>
+              <button mat-menu-item (click)="openShipmentsDialog(e)">
+                Ver remisiones
+              </button>
+            </mat-menu>
+          </td>
+        </ng-container>
+
+        <!-- Rows -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <mat-paginator
+      [pageSizeOptions]="[10, 20, 50, 100]"
+      [pageSize]="20"
+      showFirstLastButtons
+    ></mat-paginator>
+  </div>
+</div>

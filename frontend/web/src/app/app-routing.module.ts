@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { GuardService } from './services/guard.service';
-import {RouterPaths} from './constants/const';
+import { RouterPaths } from './constants/const';
 
 const routes: Routes = [
   {
@@ -11,6 +11,11 @@ const routes: Routes = [
   {
     path: 'userList',
     loadChildren: () => import('./pages/user-list/user-list.module').then(m => m.UserListModule),
+    canActivate: [GuardService]
+  },
+  {
+    path: 'automatic-billing',
+    loadChildren: () => import('./pages/automatic-billing/automatic-billing.module').then(m => m.AutomaticBillingModule),
     canActivate: [GuardService]
   },
   {
@@ -71,6 +76,11 @@ const routes: Routes = [
   {
     path: `${RouterPaths.addComponent}/:document/:ordenid/:code/:description/:hasMissingStock/:isFromDetail/:detailOrders`,
     loadChildren: () => import('./pages/add-component/add-component.module').then(m => m.AddComponentModule),
+    canActivate: [GuardService]
+  },
+  {
+    path: `${RouterPaths.historyBilling}`,
+    loadChildren: () => import('./pages/auto-billing/auto-billing.module').then(m => m.AutoBillingModule),
     canActivate: [GuardService]
   },
   {

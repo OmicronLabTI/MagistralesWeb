@@ -63,6 +63,8 @@ export enum HttpServiceTOCall {
     ORDERS_ISOLATED,
     PRODUCTIVITY,
     INCIDENTS_LIST,
+    AUTOMATIC_BILLING,
+    HISTORY_BILLING
 }
 export const ConstLogin = {
     defaultRedirectUri: 'asdad',
@@ -200,6 +202,8 @@ export const pathRoles = {
     admin: [
         'userList',
         'login',
+        'automatic-billing',
+        'history-billing',
         '**'
     ],
     logistica: [
@@ -243,7 +247,9 @@ export const RouterPaths = {
     orderDetail: 'pdetalle',
     detailFormula: 'ordenfabricacion',
     pedido: 'pedidos',
-    addComponent: 'addComponent'
+    addComponent: 'addComponent',
+    automaticBilling: 'automatic-billing',
+    historyBilling: 'history-billing'
 
 };
 export enum TypeProperty {

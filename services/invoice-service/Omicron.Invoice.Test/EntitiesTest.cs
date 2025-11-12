@@ -29,6 +29,7 @@ namespace Omicron.Invoice.Test
             new ParametersDto(),
             new InvoicesDataDto(),
             new InvoiceRemissionJoinModel(),
+            new AutoBillingRowDto(),
         };
 
         /// <summary>

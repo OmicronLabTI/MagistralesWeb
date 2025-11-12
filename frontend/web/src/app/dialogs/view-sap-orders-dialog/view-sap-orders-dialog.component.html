@@ -1,0 +1,33 @@
+<div class="overlay">
+  <div class="dialog-container">
+    <!-- Header -->
+    <div class="dialog-header">
+      <h2>Pedidos SAP relacionados</h2>
+      <button mat-icon-button class="close-btn" (click)="close()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <!-- Tabla -->
+    <div class="table-wrapper">
+      <table mat-table [dataSource]="dataSource" class="sap-table" matSort>
+
+        <!-- Columna # -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef>#</th>
+          <td mat-cell *matCellDef="let e">{{ e.id }}</td>
+        </ng-container>
+
+        <!-- Columna Pedido SAP -->
+        <ng-container matColumnDef="idpedidosap">
+          <th mat-header-cell *matHeaderCellDef>ID Pedido SAP</th>
+          <td mat-cell *matCellDef="let e">{{ e.idpedidosap }}</td>
+        </ng-container>
+
+        <!-- Filas -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+  </div>
+</div>
