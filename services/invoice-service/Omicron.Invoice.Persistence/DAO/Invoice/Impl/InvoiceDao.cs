@@ -207,14 +207,11 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
         /// </returns>
         public async Task<int> GetAutoBillingCountAsync(List<string> status)
         {
-            var query = this.context.Invoice.AsNoTracking();
-
-            if (status != null && status.Count > 0)
-            {
-                query = query.Where(x => status.Contains(x.Status));
-            }
-
-            return await query.CountAsync();
+            return await this.context.Invoice
+                .AsNoTracking()
+                .Where(x => status == null || status.Count == 0 || status.Contains(x.Status))
+                .CountAsync()
+                .ConfigureAwait(false);
         }
     }
 }
