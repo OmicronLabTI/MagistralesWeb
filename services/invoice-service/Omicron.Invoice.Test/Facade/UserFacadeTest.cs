@@ -66,7 +66,7 @@ namespace Omicron.Invoice.Test.Facade
             var response = await this.invoiceFacade.CreateInvoice(model);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response != null);
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace Omicron.Invoice.Test.Facade
             var response = await this.invoiceFacade.GetInvoicesByRemissionId(model);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response != null);
         }
     }
 }
