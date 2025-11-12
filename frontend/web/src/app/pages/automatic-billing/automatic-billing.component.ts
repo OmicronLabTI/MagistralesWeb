@@ -135,7 +135,9 @@ export class AutomaticBillingComponent implements OnInit {
         this.lengthPaginator = res.comments;
         this.dataSource.data = res.response;
         this.shapeData();
-      }});
+      },
+      error: (err) => this.errorService.httpError(err)
+    });
   }
 
   /**
@@ -205,7 +207,9 @@ export class AutomaticBillingComponent implements OnInit {
         if (res.code !== 200) {
           row.manualChangeApplied = false;
         }
-      }});
+      },
+      error: (err) => this.errorService.httpError(err)
+    });
   }
 
   /**
@@ -228,7 +232,9 @@ export class AutomaticBillingComponent implements OnInit {
           const skippedIdsList = res.response.skippedIds;
           // TODO: Implement user feedback for processed/skipped IDs
         }
-      }});
+      },
+      error: (err) => this.errorService.httpError(err)
+    });
   }
 
   /**
