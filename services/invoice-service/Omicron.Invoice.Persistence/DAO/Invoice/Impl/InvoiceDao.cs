@@ -144,18 +144,14 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
         /// </returns>
         public async Task<List<InvoiceModel>> GetAutoBillingBaseAsync(List<string> status, int offset, int limit)
         {
-            var query = this.context.Invoice.AsNoTracking();
-
-            if (status != null && status.Count > 0)
-            {
-                query = query.Where(x => status.Contains(x.Status));
-            }
-
-            return await query
+            return await this.context.Invoice
+                .AsNoTracking()
+                .Where(x => status == null || status.Count == 0 || status.Contains(x.Status))
                 .OrderByDescending(x => x.InvoiceCreateDate)
                 .Skip(offset)
                 .Take(limit)
-                .ToListAsync();
+                .ToListAsync()
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -170,14 +166,12 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
         /// </returns>
         public async Task<Dictionary<string, List<InvoiceSapOrderModel>>> GetSapOrdersByInvoiceIdsAsync(List<string> invoiceIds)
         {
-            var sapOrders = await this.context.InvoiceSapOrderModel
+            return await this.context.InvoiceSapOrderModel
                 .AsNoTracking()
                 .Where(s => invoiceIds.Contains(s.IdInvoice))
-                .ToListAsync();
-
-            return sapOrders
                 .GroupBy(s => s.IdInvoice)
-                .ToDictionary(g => g.Key, g => g.ToList());
+                .ToDictionaryAsync(g => g.Key, g => g.ToList())
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -192,14 +186,12 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
         /// </returns>
         public async Task<Dictionary<string, List<InvoiceRemissionModel>>> GetRemissionsByInvoiceIdsAsync(List<string> invoiceIds)
         {
-            var remissions = await this.context.Remissions
+            return await this.context.Remissions
                 .AsNoTracking()
                 .Where(r => invoiceIds.Contains(r.IdInvoice))
-                .ToListAsync();
-
-            return remissions
                 .GroupBy(r => r.IdInvoice)
-                .ToDictionary(g => g.Key, g => g.ToList());
+                .ToDictionaryAsync(g => g.Key, g => g.ToList())
+                .ConfigureAwait(false);
         }
 
         /// <summary>
