@@ -15,7 +15,7 @@ export class InvoicesService {
   ) { }
 
   getAutomaticBillingTableData(queryString: string) {
-    return this.consumeService.httpGet<IAutomaticBillingRes>(`${Endpoints.invoices.automaticBillingTableData}/${queryString}`);
+    return this.consumeService.httpGet<IAutomaticBillingRes>(`${Endpoints.invoices.automaticBillingTableData}?${queryString}`);
   }
 
   adjustmentMade(id: string) {

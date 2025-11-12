@@ -201,7 +201,7 @@ export class AutomaticBillingComponent implements OnInit {
    * Sends manual adjustment confirmation to backend.
    */
   sendManualChangesConfirmation(row: AutomaticBilling): void {
-    const query = `id=${row.id}`;
+    const query = `${row.id}`;
     this.invoicesService.adjustmentMade(query).subscribe({
       next: (res) => {
         if (res.code !== 200) {
