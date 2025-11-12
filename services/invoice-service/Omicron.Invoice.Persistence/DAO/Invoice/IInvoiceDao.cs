@@ -43,11 +43,41 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice
         Task InsertInvoices(List<InvoiceModel> invoices);
 
         /// <summary>
+        /// Method for GetInvoices.
+        /// </summary>
+        /// <param name="status">The status.</param>
+        /// <param name="offset">The offset.</param>
+        /// <param name="limit">The limit.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<List<InvoiceModel>> GetInvoicesNotCreatedByStatus(List<string> status, int offset, int limit);
+
+        /// <summary>
+        /// Method for GetInvoicesCount.
+        /// </summary>
+        /// <param name="status">The status.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<int> GetInvoicesCount(List<string> status);
+
+        /// <summary>
+        /// Method for GetInvoicesCount.
+        /// </summary>
+        /// <param name="id">The id.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<List<InvoiceModel>> GetInvoicesById(List<string> id);
+
+        /// <summary>
         /// Get invoice.
         /// </summary>
         /// <param name="id">the id.</param>
         /// <returns>the data.</returns>
         Task<InvoiceModel> GetInvoiceById(string id);
+
+        /// <summary>
+        /// Method for SaveChangesAsync.
+        /// Get invoice.
+        /// </summary>
+        /// <returns>the SaveChangesAsync.</returns>
+        Task<int> SaveChangesAsync();
 
         /// <summary>
         /// Update invoice.

@@ -110,5 +110,45 @@ namespace Omicron.Invoice.Services.Utils
 
             return Regex.Replace(normalized, @"[^A-Z0-9\-]+", string.Empty).Trim('-');
         }
+
+        /// <summary>
+        /// creates the result.
+        /// </summary>
+        /// <param name="dic">the dictioanry.</param>
+        /// <param name="key">the key to search.</param>
+        /// <param name="defaultValue">default value.</param>
+        /// <returns>the resultModel.</returns>
+        public static string GetDictionaryValueString(Dictionary<string, string> dic, string key, string defaultValue)
+        {
+            return dic.ContainsKey(key) ? dic[key] : defaultValue;
+        }
+
+        /// <summary>
+        /// GetDateRangeFromParameters.
+        /// </summary>
+        /// <param name="parameters">parameters.</param>
+        /// <returns>dates.</returns>
+        public static (DateTime fechaInicio, DateTime fechaFin) GetDateRangeFromParameters(Dictionary<string, string> parameters)
+        {
+            parameters.TryGetValue(ServiceConstants.Date, out string dateValue);
+            var parts = dateValue.Split('-', StringSplitOptions.RemoveEmptyEntries);
+            var fechaInicio = DateTime.ParseExact(parts[0].Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture).Date;
+            var fechaFin = DateTime.ParseExact(parts[1].Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture).Date.AddDays(1).AddMilliseconds(-1);
+            return (fechaInicio, fechaFin);
+        }
+
+        /// <summary>
+        /// GetDateRangeFromParameters.
+        /// </summary>
+        /// <param name="value">value.</param>
+        /// <returns>dates.</returns>
+        public static List<string> SplitStringList(string value)
+        {
+            return string.IsNullOrWhiteSpace(value)
+                ? new List<string>()
+                : value.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                        .Select(s => s.Trim())
+                        .ToList();
+        }
     }
 }

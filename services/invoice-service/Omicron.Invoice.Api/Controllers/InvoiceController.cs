@@ -37,6 +37,26 @@ namespace Omicron.Invoice.Api.Controllers
         /// <summary>
         /// Method for get all users.
         /// </summary>
+        /// <param name="parameters">parameters.</param>
+        /// <returns>A representing the result of the asynchronous operation.</returns>
+        [HttpGet]
+        [Route("/invoices")]
+        public async Task<IActionResult> GetInvoices([FromQuery] Dictionary<string, string> parameters)
+            => this.Ok(await this.invoiceFacade.GetInvoices(parameters));
+
+        /// <summary>
+        /// Method for get all users.
+        /// </summary>
+        /// <param name="id">id.</param>
+        /// <returns>A representing the result of the asynchronous operation.</returns>
+        [HttpPut]
+        [Route("/updatemanualchange")]
+        public async Task<IActionResult> UpdateManualChange([FromBody] string id)
+            => this.Ok(await this.invoiceFacade.UpdateManualChange(id));
+
+        /// <summary>
+        /// Method for get all users.
+        /// </summary>
         /// <param name="remissions">the request.</param>
         /// <returns>A representing the result of the asynchronous operation.</returns>
         [HttpPost]

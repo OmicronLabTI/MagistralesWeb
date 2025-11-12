@@ -19,6 +19,7 @@ namespace Omicron.Invoice.Services.Invoice.Impl
         private readonly Serilog.ILogger logger;
         private readonly ISapServiceLayerAdapterService serviceLayerService;
         private readonly ISapAdapter sapAdapter;
+        private readonly IUsersService usersService;
         private ICatalogsService catalogsService;
 
         private IRedisService redisService;
@@ -34,6 +35,7 @@ namespace Omicron.Invoice.Services.Invoice.Impl
         /// <param name="serviceLayerService">the serviceLayerService.</param>
         /// <param name="catalogsService">the catalog.</param>
         /// <param name="redisService">the redis.</param>
+        /// <param name="usersService">the usersService.</param>
         public InvoiceService(
             IInvoiceDao invoiceDao,
             IBackgroundTaskQueue taskQueue,
@@ -42,7 +44,8 @@ namespace Omicron.Invoice.Services.Invoice.Impl
             ISapAdapter sapAdapter,
             ISapServiceLayerAdapterService serviceLayerService,
             ICatalogsService catalogsService,
-            IRedisService redisService)
+            IRedisService redisService,
+            IUsersService usersService)
         {
             this.invoiceDao = invoiceDao;
             this.taskQueue = taskQueue.ThrowIfNull(nameof(taskQueue));
@@ -52,6 +55,7 @@ namespace Omicron.Invoice.Services.Invoice.Impl
             this.serviceLayerService = serviceLayerService.ThrowIfNull(nameof(serviceLayerService));
             this.catalogsService = catalogsService.ThrowIfNull(nameof(catalogsService));
             this.redisService = redisService.ThrowIfNull(nameof(redisService));
+            this.usersService = usersService.ThrowIfNull(nameof(usersService));
         }
 
         /// <inheritdoc/>
@@ -169,6 +173,39 @@ namespace Omicron.Invoice.Services.Invoice.Impl
         }
 
         /// <inheritdoc/>
+        public async Task<ResultDto> GetInvoices(Dictionary<string, string> parameters)
+        {
+            var offset = int.Parse(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Offset, ServiceConstants.OffsetDefault));
+            var limit = int.Parse(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Limit, ServiceConstants.Limit));
+            var status = ServiceUtils.SplitStringList(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Status, ServiceConstants.SuccessfulInvoiceCreationStatus));
+
+            var listInvoices = await this.invoiceDao.GetInvoicesNotCreatedByStatus(status, offset, limit);
+            var total = await this.invoiceDao.GetInvoicesCount(status);
+            var usersids = listInvoices.Select(x => x.AlmacenUser).Distinct().ToList();
+            var listUsers = await this.GetUsersById(usersids);
+
+            var listToReturn = CreateListInvoicesToReturn(listInvoices, listUsers);
+
+            return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, total);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> UpdateManualChange(string id)
+        {
+            var invoice = (await this.invoiceDao.GetInvoicesById([id])).FirstOrDefault();
+
+            if (invoice == null || invoice.ManualChangeApplied != false)
+            {
+                return ServiceUtils.CreateResult(false, (int)HttpStatusCode.BadRequest, ServiceConstants.ErrorUpdateInvoice, null, null, null);
+            }
+
+            invoice.ManualChangeApplied = true;
+            await this.invoiceDao.SaveChangesAsync();
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null, null);
+        }
+
+        /// <inheritdoc/>
         public bool PublishProcessToMediatR(CreateInvoiceDto request)
         {
             try
@@ -198,6 +235,52 @@ namespace Omicron.Invoice.Services.Invoice.Impl
         {
             var invoices = await this.invoiceDao.GetInvoicesByRemissionId(remissions.Select(x => (long)x).ToList());
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, invoices, null, null);
+        }
+
+        private static List<InvoiceErrorDto> CreateListInvoicesToReturn(List<InvoiceModel> listInvoices, List<UserModel> users)
+        {
+            var userDictionary = users.ToDictionary(u => u.Id, u => u);
+            var listToReturn = new List<InvoiceErrorDto>();
+
+            listInvoices.ForEach(x =>
+            {
+                userDictionary.TryGetValue(x.AlmacenUser, out var user);
+
+                var invoice = new InvoiceErrorDto
+                {
+                    Id = x.Id,
+                    CreateDate = x.CreateDate.ToString("dd/MM/yyyy HH:mm:ss"),
+                    AlmacenUser = user == null ? string.Empty : $"{user.FirstName} {user.LastName}",
+                    Status = x.Status,
+                    DxpOrderId = x.DxpOrderId,
+                    TypeInvoice = x.TypeInvoice,
+                    BillingType = x.BillingType,
+                    ErrorMessage = GetErrorMessageForInvoice(x.InvoiceError, x),
+                    UpdateDate = x.UpdateDate?.ToString("dd/MM/yyyy HH:mm:ss"),
+                    RetryNumber = x.RetryNumber,
+                    ManualChangeApplied = x.ManualChangeApplied,
+                    IsProcessing = x.IsProcessing,
+                    RemissionId = x.Remissions == null ? new List<int>() : x.Remissions.Select(x => x.RemissionId).Order().ToList(),
+                    SapOrderId = x.SapOrders == null ? new List<int>() : x.SapOrders.Select(x => x.SapOrderId).Order().ToList(),
+                };
+                listToReturn.Add(invoice);
+            });
+
+            return listToReturn.OrderBy(i => ServiceConstants.StatusOrder[i.Status]).ToList();
+        }
+
+        private static string GetErrorMessageForInvoice(InvoiceErrorModel error, InvoiceModel invoice)
+        {
+            return error?.ErrorMessage
+                ?? error?.Error
+                ?? invoice.ErrorMessage
+                ?? null;
+        }
+
+        private async Task<List<UserModel>> GetUsersById(List<string> userIds)
+        {
+            var users = await this.usersService.GetUsersById(userIds, ServiceConstants.GetUsersById);
+            return JsonConvert.DeserializeObject<List<UserModel>>(users.Response.ToString());
         }
 
         private async Task<(InvoiceErrorModel, bool)> GetDataBaseInvoiceError(string exceptionMessage)

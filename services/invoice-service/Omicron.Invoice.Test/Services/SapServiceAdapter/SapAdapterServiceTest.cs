@@ -27,7 +27,7 @@ namespace Omicron.Invoice.Test.Services.SapServiceAdapter
             var result = client.PostSapAdapter(new { }, "endpoint").Result;
 
             // Assert
-            ClassicAssert.IsTrue(result.Success);
+            Assert.That(result.Success);
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace Omicron.Invoice.Test.Services.SapServiceAdapter
             var client = this.CreateClientFailure();
 
             // Act
-            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await client.PostSapAdapter(new { }, "endpoint"));
+            Assert.ThrowsAsync<CustomServiceException>(async () => await client.PostSapAdapter(new { }, "endpoint"));
         }
     }
 }
