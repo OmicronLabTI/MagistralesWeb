@@ -1,0 +1,23 @@
+<div class="dialog-content">
+    <div class="d-flex flex-column align-items-center justify-content-center mb-4">
+        <img src="/assets/icons/warning_dialog.svg" alt="warning">
+    </div>
+    <div class="content-dialog">
+        <div class="title-box">
+            <p class="title-dialog mb-0 text-center">
+                ¿Confirmas que el ajuste manual ya fue realizado?
+            </p>
+        </div>
+        <div class="subtitle-box">
+            <p class="subtitle">Esta acción no podrá revertirse.</p>
+        </div>
+    </div>
+    <div class="d-flex actions-content">
+        <button mat-stroked-button class="btn-cancel-modal" matDialogClose>
+            Cancelar
+        </button>
+        <button mat-raised-button class="btn-add-modal" (click)="confirm()">
+            Confirmar
+        </button>
+    </div>
+</div>

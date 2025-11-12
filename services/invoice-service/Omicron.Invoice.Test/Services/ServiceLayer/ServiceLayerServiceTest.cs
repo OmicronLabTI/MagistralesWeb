@@ -82,7 +82,7 @@ namespace Omicron.Invoice.Test.Services.ServiceLayer
             var result = await this.serviceLayerClient.PostAsync(url, requestBody);
 
             // Assert
-            ClassicAssert.IsTrue(result.Success);
+            Assert.That(result.Success);
         }
     }
 }

@@ -1,0 +1,90 @@
+/* ============================================================
+   AUTO-BILLING PAGE WRAPPER (Encapsulado)
+   ============================================================ */
+.auto-billing-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #fff;
+
+  .table-section {
+    flex: 1;
+    padding: 16px;
+  }
+
+  /* ============================================================
+     TABLE SCROLL CONTAINER
+     ============================================================ */
+  .table-scroll-container {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #b0b0b0 #f7f7f7;
+
+    &::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f7f7f7;
+      border-radius: 8px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: #b0b0b0;
+      border-radius: 8px;
+    }
+  }
+
+  /* ============================================================
+     BILLING TABLE CORE
+     ============================================================ */
+  .billing-table {
+    width: 100%;
+    min-width: 1000px;
+    border-collapse: collapse;
+    border: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* ============================================================
+     ANGULAR MATERIAL OVERRIDES (ENCAPSULADOS)
+     ============================================================ */
+  /* Nota: todos los ng-deep están anidados bajo .auto-billing-page */
+  ::ng-deep .auto-billing-page {
+    .mat-mdc-paginator {
+      background-color: #ffffff;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .mat-mdc-header-row {
+      background-color: #f8f9fa;
+      font-weight: 600;
+    }
+
+    .mat-mdc-header-cell {
+      color: #333;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .mat-mdc-cell {
+      font-size: 14px;
+      color: #555;
+      white-space: nowrap;
+    }
+
+    .mat-mdc-menu-item {
+      font-size: 13px;
+    }
+
+    /* Ejemplo seguro de override específico */
+    .billing-table .mat-mdc-form-field-infix {
+      padding: 0 8px;
+    }
+  }
+}

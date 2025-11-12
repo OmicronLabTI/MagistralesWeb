@@ -35,8 +35,8 @@ namespace Omicron.Invoice.Test.Services.BackgroundTask
                 var dequeued = await queue.DequeueAsync(CancellationToken.None);
 
                 // Assert
-                ClassicAssert.NotNull(dequeued);
-                ClassicAssert.That(dequeued, Is.EqualTo(workItem));
+                Assert.That(dequeued != null);
+                Assert.That(dequeued, Is.EqualTo(workItem));
             }
 
             /// <summary>
@@ -49,7 +49,7 @@ namespace Omicron.Invoice.Test.Services.BackgroundTask
                 var queue = new BackgroundTaskQueue();
 
                 // Act & Assert
-                ClassicAssert.Throws<ArgumentNullException>(() => queue.QueueBackgroundWorkItem(null!));
+                Assert.Throws<ArgumentNullException>(() => queue.QueueBackgroundWorkItem(null!));
             }
 
             /// <summary>
@@ -73,7 +73,7 @@ namespace Omicron.Invoice.Test.Services.BackgroundTask
                 var dequeued = await dequeueTask;
 
                 // Assert
-                ClassicAssert.That(dequeued, Is.EqualTo(workItem));
+                Assert.That(dequeued, Is.EqualTo(workItem));
             }
 
             /// <summary>
@@ -91,7 +91,7 @@ namespace Omicron.Invoice.Test.Services.BackgroundTask
                 cts.Cancel();
 
                 // Assert
-                ClassicAssert.ThrowsAsync<OperationCanceledException>(async () => await task);
+                Assert.ThrowsAsync<OperationCanceledException>(async () => await task);
             }
         }
     }
