@@ -6,6 +6,9 @@
 // </copyright>
 // </summary>
 
+using System.Globalization;
+using System.Text.RegularExpressions;
+
 namespace Omicron.Invoice.Services.Utils
 {
     /// <summary>
@@ -46,6 +49,66 @@ namespace Omicron.Invoice.Services.Utils
         public static T ThrowIfNull<T>(this T obj, string name)
         {
             return obj ?? throw new ArgumentNullException(name);
+        }
+
+        /// <summary>
+        /// Retrieves the content of a specific sheet from an Excel workbook as a DataTable.
+        /// </summary>
+        /// <param name="workbook"> The Excel workbook from which the sheet will be read. </param>
+        /// <param name="sheetNumber"> The index (1-based) of the sheet to be retrieved. </param>
+        /// <returns> A DataTable containing the content of the specified sheet. </returns>
+        public static DataTable ReadSheet(XLWorkbook workbook, int sheetNumber)
+        {
+            var datatable = new DataTable();
+            var firstrow = true;
+            string readRange = "1:1";
+            var worksheet = workbook.Worksheet(sheetNumber);
+
+            foreach (var row in worksheet.RowsUsed())
+            {
+                if (firstrow)
+                {
+                    readRange = string.Format("{0}:{1}", 1, row.LastCellUsed().Address.ColumnNumber);
+                    foreach (var cell in row.Cells(readRange))
+                    {
+                        datatable.Columns.Add(cell.Value.ToString());
+                    }
+
+                    firstrow = false;
+                    continue;
+                }
+
+                datatable.Rows.Add();
+                int cellIndex = 0;
+
+                foreach (var cell in row.Cells(readRange))
+                {
+                    datatable.Rows[datatable.Rows.Count - 1][cellIndex] = cell.Value.ToString();
+                    cellIndex++;
+                }
+            }
+
+            return datatable;
+        }
+
+        /// <summary>
+        /// Normalizes input string by removing accents, converting to uppercase.
+        /// </summary>
+        /// <param name="input">Input string to normalize.</param>
+        /// <returns>Normalized string with only letters, numbers and hyphens in uppercase format.</returns>
+        public static string NormalizeComplete(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return input;
+            }
+
+            string normalized = new string(input.Normalize(NormalizationForm.FormD)
+                .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                .ToArray())
+                .ToUpper();
+
+            return Regex.Replace(normalized, @"[^A-Z0-9\-]+", string.Empty).Trim('-');
         }
     }
 }

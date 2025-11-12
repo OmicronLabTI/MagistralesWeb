@@ -68,5 +68,26 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice
         /// <param name="remissionId">the ids.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<IEnumerable<InvoiceRemissionJoinModel>> GetInvoicesByRemissionId(List<long> remissionId);
+
+        /// <summary>
+        /// Get existing error IDs.
+        /// </summary>
+        /// <param name="ids">List of IDs to check.</param>
+        /// <returns>List of existing IDs.</returns>
+        Task<List<int>> GetExistingErrorIds(List<int> ids);
+
+        /// <summary>
+        /// Insert invoice errors from catalog.
+        /// </summary>
+        /// <param name="invoicErrors">List of errors to insert.</param>
+        /// <returns>Task.</returns>
+        Task InsertInvoiceErrors(List<InvoiceErrorModel> invoicErrors);
+
+        /// <summary>
+        /// Update invoice errors from catalog.
+        /// </summary>
+        /// <param name="invoicErrors">List of errors to update.</param>
+        /// <returns>Task.</returns>
+        Task UpdateInvoiceErrors(List<InvoiceErrorModel> invoicErrors);
     }
 }

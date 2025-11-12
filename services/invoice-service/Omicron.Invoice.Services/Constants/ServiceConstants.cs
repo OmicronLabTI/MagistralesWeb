@@ -14,6 +14,11 @@ namespace Omicron.Invoice.Services.Constants
     public static class ServiceConstants
     {
         /// <summary>
+        /// Constant for Offset.
+        /// </summary>
+        public const string ErrorDownload = "Formulas - Microservice Invoice - Error to download azure blob {0} Error: {1} --- {2}";
+
+        /// <summary>
         /// the container file.
         /// </summary>
         public const string InvoiceErrorsCatalogsFileUrl = "InvoiceErrorsCatalogsFileUrl";
@@ -27,6 +32,11 @@ namespace Omicron.Invoice.Services.Constants
         /// Azure Account Key.
         /// </summary>
         public const string AzureAccountKey = "AzureAccountKey";
+
+        /// <summary>
+        /// InvoiceErrorsCatalogs.
+        /// </summary>
+        public const string InvoiceErrorsCatalogs = "InvoiceErrorsCatalogs";
 
         /// <summary>
         /// Gets parámetro para obtener la key Redis.

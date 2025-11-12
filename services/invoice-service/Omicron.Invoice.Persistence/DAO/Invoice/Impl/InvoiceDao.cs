@@ -93,5 +93,28 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
                               ProcessId = invoice.Id,
                           }).ToListAsync();
         }
+
+        /// <inheritdoc/>
+        public async Task<List<int>> GetExistingErrorIds(List<int> ids)
+        {
+            return await this.context.InvoiceError
+                .Where(x => ids.Contains(x.Id))
+                .Select(x => x.Id)
+                .ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task InsertInvoiceErrors(List<InvoiceErrorModel> invoiceErrors)
+        {
+            this.context.InvoiceError.AddRange(invoiceErrors);
+            await this.context.SaveChangesAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task UpdateInvoiceErrors(List<InvoiceErrorModel> invoiceErrors)
+        {
+            this.context.InvoiceError.UpdateRange(invoiceErrors);
+            await this.context.SaveChangesAsync();
+        }
     }
 }
