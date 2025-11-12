@@ -323,5 +323,85 @@ namespace Omicron.Invoice.Services.Invoice.Impl
             var result = await this.sapAdapter.PostSapAdapter(remissions, ServiceConstants.ValidateInvoiceUrl);
             return JsonConvert.DeserializeObject<InvoicesDataDto>(result.Response.ToString());
         }
+
+        public async Task<ResultDto> GetAutoBillingAsync(Dictionary<string, string> parameters)
+        {
+            var offset = int.Parse(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Offset, ServiceConstants.OffsetDefault));
+            var limit = int.Parse(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Limit, ServiceConstants.Limit));
+            var status = ServiceUtils.SplitStringList(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Status, ServiceConstants.SuccessfulInvoiceCreationStatus));
+            var now = DateTime.Now;
+            var startDateStr = ServiceUtils.GetDictionaryValueString(parameters, "startDate", null);
+            var endDateStr = ServiceUtils.GetDictionaryValueString(parameters, "endDate", null);
+            var startDate = string.IsNullOrWhiteSpace(startDateStr)
+                ? now.Date.AddDays(-4)
+                : DateTime.Parse(startDateStr);
+
+            var endDate = string.IsNullOrWhiteSpace(endDateStr)
+                ? now.Date.AddDays(1).AddTicks(-1)
+                : DateTime.Parse(endDateStr);
+            var invoices = await this.invoiceDao.GetAutoBillingBaseAsync(status, offset, limit);
+            var total = await this.invoiceDao.GetAutoBillingCountAsync(status);
+            var userIds = invoices
+                .Select(x => x.AlmacenUser)
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Distinct()
+                .ToList();
+
+            var listUsers = await this.GetUsersById(userIds);
+            var userMap = listUsers.ToDictionary(u => u.Id, u => u);
+            var invoiceIds = invoices.Select(x => x.Id).ToList();
+            var sapByInvoice = await this.invoiceDao.GetSapOrdersByInvoiceIdsAsync(invoiceIds);
+            var remByInvoice = await this.invoiceDao.GetRemissionsByInvoiceIdsAsync(invoiceIds);
+            var catalog = await this.invoiceDao.GetAllErrors();
+            var rows = new List<AutoBillingRowDto>();
+            foreach (var inv in invoices)
+            {
+                userMap.TryGetValue(inv.AlmacenUser, out var user);
+                var sapOrders = sapByInvoice.ContainsKey(inv.Id) ? sapByInvoice[inv.Id] : new List<InvoiceSapOrderModel>();
+                var remissions = remByInvoice.ContainsKey(inv.Id) ? remByInvoice[inv.Id] : new List<InvoiceRemissionModel>();
+                string lastErrorMessage;
+                if (string.IsNullOrEmpty(inv.ErrorMessage))
+                {
+                    lastErrorMessage = "NO APLICA";
+                }
+                else
+                {
+                    var match = catalog.FirstOrDefault(e => inv.ErrorMessage.Contains(e.Code));
+                    lastErrorMessage = match != null ? match.ErrorMessage : inv.ErrorMessage;
+                }
+
+                rows.Add(new AutoBillingRowDto
+                {
+                    Id = inv.Id,
+                    IdFacturaSap = inv.IdFacturaSap?.ToString(),
+                    InvoiceCreateDate = inv.InvoiceCreateDate?.ToString("dd/MM/yy HH:mm:ss"),
+                    TypeInvoice = inv.TypeInvoice,
+                    BillingType = inv.BillingType,
+                    AlmacenUser = user == null ? string.Empty : $"{user.FirstName} {user.LastName}",
+                    DxpOrderId = inv.DxpOrderId,
+                    ShopTransaction = "T001", // Temporal
+                    SapOrdersCount = sapOrders.Count,
+                    RemissionsCount = remissions.Count,
+                    RetryNumber = inv.RetryNumber,
+                    SapOrders = sapOrders,
+                    Remissions = remissions,
+                    LastErrorMessage = lastErrorMessage,
+                    LastUpdateDate = inv.UpdateDate?.ToString("dd/MM/yy HH:mm:ss"),
+                });
+            }
+            rows = rows.OrderBy(r => r.Id).ToList();
+            return ServiceUtils.CreateResult(
+                success: true,
+                code: 200,
+                userError: null,
+                responseObj: rows,
+                exceptionMessage: null,
+                comments: new
+                {
+                    total,
+                    startDate = startDate,
+                    endDate = endDate,
+                });
+        }
     }
 }

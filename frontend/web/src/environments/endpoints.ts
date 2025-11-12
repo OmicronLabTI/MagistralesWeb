@@ -80,7 +80,13 @@ export const Endpoints = {
     incidentsList: `${environment.baseUrl}/api/almacen/incidents`,
     changeStatus: `${environment.baseUrl}/api/almacen/incidents`
   },
-  destination: `${environment.baseUrl}/api/catalogos/params/contains/field?DestinationWarehouse=DestinationWarehouse`
+  destination: `${environment.baseUrl}/api/catalogos/params/contains/field?DestinationWarehouse=DestinationWarehouse`,
+  invoices: {
+    automaticBillingTableData: `${environment.baseUrl}/api/invoice/invoices`,
+    confirmAdjustment: `${environment.baseUrl}/api/invoice/updatemanualchange`,
+    manualRetry: `${environment.baseUrl}/api/invoice/retry/manual/createinvoice`,
+    historyBilling: `${environment.baseUrl}/api/invoice/history-billing`
+  }
 };
 export const TokenExcludedEndpoints = [
   '/api/oauth/oauthrs',

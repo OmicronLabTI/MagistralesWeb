@@ -41,5 +41,20 @@ namespace Omicron.Invoice.Facade.Users.Impl
         {
             return await this.invoiceService.GetInvoicesByRemissionId(remissions);
         }
+
+        /// <summary>
+        /// Retrieves automatic billing data (AutoBilling) by invoking the corresponding service layer method.
+        /// </summary>
+        /// <param name="parameters">
+        /// A collection of key-value pairs used to query automatic billing records.
+        /// These may include filters such as date range, user, billing mode, or SAP invoice ID.
+        /// </param>
+        /// <returns>
+        /// A task representing the asynchronous operation.
+        /// The task result contains a <see cref="ResultDto"/> object with the automatic billing data
+        /// formatted for visualization in the frontend grid.
+        /// </returns>
+        public async Task<ResultDto> GetAutoBilling(Dictionary<string, string> parameters)
+            => await this.invoiceService.GetAutoBillingAsync(parameters);
     }
 }

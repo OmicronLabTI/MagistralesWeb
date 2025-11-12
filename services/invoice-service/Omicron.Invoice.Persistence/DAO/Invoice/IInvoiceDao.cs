@@ -98,5 +98,49 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice
         /// <param name="remissionId">the ids.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<IEnumerable<InvoiceRemissionJoinModel>> GetInvoicesByRemissionId(List<long> remissionId);
+
+        /// <summary>
+        /// Retrieves all SAP order objects grouped by their associated invoice identifiers.
+        /// </summary>
+        /// <param name="invoiceIds">A list of invoice identifiers.</param>
+        /// <returns>
+        /// A task representing the asynchronous operation.
+        /// The task result contains a dictionary where each key is an invoice ID and the value
+        /// is a list of <see cref="InvoiceSapOrderModel"/> objects linked to that invoice.
+        /// </returns>
+        Task<Dictionary<string, List<InvoiceSapOrderModel>>> GetSapOrdersByInvoiceIdsAsync(List<string> invoiceIds);
+
+        /// <summary>
+        /// Retrieves automatic billing records (AutoBilling base data) filtered by status and paginated.
+        /// </summary>
+        /// <param name="status">A list of AutoBilling statuses used as filters.</param>
+        /// <param name="offset">The starting position of the result set (for pagination).</param>
+        /// <param name="limit">The maximum number of records to return.</param>
+        /// <returns>
+        /// A task representing the asynchronous operation.
+        /// The task result contains a <see cref="List{InvoiceModel}"/> with AutoBilling base data.
+        /// </returns>
+        Task<List<InvoiceModel>> GetAutoBillingBaseAsync(List<string> status, int offset, int limit);
+
+        /// <summary>
+        /// Retrieves all remission objects grouped by their associated invoice identifiers.
+        /// </summary>
+        /// <param name="invoiceIds">A list of invoice identifiers.</param>
+        /// <returns>
+        /// A task representing the asynchronous operation.
+        /// The task result contains a dictionary where each key is an invoice ID and the value
+        /// is a list of <see cref="InvoiceRemissionModel"/> objects linked to that invoice.
+        /// </returns>
+        Task<Dictionary<string, List<InvoiceRemissionModel>>> GetRemissionsByInvoiceIdsAsync(List<string> invoiceIds);
+
+        /// <summary>
+        /// Retrieves the total number of AutoBilling records that match the given status filters.
+        /// </summary>
+        /// <param name="status">A list of AutoBilling statuses used as filters.</param>
+        /// <returns>
+        /// A task representing the asynchronous operation.
+        /// The task result contains the total count of AutoBilling records.
+        /// </returns>
+        Task<int> GetAutoBillingCountAsync(List<string> status);
     }
 }

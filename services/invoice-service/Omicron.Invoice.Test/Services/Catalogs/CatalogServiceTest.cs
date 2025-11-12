@@ -26,7 +26,7 @@ namespace Omicron.Invoice.Test.Services.Catalog
             var result = client.GetParams("endpoint").Result;
 
             // Assert
-            ClassicAssert.IsTrue(result.Success);
+            Assert.That(result.Success);
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace Omicron.Invoice.Test.Services.Catalog
             var client = this.CreateClientFailure();
 
             // Act
-            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await client.GetParams("endpoint"));
+            Assert.ThrowsAsync<CustomServiceException>(async () => await client.GetParams("endpoint"));
         }
     }
 }

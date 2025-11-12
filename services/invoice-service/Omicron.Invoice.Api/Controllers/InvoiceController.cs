@@ -72,5 +72,15 @@ namespace Omicron.Invoice.Api.Controllers
         [HttpGet]
         public IActionResult Ping()
             => this.Ok("Pong");
+
+        /// <summary>
+        /// Auto-billing grid endpoint.
+        /// </summary>
+        /// <param name="parameters">Query params: offset, limit, status (lista separada por coma).</param>
+        /// <returns>ResultDto con rows + total.</returns>
+        [HttpGet]
+        [Route("/history-billing")]
+        public async Task<IActionResult> GetAutoBilling([FromQuery] Dictionary<string, string> parameters)
+            => this.Ok(await this.invoiceFacade.GetAutoBilling(parameters));
     }
 }
