@@ -9,20 +9,19 @@
 namespace Omicron.Invoice.Test.Services.Invoice
 {
     /// <summary>
-    /// Class InvoiceServiceTest.
+    /// Unit tests for <see cref="InvoiceService.GetAutoBillingAsync"/>.
     /// </summary>
     [TestFixture]
     public class InvoiceServiceTest : BaseTest
     {
         /// <summary>
-        /// Test method that validates successful retrieval of AutoBilling data.
+        /// Validates successful retrieval of AutoBilling data.
         /// Ensures that the service correctly returns data when the DAO contains results.
         /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous test operation.</returns>
         [Test]
         public async Task GetAutoBillingAsync_Success()
         {
-            // arrange
+            // Arrange
             var mockDao = new Mock<IInvoiceDao>();
             var mockUsers = new Mock<IUsersService>();
             var mockQueue = new Mock<IBackgroundTaskQueue>();
@@ -36,16 +35,12 @@ namespace Omicron.Invoice.Test.Services.Invoice
             mockDao.Setup(x => x.GetAutoBillingBaseAsync(It.IsAny<List<string>>(), 0, 10))
                 .ReturnsAsync(new List<InvoiceModel> { new InvoiceModel { Id = "INV-001", AlmacenUser = "U001" } });
             mockDao.Setup(x => x.GetAutoBillingCountAsync(It.IsAny<List<string>>())).ReturnsAsync(1);
-
             mockDao.Setup(x => x.GetSapOrdersByInvoiceIdsAsync(It.IsAny<List<string>>()))
                 .ReturnsAsync(new Dictionary<string, List<InvoiceSapOrderModel>>());
-
             mockDao.Setup(x => x.GetRemissionsByInvoiceIdsAsync(It.IsAny<List<string>>()))
                 .ReturnsAsync(new Dictionary<string, List<InvoiceRemissionModel>>());
-
             mockDao.Setup(x => x.GetAllErrors()).ReturnsAsync(new List<InvoiceErrorModel>());
 
-            // ✅ Mock UsersService con JSON serializado para evitar errores de deserialización
             mockUsers
                 .Setup(x => x.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
                 .ReturnsAsync(ServiceUtils.CreateResult(
@@ -69,22 +64,26 @@ namespace Omicron.Invoice.Test.Services.Invoice
 
             var parameters = new Dictionary<string, string> { { "offset", "0" }, { "limit", "10" } };
 
-            // act
+            // Act
             var result = await service.GetAutoBillingAsync(parameters);
 
-            // assert
-            ClassicAssert.IsTrue(result.Success);
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Success, Is.True);
+                Assert.That(result.Response, Is.Not.Null);
+            });
         }
 
         /// <summary>
-        /// Test method that validates correct handling when no AutoBilling records are found.
-        /// Ensures that the service still returns a successful response, even when the data set is empty.
+        /// Validates correct handling when no AutoBilling records are found.
+        /// Ensures that the service still returns a successful response even when the dataset is empty.
         /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous test operation.</returns>
         [Test]
         public async Task GetAutoBillingAsync_EmptyResult()
         {
-            // arrange
+            // Arrange
             var mockDao = new Mock<IInvoiceDao>();
             var mockUsers = new Mock<IUsersService>();
             var mockQueue = new Mock<IBackgroundTaskQueue>();
@@ -99,7 +98,6 @@ namespace Omicron.Invoice.Test.Services.Invoice
                 .ReturnsAsync(new List<InvoiceModel>());
             mockDao.Setup(x => x.GetAutoBillingCountAsync(It.IsAny<List<string>>())).ReturnsAsync(0);
 
-            // ✅ Mock UsersService con JSON serializado para mantener compatibilidad con la lógica de deserialización interna
             mockUsers
                 .Setup(x => x.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
                 .ReturnsAsync(ServiceUtils.CreateResult(
@@ -123,11 +121,16 @@ namespace Omicron.Invoice.Test.Services.Invoice
 
             var parameters = new Dictionary<string, string> { { "offset", "0" }, { "limit", "10" } };
 
-            // act
+            // Act
             var result = await service.GetAutoBillingAsync(parameters);
 
-            // assert
-            ClassicAssert.IsTrue(result.Success);
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Success, Is.True);
+                Assert.That(((List<AutoBillingRowDto>)result.Response).Count, Is.EqualTo(0));
+            });
         }
     }
 }

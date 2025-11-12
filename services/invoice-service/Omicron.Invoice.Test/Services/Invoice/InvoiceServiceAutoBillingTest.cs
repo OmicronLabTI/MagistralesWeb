@@ -9,7 +9,7 @@
 namespace Omicron.Invoice.Test.Services.Invoice
 {
     /// <summary>
-    /// Class InvoiceServiceAutoBillingTest.
+    /// Unit tests for <see cref="InvoiceService.GetAutoBillingAsync"/>.
     /// </summary>
     [TestFixture]
     public class InvoiceServiceAutoBillingTest : BaseTest
@@ -25,9 +25,6 @@ namespace Omicron.Invoice.Test.Services.Invoice
         private Mock<IRedisService> mockRedis;
         private InvoiceService invoiceService;
 
-        /// <summary>
-        /// Initializes the mocks and test environment before each test.
-        /// </summary>
         [SetUp]
         public void Init()
         {
@@ -54,14 +51,12 @@ namespace Omicron.Invoice.Test.Services.Invoice
         }
 
         /// <summary>
-        /// Test to verify successful execution of GetAutoBillingAsync.
-        /// Ensures all dependent DAO calls and user mapping are handled properly.
+        /// Verifies successful execution of GetAutoBillingAsync, ensuring correct DAO calls and data mapping.
         /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [Test]
         public async Task GetAutoBillingAsync_Success()
         {
-            // arrange
+            // Arrange
             var parameters = new Dictionary<string, string>
             {
                 { "offset", "0" },
@@ -118,26 +113,28 @@ namespace Omicron.Invoice.Test.Services.Invoice
                     null,
                     null));
 
-            // act
+            // Act
             var result = await this.invoiceService.GetAutoBillingAsync(parameters);
 
-            // assert
-            ClassicAssert.IsTrue(result.Success);
-            ClassicAssert.IsNotNull(result.Response);
-            ClassicAssert.AreEqual(2, ((List<AutoBillingRowDto>)result.Response).Count);
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Success, Is.True);
+                Assert.That(((List<AutoBillingRowDto>)result.Response).Count, Is.EqualTo(2));
+            });
+
             this.mockDao.Verify(x => x.GetAutoBillingBaseAsync(It.IsAny<List<string>>(), 0, 10), Times.Once);
             this.mockUsers.Verify(x => x.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()), Times.Once);
         }
 
         /// <summary>
-        /// Test to validate empty response when no invoices are returned.
-        /// Ensures method completes successfully with an empty dataset.
+        /// Verifies GetAutoBillingAsync returns an empty response when no invoices exist.
         /// </summary>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Test]
         public async Task GetAutoBillingAsync_Empty()
         {
-            // arrange
+            // Arrange
             var parameters = new Dictionary<string, string>
             {
                 { "offset", "0" },
@@ -151,29 +148,34 @@ namespace Omicron.Invoice.Test.Services.Invoice
             this.mockUsers.Setup(x => x.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
                 .ReturnsAsync(ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(new List<UserModel>()), null, null));
 
-            // act
+            // Act
             var result = await this.invoiceService.GetAutoBillingAsync(parameters);
 
-            // assert
-            ClassicAssert.IsTrue(result.Success);
-            ClassicAssert.AreEqual(0, ((List<AutoBillingRowDto>)result.Response).Count);
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Success, Is.True);
+                Assert.That(((List<AutoBillingRowDto>)result.Response).Count, Is.EqualTo(0));
+            });
         }
 
         /// <summary>
-        /// Test to validate exception handling within GetAutoBillingAsync.
-        /// Ensures method logs error and rethrows exceptions when DAO fails.
+        /// Verifies GetAutoBillingAsync properly throws when DAO fails.
         /// </summary>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Test]
         public void GetAutoBillingAsync_ThrowsException()
         {
-            // arrange
+            // Arrange
             var parameters = new Dictionary<string, string> { { "offset", "0" }, { "limit", "10" } };
             this.mockDao.Setup(x => x.GetAutoBillingBaseAsync(It.IsAny<List<string>>(), 0, 10))
                 .ThrowsAsync(new Exception("Database error"));
 
-            // act & assert
-            Assert.ThrowsAsync<Exception>(async () => await this.invoiceService.GetAutoBillingAsync(parameters));
+            // Act & Assert
+            var ex = Assert.ThrowsAsync<Exception>(async () => await this.invoiceService.GetAutoBillingAsync(parameters));
+
+            Assert.That(ex, Is.Not.Null);
+            Assert.That(ex.Message, Is.EqualTo("Database error"));
         }
     }
 }

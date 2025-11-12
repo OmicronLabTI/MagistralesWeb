@@ -9,7 +9,7 @@
 namespace Omicron.Invoice.Test.Facade.Invoice
 {
     /// <summary>
-    /// Class InvoiceFacadeTest.
+    /// Unit tests for <see cref="InvoiceFacade"/>.
     /// </summary>
     [TestFixture]
     public class InvoiceFacadeTest : BaseTest
@@ -28,14 +28,12 @@ namespace Omicron.Invoice.Test.Facade.Invoice
         }
 
         /// <summary>
-        /// Test that verifies successful invocation of GetAutoBilling through the facade.
-        /// Ensures the method delegates execution to the service layer and returns a valid ResultDto.
+        /// Verifies that GetAutoBilling successfully delegates to the service layer and returns a valid result.
         /// </summary>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Test]
         public async Task GetAutoBilling_Success()
         {
-            // arrange
+            // Arrange
             var parameters = new Dictionary<string, string>
             {
                 { "offset", "0" },
@@ -56,25 +54,27 @@ namespace Omicron.Invoice.Test.Facade.Invoice
                 .Setup(x => x.GetAutoBillingAsync(It.IsAny<Dictionary<string, string>>()))
                 .ReturnsAsync(expectedResult);
 
-            // act
+            // Act
             var result = await this.invoiceFacade.GetAutoBilling(parameters);
 
-            // assert
-            ClassicAssert.IsNotNull(result);
-            ClassicAssert.IsTrue(result.Success);
-            ClassicAssert.AreEqual(200, result.Code);
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Success, Is.True);
+                Assert.That(result.Code, Is.EqualTo(200));
+            });
+
             this.invoiceServiceMock.Verify(x => x.GetAutoBillingAsync(parameters), Times.Once);
         }
 
         /// <summary>
-        /// Test that validates behavior when the service returns an error ResultDto.
-        /// Ensures the facade properly propagates the failed result without alteration.
+        /// Verifies that GetAutoBilling correctly propagates an error result from the service layer.
         /// </summary>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Test]
         public async Task GetAutoBilling_Failure()
         {
-            // arrange
+            // Arrange
             var parameters = new Dictionary<string, string>
             {
                 { "offset", "0" },
@@ -92,26 +92,28 @@ namespace Omicron.Invoice.Test.Facade.Invoice
                 .Setup(x => x.GetAutoBillingAsync(It.IsAny<Dictionary<string, string>>()))
                 .ReturnsAsync(expectedResult);
 
-            // act
+            // Act
             var result = await this.invoiceFacade.GetAutoBilling(parameters);
 
-            // assert
-            ClassicAssert.IsNotNull(result);
-            ClassicAssert.IsFalse(result.Success);
-            ClassicAssert.AreEqual(500, result.Code);
-            ClassicAssert.AreEqual("Internal server error", result.UserError);
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Success, Is.False);
+                Assert.That(result.Code, Is.EqualTo(500));
+                Assert.That(result.UserError, Is.EqualTo("Internal server error"));
+            });
+
             this.invoiceServiceMock.Verify(x => x.GetAutoBillingAsync(parameters), Times.Once);
         }
 
         /// <summary>
-        /// Test that validates exception handling when the service throws an error.
-        /// Ensures the facade properly propagates or rethrows exceptions as expected.
+        /// Verifies that GetAutoBilling properly propagates exceptions thrown by the service layer.
         /// </summary>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Test]
         public void GetAutoBilling_ThrowsException()
         {
-            // arrange
+            // Arrange
             var parameters = new Dictionary<string, string>
             {
                 { "offset", "0" },
@@ -122,9 +124,12 @@ namespace Omicron.Invoice.Test.Facade.Invoice
                 .Setup(x => x.GetAutoBillingAsync(It.IsAny<Dictionary<string, string>>()))
                 .ThrowsAsync(new Exception("Service failure"));
 
-            // act & assert
+            // Act & Assert
             var ex = Assert.ThrowsAsync<Exception>(async () => await this.invoiceFacade.GetAutoBilling(parameters));
+
+            Assert.That(ex, Is.Not.Null);
             Assert.That(ex.Message, Is.EqualTo("Service failure"));
+
             this.invoiceServiceMock.Verify(x => x.GetAutoBillingAsync(parameters), Times.Once);
         }
     }
