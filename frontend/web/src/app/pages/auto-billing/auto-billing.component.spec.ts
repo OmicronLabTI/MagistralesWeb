@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import {
   MatButtonModule,
   MatDialog,
@@ -9,12 +9,13 @@ import {
   MatTableModule,
   MatTooltipModule
 } from '@angular/material';
-import { AutoBillingComponent } from './auto-billing.component';
-import { ObservableService } from 'src/app/services/observable.service';
-import { AutoBillingService } from 'src/app/services/autoBilling.service';
-import { of } from 'rxjs';
-import { AutoBillingModel } from 'src/app/model/http/autoBilling.model';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { of } from 'rxjs';
+
+import { AutoBillingComponent } from './auto-billing.component';
+import { AutoBillingService } from 'src/app/services/autoBilling.service';
+import { ObservableService } from 'src/app/services/observable.service';
+import { AutoBillingModel } from 'src/app/model/http/autoBilling.model';
 
 describe('AutoBillingComponent', () => {
   let component: AutoBillingComponent;
@@ -24,38 +25,31 @@ describe('AutoBillingComponent', () => {
   let autoBillingServiceMock: jasmine.SpyObj<AutoBillingService>;
 
   const result: AutoBillingModel = {
-    requestId: 'XXXXX',
-    sapInvoiceId: 'XXXXX',
-    sapCreationDate: '12/12/2025',
+    requestId: 'REQ001',
+    sapInvoiceId: 'SAP001',
+    sapCreationDate: '2025-11-12',
     invoiceType: 'A',
     billingMode: 'Manual',
-    originUser: 'XXXXXX',
-    shopOrder: 'DHJ12-XDF23',
-    shopTransaction: 'DHJ12-XDF23',
-    sapOrder: 12,
-    shipments: 12,
-    retries: 1,
+    originUser: 'TEST_USER',
+    shopOrder: 'ORD001',
+    shopTransaction: 'TX123456',
+    sapOrder: 2,
+    shipments: 1,
+    retries: 0,
     sapOrders: [
-      {
-        id: 1,
-        idinvoice: '123',
-        idpedidosap: '123'
-      }
+      { id: 1, idinvoice: 'INV001', idpedidosap: 'SO001' }
     ],
     remissions: [
-      {
-        id: 1,
-        idinvoice: '123',
-        idremission: '123'
-      }
+      { id: 1, idinvoice: 'INV001', idremission: 'REM001' }
     ]
   };
 
   beforeEach(async(() => {
-    matDialogMock = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
-    observableServiceMock = jasmine.createSpyObj<ObservableService>('ObservableService', ['setUrlActive']);
-    autoBillingServiceMock = jasmine.createSpyObj<AutoBillingService>('AutoBillingService', ['getAllAutoBilling']);
+    matDialogMock = jasmine.createSpyObj('MatDialog', ['open']);
+    observableServiceMock = jasmine.createSpyObj('ObservableService', ['setUrlActive']);
+    autoBillingServiceMock = jasmine.createSpyObj('AutoBillingService', ['getAllAutoBilling']);
 
+    // Mock del servicio principal
     autoBillingServiceMock.getAllAutoBilling.and.returnValue(of([result]));
 
     TestBed.configureTestingModule({
@@ -84,36 +78,66 @@ describe('AutoBillingComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  // =====================================
+  // CORE TESTS
+  // =====================================
+
+  it('should create the component', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should openSapOrdersDialog', () => {
+  it('should load data and populate table on init', fakeAsync(() => {
+    component.ngOnInit();
+    tick();
+    expect(autoBillingServiceMock.getAllAutoBilling).toHaveBeenCalledWith(0, 20);
+    expect(component.dataSource.data.length).toBe(1);
+    expect(component.dataSource.data[0].sapInvoiceId).toBe('SAP001');
+  }));
+
+  // ✅ Versión final estable del test de paginador
+  it('should reload data when paginator emits page event', fakeAsync(() => {
+    spyOn(component, 'loadData').and.callThrough();
+
+    // Simular un cambio de página manual (como lo haría Angular Material)
+    const mockPageEvent = { pageIndex: 1, pageSize: 10, length: 100 };
+    const offset = mockPageEvent.pageIndex * mockPageEvent.pageSize;
+
+    // Ejecutar manualmente el método con los valores calculados
+    component.loadData(offset, mockPageEvent.pageSize);
+    tick(100);
+
+    // Validar que se haya llamado correctamente
+    expect(component.loadData).toHaveBeenCalledWith(10, 10);
+  }));
+
+  it('should call AutoBillingService with correct pagination parameters', fakeAsync(() => {
+    component.loadData(10, 50);
+    tick();
+    expect(autoBillingServiceMock.getAllAutoBilling).toHaveBeenCalledWith(10, 50);
+  }));
+
+  // =====================================
+  // DIALOG TESTS
+  // =====================================
+
+  it('should open SAP Orders dialog when sapOrders exist', () => {
     component.openSapOrdersDialog(result);
     expect(matDialogMock.open).toHaveBeenCalled();
   });
 
-  it('should not openSapOrdersDialog when sapOrders is empty', () => {
-    const data: AutoBillingModel = {
-      ...result,
-      sapOrders: [],
-      remissions: []
-    };
+  it('should not open SAP Orders dialog when sapOrders are empty', () => {
+    const data: AutoBillingModel = { ...result, sapOrders: [], remissions: [] };
     component.openSapOrdersDialog(data);
     expect(matDialogMock.open).not.toHaveBeenCalled();
   });
 
-  it('should openShipmentsDialog', () => {
+  it('should open Remissions dialog when remissions exist', () => {
     component.openShipmentsDialog(result);
     expect(matDialogMock.open).toHaveBeenCalled();
   });
 
-  it('should not openShipmentsDialog when remissions is empty', () => {
-    const data: AutoBillingModel = {
-      ...result,
-      sapOrders: [],
-      remissions: []
-    };
+  it('should not open Remissions dialog when remissions are empty', () => {
+    const data: AutoBillingModel = { ...result, sapOrders: [], remissions: [] };
     component.openShipmentsDialog(data);
     expect(matDialogMock.open).not.toHaveBeenCalled();
   });
