@@ -6,9 +6,6 @@
 // </copyright>
 // </summary>
 
-using System.Globalization;
-using System.Text.RegularExpressions;
-
 namespace Omicron.Invoice.Services.Utils
 {
     /// <summary>
