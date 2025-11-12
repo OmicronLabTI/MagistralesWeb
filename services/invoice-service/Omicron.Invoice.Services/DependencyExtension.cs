@@ -43,6 +43,7 @@ namespace Omicron.Invoice.Services
             services.AddScoped<ISapAdapter, SapAdapter.SapAdapter>();
             services.AddScoped<ICatalogsService, CatalogsService>(); 
             services.AddScoped<ICatalogsInvoiceService, CatalogsInvoiceService>();
+            services.AddScoped<IAzureService, AzureService>();
             return services;
         }
     }

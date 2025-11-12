@@ -18,15 +18,17 @@ namespace Omicron.Invoice.Services.CatalogsInvoice.Impl
     /// <param name="redisService">Redis Service.</param>
     /// <param name="invoiceService">Invoice Service.</param>
     /// <param name="invoiceDao">Invoice dao.</param>
-    public class CatalogsInvoiceService(Serilog.ILogger logger, IRedisService redisService, IInvoiceService invoiceService, IInvoiceDao invoiceDao)
+    /// <param name="configuration">configuration.</param>
+    /// <param name="azureService">azureService.</param>
+    public class CatalogsInvoiceService(IConfiguration configuration, Serilog.ILogger logger, IRedisService redisService, IInvoiceService invoiceService, IInvoiceDao invoiceDao, IAzureService azureService)
         : ICatalogsInvoiceService
     {
-        private readonly IConfiguration configuration;
-        private readonly IAzureService azureService;
+        private readonly IAzureService azureService = azureService.ThrowIfNull(nameof(azureService));
         private readonly Serilog.ILogger logger = logger.ThrowIfNull(nameof(logger));
         private readonly IRedisService redisService = redisService.ThrowIfNull(nameof(redisService));
         private readonly IInvoiceService invoiceService = invoiceService.ThrowIfNull(nameof(invoiceService));
         private readonly IInvoiceDao invoiceDao = invoiceDao.ThrowIfNull(nameof(invoiceDao));
+        private readonly IConfiguration configuration = configuration.ThrowIfNull(nameof(configuration));
 
         /// <inheritdoc/>
         public async Task<ResultDto> InvoiceErrorsFromExcel()

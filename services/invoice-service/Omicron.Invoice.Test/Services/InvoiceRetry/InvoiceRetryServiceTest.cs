@@ -72,6 +72,7 @@ namespace Omicron.Invoice.Test.Services.InvoiceRetry
         /// </summary>
         /// <param name="executionType">Execution Type.</param>
         /// <param name="expectedProcessed">Expected Processed.</param>
+        /// <param name="hasRecords">Expected hasRecords.</param>
         /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Test]
         [TestCase("manual", 1, true)]
