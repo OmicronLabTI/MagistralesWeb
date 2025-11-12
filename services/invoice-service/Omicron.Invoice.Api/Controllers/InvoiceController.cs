@@ -51,7 +51,7 @@ namespace Omicron.Invoice.Api.Controllers
         /// <returns>A representing the result of the asynchronous operation.</returns>
         [HttpPut]
         [Route("/updatemanualchange")]
-        public async Task<IActionResult> UpdateManualChange([FromBody] string id)
+        public async Task<IActionResult> UpdateManualChange([FromBody] UpdateManualChangeDto id)
             => this.Ok(await this.invoiceFacade.UpdateManualChange(id));
 
         /// <summary>

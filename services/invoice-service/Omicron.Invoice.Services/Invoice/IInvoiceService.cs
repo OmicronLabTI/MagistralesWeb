@@ -39,7 +39,7 @@ namespace Omicron.Invoice.Services.Invoice
         /// </summary>
         /// <param name="id">id invoice.</param>
         /// <returns>A representing the result of the asynchronous operation.</returns>
-        Task<ResultDto> UpdateManualChange(string id);
+        Task<ResultDto> UpdateManualChange(UpdateManualChangeDto id);
 
         /// <summary>
         /// Method to carry out the order process.
