@@ -190,9 +190,9 @@ namespace Omicron.Invoice.Services.Invoice.Impl
         }
 
         /// <inheritdoc/>
-        public async Task<ResultDto> UpdateManualChange(string id)
+        public async Task<ResultDto> UpdateManualChange(UpdateManualChangeDto id)
         {
-            var invoice = (await this.invoiceDao.GetInvoicesById([id])).FirstOrDefault();
+            var invoice = (await this.invoiceDao.GetInvoicesById([id.Id])).FirstOrDefault();
 
             if (invoice == null || invoice.ManualChangeApplied != false)
             {

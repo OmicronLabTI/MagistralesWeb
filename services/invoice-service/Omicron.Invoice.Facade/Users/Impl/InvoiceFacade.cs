@@ -33,7 +33,7 @@ namespace Omicron.Invoice.Facade.Users.Impl
             => await this.invoiceService.GetInvoices(parameters);
 
         /// <inheritdoc/>
-        public async Task<ResultDto> UpdateManualChange(string id)
+        public async Task<ResultDto> UpdateManualChange(UpdateManualChangeDto id)
             => await this.invoiceService.UpdateManualChange(id);
 
         /// <inheritdoc/>
