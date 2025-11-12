@@ -19,7 +19,7 @@ import { Endpoints } from 'src/environments/endpoints';
  *
  * @see Endpoints.invoices.historyBilling
  * @since November 2025
- * @version 1.2
+ * @version 1.4
  * @author
  * Victor Alfonso Tánori Ruiz
  */
@@ -53,12 +53,12 @@ export class AutoBillingService {
       sortOrder: 'asc'
     };
 
+    // ✅ Simplified: No error handling here, handled globally by interceptor or ConsumeService.
     return this.consume.httpGet<{ response: any[] }>(this.API_URL, params).pipe(
       map(apiResponse => {
-        const data = apiResponse && apiResponse.response ? apiResponse.response : [];
+        const data = (apiResponse && apiResponse.response) ? apiResponse.response : [];
 
-        // ✅ Use arrow functions & remove space before parens
-        data.sort((a, b) => a.id.localeCompare(b.id));
+        data.sort((a, b) => (a.id || '').localeCompare(b.id || ''));
 
         return data.map((item): AutoBillingModel => {
           const sapOrders: SapOrderModel[] = (item.sapOrders || []).map((s: any) => ({
@@ -73,7 +73,6 @@ export class AutoBillingService {
             idinvoice: String(r.idInvoice)
           }));
 
-          // ✅ Property shorthand: { sapOrders, remissions }
           return {
             requestId: String(item.id || ''),
             sapInvoiceId: String(item.idFacturaSap || 'N/A'),
