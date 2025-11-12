@@ -323,5 +323,138 @@ namespace Omicron.Invoice.Services.Invoice.Impl
             var result = await this.sapAdapter.PostSapAdapter(remissions, ServiceConstants.ValidateInvoiceUrl);
             return JsonConvert.DeserializeObject<InvoicesDataDto>(result.Response.ToString());
         }
+
+        /// <summary>
+        /// Retrieves automatic billing (AutoBilling) data, including user information and
+        /// related SAP orders and remission details. 
+        /// This method aggregates all related entities to provide a complete dataset for the AutoBilling grid.
+        /// </summary>
+        /// <param name="parameters">
+        /// A dictionary containing filtering and pagination parameters such as:
+        /// "offset" - starting record index, 
+        /// "limit" - number of records to return, 
+        /// "status" - list of invoice statuses.
+        /// </param>
+        /// <returns>
+        /// A task representing the asynchronous operation.
+        /// The task result contains a <see cref="ResultDto"/> object encapsulating a list of
+        /// <see cref="AutoBillingRowDto"/> objects with enriched AutoBilling data, 
+        /// and the total record count for pagination.
+        /// </returns>
+        public async Task<ResultDto> GetAutoBillingAsync(Dictionary<string, string> parameters)
+        {
+            // ----------------------------------------------------------
+            // 1. Lectura de parámetros base (offset, limit, status)
+            // ----------------------------------------------------------
+            var offset = int.Parse(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Offset, ServiceConstants.OffsetDefault));
+            var limit = int.Parse(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Limit, ServiceConstants.Limit));
+            var status = ServiceUtils.SplitStringList(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Status, ServiceConstants.SuccessfulInvoiceCreationStatus));
+
+            // ----------------------------------------------------------
+            // 2. Fechas (por default últimos 5 días contando el actual)
+            // ----------------------------------------------------------
+            var now = DateTime.Now;
+            var startDateStr = ServiceUtils.GetDictionaryValueString(parameters, "startDate", null);
+            var endDateStr = ServiceUtils.GetDictionaryValueString(parameters, "endDate", null);
+
+            var startDate = string.IsNullOrWhiteSpace(startDateStr)
+                ? now.Date.AddDays(-4) // hace 4 días + hoy = últimos 5 días
+                : DateTime.Parse(startDateStr);
+
+            var endDate = string.IsNullOrWhiteSpace(endDateStr)
+                ? now.Date.AddDays(1).AddTicks(-1)
+                : DateTime.Parse(endDateStr);
+
+            // ----------------------------------------------------------
+            // 3. Obtener base de facturas y conteo total
+            // ----------------------------------------------------------
+            var invoices = await this.invoiceDao.GetAutoBillingBaseAsync(status, offset, limit);
+            var total = await this.invoiceDao.GetAutoBillingCountAsync(status);
+
+            // ----------------------------------------------------------
+            // 4. Obtener información de usuarios
+            // ----------------------------------------------------------
+            var userIds = invoices
+                .Select(x => x.AlmacenUser)
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Distinct()
+                .ToList();
+
+            var listUsers = await this.GetUsersById(userIds);
+            var userMap = listUsers.ToDictionary(u => u.Id, u => u);
+
+            // ----------------------------------------------------------
+            // 5. Obtener SAP Orders y Remisiones
+            // ----------------------------------------------------------
+            var invoiceIds = invoices.Select(x => x.Id).ToList();
+            var sapByInvoice = await this.invoiceDao.GetSapOrdersByInvoiceIdsAsync(invoiceIds);
+            var remByInvoice = await this.invoiceDao.GetRemissionsByInvoiceIdsAsync(invoiceIds);
+
+            // ----------------------------------------------------------
+            // 6. Obtener catálogo de errores (OM-6971)
+            // ----------------------------------------------------------
+            var catalog = await this.invoiceDao.GetAllErrors();
+
+            // ----------------------------------------------------------
+            // 7. Construir lista final
+            // ----------------------------------------------------------
+            var rows = new List<AutoBillingRowDto>();
+            foreach (var inv in invoices)
+            {
+                userMap.TryGetValue(inv.AlmacenUser, out var user);
+                var sapOrders = sapByInvoice.ContainsKey(inv.Id) ? sapByInvoice[inv.Id] : new List<InvoiceSapOrderModel>();
+                var remissions = remByInvoice.ContainsKey(inv.Id) ? remByInvoice[inv.Id] : new List<InvoiceRemissionModel>();
+                // Determinar mensaje de error
+                string lastErrorMessage;
+                if (string.IsNullOrEmpty(inv.ErrorMessage))
+                {
+                    lastErrorMessage = "NO APLICA";
+                }
+                else
+                {
+                    var match = catalog.FirstOrDefault(e => inv.ErrorMessage.Contains(e.Code));
+                    lastErrorMessage = match != null ? match.ErrorMessage : inv.ErrorMessage;
+                }
+
+                // Construcción del DTO
+                rows.Add(new AutoBillingRowDto
+                {
+                    Id = inv.Id,
+                    IdFacturaSap = inv.IdFacturaSap?.ToString(),
+                    InvoiceCreateDate = inv.InvoiceCreateDate?.ToString("dd/MM/yy HH:mm:ss"),
+                    TypeInvoice = inv.TypeInvoice,
+                    BillingType = inv.BillingType,
+                    AlmacenUser = user == null ? string.Empty : $"{user.FirstName} {user.LastName}",
+                    DxpOrderId = inv.DxpOrderId,
+                    ShopTransaction = "T001", // Temporal
+                    SapOrdersCount = sapOrders.Count,
+                    RemissionsCount = remissions.Count,
+                    RetryNumber = inv.RetryNumber,
+                    SapOrders = sapOrders,
+                    Remissions = remissions,
+                    LastErrorMessage = lastErrorMessage,
+                    LastUpdateDate = inv.UpdateDate?.ToString("dd/MM/yy HH:mm:ss")
+                });
+            }
+
+            // ----------------------------------------------------------
+            // 8. Ordenar por Id ascendente y construir respuesta
+            // ----------------------------------------------------------
+            rows = rows.OrderBy(r => r.Id).ToList();
+            return ServiceUtils.CreateResult(
+                success: true,
+                code: 200,
+                userError: null,
+                responseObj: rows,
+                exceptionMessage: null,
+                comments: new
+                {
+                    total,
+                    startDate = startDate,
+                    endDate = endDate
+                });
+        }
+
+
     }
 }

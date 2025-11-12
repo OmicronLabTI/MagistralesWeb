@@ -8,6 +8,18 @@
 
 namespace Omicron.Invoice.Api
 {
+    using MediatR;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
+    using Omicron.Invoice.Facade;
+    using Omicron.Invoice.Persistence;
+    using Omicron.Invoice.Services;
+    using Serilog;
+    using StackExchange.Redis;
+
+
     /// <summary>
     /// DependencyExtension static.
     /// </summary>
@@ -62,21 +74,34 @@ namespace Omicron.Invoice.Api
                 c.BaseAddress = new Uri(webApplication.Configuration["SapAdapterUrl"]);
             })
             .AddTypedClient<ISapAdapter, SapAdapter>();
+
             webApplication.Services.AddHttpClient("service layer adapter", c =>
             {
                 c.BaseAddress = new Uri(webApplication.Configuration["SapServiceLayerAdapterUrl"]);
             })
             .AddTypedClient<ISapServiceLayerAdapterService, SapServiceLayerAdapterService>();
+
             webApplication.Services.AddHttpClient("catalogs", c =>
             {
                 c.BaseAddress = new Uri(webApplication.Configuration["CatalogUrl"]);
             })
             .AddTypedClient<ICatalogsService, CatalogsService>();
+
             webApplication.Services.AddHttpClient("users", c =>
             {
                 c.BaseAddress = new Uri(webApplication.Configuration["UserService"]);
             })
             .AddTypedClient<IUsersService, UsersService>();
+
+            // 🔹 Configurar CORS (permitir cualquier origen, método y encabezado)
+            webApplication.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    policy => policy
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+            });
 
             return webApplication.Build();
         }
@@ -90,9 +115,15 @@ namespace Omicron.Invoice.Api
         {
             app.UseSwagger();
             app.UseSwaggerUI();
+
             app.UseHttpsRedirection();
+
+            // 🔹 Activar CORS antes de autorización y mapeo de controladores
+            app.UseCors("AllowAll");
+
             app.UseAuthorization();
             app.MapControllers();
+
             return app;
         }
     }
