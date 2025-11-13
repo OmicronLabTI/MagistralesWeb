@@ -44,13 +44,15 @@ namespace Omicron.Invoice.Services.InvoiceRetry.Impl
             }
 
             var invoicesToProcess = await this.invoiceDao.GetInvoicesForRetryProcessAsync(ServiceConstants.InvoiceCreationErrorStatus);
-
-            if (invoicesToProcess.Any())
-            {
-                await this.redisService.StoreListAsync(
+            await this.redisService.StoreListAsync(
                     ServiceConstants.InvoiceToProcessAutomaticRetryKey,
                     invoicesToProcess.OrderBy(x => x.CreateDate).Select(x => x.Id),
                     new TimeSpan(2, 0, 0));
+
+            if (!invoicesToProcess.Any())
+            {
+                await this.redisService.DeleteKey(ServiceConstants.InvoiceLockAutomaticRetryKey);
+                await this.redisService.DeleteKey(ServiceConstants.InvoiceToProcessAutomaticRetryKey);
             }
 
             this.logger.Information(LogsConstants.RetryWillProcessRecords(logBase, invoicesToProcess.Count()));
@@ -66,6 +68,7 @@ namespace Omicron.Invoice.Services.InvoiceRetry.Impl
             if (idsToProcess.Count <= 0)
             {
                 this.logger.Information(LogsConstants.ThereIsNoInformationToProcess(logBase));
+                await this.DeleteRedisProcessKey(invoiceRetry, idsToProcess, executionType, logBase);
                 return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null, null);
             }
 
@@ -94,14 +97,7 @@ namespace Omicron.Invoice.Services.InvoiceRetry.Impl
             this.logger.Information(LogsConstants.InvoicesToBeRetried(logBase, JsonConvert.SerializeObject(invoicesToProcess.Select(x => x.Id).ToList())));
 
             this.RetryInvoiceCreationAsync(invoicesToProcess, logBase);
-
-            if (idsToProcess.Count < invoiceRetry.Limit && executionType.ToUpper() == ServiceConstants.AutomaticExecutionType.ToUpper())
-            {
-                this.logger.Information(LogsConstants.RedisKeysAreDeletedForRetryControl(logBase));
-                await this.redisService.DeleteKey(ServiceConstants.InvoiceToProcessAutomaticRetryKey);
-                await this.redisService.DeleteKey(ServiceConstants.InvoiceLockAutomaticRetryKey);
-            }
-
+            await this.DeleteRedisProcessKey(invoiceRetry, idsToProcess, executionType, logBase);
             this.logger.Information(LogsConstants.RetryProcessCompletedSuccessfully(logBase, JsonConvert.SerializeObject(result)));
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, result, null, null);
         }
@@ -154,7 +150,8 @@ namespace Omicron.Invoice.Services.InvoiceRetry.Impl
                 }
 
                 invoiceData.Type = executionType;
-                invoiceData.AlmacenUser = requestingUser;
+                invoiceData.RetryUser = requestingUser;
+                invoiceData.RetryNumber++;
                 await this.invoiceDao.UpdateInvoiceAsync(invoiceData);
                 result.ProcessedIds.Add(id);
                 invoicesToProcess.Add(invoiceData);
@@ -181,6 +178,16 @@ namespace Omicron.Invoice.Services.InvoiceRetry.Impl
                 {
                     this.logger.Error(LogsConstants.RetryErrorSendingToCreateTheInvoice(logBase, invoice.Id), ex);
                 }
+            }
+        }
+
+        private async Task DeleteRedisProcessKey(InvoiceRetryRequestDto invoiceRetry, List<string> idsToProcess, string executionType, string logBase)
+        {
+            if (idsToProcess.Count < invoiceRetry.Limit && executionType.ToUpper() == ServiceConstants.AutomaticExecutionType.ToUpper())
+            {
+                this.logger.Information(LogsConstants.RedisKeysAreDeletedForRetryControl(logBase));
+                await this.redisService.DeleteKey(ServiceConstants.InvoiceToProcessAutomaticRetryKey);
+                await this.redisService.DeleteKey(ServiceConstants.InvoiceLockAutomaticRetryKey);
             }
         }
     }
