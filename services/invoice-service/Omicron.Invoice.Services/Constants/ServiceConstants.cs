@@ -39,6 +39,18 @@ namespace Omicron.Invoice.Services.Constants
         public const string InvoiceErrorsCatalogs = "InvoiceErrorsCatalogs";
 
         /// <summary>
+        /// LogsInvoiceErrorsCatalogs.
+        /// </summary>
+        public const string LogsInvoiceErrorsCatalogs = "InvoiceCatalogs - Error processing error catalog";
+
+        /// <summary>
+        /// InvoiceErrorsCatalogs.
+        /// </summary>
+        public const string InternalServerError = "Error saving information to database";
+
+        
+
+        /// <summary>
         /// Gets Const for offset.
         /// </summary>
         public static string Offset => "offset";

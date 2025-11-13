@@ -33,39 +33,61 @@ namespace Omicron.Invoice.Services.CatalogsInvoice.Impl
         /// <inheritdoc/>
         public async Task<ResultDto> InvoiceErrorsFromExcel()
         {
-            var invoiceErrors = await this.GetInvoiceErrorsFromExcel();
-
-            foreach (var item in invoiceErrors)
+            try
             {
-                item.Code = ServiceUtils.NormalizeComplete(item.Code);
+                var invoiceErrors = await this.GetInvoiceErrorsFromExcel();
+
+                invoiceErrors = invoiceErrors
+                    .GroupBy(p => p.Code)
+                    .Select(g => g.First())
+                    .ToList();
+
+                var codes = invoiceErrors.Select(x => x.Code).ToList();
+                var existingRecords = await this.invoiceDao.GetExistingErrorsByCodes(codes);
+                var existingCodes = existingRecords.Select(x => x.Code).ToList();
+
+                var recordsToUpdate = invoiceErrors.Where(x => existingCodes.Contains(x.Code)).ToList();
+                var recordsToInsert = invoiceErrors.Where(x => !existingCodes.Contains(x.Code)).ToList();
+
+                if (recordsToUpdate.Any())
+                {
+                    foreach (var record in recordsToUpdate)
+                    {
+                        var existing = existingRecords.FirstOrDefault(x => x.Code == record.Code);
+
+                        if (existing != null)
+                        {
+                            existing.ErrorMessage = record.ErrorMessage;
+                            existing.RequireManualChange = record.RequireManualChange;
+                        }
+                    }
+
+                    await this.invoiceDao.UpdateInvoiceErrors(existingRecords);
+                }
+
+                if (recordsToInsert.Any())
+                {
+                    await this.invoiceDao.InsertInvoiceErrors(recordsToInsert);
+                }
+
+                await this.redisService.WriteToRedis(
+                    ServiceConstants.InvoiceErrorsCatalogs,
+                    JsonConvert.SerializeObject(invoiceErrors),
+                    TimeSpan.FromHours(12));
+
+                return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null, null);
             }
-
-            invoiceErrors = invoiceErrors
-                .GroupBy(p => p.Id)
-                .Select(g => g.First())
-                .ToList();
-
-            var ids = invoiceErrors.Select(x => x.Id).ToList();
-            var existingIds = await this.invoiceDao.GetExistingErrorIds(ids);
-            var recordsToUpdate = invoiceErrors.Where(x => existingIds.Contains(x.Id)).ToList();
-            var recordsToInsert = invoiceErrors.Where(x => !existingIds.Contains(x.Id)).ToList();
-
-            if (recordsToUpdate.Any())
+            catch (Exception ex)
             {
-                await this.invoiceDao.UpdateInvoiceErrors(recordsToUpdate);
+                this.logger.Error(ex, ServiceConstants.LogsInvoiceErrorsCatalogs);
+                return ServiceUtils.CreateResult(
+                    false,
+                    (int)HttpStatusCode.InternalServerError,
+                    ServiceConstants.InternalServerError,
+                    null,
+                    null,
+                    null);
             }
-
-            if (recordsToInsert.Any())
-            {
-                await this.invoiceDao.InsertInvoiceErrors(recordsToInsert);
-            }
-
-            await this.redisService.WriteToRedis(
-            ServiceConstants.InvoiceErrorsCatalogs,
-            JsonConvert.SerializeObject(invoiceErrors),
-            TimeSpan.FromHours(12));
-
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null, null);
         }
 
         private async Task<List<InvoiceErrorModel>> GetInvoiceErrorsFromExcel()
@@ -73,21 +95,22 @@ namespace Omicron.Invoice.Services.CatalogsInvoice.Impl
             var table = await this.ObtainDataFromExcel(ServiceConstants.InvoiceErrorsCatalogsFileUrl, 1);
             var columns = table.Columns.Cast<DataColumn>().Select(x => x.ColumnName).ToList();
 
-            var id = columns[0];
-            var code = columns[1];
-            var error = columns[2];
-            var errorMessage = columns[3];
-            var requireManualChange = columns[4];
+            var code = columns[0];
+            var error = columns[1];
+            var errorMessage = columns[2];
+            var requireManualChange = columns[3];
 
             var invoiceErrors = table.AsEnumerable()
                 .Select(row => new InvoiceErrorModel
                 {
-                    Id = int.Parse(row[id].ToString()?.Trim()),
                     Code = row[code].ToString()?.Trim(),
                     Error = row[error].ToString()?.Trim(),
                     ErrorMessage = row[errorMessage].ToString()?.Trim(),
-                    RequireManualChange = row[requireManualChange].ToString()?.Trim() == "1",
+                    RequireManualChange = row[requireManualChange].ToString()?.Trim().ToUpper() == "SI",
                 })
+                .Where(x => !string.IsNullOrWhiteSpace(x.Code) &&
+                            !string.IsNullOrWhiteSpace(x.Error) &&
+                            !string.IsNullOrWhiteSpace(x.ErrorMessage))
                 .ToList();
 
             return invoiceErrors;

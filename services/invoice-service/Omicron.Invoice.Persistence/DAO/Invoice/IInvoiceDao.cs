@@ -102,9 +102,9 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice
         /// <summary>
         /// Get existing error IDs.
         /// </summary>
-        /// <param name="ids">List of IDs to check.</param>
+        /// <param name="codes">List of IDs to check.</param>
         /// <returns>List of existing IDs.</returns>
-        Task<List<int>> GetExistingErrorIds(List<int> ids);
+        Task<List<InvoiceErrorModel>> GetExistingErrorsByCodes(List<string> codes);
 
         /// <summary>
         /// Insert invoice errors from catalog.

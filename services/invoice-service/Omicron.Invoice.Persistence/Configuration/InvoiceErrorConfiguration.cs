@@ -21,6 +21,7 @@ namespace Omicron.Invoice.Persistence.Configuration
                      builder.Property(p => p.Id)
                             .HasColumnName("id")
                             .HasColumnType("integer")
+                            .ValueGeneratedOnAdd()
                             .IsRequired();
 
                      builder.Property(p => p.Code)

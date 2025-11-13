@@ -129,11 +129,10 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
         }
 
         /// <inheritdoc/>
-        public async Task<List<int>> GetExistingErrorIds(List<int> ids)
+        public async Task<List<InvoiceErrorModel>> GetExistingErrorsByCodes(List<string> codes)
         {
             return await this.context.InvoiceError
-                .Where(x => ids.Contains(x.Id))
-                .Select(x => x.Id)
+                .Where(x => codes.Contains(x.Code))
                 .ToListAsync();
         }
 

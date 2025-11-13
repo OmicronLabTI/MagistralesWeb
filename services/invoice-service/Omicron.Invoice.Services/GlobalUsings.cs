@@ -40,7 +40,7 @@ global using System.Text;
 global using System.Threading.Tasks;
 global using System.IO;
 global using System.Data;
-global using Microsoft.Extensions.Logging;
+global using Serilog;
 global using Omicron.Invoice.Common.DTOs.Responses.Invoices;
 global using Omicron.Invoice.Model.Model.JoinsModels;
 global using System.Globalization;
