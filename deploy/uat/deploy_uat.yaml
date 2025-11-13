@@ -553,3 +553,74 @@ spec:
     app: sapservicelayeradapter
   type: ClusterIP
 ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: invoice-deployment
+  labels:
+    app: invoice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: invoice
+  template:
+    metadata:
+      labels:
+        app: invoice
+    spec:
+      containers:
+        - name: invoice
+          image: omicron.azurecr.io/omicronuat/omicron-appiosformulas-invoice-repository:latest
+          imagePullPolicy: Always
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Uat
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
+            - name: POSTGRESS_NET_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-uat
+                  key: omicron_net_postgress_db
+            - name: REDIS_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-uat
+                  key: redis
+            - name: STORAGE_ACCOUNT
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-uat
+                  key: storage_account
+            - name: STORAGE_ACCOUNT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-uat
+                  key: storage_account_key
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: 50m
+              memory: 100Mi
+            requests:
+              cpu: 1m
+              memory: 40Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: invoice-svc
+  labels:
+    app: invoice
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+  selector:
+    app: invoice
+  type: ClusterIP
