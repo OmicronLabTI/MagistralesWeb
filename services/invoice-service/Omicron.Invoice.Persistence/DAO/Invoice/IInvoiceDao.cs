@@ -142,5 +142,26 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice
         /// The task result contains the total count of AutoBilling records.
         /// </returns>
         Task<int> GetAutoBillingCountAsync(List<string> status);
+
+        /// <summary>
+        /// Get existing error IDs.
+        /// </summary>
+        /// <param name="codes">List of IDs to check.</param>
+        /// <returns>List of existing IDs.</returns>
+        Task<List<InvoiceErrorModel>> GetExistingErrorsByCodes(List<string> codes);
+
+        /// <summary>
+        /// Insert invoice errors from catalog.
+        /// </summary>
+        /// <param name="invoicErrors">List of errors to insert.</param>
+        /// <returns>Task.</returns>
+        Task InsertInvoiceErrors(List<InvoiceErrorModel> invoicErrors);
+
+        /// <summary>
+        /// Update invoice errors from catalog.
+        /// </summary>
+        /// <param name="invoiceErrors">List of errors to update.</param>
+        /// <returns>Task.</returns>
+        Task UpdateInvoiceErrors(List<InvoiceErrorModel> invoiceErrors);
     }
 }

@@ -95,6 +95,27 @@
 			</column>
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="changelog-1.7" author="luis.reyes">
+    <comment>Modificar tamaños de columnas e id como identity en invoiceerrors</comment>    
+    <sql endDelimiter=";">
+        ALTER TABLE invoiceerrors 
+        ALTER COLUMN code TYPE varchar(10),
+        ALTER COLUMN error TYPE varchar(300),
+        ALTER COLUMN errormessage TYPE varchar(300);
+    </sql>
+	</changeSet>
+	
+	<changeSet id="changelog-1.8" author="luis.reyes">
+		<comment>id autoincremental en invoiceerrors</comment>
+		<sql>
+			CREATE SEQUENCE IF NOT EXISTS invoiceerrors_id_seq;
+			ALTER TABLE invoiceerrors ALTER COLUMN id SET DEFAULT nextval('invoiceerrors_id_seq');
+			ALTER SEQUENCE invoiceerrors_id_seq OWNED BY invoiceerrors.id;
+			SELECT setval('invoiceerrors_id_seq', COALESCE((SELECT MAX(id) FROM invoiceerrors), 1));
+		</sql>
+	</changeSet>
+	
 	<changeSet author="jarturoep" id="changelog-1.9">
 		<addColumn tableName="invoices">
 			<column name="retryuser" type="varchar(50)">
