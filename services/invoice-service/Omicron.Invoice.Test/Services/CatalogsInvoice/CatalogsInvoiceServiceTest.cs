@@ -106,24 +106,5 @@ namespace Omicron.Invoice.Test.Services.CatalogsInvoice
             stream.Position = 0;
             return stream;
         }
-
-        /// <summary>
-        /// Get mock InvoiceErrorModel data.
-        /// </summary>
-        /// <returns>List of InvoiceErrorModel.</returns>
-        private new List<InvoiceErrorModel> GetInvoiceErrorModel()
-        {
-            return new List<InvoiceErrorModel>
-            {
-                new InvoiceErrorModel
-                {
-                    Id = 1,
-                    Code = "55P03",
-                    Error = "lock_not_available",
-                    ErrorMessage = "Lock not available",
-                    RequireManualChange = false,
-                },
-            };
-        }
     }
 }

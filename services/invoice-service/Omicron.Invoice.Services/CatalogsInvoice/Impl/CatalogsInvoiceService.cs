@@ -49,21 +49,7 @@ namespace Omicron.Invoice.Services.CatalogsInvoice.Impl
                 var recordsToUpdate = invoiceErrors.Where(x => existingCodes.Contains(x.Code)).ToList();
                 var recordsToInsert = invoiceErrors.Where(x => !existingCodes.Contains(x.Code)).ToList();
 
-                if (recordsToUpdate.Any())
-                {
-                    foreach (var record in recordsToUpdate)
-                    {
-                        var existing = existingRecords.FirstOrDefault(x => x.Code == record.Code);
-
-                        if (existing != null)
-                        {
-                            existing.ErrorMessage = record.ErrorMessage;
-                            existing.RequireManualChange = record.RequireManualChange;
-                        }
-                    }
-
-                    await this.invoiceDao.UpdateInvoiceErrors(existingRecords);
-                }
+                await this.UpdateExistingRecords(recordsToUpdate, existingRecords);
 
                 if (recordsToInsert.Any())
                 {
@@ -88,6 +74,29 @@ namespace Omicron.Invoice.Services.CatalogsInvoice.Impl
                     null,
                     null);
             }
+        }
+
+        private async Task UpdateExistingRecords(
+        List<InvoiceErrorModel> recordsToUpdate,
+        List<InvoiceErrorModel> existingRecords)
+        {
+            if (!recordsToUpdate.Any())
+            {
+                return;
+            }
+
+            var existingDict = existingRecords.ToDictionary(x => x.Code);
+
+            recordsToUpdate
+                .Where(record => existingDict.ContainsKey(record.Code))
+                .ToList()
+                .ForEach(record =>
+                {
+                    existingDict[record.Code].ErrorMessage = record.ErrorMessage;
+                    existingDict[record.Code].RequireManualChange = record.RequireManualChange;
+                });
+
+            await this.invoiceDao.UpdateInvoiceErrors(existingRecords);
         }
 
         private async Task<List<InvoiceErrorModel>> GetInvoiceErrorsFromExcel()

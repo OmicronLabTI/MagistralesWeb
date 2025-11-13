@@ -15,7 +15,7 @@ namespace Omicron.Invoice.Api.Controllers
     /// Initializes a new instance of the <see cref="CatalogsInvoiceController"/> class.
     /// </remarks>
     /// <param name="catalogsInvoiceFacade">Catalogs Invoice Controller.</param>
-    [Route("api/[controller]")]
+    [Route("/")]
     [ApiController]
     public class CatalogsInvoiceController(ICatalogsInvoiceFacade catalogsInvoiceFacade)
         : ControllerBase
@@ -27,7 +27,7 @@ namespace Omicron.Invoice.Api.Controllers
         /// </summary>
         /// <returns>A <see cref="Task{ResultDto}"/> contains invoice errors. </returns>
         [HttpPost]
-        [Route("/invoice/errors")]
+        [Route("invoice/errors")]
         public async Task<IActionResult> InvoiceErrorsFromExcel()
             => this.Ok(await this.catalogsInvoiceFacade.InvoiceErrorsFromExcel());
     }

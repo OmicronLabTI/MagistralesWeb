@@ -160,8 +160,8 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice
         /// <summary>
         /// Update invoice errors from catalog.
         /// </summary>
-        /// <param name="invoicErrors">List of errors to update.</param>
+        /// <param name="invoiceErrors">List of errors to update.</param>
         /// <returns>Task.</returns>
-        Task UpdateInvoiceErrors(List<InvoiceErrorModel> invoicErrors);
+        Task UpdateInvoiceErrors(List<InvoiceErrorModel> invoiceErrors);
     }
 }
