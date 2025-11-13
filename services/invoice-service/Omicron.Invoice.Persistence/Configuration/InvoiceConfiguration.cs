@@ -89,6 +89,9 @@ namespace Omicron.Invoice.Persistence.Configuration
                     .HasColumnName("payload")
                     .HasColumnType("jsonb")
                     .IsRequired();
+            builder.Property(p => p.RetryUser)
+                   .HasColumnName("retryuser")
+                   .HasColumnType("varchar(50)");
         }
     }
 }

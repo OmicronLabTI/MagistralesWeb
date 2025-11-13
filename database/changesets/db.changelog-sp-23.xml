@@ -95,4 +95,11 @@
 			</column>
 		</addColumn>
 	</changeSet>
+	<changeSet author="jarturoep" id="changelog-1.9">
+		<addColumn tableName="invoices">
+			<column name="retryuser" type="varchar(50)">
+				<constraints nullable="true"/>
+			</column>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
