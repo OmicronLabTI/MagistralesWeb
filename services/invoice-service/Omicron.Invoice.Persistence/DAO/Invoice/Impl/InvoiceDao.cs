@@ -88,16 +88,20 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
         /// <inheritdoc/>
         public async Task<IEnumerable<InvoiceModel>> GetInvoicesForRetryProcessAsync(string status)
         {
-            return await (from fac in this.context.Invoice
-                          join err in this.context.InvoiceError on fac.IdInvoiceError equals err.Id
-                          where fac.IsProcessing == false
-                                && fac.Status == status
-                                && (
-                                      (err.RequireManualChange == true
-                                          && (fac.ManualChangeApplied == true || fac.ManualChangeApplied == null))
-                                   || err.RequireManualChange == false)
-                          select fac)
-                   .ToListAsync();
+            return await (
+                    from fac in this.context.Invoice
+                    join err in this.context.InvoiceError
+                        on fac.IdInvoiceError equals err.Id into errJoin
+                    from err in errJoin.DefaultIfEmpty()
+                    where !fac.IsProcessing
+                          && fac.Status == status
+                          && (
+                                err == null ||
+                                (!err.RequireManualChange) ||
+                                (err.RequireManualChange
+                                 && (fac.ManualChangeApplied == true
+                                     || fac.ManualChangeApplied == null)))
+                    select fac).ToListAsync();
         }
 
         /// <inheritdoc/>
