@@ -3,7 +3,7 @@
   <div class="toolbars-container" *ngIf="isLogin">
     <mat-toolbar class="toolbar-first">
       <div class="logo-omi-container">
-        <img alt="logo-omicron" src="assets/images/omicron-logo.svg"  class="logo-nav-bar">
+        <img alt="logo-omicron" src="assets/images/omicron-logo.svg" class="logo-nav-bar">
       </div>
 
       <div class="user-logged-container">
@@ -12,12 +12,22 @@
         </div>
         <div class="link-logout">
           <button mat-button [matMenuTriggerFor]="logoutMenu">
-            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="feather feather-chevron-down">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
           </button>
           <mat-menu #logoutMenu="matMenu">
             <div class="option-logout-container">
               <button mat-icon-button (click)="endSession()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="feather feather-log-out">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
                 Cerrar sesión
               </button>
             </div>
@@ -40,30 +50,189 @@
 
         <div fxShow="true" fxHide.lt-md class="menu-options-container">
           <!-- The following menu items will be hidden on both SM and XS screen sizes -->
-          <div *ngIf="role === '3' || role === '4' || role === '5'" [ngClass]="iconMenuActive === 0 || iconMenuActive === 1 || iconMenuActive === 3 ? 'menu-no-active-color' : 'menu-active-color'"  class="menu-option-button color-ico-menu" (click)="goToPage(['pedidos'])">
-            <svg *ngIf="iconMenuActive !== 0 && iconMenuActive !== 1 && iconMenuActive !== 3 " xmlns="http://www.w3.org/2000/svg"  aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16"><g fill="#04151F"><path fill-rule="evenodd" d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5L8 5.961L14.154 3.5l-2.404-.961zm3.25 1.7l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"></path></g></svg>
-            <svg *ngIf="iconMenuActive === 0 || iconMenuActive === 1 || iconMenuActive === 3" xmlns="http://www.w3.org/2000/svg"  aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16"><g fill="#fff"><path fill-rule="evenodd" d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5L8 5.961L14.154 3.5l-2.404-.961zm3.25 1.7l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"></path></g></svg>
+          <div *ngIf="role === '3' || role === '4' || role === '5'"
+            [ngClass]="iconMenuActive === 0 || iconMenuActive === 1 || iconMenuActive === 3 ? 'menu-no-active-color' : 'menu-active-color'"
+            class="menu-option-button color-ico-menu" (click)="goToPage(['pedidos'])">
+            <svg *ngIf="iconMenuActive !== 0 && iconMenuActive !== 1 && iconMenuActive !== 3 "
+              xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="1em" height="1em"
+              style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);"
+              preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16">
+              <g fill="#04151F">
+                <path fill-rule="evenodd"
+                  d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5L8 5.961L14.154 3.5l-2.404-.961zm3.25 1.7l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z">
+                </path>
+              </g>
+            </svg>
+            <svg *ngIf="iconMenuActive === 0 || iconMenuActive === 1 || iconMenuActive === 3"
+              xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="1em" height="1em"
+              style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);"
+              preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16">
+              <g fill="#fff">
+                <path fill-rule="evenodd"
+                  d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5L8 5.961L14.154 3.5l-2.404-.961zm3.25 1.7l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z">
+                </path>
+              </g>
+            </svg>
             <a class="nav-link title-nav-header" mat-button>Pedidos</a>
           </div>
-          <div *ngIf="role === '3'" [ngClass]="iconMenuActive === 4 ? 'menu-no-active-color' : 'menu-active-color'" class="menu-option-button margin-left-options" (click)="goToPage(['ordenes'])">
-            <svg *ngIf="iconMenuActive !== 4" xmlns="http://www.w3.org/2000/svg"  aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32"><path d="M25.7 9.3l-7-7c-.2-.2-.4-.3-.7-.3H8c-1.1 0-2 .9-2 2v24c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V10c0-.3-.1-.5-.3-.7zM18 4.4l5.6 5.6H18V4.4zM24 28H8V4h8v6c0 1.1.9 2 2 2h6v16z" fill="#04151F"></path><path d="M10 22h12v2H10z" fill="#04151F"></path><path d="M10 16h12v2H10z" fill="#04151F"></path></svg>
-            <svg *ngIf="iconMenuActive === 4" xmlns="http://www.w3.org/2000/svg"  aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32"><path d="M25.7 9.3l-7-7c-.2-.2-.4-.3-.7-.3H8c-1.1 0-2 .9-2 2v24c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V10c0-.3-.1-.5-.3-.7zM18 4.4l5.6 5.6H18V4.4zM24 28H8V4h8v6c0 1.1.9 2 2 2h6v16z" fill="#fff"></path><path d="M10 22h12v2H10z" fill="#fff"></path><path d="M10 16h12v2H10z" fill="#fff"></path></svg>
+          <div *ngIf="role === '3'" [ngClass]="iconMenuActive === 4 ? 'menu-no-active-color' : 'menu-active-color'"
+            class="menu-option-button margin-left-options" (click)="goToPage(['ordenes'])">
+            <svg *ngIf="iconMenuActive !== 4" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"
+              width="1em" height="1em"
+              style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);"
+              preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32">
+              <path
+                d="M25.7 9.3l-7-7c-.2-.2-.4-.3-.7-.3H8c-1.1 0-2 .9-2 2v24c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V10c0-.3-.1-.5-.3-.7zM18 4.4l5.6 5.6H18V4.4zM24 28H8V4h8v6c0 1.1.9 2 2 2h6v16z"
+                fill="#04151F"></path>
+              <path d="M10 22h12v2H10z" fill="#04151F"></path>
+              <path d="M10 16h12v2H10z" fill="#04151F"></path>
+            </svg>
+            <svg *ngIf="iconMenuActive === 4" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"
+              width="1em" height="1em"
+              style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);"
+              preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32">
+              <path
+                d="M25.7 9.3l-7-7c-.2-.2-.4-.3-.7-.3H8c-1.1 0-2 .9-2 2v24c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V10c0-.3-.1-.5-.3-.7zM18 4.4l5.6 5.6H18V4.4zM24 28H8V4h8v6c0 1.1.9 2 2 2h6v16z"
+                fill="#fff"></path>
+              <path d="M10 22h12v2H10z" fill="#fff"></path>
+              <path d="M10 16h12v2H10z" fill="#fff"></path>
+            </svg>
             <a class="nav-link title-nav-header" mat-button>Órdenes de Fabricación</a>
           </div>
-          <div *ngIf="role === '1'" [ngClass]="iconMenuActive === 2 ? 'menu-no-active-color' : 'menu-active-color'" class="menu-option-button margin-left-options" (click)="goToPage(['userList'])">
-            <svg *ngIf="iconMenuActive !== 2" xmlns="http://www.w3.org/2000/svg" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 36 36"><path class="clr-i-solid clr-i-solid-path-1" d="M12 16.14h-.87a8.67 8.67 0 0 0-6.43 2.52l-.24.28v8.28h4.08v-4.7l.55-.62l.25-.29a11 11 0 0 1 4.71-2.86A6.59 6.59 0 0 1 12 16.14z" fill="#04151F"/><path class="clr-i-solid clr-i-solid-path-2" d="M31.34 18.63a8.67 8.67 0 0 0-6.43-2.52a10.47 10.47 0 0 0-1.09.06a6.59 6.59 0 0 1-2 2.45a10.91 10.91 0 0 1 5 3l.25.28l.54.62v4.71h3.94v-8.32z" fill="#04151F"/><path class="clr-i-solid clr-i-solid-path-3" d="M11.1 14.19h.31a6.45 6.45 0 0 1 3.11-6.29a4.09 4.09 0 1 0-3.42 6.33z" fill="#04151F"/><path class="clr-i-solid clr-i-solid-path-4" d="M24.43 13.44a6.54 6.54 0 0 1 0 .69a4.09 4.09 0 0 0 .58.05h.19A4.09 4.09 0 1 0 21.47 8a6.53 6.53 0 0 1 2.96 5.44z" fill="#04151F"/><circle class="clr-i-solid clr-i-solid-path-5" cx="17.87" cy="13.45" r="4.47" fill="#04151F"/><path class="clr-i-solid clr-i-solid-path-6" d="M18.11 20.3A9.69 9.69 0 0 0 11 23l-.25.28v6.33a1.57 1.57 0 0 0 1.6 1.54h11.49a1.57 1.57 0 0 0 1.6-1.54V23.3l-.24-.3a9.58 9.58 0 0 0-7.09-2.7z" fill="#04151F"/></svg>
-            <svg *ngIf="iconMenuActive === 2" xmlns="http://www.w3.org/2000/svg" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 36 36"><path class="clr-i-solid clr-i-solid-path-1" d="M12 16.14h-.87a8.67 8.67 0 0 0-6.43 2.52l-.24.28v8.28h4.08v-4.7l.55-.62l.25-.29a11 11 0 0 1 4.71-2.86A6.59 6.59 0 0 1 12 16.14z" fill="#fff"/><path class="clr-i-solid clr-i-solid-path-2" d="M31.34 18.63a8.67 8.67 0 0 0-6.43-2.52a10.47 10.47 0 0 0-1.09.06a6.59 6.59 0 0 1-2 2.45a10.91 10.91 0 0 1 5 3l.25.28l.54.62v4.71h3.94v-8.32z" fill="#fff"/><path class="clr-i-solid clr-i-solid-path-3" d="M11.1 14.19h.31a6.45 6.45 0 0 1 3.11-6.29a4.09 4.09 0 1 0-3.42 6.33z" fill="#fff"/><path class="clr-i-solid clr-i-solid-path-4" d="M24.43 13.44a6.54 6.54 0 0 1 0 .69a4.09 4.09 0 0 0 .58.05h.19A4.09 4.09 0 1 0 21.47 8a6.53 6.53 0 0 1 2.96 5.44z" fill="#fff"/><circle class="clr-i-solid clr-i-solid-path-5" cx="17.87" cy="13.45" r="4.47" fill="#fff"/><path class="clr-i-solid clr-i-solid-path-6" d="M18.11 20.3A9.69 9.69 0 0 0 11 23l-.25.28v6.33a1.57 1.57 0 0 0 1.6 1.54h11.49a1.57 1.57 0 0 0 1.6-1.54V23.3l-.24-.3a9.58 9.58 0 0 0-7.09-2.7z" fill="#fff"/></svg>
+          <div *ngIf="role === '1'" [ngClass]="iconMenuActive === 2 ? 'menu-no-active-color' : 'menu-active-color'"
+            class="menu-option-button margin-left-options" (click)="goToPage(['userList'])">
+            <svg *ngIf="iconMenuActive !== 2" xmlns="http://www.w3.org/2000/svg" focusable="false" width="1em"
+              height="1em"
+              style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);"
+              preserveAspectRatio="xMidYMid meet" viewBox="0 0 36 36">
+              <path class="clr-i-solid clr-i-solid-path-1"
+                d="M12 16.14h-.87a8.67 8.67 0 0 0-6.43 2.52l-.24.28v8.28h4.08v-4.7l.55-.62l.25-.29a11 11 0 0 1 4.71-2.86A6.59 6.59 0 0 1 12 16.14z"
+                fill="#04151F" />
+              <path class="clr-i-solid clr-i-solid-path-2"
+                d="M31.34 18.63a8.67 8.67 0 0 0-6.43-2.52a10.47 10.47 0 0 0-1.09.06a6.59 6.59 0 0 1-2 2.45a10.91 10.91 0 0 1 5 3l.25.28l.54.62v4.71h3.94v-8.32z"
+                fill="#04151F" />
+              <path class="clr-i-solid clr-i-solid-path-3"
+                d="M11.1 14.19h.31a6.45 6.45 0 0 1 3.11-6.29a4.09 4.09 0 1 0-3.42 6.33z" fill="#04151F" />
+              <path class="clr-i-solid clr-i-solid-path-4"
+                d="M24.43 13.44a6.54 6.54 0 0 1 0 .69a4.09 4.09 0 0 0 .58.05h.19A4.09 4.09 0 1 0 21.47 8a6.53 6.53 0 0 1 2.96 5.44z"
+                fill="#04151F" />
+              <circle class="clr-i-solid clr-i-solid-path-5" cx="17.87" cy="13.45" r="4.47" fill="#04151F" />
+              <path class="clr-i-solid clr-i-solid-path-6"
+                d="M18.11 20.3A9.69 9.69 0 0 0 11 23l-.25.28v6.33a1.57 1.57 0 0 0 1.6 1.54h11.49a1.57 1.57 0 0 0 1.6-1.54V23.3l-.24-.3a9.58 9.58 0 0 0-7.09-2.7z"
+                fill="#04151F" />
+            </svg>
+            <svg *ngIf="iconMenuActive === 2" xmlns="http://www.w3.org/2000/svg" focusable="false" width="1em"
+              height="1em"
+              style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);"
+              preserveAspectRatio="xMidYMid meet" viewBox="0 0 36 36">
+              <path class="clr-i-solid clr-i-solid-path-1"
+                d="M12 16.14h-.87a8.67 8.67 0 0 0-6.43 2.52l-.24.28v8.28h4.08v-4.7l.55-.62l.25-.29a11 11 0 0 1 4.71-2.86A6.59 6.59 0 0 1 12 16.14z"
+                fill="#fff" />
+              <path class="clr-i-solid clr-i-solid-path-2"
+                d="M31.34 18.63a8.67 8.67 0 0 0-6.43-2.52a10.47 10.47 0 0 0-1.09.06a6.59 6.59 0 0 1-2 2.45a10.91 10.91 0 0 1 5 3l.25.28l.54.62v4.71h3.94v-8.32z"
+                fill="#fff" />
+              <path class="clr-i-solid clr-i-solid-path-3"
+                d="M11.1 14.19h.31a6.45 6.45 0 0 1 3.11-6.29a4.09 4.09 0 1 0-3.42 6.33z" fill="#fff" />
+              <path class="clr-i-solid clr-i-solid-path-4"
+                d="M24.43 13.44a6.54 6.54 0 0 1 0 .69a4.09 4.09 0 0 0 .58.05h.19A4.09 4.09 0 1 0 21.47 8a6.53 6.53 0 0 1 2.96 5.44z"
+                fill="#fff" />
+              <circle class="clr-i-solid clr-i-solid-path-5" cx="17.87" cy="13.45" r="4.47" fill="#fff" />
+              <path class="clr-i-solid clr-i-solid-path-6"
+                d="M18.11 20.3A9.69 9.69 0 0 0 11 23l-.25.28v6.33a1.57 1.57 0 0 0 1.6 1.54h11.49a1.57 1.57 0 0 0 1.6-1.54V23.3l-.24-.3a9.58 9.58 0 0 0-7.09-2.7z"
+                fill="#fff" />
+            </svg>
             <a class="nav-link title-nav-header" mat-button>Usuarios</a>
           </div>
+          <div *ngIf="role === '1'" [ngClass]="iconMenuActive === 7 ? 'menu-no-active-color' : 'menu-active-color'"
+            class="menu-option-button margin-left-options" (click)="goToPage(['automatic-billing'])">
+            <svg *ngIf="iconMenuActive === 7" xmlns="http://www.w3.org/2000/svg" width="11" height="14"
+              viewBox="0 0 11 14" fill="none">
+              <path
+                d="M4.66667 10V10.3333C4.66667 10.4222 4.7 10.5 4.76667 10.5667C4.83333 10.6333 4.91111 10.6667 5 10.6667H5.66667C5.75556 10.6667 5.83333 10.6333 5.9 10.5667C5.96667 10.5 6 10.4222 6 10.3333V10H6.66667C6.85556 10 7.01389 9.93611 7.14167 9.80833C7.26944 9.68056 7.33333 9.52222 7.33333 9.33333V7.33333C7.33333 7.14444 7.26944 6.98611 7.14167 6.85833C7.01389 6.73056 6.85556 6.66667 6.66667 6.66667H4.66667V6H6.66667C6.85556 6 7.01389 5.93611 7.14167 5.80833C7.26944 5.68056 7.33333 5.52222 7.33333 5.33333C7.33333 5.14444 7.26944 4.98611 7.14167 4.85833C7.01389 4.73056 6.85556 4.66667 6.66667 4.66667H6V4.33333C6 4.24444 5.96667 4.16667 5.9 4.1C5.83333 4.03333 5.75556 4 5.66667 4H5C4.91111 4 4.83333 4.03333 4.76667 4.1C4.7 4.16667 4.66667 4.24444 4.66667 4.33333V4.66667H4C3.81111 4.66667 3.65278 4.73056 3.525 4.85833C3.39722 4.98611 3.33333 5.14444 3.33333 5.33333V7.33333C3.33333 7.52222 3.39722 7.68056 3.525 7.80833C3.65278 7.93611 3.81111 8 4 8H6V8.66667H4C3.81111 8.66667 3.65278 8.73056 3.525 8.85833C3.39722 8.98611 3.33333 9.14444 3.33333 9.33333C3.33333 9.52222 3.39722 9.68056 3.525 9.80833C3.65278 9.93611 3.81111 10 4 10H4.66667ZM1.33333 13.3333C0.966667 13.3333 0.652778 13.2028 0.391667 12.9417C0.130556 12.6806 0 12.3667 0 12V1.33333C0 0.966667 0.130556 0.652778 0.391667 0.391667C0.652778 0.130556 0.966667 0 1.33333 0H6.11667C6.29444 0 6.46389 0.0333333 6.625 0.1C6.78611 0.166667 6.92778 0.261111 7.05 0.383333L10.2833 3.61667C10.4056 3.73889 10.5 3.88056 10.5667 4.04167C10.6333 4.20278 10.6667 4.37222 10.6667 4.55V12C10.6667 12.3667 10.5361 12.6806 10.275 12.9417C10.0139 13.2028 9.7 13.3333 9.33333 13.3333H1.33333Z"
+                fill="#fff" />
+            </svg>
+            <svg *ngIf="iconMenuActive !== 7" xmlns="http://www.w3.org/2000/svg" width="11" height="14"
+              viewBox="0 0 11 14" fill="none">
+              <path
+                d="M4.66667 10V10.3333C4.66667 10.4222 4.7 10.5 4.76667 10.5667C4.83333 10.6333 4.91111 10.6667 5 10.6667H5.66667C5.75556 10.6667 5.83333 10.6333 5.9 10.5667C5.96667 10.5 6 10.4222 6 10.3333V10H6.66667C6.85556 10 7.01389 9.93611 7.14167 9.80833C7.26944 9.68056 7.33333 9.52222 7.33333 9.33333V7.33333C7.33333 7.14444 7.26944 6.98611 7.14167 6.85833C7.01389 6.73056 6.85556 6.66667 6.66667 6.66667H4.66667V6H6.66667C6.85556 6 7.01389 5.93611 7.14167 5.80833C7.26944 5.68056 7.33333 5.52222 7.33333 5.33333C7.33333 5.14444 7.26944 4.98611 7.14167 4.85833C7.01389 4.73056 6.85556 4.66667 6.66667 4.66667H6V4.33333C6 4.24444 5.96667 4.16667 5.9 4.1C5.83333 4.03333 5.75556 4 5.66667 4H5C4.91111 4 4.83333 4.03333 4.76667 4.1C4.7 4.16667 4.66667 4.24444 4.66667 4.33333V4.66667H4C3.81111 4.66667 3.65278 4.73056 3.525 4.85833C3.39722 4.98611 3.33333 5.14444 3.33333 5.33333V7.33333C3.33333 7.52222 3.39722 7.68056 3.525 7.80833C3.65278 7.93611 3.81111 8 4 8H6V8.66667H4C3.81111 8.66667 3.65278 8.73056 3.525 8.85833C3.39722 8.98611 3.33333 9.14444 3.33333 9.33333C3.33333 9.52222 3.39722 9.68056 3.525 9.80833C3.65278 9.93611 3.81111 10 4 10H4.66667ZM1.33333 13.3333C0.966667 13.3333 0.652778 13.2028 0.391667 12.9417C0.130556 12.6806 0 12.3667 0 12V1.33333C0 0.966667 0.130556 0.652778 0.391667 0.391667C0.652778 0.130556 0.966667 0 1.33333 0H6.11667C6.29444 0 6.46389 0.0333333 6.625 0.1C6.78611 0.166667 6.92778 0.261111 7.05 0.383333L10.2833 3.61667C10.4056 3.73889 10.5 3.88056 10.5667 4.04167C10.6333 4.20278 10.6667 4.37222 10.6667 4.55V12C10.6667 12.3667 10.5361 12.6806 10.275 12.9417C10.0139 13.2028 9.7 13.3333 9.33333 13.3333H1.33333Z"
+                fill="#04151F" />
+            </svg>
+            <a class="nav-link title-nav-header" mat-button>Facturación automática</a>
+          </div>
+          <div *ngIf="role === '1'" [ngClass]="iconMenuActive === 8 ? 'menu-no-active-color' : 'menu-active-color'"
+            class="menu-option-button margin-left-options" (click)="goToPage(['history-billing'])">
+            <svg *ngIf="iconMenuActive === 8" width="16" height="16" viewBox="0 0 16 16" fill="none"
+              xmlns="http://www.w3.org/2000/svg">
+              <mask id="mask0_17304_29164" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="16"
+                height="16">
+                <rect width="16" height="16" fill="#D9D9D9" />
+              </mask>
+              <g mask="url(#mask0_17304_29164)">
+                <path
+                  d="M8 14C6.46667 14 5.13056 13.4917 3.99167 12.475C2.85278 11.4583 2.2 10.1889 2.03333 8.66667H3.4C3.55556 9.82222 4.06944 10.7778 4.94167 11.5333C5.81389 12.2889 6.83333 12.6667 8 12.6667C9.3 12.6667 10.4028 12.2139 11.3083 11.3083C12.2139 10.4028 12.6667 9.3 12.6667 8C12.6667 6.7 12.2139 5.59722 11.3083 4.69167C10.4028 3.78611 9.3 3.33333 8 3.33333C7.23333 3.33333 6.51667 3.51111 5.85 3.86667C5.18333 4.22222 4.62222 4.71111 4.16667 5.33333H6V6.66667H2V2.66667H3.33333V4.23333C3.9 3.52222 4.59167 2.97222 5.40833 2.58333C6.225 2.19444 7.08889 2 8 2C8.83333 2 9.61389 2.15833 10.3417 2.475C11.0694 2.79167 11.7028 3.21944 12.2417 3.75833C12.7806 4.29722 13.2083 4.93056 13.525 5.65833C13.8417 6.38611 14 7.16667 14 8C14 8.83333 13.8417 9.61389 13.525 10.3417C13.2083 11.0694 12.7806 11.7028 12.2417 12.2417C11.7028 12.7806 11.0694 13.2083 10.3417 13.525C9.61389 13.8417 8.83333 14 8 14ZM9.86667 10.8L7.33333 8.26667V4.66667H8.66667V7.73333L10.8 9.86667L9.86667 10.8Z"
+                  fill="#fff" />
+              </g>
+            </svg>
+            <svg *ngIf="iconMenuActive !== 8" width="16" height="16" viewBox="0 0 16 16" fill="none"
+              xmlns="http://www.w3.org/2000/svg">
+              <mask id="mask0_17304_29164" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="16"
+                height="16">
+                <rect width="16" height="16" fill="#D9D9D9" />
+              </mask>
+              <g mask="url(#mask0_17304_29164)">
+                <path
+                  d="M8 14C6.46667 14 5.13056 13.4917 3.99167 12.475C2.85278 11.4583 2.2 10.1889 2.03333 8.66667H3.4C3.55556 9.82222 4.06944 10.7778 4.94167 11.5333C5.81389 12.2889 6.83333 12.6667 8 12.6667C9.3 12.6667 10.4028 12.2139 11.3083 11.3083C12.2139 10.4028 12.6667 9.3 12.6667 8C12.6667 6.7 12.2139 5.59722 11.3083 4.69167C10.4028 3.78611 9.3 3.33333 8 3.33333C7.23333 3.33333 6.51667 3.51111 5.85 3.86667C5.18333 4.22222 4.62222 4.71111 4.16667 5.33333H6V6.66667H2V2.66667H3.33333V4.23333C3.9 3.52222 4.59167 2.97222 5.40833 2.58333C6.225 2.19444 7.08889 2 8 2C8.83333 2 9.61389 2.15833 10.3417 2.475C11.0694 2.79167 11.7028 3.21944 12.2417 3.75833C12.7806 4.29722 13.2083 4.93056 13.525 5.65833C13.8417 6.38611 14 7.16667 14 8C14 8.83333 13.8417 9.61389 13.525 10.3417C13.2083 11.0694 12.7806 11.7028 12.2417 12.2417C11.7028 12.7806 11.0694 13.2083 10.3417 13.525C9.61389 13.8417 8.83333 14 8 14ZM9.86667 10.8L7.33333 8.26667V4.66667H8.66667V7.73333L10.8 9.86667L9.86667 10.8Z"
+                  fill="#04151F" />
+              </g>
+            </svg>
+            <a class="nav-link title-nav-header" mat-button>Historico facturación</a>
+          </div>
           <!--check role for menu -->
-          <div *ngIf="role === '7'" [ngClass]="iconMenuActive === 6 ? 'menu-no-active-color' : 'menu-active-color'" class="menu-option-button margin-left-options" (click)="goToPage(['incidentsList'])">
-            <svg *ngIf="iconMenuActive !== 6"  xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="#04151F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></g></svg>
-            <svg *ngIf="iconMenuActive === 6" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></g></svg>
+          <div *ngIf="role === '7'" [ngClass]="iconMenuActive === 6 ? 'menu-no-active-color' : 'menu-active-color'"
+            class="menu-option-button margin-left-options" (click)="goToPage(['incidentsList'])">
+            <svg *ngIf="iconMenuActive !== 6" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"
+              width="1em" height="1em"
+              style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);"
+              preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+              <g fill="none" stroke="#04151F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                </path>
+                <path d="M12 9v4"></path>
+                <path d="M12 17h.01"></path>
+              </g>
+            </svg>
+            <svg *ngIf="iconMenuActive === 6" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"
+              width="1em" height="1em"
+              style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);"
+              preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+              <g fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                </path>
+                <path d="M12 9v4"></path>
+                <path d="M12 17h.01"></path>
+              </g>
+            </svg>
             <a class="nav-link title-nav-header" mat-button> Incidencias</a>
           </div>
-          <div *ngIf="role === '3' || role === '7'" [matMenuTriggerFor]="menu" [ngClass]="iconMenuActive === 5 ? 'menu-no-active-color' : 'menu-active-color'" class="menu-option-button margin-left-options">
-            <svg *ngIf="iconMenuActive !== 5" xmlns="http://www.w3.org/2000/svg" width="512" height="512" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);"><path d="M396.8 352h22.4c6.4 0 12.8-6.4 12.8-12.8V108.8c0-6.4-6.4-12.8-12.8-12.8h-22.4c-6.4 0-12.8 6.4-12.8 12.8v230.4c0 6.4 6.4 12.8 12.8 12.8zm-192 0h22.4c6.4 0 12.8-6.4 12.8-12.8V140.8c0-6.4-6.4-12.8-12.8-12.8h-22.4c-6.4 0-12.8 6.4-12.8 12.8v198.4c0 6.4 6.4 12.8 12.8 12.8zm96 0h22.4c6.4 0 12.8-6.4 12.8-12.8V204.8c0-6.4-6.4-12.8-12.8-12.8h-22.4c-6.4 0-12.8 6.4-12.8 12.8v134.4c0 6.4 6.4 12.8 12.8 12.8zM496 400H48V80c0-8.84-7.16-16-16-16H16C7.16 64 0 71.16 0 80v336c0 17.67 14.33 32 32 32h464c8.84 0 16-7.16 16-16v-16c0-8.84-7.16-16-16-16zm-387.2-48h22.4c6.4 0 12.8-6.4 12.8-12.8v-70.4c0-6.4-6.4-12.8-12.8-12.8h-22.4c-6.4 0-12.8 6.4-12.8 12.8v70.4c0 6.4 6.4 12.8 12.8 12.8z" fill="#04151F"/><rect x="0" y="0" width="512" height="512" fill="rgba(0, 0, 0, 0)" /></svg>
-            <svg *ngIf="iconMenuActive === 5" xmlns="http://www.w3.org/2000/svg" width="512" height="512" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);"><path d="M396.8 352h22.4c6.4 0 12.8-6.4 12.8-12.8V108.8c0-6.4-6.4-12.8-12.8-12.8h-22.4c-6.4 0-12.8 6.4-12.8 12.8v230.4c0 6.4 6.4 12.8 12.8 12.8zm-192 0h22.4c6.4 0 12.8-6.4 12.8-12.8V140.8c0-6.4-6.4-12.8-12.8-12.8h-22.4c-6.4 0-12.8 6.4-12.8 12.8v198.4c0 6.4 6.4 12.8 12.8 12.8zm96 0h22.4c6.4 0 12.8-6.4 12.8-12.8V204.8c0-6.4-6.4-12.8-12.8-12.8h-22.4c-6.4 0-12.8 6.4-12.8 12.8v134.4c0 6.4 6.4 12.8 12.8 12.8zM496 400H48V80c0-8.84-7.16-16-16-16H16C7.16 64 0 71.16 0 80v336c0 17.67 14.33 32 32 32h464c8.84 0 16-7.16 16-16v-16c0-8.84-7.16-16-16-16zm-387.2-48h22.4c6.4 0 12.8-6.4 12.8-12.8v-70.4c0-6.4-6.4-12.8-12.8-12.8h-22.4c-6.4 0-12.8 6.4-12.8 12.8v70.4c0 6.4 6.4 12.8 12.8 12.8z" fill="#FFF"/><rect x="0" y="0" width="512" height="512" fill="rgba(0, 0, 0, 0)" /></svg>
+          <div *ngIf="role === '3' || role === '7'" [matMenuTriggerFor]="menu"
+            [ngClass]="iconMenuActive === 5 ? 'menu-no-active-color' : 'menu-active-color'"
+            class="menu-option-button margin-left-options">
+            <svg *ngIf="iconMenuActive !== 5" xmlns="http://www.w3.org/2000/svg" width="512" height="512"
+              preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512"
+              style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);">
+              <path
+                d="M396.8 352h22.4c6.4 0 12.8-6.4 12.8-12.8V108.8c0-6.4-6.4-12.8-12.8-12.8h-22.4c-6.4 0-12.8 6.4-12.8 12.8v230.4c0 6.4 6.4 12.8 12.8 12.8zm-192 0h22.4c6.4 0 12.8-6.4 12.8-12.8V140.8c0-6.4-6.4-12.8-12.8-12.8h-22.4c-6.4 0-12.8 6.4-12.8 12.8v198.4c0 6.4 6.4 12.8 12.8 12.8zm96 0h22.4c6.4 0 12.8-6.4 12.8-12.8V204.8c0-6.4-6.4-12.8-12.8-12.8h-22.4c-6.4 0-12.8 6.4-12.8 12.8v134.4c0 6.4 6.4 12.8 12.8 12.8zM496 400H48V80c0-8.84-7.16-16-16-16H16C7.16 64 0 71.16 0 80v336c0 17.67 14.33 32 32 32h464c8.84 0 16-7.16 16-16v-16c0-8.84-7.16-16-16-16zm-387.2-48h22.4c6.4 0 12.8-6.4 12.8-12.8v-70.4c0-6.4-6.4-12.8-12.8-12.8h-22.4c-6.4 0-12.8 6.4-12.8 12.8v70.4c0 6.4 6.4 12.8 12.8 12.8z"
+                fill="#04151F" />
+              <rect x="0" y="0" width="512" height="512" fill="rgba(0, 0, 0, 0)" />
+            </svg>
+            <svg *ngIf="iconMenuActive === 5" xmlns="http://www.w3.org/2000/svg" width="512" height="512"
+              preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512"
+              style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);">
+              <path
+                d="M396.8 352h22.4c6.4 0 12.8-6.4 12.8-12.8V108.8c0-6.4-6.4-12.8-12.8-12.8h-22.4c-6.4 0-12.8 6.4-12.8 12.8v230.4c0 6.4 6.4 12.8 12.8 12.8zm-192 0h22.4c6.4 0 12.8-6.4 12.8-12.8V140.8c0-6.4-6.4-12.8-12.8-12.8h-22.4c-6.4 0-12.8 6.4-12.8 12.8v198.4c0 6.4 6.4 12.8 12.8 12.8zm96 0h22.4c6.4 0 12.8-6.4 12.8-12.8V204.8c0-6.4-6.4-12.8-12.8-12.8h-22.4c-6.4 0-12.8 6.4-12.8 12.8v134.4c0 6.4 6.4 12.8 12.8 12.8zM496 400H48V80c0-8.84-7.16-16-16-16H16C7.16 64 0 71.16 0 80v336c0 17.67 14.33 32 32 32h464c8.84 0 16-7.16 16-16v-16c0-8.84-7.16-16-16-16zm-387.2-48h22.4c6.4 0 12.8-6.4 12.8-12.8v-70.4c0-6.4-6.4-12.8-12.8-12.8h-22.4c-6.4 0-12.8 6.4-12.8 12.8v70.4c0 6.4 6.4 12.8 12.8 12.8z"
+                fill="#FFF" />
+              <rect x="0" y="0" width="512" height="512" fill="rgba(0, 0, 0, 0)" />
+            </svg>
             <a class="nav-link title-nav-header" mat-button>Gráficas</a>
           </div>
 
@@ -79,24 +248,24 @@
       </mat-toolbar-row>
     </mat-toolbar>
   </div>
-<div [ngClass]="isLogin? 'mat-container-custom-home': 'mat-container-custom-login'">
-  <mat-sidenav-container fxFlexFill>
-    <mat-sidenav #sidenav>
-      <mat-nav-list>
-        <a *ngIf="role === '3'" mat-list-item [routerLink]="['pedidos']">Pedidos</a>
-        <a *ngIf="role === '3'" mat-list-item [routerLink]="['ordenes']">Órdenes de Fabricación</a>
-        <a *ngIf="role === '1'" mat-list-item [routerLink]="['userList']">Usuarios</a>
-        <a *ngIf="role === '3'" mat-list-item [matMenuTriggerFor]="menu">Gráficas</a>
-      </mat-nav-list>
-      <mat-menu #menu="matMenu">
-        <button mat-menu-item (click)="goToPage(['productividad'])">Productividad</button>
-        <button mat-menu-item (click)="goToPage(['workLoad'])">Carga de trabajo</button>
-      </mat-menu>
-    </mat-sidenav>
-    <mat-sidenav-content fxFlexFill>
-      <mat-progress-bar *ngIf="isLoading | async" mode="indeterminate"></mat-progress-bar>
-      <router-outlet></router-outlet>
-    </mat-sidenav-content>
-  </mat-sidenav-container>
-</div>
+  <div [ngClass]="isLogin? 'mat-container-custom-home': 'mat-container-custom-login'">
+    <mat-sidenav-container fxFlexFill>
+      <mat-sidenav #sidenav>
+        <mat-nav-list>
+          <a *ngIf="role === '3'" mat-list-item [routerLink]="['pedidos']">Pedidos</a>
+          <a *ngIf="role === '3'" mat-list-item [routerLink]="['ordenes']">Órdenes de Fabricación</a>
+          <a *ngIf="role === '1'" mat-list-item [routerLink]="['userList']">Usuarios</a>
+          <a *ngIf="role === '3'" mat-list-item [matMenuTriggerFor]="menu">Gráficas</a>
+        </mat-nav-list>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="goToPage(['productividad'])">Productividad</button>
+          <button mat-menu-item (click)="goToPage(['workLoad'])">Carga de trabajo</button>
+        </mat-menu>
+      </mat-sidenav>
+      <mat-sidenav-content fxFlexFill>
+        <mat-progress-bar *ngIf="isLoading | async" mode="indeterminate"></mat-progress-bar>
+        <router-outlet></router-outlet>
+      </mat-sidenav-content>
+    </mat-sidenav-container>
+  </div>
 </div>

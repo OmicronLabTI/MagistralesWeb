@@ -39,7 +39,7 @@ namespace Omicron.Invoice.Services.Invoice
         /// </summary>
         /// <param name="id">id invoice.</param>
         /// <returns>A representing the result of the asynchronous operation.</returns>
-        Task<ResultDto> UpdateManualChange(string id);
+        Task<ResultDto> UpdateManualChange(UpdateManualChangeDto id);
 
         /// <summary>
         /// Method to carry out the order process.
@@ -54,5 +54,20 @@ namespace Omicron.Invoice.Services.Invoice
         /// <param name="remissions"> request invoice. </param>
         /// <returns> order data. </returns>
         Task<ResultDto> GetInvoicesByRemissionId(List<int> remissions);
+
+        /// <summary>
+        /// Retrieves automatic billing (AutoBilling) information based on the specified parameters.
+        /// This method serves the Automatic Billing module, returning data formatted
+        /// for grid display and including related invoice and SAP order counts.
+        /// </summary>
+        /// <param name="parameters">
+        /// A dictionary containing key-value pairs for filtering AutoBilling records,
+        /// such as status, pagination offsets, date range, or user identifiers.
+        /// </param>
+        /// <returns>
+        /// A task representing the asynchronous operation.
+        /// The task result contains a <see cref="ResultDto"/> object with automatic billing data.
+        /// </returns>
+        Task<ResultDto> GetAutoBillingAsync(Dictionary<string, string> parameters);
     }
 }

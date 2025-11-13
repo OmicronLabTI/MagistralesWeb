@@ -261,7 +261,7 @@ namespace Omicron.Invoice.Test.Services
         public async Task UpdateManualChangeWithError()
         {
             // arrange
-            var dic = "INV-001";
+            var dic = new UpdateManualChangeDto() { Id = "INV-001" };
 
             var taskQueue = new Mock<IBackgroundTaskQueue>();
             var serviceScopeFactoryMock = new Mock<IServiceScopeFactory>();
@@ -291,7 +291,7 @@ namespace Omicron.Invoice.Test.Services
         public async Task UpdateManualChange()
         {
             // arrange
-            var dic = "INV-003";
+            var dic = new UpdateManualChangeDto() { Id = "INV-003" };
 
             var taskQueue = new Mock<IBackgroundTaskQueue>();
             var serviceScopeFactoryMock = new Mock<IServiceScopeFactory>();

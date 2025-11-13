@@ -51,4 +51,4 @@ global using Omicron.Invoice.Services.CatalogsInvoice;
 global using System.IO;
 global using Omicron.Invoice.Model.Model.JoinsModels;
 global using Omicron.Invoice.Services.BackgroundTaskQueue.Impl;
- 
+global using Omicron.Invoice.Services.Utils; 

@@ -128,6 +128,92 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
                           }).ToListAsync();
         }
 
+        /// <summary>
+        /// Retrieves the base dataset for the AutoBilling grid, applying optional filters and pagination.
+        /// </summary>
+        /// <param name="status">
+        /// A list of invoice statuses used to filter results.
+        /// If null or empty, all invoices are returned.
+        /// </param>
+        /// <param name="offset">The number of records to skip, used for pagination.</param>
+        /// <param name="limit">The maximum number of records to retrieve.</param>
+        /// <returns>
+        /// A task representing the asynchronous operation.
+        /// The task result contains a <see cref="List{InvoiceModel}"/> collection representing
+        /// the filtered invoices ordered by creation date (descending).
+        /// </returns>
+        public async Task<List<InvoiceModel>> GetAutoBillingBaseAsync(List<string> status, int offset, int limit)
+        {
+            return await this.context.Invoice
+                .AsNoTracking()
+                .Where(x => status == null || status.Count == 0 || status.Contains(x.Status))
+                .OrderByDescending(x => x.InvoiceCreateDate)
+                .Skip(offset)
+                .Take(limit)
+                .ToListAsync()
+                .ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Retrieves all SAP order entities associated with a collection of invoices.
+        /// Results are grouped by invoice ID and returned as a dictionary.
+        /// </summary>
+        /// <param name="invoiceIds">A list of invoice identifiers for which to load SAP orders.</param>
+        /// <returns>
+        /// A task representing the asynchronous operation.  
+        /// The task result contains a dictionary where each key represents an invoice ID and the value
+        /// is a list of <see cref="InvoiceSapOrderModel"/> objects linked to that invoice.
+        /// </returns>
+        public async Task<Dictionary<string, List<InvoiceSapOrderModel>>> GetSapOrdersByInvoiceIdsAsync(List<string> invoiceIds)
+        {
+            return await this.context.InvoiceSapOrderModel
+                .AsNoTracking()
+                .Where(s => invoiceIds.Contains(s.IdInvoice))
+                .GroupBy(s => s.IdInvoice)
+                .ToDictionaryAsync(g => g.Key, g => g.ToList())
+                .ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Retrieves all remission entities associated with a collection of invoices.
+        /// Results are grouped by invoice ID and returned as a dictionary.
+        /// </summary>
+        /// <param name="invoiceIds">A list of invoice identifiers for which to load remission data.</param>
+        /// <returns>
+        /// A task representing the asynchronous operation.
+        /// The task result contains a dictionary where each key represents an invoice ID and the value
+        /// is a list of <see cref="InvoiceRemissionModel"/> objects linked to that invoice.
+        /// </returns>
+        public async Task<Dictionary<string, List<InvoiceRemissionModel>>> GetRemissionsByInvoiceIdsAsync(List<string> invoiceIds)
+        {
+            return await this.context.Remissions
+                .AsNoTracking()
+                .Where(r => invoiceIds.Contains(r.IdInvoice))
+                .GroupBy(r => r.IdInvoice)
+                .ToDictionaryAsync(g => g.Key, g => g.ToList())
+                .ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Retrieves the total number of invoices matching the provided AutoBilling status filters.
+        /// </summary>
+        /// <param name="status">
+        /// A list of invoice statuses used to filter results.
+        /// If null or empty, all invoices are counted.
+        /// </param>
+        /// <returns>
+        /// A task representing the asynchronous operation.
+        /// The task result contains the total number of matching invoices.
+        /// </returns>
+        public async Task<int> GetAutoBillingCountAsync(List<string> status)
+        {
+            return await this.context.Invoice
+                .AsNoTracking()
+                .Where(x => status == null || status.Count == 0 || status.Contains(x.Status))
+                .CountAsync()
+                .ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         public async Task<List<InvoiceErrorModel>> GetExistingErrorsByCodes(List<string> codes)
         {
