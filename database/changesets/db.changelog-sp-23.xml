@@ -106,7 +106,7 @@
     </sql>
 	</changeSet>
 	
-	<changeSet id="changelog-1.8" author="luis.reyes">
+	<changeSet id="changelog-1.8" author="luis.reyesl">
 		<comment>id autoincremental en invoiceerrors</comment>
 		<sql>
 			CREATE SEQUENCE IF NOT EXISTS invoiceerrors_id_seq;
