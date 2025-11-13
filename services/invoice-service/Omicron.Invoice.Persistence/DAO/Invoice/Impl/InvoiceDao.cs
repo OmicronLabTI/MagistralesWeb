@@ -217,5 +217,27 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
                 .CountAsync()
                 .ConfigureAwait(false);
         }
+
+        /// <inheritdoc/>
+        public async Task<List<InvoiceErrorModel>> GetExistingErrorsByCodes(List<string> codes)
+        {
+            return await this.context.InvoiceError
+                .Where(x => codes.Contains(x.Code))
+                .ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task InsertInvoiceErrors(List<InvoiceErrorModel> invoiceErrors)
+        {
+            this.context.InvoiceError.AddRange(invoiceErrors);
+            await this.context.SaveChangesAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task UpdateInvoiceErrors(List<InvoiceErrorModel> invoiceErrors)
+        {
+            this.context.InvoiceError.UpdateRange(invoiceErrors);
+            await this.context.SaveChangesAsync();
+        }
     }
 }

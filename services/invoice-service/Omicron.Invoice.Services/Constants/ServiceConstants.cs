@@ -14,6 +14,43 @@ namespace Omicron.Invoice.Services.Constants
     public static class ServiceConstants
     {
         /// <summary>
+        /// Constant for Offset.
+        /// </summary>
+        public const string ErrorDownload = "Formulas - Microservice Invoice - Error to download azure blob {0} Error: {1} --- {2}";
+
+        /// <summary>
+        /// the container file.
+        /// </summary>
+        public const string InvoiceErrorsCatalogsFileUrl = "InvoiceErrorsCatalogsFileUrl";
+
+        /// <summary>
+        /// Azure Account Name.
+        /// </summary>
+        public const string AzureAccountName = "AzureAccountName";
+
+        /// <summary>
+        /// Azure Account Key.
+        /// </summary>
+        public const string AzureAccountKey = "AzureAccountKey";
+
+        /// <summary>
+        /// InvoiceErrorsCatalogs.
+        /// </summary>
+        public const string InvoiceErrorsCatalogs = "InvoiceErrorsCatalogs";
+
+        /// <summary>
+        /// LogsInvoiceErrorsCatalogs.
+        /// </summary>
+        public const string LogsInvoiceErrorsCatalogs = "InvoiceCatalogs - Error processing error catalog";
+
+        /// <summary>
+        /// InvoiceErrorsCatalogs.
+        /// </summary>
+        public const string InternalServerError = "Error saving information to database";
+
+        
+
+        /// <summary>
         /// Gets Const for offset.
         /// </summary>
         public static string Offset => "offset";
