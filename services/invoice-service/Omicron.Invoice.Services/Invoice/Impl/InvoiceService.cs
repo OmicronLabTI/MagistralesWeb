@@ -260,8 +260,8 @@ namespace Omicron.Invoice.Services.Invoice.Impl
                     RetryNumber = x.RetryNumber,
                     ManualChangeApplied = x.ManualChangeApplied,
                     IsProcessing = x.IsProcessing,
-                    RemissionId = x.Remissions == null ? new List<int>() : x.Remissions.Select(x => x.RemissionId).Order().ToList(),
-                    SapOrderId = x.SapOrders == null ? new List<int>() : x.SapOrders.Select(x => x.SapOrderId).Order().ToList(),
+                    RemissionId = x.Remissions == null ? new List<int>() : x.Remissions.Select(x => x.RemissionId).Order().Distinct().ToList(),
+                    SapOrderId = x.SapOrders == null ? new List<int>() : x.SapOrders.Select(x => x.SapOrderId).Order().Distinct().ToList(),
                 };
                 listToReturn.Add(invoice);
             });

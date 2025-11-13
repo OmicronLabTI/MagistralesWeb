@@ -159,6 +159,14 @@ namespace Omicron.Invoice.Model.Entities
         public string Payload { get; set; }
 
         /// <summary>
+        /// Gets or sets the user who retried the process. This field is null if the process succeeded on the first attempt.
+        /// </summary>
+        /// <value>
+        /// Username string.
+        /// </value>
+        public string RetryUser { get; set; }
+
+        /// <summary>
         /// Gets or sets navigation property to invoice error.
         /// </summary>
         /// <value>
