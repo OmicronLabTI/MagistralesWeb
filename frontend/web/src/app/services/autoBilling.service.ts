@@ -1,93 +1,100 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { AutoBillingModel, SapOrderModel, RemissionModel } from '../model/http/autoBilling.model';
+import { AutoBillingModel } from '../model/http/autoBilling.model';
 import { ConsumeService } from './consume.service';
 import { Endpoints } from 'src/environments/endpoints';
 
-/**
- * @fileoverview
- * Service responsible for retrieving and transforming automatic billing (Auto-Billing)
- * history data from the backend according to user story OM-7160.
- *
- * Responsibilities:
- * - Retrieve automatic billing records from the last 5 days (including today).
- * - Filter by status "Creación exitosa".
- * - Sort records in ascending order by invoice ID.
- * - Map backend responses into strongly typed models
- *   (AutoBillingModel, SapOrderModel, RemissionModel).
- *
- * @see Endpoints.invoices.historyBilling
- * @since November 2025
- * @version 1.5
- * @author
- * Victor Alfonso Tánori Ruiz
- */
 @Injectable({
   providedIn: 'root'
 })
 export class AutoBillingService {
+
+  /**
+   * API endpoint for retrieving billing records.
+   */
   private readonly API_URL = Endpoints.invoices.historyBilling;
 
   constructor(private consume: ConsumeService) {}
 
   /**
-   * Retrieves Auto-Billing records with pagination and filtering.
-   * @param offset current page index * pageSize
-   * @param limit number of records per page
+   * Retrieves paginated AutoBilling data from the backend.
+   * ConsumeService already handles all HTTP errors globally.
+   *
+   * @param offset The start index.
+   * @param limit Number of items per page.
    */
-  getAllAutoBilling(offset = 0, limit = 20): Observable<AutoBillingModel[]> {
-    const today = new Date();
-    const fiveDaysAgo = new Date(today);
-    fiveDaysAgo.setDate(today.getDate() - 5);
-
-    const format = (d: Date): string => d.toISOString().split('T')[0];
+  getAllAutoBilling(
+    offset: number,
+    limit: number
+  ): Observable<{ items: AutoBillingModel[]; total: number }> {
 
     const params = {
       offset: String(offset),
       limit: String(limit),
       status: 'Creación exitosa',
-      startDate: format(fiveDaysAgo),
-      endDate: format(today),
-      sortBy: 'id',
-      sortOrder: 'asc'
+      startDate: '2025-10-01',
+      endDate: '2025-11-15'
     };
 
-    // ✅ No manejamos errores locales; ConsumeService los captura automáticamente.
-    return this.consume.httpGet<{ response: any[] }>(this.API_URL, params).pipe(
-      map(apiResponse => {
-        const data = apiResponse && apiResponse.response ? apiResponse.response : [];
-        data.sort((a, b) => (a.id || '').localeCompare(b.id || ''));
+    return this.consume.httpGet<any>(this.API_URL, params).pipe(
+      map((api) => {
 
-        return data.map((item): AutoBillingModel => {
-          const sapOrders: SapOrderModel[] = (item.sapOrders || []).map((s: any) => ({
-            id: Number(s.id),
-            idpedidosap: String(s.sapOrderId),
-            idinvoice: String(s.idInvoice)
-          }));
+        const rows = api && api.response ? api.response : [];
+        const total = api && api.comments && api.comments.total
+          ? api.comments.total
+          : 0;
 
-          const remissions: RemissionModel[] = (item.remissions || []).map((r: any) => ({
-            id: Number(r.id),
-            idremission: String(r.remissionId),
-            idinvoice: String(r.idInvoice)
-          }));
+        const mapped = rows.map((item) => {
+
+          const sapOrders = item.sapOrders
+            ? item.sapOrders.map((s) => {
+                return {
+                  id: Number(s.id),
+                  idpedidosap: String(s.sapOrderId),
+                  idinvoice: String(s.idInvoice)
+                };
+              })
+            : [];
+
+          const remissions = item.remissions
+            ? item.remissions.map((r) => {
+                return {
+                  id: Number(r.id),
+                  idremission: String(r.remissionId),
+                  idinvoice: String(r.idInvoice)
+                };
+              })
+            : [];
 
           return {
-            requestId: String(item.id || ''),
-            sapInvoiceId: String(item.idFacturaSap || 'N/A'),
-            sapCreationDate: String(item.invoiceCreateDate || 'N/A'),
-            invoiceType: String(item.typeInvoice || 'N/A'),
-            billingMode: String(item.billingType || 'N/A'),
-            originUser: String(item.almacenUser || 'Unknown'),
-            shopOrder: String(item.dxpOrderId || ''),
-            shopTransaction: String(item.shopTransaction || ''),
-            sapOrder: Number(item.sapOrdersCount || sapOrders.length),
-            shipments: Number(item.remissionsCount || remissions.length),
-            retries: Number(item.retryNumber != null ? item.retryNumber : 0),
+            requestId: item.id,
+            sapInvoiceId: item.idFacturaSap,
+            sapCreationDate: item.invoiceCreateDate,
+            invoiceType: item.typeInvoice,
+            billingMode: item.billingType,
+            originUser: item.almacenUser,
+
+            /**
+             * Returns only the last 6 characters of the shop order ID.
+             */
+            shopOrder: item.dxpOrderId
+              ? String(item.dxpOrderId).slice(-6)
+              : '',
+
+            shopTransaction: item.shopTransaction,
+            sapOrder: item.sapOrdersCount,
+            shipments: item.remissionsCount,
+            retries: item.retryNumber,
             sapOrders,
             remissions
           };
         });
+
+        return {
+          items: mapped,
+          total
+        };
       })
     );
   }
