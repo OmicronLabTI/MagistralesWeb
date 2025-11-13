@@ -5,6 +5,7 @@
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
+
 namespace Omicron.Invoice.Model.Entities
 {
     /// <summary>
