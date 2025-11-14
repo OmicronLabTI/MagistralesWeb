@@ -13,6 +13,11 @@ namespace Omicron.Invoice.Services.Constants
     public static class LogsConstants
     {
         /// <summary>
+        /// Gets the ProcessId.
+        /// </summary>
+        public static string ProcessId => "ProcessId";
+
+        /// <summary>
         /// Gets the QueuedHostedServiceRunning.
         /// </summary>
         public static string QueuedHostedServiceRunning => "Invoices - Queued Hosted Service is running.";
