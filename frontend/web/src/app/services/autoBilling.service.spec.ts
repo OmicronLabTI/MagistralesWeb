@@ -1,40 +1,63 @@
-import { DatePipe } from '@angular/common';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
-import { of } from 'rxjs';
-import { autoBillingMock } from 'src/mocks/autoBillingMock';
-import { AutoBillingService } from './autoBilling.service';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { AutoBillingModel, SapOrderModel, RemissionModel } from '../model/http/autoBilling.model';
 import { ConsumeService } from './consume.service';
+import { Endpoints } from 'src/environments/endpoints';
 
-describe('AutoBillingService', () => {
-  let service: AutoBillingService;
-  let consumeServiceMock: jasmine.SpyObj<ConsumeService>;
+@Injectable({
+  providedIn: 'root'
+})
+export class AutoBillingService {
 
-  beforeEach(() => {
-    consumeServiceMock = jasmine.createSpyObj<ConsumeService>('ConsumeService', ['httpGet']);
-    consumeServiceMock.httpGet.and.returnValue(of({ response: autoBillingMock }));
+  private readonly API_URL = Endpoints.invoices.historyBilling;
 
-    TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule],
-      providers: [
-        DatePipe,
-        { provide: ConsumeService, useValue: consumeServiceMock }
-      ]
-    });
+  constructor(private consume: ConsumeService) {}
 
-    service = TestBed.get(AutoBillingService);
-  });
+  getAllAutoBilling(
+    offset: number,
+    limit: number
+  ): Observable<{ items: AutoBillingModel[]; total: number }> {
 
-  /* ==========================================================
-     ✅ CORE CREATION & TYPE CHECKS
-  ========================================================== */
-  it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
+    const params = {
+      offset: String(offset),
+      limit: String(limit),
+      status: 'Creación exitosa',
+      startDate: '2025-10-01',
+      endDate: '2025-11-15'
+    };
 
-  it('should call getAllAutoBilling and trigger httpGet', () => {
-    service.getAllAutoBilling();
-    expect(consumeServiceMock.httpGet).toHaveBeenCalled();
-  });
-});
+    return this.consume.httpGet<{
+      response: AutoBillingModel[];
+      comments: { total: number };
+    }>(this.API_URL, params).pipe(
+      map((api) => ({
+        items: api.response.map(item => ({
+          requestId: item.requestId,
+          sapInvoiceId: item.sapInvoiceId,
+          sapCreationDate: item.sapCreationDate,
+          invoiceType: item.invoiceType,
+          billingMode: item.billingMode,
+          originUser: item.originUser,
+          shopOrder: item.shopOrder,
+          sapOrder: item.sapOrder,
+          shipments: item.shipments,
+          retries: item.retries,
+
+          sapOrders: item.sapOrders.map((s: SapOrderModel) => ({
+            id: s.id,
+            idpedidosap: s.idpedidosap,
+            idinvoice: s.idinvoice
+          })),
+
+          remissions: item.remissions.map((r: RemissionModel) => ({
+            id: r.id,
+            idremission: r.idremission,
+            idinvoice: r.idinvoice
+          }))
+        })),
+        total: api.comments.total
+      }))
+    );
+  }
+}
