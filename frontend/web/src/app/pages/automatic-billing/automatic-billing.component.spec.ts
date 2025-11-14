@@ -1,30 +1,49 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 import { AutomaticBillingComponent } from './automatic-billing.component';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { InvoicesService } from 'src/app/services/invoices.service';
 import { ErrorService } from 'src/app/services/error.service';
 import { ObservableService } from 'src/app/services/observable.service';
 import { DataService } from 'src/app/services/data.service';
-import { of, Subject } from 'rxjs';
-import { MatDialog, MatDialogRef, MatMenuModule, MatMenuTrigger, MatTableModule, MatTooltipModule, PageEvent } from '@angular/material';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpServiceTOCall } from 'src/app/constants/const';
-import { automaticBillingResponseMock, changesAppliedConfirmMock, changesAppliedFailedMock,
-  invoicesMock, manualRetryResponseMock } from 'src/mocks/invoicesMock';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 
+import { of } from 'rxjs';
+
+import {
+  MatDialog,
+  MatDialogRef,
+  MatMenuModule,
+  MatTableModule,
+  MatTooltipModule,
+  PageEvent
+} from '@angular/material';
+
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+import {
+  automaticBillingResponseMock,
+  changesAppliedConfirmMock,
+  changesAppliedFailedMock,
+  invoicesMock,
+  manualRetryResponseMock
+} from 'src/mocks/invoicesMock';
+
+/**
+ * Mock seguro para evitar errores tslint y tipado correcto.
+ */
 export class MatDialogMock {
-  open() {
+  open(): MatDialogRef<any> {
     return {
-      afterClosed: () => of({}),
-    };
+      afterClosed: () => of({})
+    } as MatDialogRef<any>;
   }
 }
 
 describe('AutomaticBillingComponent', () => {
   let component: AutomaticBillingComponent;
   let fixture: ComponentFixture<AutomaticBillingComponent>;
+
   let invoiceServiceSpy: jasmine.SpyObj<InvoicesService>;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
   let dataServiceSpy: jasmine.SpyObj<DataService>;
@@ -32,46 +51,50 @@ describe('AutomaticBillingComponent', () => {
   let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
 
   let matDialog: MatDialogMock;
+
   const invoicesDashboardMock = invoicesMock;
 
   beforeEach(async(() => {
     matDialog = new MatDialogMock();
 
-    invoiceServiceSpy = jasmine.createSpyObj<InvoicesService>('InvoicesService', [
+    invoiceServiceSpy = jasmine.createSpyObj('InvoicesService', [
       'getAutomaticBillingTableData',
       'adjustmentMade',
       'sendManualRetry'
     ]);
 
-    observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService', [
-      'setUrlActive',
+    observableServiceSpy = jasmine.createSpyObj('ObservableService', [
+      'setUrlActive'
     ]);
 
-    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
+    dataServiceSpy = jasmine.createSpyObj('DataService', [
       'calculateTernary',
       'validateValidString',
       'calculateOrValueList'
     ]);
 
-    errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
-      'httpError'
-    ]);
+    errorServiceSpy = jasmine.createSpyObj('ErrorService', ['httpError']);
 
-    localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
+    localStorageServiceSpy = jasmine.createSpyObj('LocalStorageService', [
       'getUserId'
     ]);
 
-    localStorageServiceSpy.getUserId.and.returnValue('00197298-0e73-4299-b004-092de34c5aaa');
+    localStorageServiceSpy.getUserId.and.returnValue(
+      '00197298-0e73-4299-b004-092de34c5aaa'
+    );
 
-    invoiceServiceSpy.getAutomaticBillingTableData.and.callFake(() => {
-      return of(automaticBillingResponseMock);
-    });
-    invoiceServiceSpy.adjustmentMade.and.callFake(() => {
-      return of(changesAppliedConfirmMock);
-    });
-    invoiceServiceSpy.sendManualRetry.and.callFake(() => {
-      return of(manualRetryResponseMock);
-    });
+    invoiceServiceSpy.getAutomaticBillingTableData.and.returnValue(
+      of(automaticBillingResponseMock)
+    );
+
+    invoiceServiceSpy.adjustmentMade.and.returnValue(
+      of(changesAppliedConfirmMock)
+    );
+
+    invoiceServiceSpy.sendManualRetry.and.returnValue(
+      of(manualRetryResponseMock)
+    );
+
     TestBed.configureTestingModule({
       declarations: [AutomaticBillingComponent],
       imports: [
@@ -86,10 +109,10 @@ describe('AutomaticBillingComponent', () => {
         { provide: ObservableService, useValue: observableServiceSpy },
         { provide: DataService, useValue: dataServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
-        { provide: MatDialog, useValue: matDialog },
-      ],
-    })
-      .compileComponents();
+        { provide: LocalStorageService, useValue: localStorageServiceSpy },
+        { provide: MatDialog, useValue: matDialog }
+      ]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -101,39 +124,48 @@ describe('AutomaticBillingComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
   it('should call changeDataEvent', () => {
-    expect(component.changeDataEvent({ pageSize: 10, pageIndex: 0 } as PageEvent)).toEqual({ pageSize: 10, pageIndex: 0 } as PageEvent);
-    expect(component.offset).toEqual(0);
-    expect(component.limit).toEqual(10);
+    const event = { pageSize: 10, pageIndex: 0 } as PageEvent;
+
+    expect(component.changeDataEvent(event)).toEqual(event);
+    expect(component.offset).toBe(0);
+    expect(component.limit).toBe(10);
   });
+
   it('should sendManualChangesConfirmation', () => {
     component.sendManualChangesConfirmation(invoicesDashboardMock[0]);
     expect(invoiceServiceSpy.adjustmentMade).toHaveBeenCalled();
   });
-  it('should sendManualChangesConfirmation', () => {
-    invoiceServiceSpy.adjustmentMade.and.callFake(() => {
-      return of(changesAppliedFailedMock);
-    });
+
+  it('should sendManualChangesConfirmation (failure)', () => {
+    invoiceServiceSpy.adjustmentMade.and.returnValue(
+      of(changesAppliedFailedMock)
+    );
     component.sendManualChangesConfirmation(invoicesDashboardMock[0]);
     expect(invoiceServiceSpy.adjustmentMade).toHaveBeenCalled();
   });
+
   it('should manualRetry', () => {
     component.manualRetry('c6d2b66c-4a9b-4e24-9a3f-4f6f7a1a730e');
     expect(invoiceServiceSpy.sendManualRetry).toHaveBeenCalled();
   });
-  it('should manualChangesApplied', () => {
+
+  it('should manualChangesApplied (confirmed)', () => {
     spyOn(matDialog, 'open').and.returnValue({
-          afterClosed: () => of(true),
-        } as MatDialogRef<typeof component>);
+      afterClosed: () => of(true)
+    } as MatDialogRef<any>);
+
     component.manualChangesApplied(invoicesDashboardMock[0]);
     expect(invoiceServiceSpy.adjustmentMade).toHaveBeenCalled();
   });
-  it('should manualChangesApplied', () => {
+
+  it('should manualChangesApplied (cancel)', () => {
     spyOn(matDialog, 'open').and.returnValue({
-          afterClosed: () => of(false),
-        } as MatDialogRef<typeof component>);
+      afterClosed: () => of(false)
+    } as MatDialogRef<any>);
+
     component.manualChangesApplied(invoicesDashboardMock[0]);
-    expect(invoicesDashboardMock[0].manualChangeApplied).toEqual(false);
+    expect(invoicesDashboardMock[0].manualChangeApplied).toBe(false);
   });
 });
- 
