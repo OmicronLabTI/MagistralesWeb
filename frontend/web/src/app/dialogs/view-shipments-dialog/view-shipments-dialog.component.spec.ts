@@ -1,7 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ViewShipmentsDialogComponent } from './view-shipments-dialog.component';
-import { MAT_DIALOG_DATA, MatButtonModule, MatDialogModule, MatDialogRef, MatIconModule, MatTableModule, MatTooltipModule } from '@angular/material';
+import { MAT_DIALOG_DATA, MatButtonModule, MatDialogModule, MatDialogRef, MatIconModule,
+  MatTableModule, MatTooltipModule } from '@angular/material';
 
 describe('ViewShipmentsDialogComponent', () => {
   let component: ViewShipmentsDialogComponent;
