@@ -2,10 +2,31 @@
   <div class="dialog-container">
     <!-- Header -->
     <div class="dialog-header">
-      <h2>Pedidos SAP relacionados</h2>
-      <button mat-icon-button class="close-btn" (click)="close()">
-        <mat-icon>close</mat-icon>
-      </button>
+      <div class="modal-title">
+        <h2>Pedidos SAP relacionados</h2>
+        <button mat-icon-button class="close-btn" (click)="close()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <div class="request-info" *ngIf="data.isFromAutomaticBilling">
+        <div [matTooltip]="data.invoiceId" class="info-containers-width"><b>ID Petición: </b>{{data.invoiceId.slice(-6)}}</div>
+        <ng-container *ngIf="data.status === automaticBillingStatus.sent">
+          <div class="info-containers-width status-container sent-color">
+            <b>Estatus: </b><img src="assets/icons/billing_history_sent.svg" alt="Sent">{{data.status}}
+          </div>
+        </ng-container>
+        <ng-container *ngIf="data.status === automaticBillingStatus.creating">
+          <div class="info-containers-width status-container creating-color">
+            <b>Estatus: </b><img src="assets/icons/billing_history_on_process.svg" alt="Creating">{{data.status}}
+          </div>
+        </ng-container>
+        <ng-container *ngIf="data.status === automaticBillingStatus.error">
+          <div class="info-containers-width status-container error-color">
+            <b>Estatus: </b><img src="assets/icons/billing_history_error.svg" alt="Error">{{data.status}}
+          </div>
+        </ng-container>
+        <div class="info-containers-width"><b>Última actualización: </b>{{data.updateDate}}</div>
+      </div>
     </div>
 
     <!-- Tabla -->

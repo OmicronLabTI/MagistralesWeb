@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { automaticBillingStatusConst } from 'src/app/constants/automatic_billing_constants';
 import { SapOrderModel } from 'src/app/model/http/autoBilling.model';
 
 @Component({
@@ -16,11 +17,18 @@ export class ViewSapOrdersDialogComponent implements OnInit {
 
   /** Concatenated list of SAP Order IDs (for tooltip/export) */
   sapOrderListText = '';
+  automaticBillingStatus = automaticBillingStatusConst;
 
   constructor(
     public dialogRef: MatDialogRef<ViewSapOrdersDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { invoiceId: string; orders: SapOrderModel[] }
-  ) {}
+    @Inject(MAT_DIALOG_DATA) public data: {
+      invoiceId: string;
+      orders: SapOrderModel[];
+      status: string;
+      updateDate: string;
+      isFromAutomaticBilling: boolean;
+    }
+  ) { }
 
   ngOnInit(): void {
     if (this.data && this.data.orders) {
