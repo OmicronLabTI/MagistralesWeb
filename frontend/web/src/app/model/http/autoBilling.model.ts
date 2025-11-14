@@ -52,9 +52,6 @@ export interface AutoBillingModel {
   /** Associated shop order identifier. */
   shopOrder: string;
 
-  /** Transaction ID corresponding to the shop or POS operation. */
-  shopTransaction: string;
-
   /** Number of SAP orders linked to this invoice. */
   sapOrder: number;
 
