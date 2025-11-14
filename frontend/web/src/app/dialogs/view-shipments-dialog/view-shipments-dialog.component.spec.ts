@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ViewShipmentsDialogComponent } from './view-shipments-dialog.component';
-import { MAT_DIALOG_DATA, MatButtonModule, MatDialogModule, MatDialogRef, MatIconModule, MatTableModule } from '@angular/material';
+import { MAT_DIALOG_DATA, MatButtonModule, MatDialogModule, MatDialogRef, MatIconModule, MatTableModule, MatTooltipModule } from '@angular/material';
 
 describe('ViewShipmentsDialogComponent', () => {
   let component: ViewShipmentsDialogComponent;
@@ -18,7 +18,7 @@ describe('ViewShipmentsDialogComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ViewShipmentsDialogComponent],
-      imports: [MatDialogModule, MatIconModule, MatTableModule, MatButtonModule],
+      imports: [MatDialogModule, MatIconModule, MatTableModule, MatButtonModule, MatTooltipModule],
       providers: [
         { provide: MatDialogRef, useValue: mockDialogRef },
         { provide: MAT_DIALOG_DATA, useValue: dataMock },
