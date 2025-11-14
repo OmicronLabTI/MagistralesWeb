@@ -30,6 +30,7 @@ namespace Omicron.Invoice.Services.InvoiceRetry.Impl
         public async Task<ResultDto> GetDataToRetryCreateInvoicesAsync()
         {
             var processId = Guid.NewGuid().ToString();
+            using var logScope = LogContext.PushProperty(LogsConstants.ProcessId, processId);
             var logBase = LogsConstants.GetDataToRetryCreateInvoicesAsyncLogBase(processId);
 
             bool locked = await this.redisService.SetKeyIfNotExists(
@@ -63,6 +64,7 @@ namespace Omicron.Invoice.Services.InvoiceRetry.Impl
         public async Task<ResultDto> RetryCreateInvoicesAsync(InvoiceRetryRequestDto invoiceRetry, string executionType)
         {
             var processId = Guid.NewGuid().ToString();
+            using var logScope = LogContext.PushProperty(LogsConstants.ProcessId, processId);
             var logBase = LogsConstants.RetryCreateInvoicesAsync(processId);
             var idsToProcess = await this.GetIdsToProcess(invoiceRetry);
             if (idsToProcess.Count <= 0)
