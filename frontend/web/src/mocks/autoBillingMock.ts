@@ -63,9 +63,6 @@ export const autoBillingMock: AutoBillingModel[] = [
     /** Shop order identifier, if applicable */
     shopOrder: 'PED-00123',
 
-    /** Transaction identifier (last 6 characters shown in table) */
-    shopTransaction: 'TRX001A1B2C',
-
     /** Number of related SAP orders */
     sapOrder: 2,
 
@@ -95,7 +92,6 @@ export const autoBillingMock: AutoBillingModel[] = [
     billingMode: 'Parcial',
     originUser: 'aespinosaAlm',
     shopOrder: 'PED-00987',
-    shopTransaction: 'TRX002Z9X8Y',
     sapOrder: 1,
     shipments: 3,
     retries: 1,
@@ -117,7 +113,6 @@ export const autoBillingMock: AutoBillingModel[] = [
     billingMode: 'Completa',
     originUser: 'mhernandezAlm',
     shopOrder: 'PED-04567',
-    shopTransaction: 'TRX003LMN45',
     sapOrder: 3,
     shipments: 2,
     retries: 0,
@@ -140,7 +135,6 @@ export const autoBillingMock: AutoBillingModel[] = [
     billingMode: 'Parcial',
     originUser: 'cperezAlm',
     shopOrder: '',
-    shopTransaction: '',
     sapOrder: 1,
     shipments: 1,
     retries: 2,

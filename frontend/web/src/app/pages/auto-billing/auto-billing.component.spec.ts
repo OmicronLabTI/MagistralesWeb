@@ -32,7 +32,6 @@ describe('AutoBillingComponent', () => {
     billingMode: 'Manual',
     originUser: 'TEST_USER',
     shopOrder: 'ORD001',
-    shopTransaction: 'TX123456',
     sapOrder: 2,
     shipments: 1,
     retries: 0,
@@ -49,8 +48,13 @@ describe('AutoBillingComponent', () => {
     observableServiceMock = jasmine.createSpyObj('ObservableService', ['setUrlActive']);
     autoBillingServiceMock = jasmine.createSpyObj('AutoBillingService', ['getAllAutoBilling']);
 
-    // Mock del servicio principal
-    autoBillingServiceMock.getAllAutoBilling.and.returnValue(of([result]));
+    // **AQUI EL FIX IMPORTANTE**
+    autoBillingServiceMock.getAllAutoBilling.and.returnValue(
+      of({
+        items: [result],
+        total: 1
+      })
+    );
 
     TestBed.configureTestingModule({
       declarations: [AutoBillingComponent],
@@ -89,29 +93,27 @@ describe('AutoBillingComponent', () => {
   it('should load data and populate table on init', fakeAsync(() => {
     component.ngOnInit();
     tick();
+
     expect(autoBillingServiceMock.getAllAutoBilling).toHaveBeenCalledWith(0, 20);
     expect(component.dataSource.data.length).toBe(1);
     expect(component.dataSource.data[0].sapInvoiceId).toBe('SAP001');
   }));
 
-  // ✅ Versión final estable del test de paginador
+  // Test de paginador
   it('should reload data when paginator emits page event', fakeAsync(() => {
-    spyOn(component, 'loadData').and.callThrough();
+    spyOn(component, 'loadPageData').and.callThrough();
 
-    // Simular un cambio de página manual (como lo haría Angular Material)
     const mockPageEvent = { pageIndex: 1, pageSize: 10, length: 100 };
     const offset = mockPageEvent.pageIndex * mockPageEvent.pageSize;
 
-    // Ejecutar manualmente el método con los valores calculados
-    component.loadData(offset, mockPageEvent.pageSize);
-    tick(100);
+    component.loadPageData(offset, mockPageEvent.pageSize);
+    tick();
 
-    // Validar que se haya llamado correctamente
-    expect(component.loadData).toHaveBeenCalledWith(10, 10);
+    expect(component.loadPageData).toHaveBeenCalledWith(10, 10);
   }));
 
   it('should call AutoBillingService with correct pagination parameters', fakeAsync(() => {
-    component.loadData(10, 50);
+    component.loadPageData(10, 50);
     tick();
     expect(autoBillingServiceMock.getAllAutoBilling).toHaveBeenCalledWith(10, 50);
   }));
