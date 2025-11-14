@@ -82,7 +82,6 @@ export class AutoBillingService {
               ? String(item.dxpOrderId).slice(-6)
               : '',
 
-            shopTransaction: item.shopTransaction,
             sapOrder: item.sapOrdersCount,
             shipments: item.remissionsCount,
             retries: item.retryNumber,

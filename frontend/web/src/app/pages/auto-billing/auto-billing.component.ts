@@ -84,9 +84,15 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
   loadPageData(offset: number, limit: number): void {
     this.autoBillingService.getAllAutoBilling(offset, limit).subscribe(res => {
       this.dataSource.data = res.items;
-      this.paginator.length = res.total; // must set actual total rows
+
+      // Fix para pruebas unitarias:
+      // paginator no existe hasta AfterViewInit
+      if (this.paginator) {
+        this.paginator.length = res.total;
+      }
     });
   }
+
 
   /**
    * Opens the SAP Orders dialog for the selected invoice row.
