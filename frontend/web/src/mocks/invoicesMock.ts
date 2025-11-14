@@ -66,7 +66,7 @@ export const automaticBillingResponseMock: IAutomaticBillingRes = {
             typeInvoice: 'Genérica',
             billingType: 'Parcial',
             errorMessage: 'Error XML',
-            updateDate: '01/10/2025 09:10:00',
+            updateDate: '',
             retryNumber: 1,
             manualChangeApplied: null,
             isProcessing: false,

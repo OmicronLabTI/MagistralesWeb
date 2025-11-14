@@ -29,9 +29,47 @@
   /* === Header === */
   .dialog-header {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
     margin-bottom: 12px;
+
+    .modal-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .request-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+
+      .info-containers-width {
+        max-width: 146px;
+      }
+
+      .status-container {
+        display: flex;
+        align-items: center;
+        column-gap: 5px;
+      }
+
+      .sent-color {
+        color: #1876AB;
+      }
+
+      .creating-color {
+        color: #AD8B12;
+      }
+
+      .error-color {
+        color: #E2062E;
+      }
+
+      .sent-color b, .creating-color b, .error-color b {
+        color: initial;
+      }
+    }
 
     h2 {
       margin: 0;
@@ -98,6 +136,7 @@
       opacity: 0;
       transform: scale(0.95);
     }
+
     to {
       opacity: 1;
       transform: scale(1);

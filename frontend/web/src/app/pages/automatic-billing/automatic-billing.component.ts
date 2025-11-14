@@ -265,13 +265,25 @@ export class AutomaticBillingComponent implements OnInit {
       this.dialog.open(ViewSapOrdersDialogComponent, {
         width: '800px',
         panelClass: 'custom-dialog-container',
-        data: { invoiceId: row.id, orders: dataToModal }
+        data: {
+          invoiceId: row.id,
+          orders: dataToModal,
+          status: row.status,
+          updateDate: row.updateDate,
+          isFromAutomaticBilling: true,
+        }
       });
     } else {
       this.dialog.open(ViewShipmentsDialogComponent, {
         width: '800px',
         panelClass: 'custom-dialog-container',
-        data: { invoiceId: row.id, remissions: dataToModal }
+        data: {
+          invoiceId: row.id,
+          remissions: dataToModal,
+          status: row.status,
+          updateDate: row.updateDate,
+          isFromAutomaticBilling: true,
+        }
       });
     }
   }

@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { automaticBillingStatusConst } from 'src/app/constants/automatic_billing_constants';
 import { RemissionModel } from 'src/app/model/http/autoBilling.model';
 
 @Component({
@@ -16,11 +17,18 @@ export class ViewShipmentsDialogComponent implements OnInit {
 
   /** Concatenated remission IDs for tooltip/export */
   remissionListText = '';
+  automaticBillingStatus = automaticBillingStatusConst;
 
   constructor(
     public dialogRef: MatDialogRef<ViewShipmentsDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { invoiceId: string; remissions: RemissionModel[] }
-  ) {}
+    @Inject(MAT_DIALOG_DATA) public data: {
+      invoiceId: string;
+      remissions: RemissionModel[];
+      status: string;
+      updateDate: string;
+      isFromAutomaticBilling: boolean;
+    }
+  ) { }
 
   ngOnInit(): void {
     if (this.data && this.data.remissions) {
