@@ -61,13 +61,13 @@ namespace Omicron.Invoice.Services.Invoice.Impl
         /// <inheritdoc/>
         public async Task<ResultDto> RegisterInvoice(CreateInvoiceDto request)
         {
-            var remissions = request.IdDeliveries.Select(x => new InvoiceRemissionModel()
+            var remissions = request.IdDeliveries.Distinct().Select(x => new InvoiceRemissionModel()
             {
                 RemissionId = x,
                 IdInvoice = request.ProcessId,
             }).ToList();
 
-            var sapOrders = request.IdSapOrders.Select(x => new InvoiceSapOrderModel()
+            var sapOrders = request.IdSapOrders.Distinct().Select(x => new InvoiceSapOrderModel()
             {
                 SapOrderId = x,
                 IdInvoice = request.ProcessId,
