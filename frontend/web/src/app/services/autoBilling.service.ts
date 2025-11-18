@@ -4,68 +4,56 @@ import { map } from 'rxjs/operators';
 import { AutoBillingModel } from '../model/http/autoBilling.model';
 import { ConsumeService } from './consume.service';
 import { Endpoints } from 'src/environments/endpoints';
+import {
+  AutoBillingApiResponse,
+  AutoBillingApiItem
+} from '../model/http/autoBilling-response.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AutoBillingService {
-
-  /**
-   * API endpoint for retrieving billing records.
-   */
   private readonly API_URL = Endpoints.invoices.historyBilling;
 
   constructor(private consume: ConsumeService) {}
 
-  /**
-   * Retrieves paginated AutoBilling data from the backend.
-   * ConsumeService already handles all HTTP errors globally.
-   *
-   * @param offset The start index.
-   * @param limit Number of items per page.
-   */
   getAllAutoBilling(
     offset: number,
     limit: number
   ): Observable<{ items: AutoBillingModel[]; total: number }> {
+    const today = new Date();
+    const past5 = new Date();
+    past5.setDate(today.getDate() - 5);
+
+    const formatDate = (d: Date): string => {
+      return d.toISOString().split('T')[0];
+    };
 
     const params = {
       offset: String(offset),
       limit: String(limit),
       status: 'Creación exitosa',
-      startDate: '2025-10-01',
-      endDate: '2025-11-15'
+      startDate: formatDate(past5),
+      endDate: formatDate(today)
     };
 
-    return this.consume.httpGet<any>(this.API_URL, params).pipe(
-      map((api) => {
-
+    return this.consume.httpGet<AutoBillingApiResponse>(this.API_URL, params).pipe(
+      map((api: AutoBillingApiResponse) => {
         const rows = api && api.response ? api.response : [];
-        const total = api && api.comments && api.comments.total
-          ? api.comments.total
-          : 0;
+        const total = api && api.comments ? api.comments.total : 0;
 
-        const mapped = rows.map((item) => {
+        const mapped: AutoBillingModel[] = rows.map((item: AutoBillingApiItem) => {
+          const sapOrders = item.sapOrders.map(s => ({
+            id: s.id,
+            idpedidosap: s.sapOrderId,
+            idinvoice: s.idInvoice
+          }));
 
-          const sapOrders = item.sapOrders
-            ? item.sapOrders.map((s) => {
-                return {
-                  id: Number(s.id),
-                  idpedidosap: String(s.sapOrderId),
-                  idinvoice: String(s.idInvoice)
-                };
-              })
-            : [];
-
-          const remissions = item.remissions
-            ? item.remissions.map((r) => {
-                return {
-                  id: Number(r.id),
-                  idremission: String(r.remissionId),
-                  idinvoice: String(r.idInvoice)
-                };
-              })
-            : [];
+          const remissions = item.remissions.map(r => ({
+            id: r.id,
+            idremission: r.remissionId,
+            idinvoice: r.idInvoice
+          }));
 
           return {
             requestId: item.id,
@@ -74,14 +62,7 @@ export class AutoBillingService {
             invoiceType: item.typeInvoice,
             billingMode: item.billingType,
             originUser: item.almacenUser,
-
-            /**
-             * Returns only the last 6 characters of the shop order ID.
-             */
-            shopOrder: item.dxpOrderId
-              ? String(item.dxpOrderId).slice(-6)
-              : '',
-
+            shopOrder: item.dxpOrderId,
             sapOrder: item.sapOrdersCount,
             shipments: item.remissionsCount,
             retries: item.retryNumber,
@@ -89,6 +70,8 @@ export class AutoBillingService {
             remissions
           };
         });
+
+        mapped.sort((a, b) => Number(a.sapInvoiceId) - Number(b.sapInvoiceId));
 
         return {
           items: mapped,

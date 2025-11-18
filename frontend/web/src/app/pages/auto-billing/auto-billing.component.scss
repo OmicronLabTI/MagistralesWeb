@@ -1,5 +1,5 @@
 /* ============================================================
-   AUTO-BILLING PAGE WRAPPER (Encapsulado)
+   AUTO-BILLING PAGE WRAPPER
    ============================================================ */
 .auto-billing-page {
   display: flex;
@@ -51,10 +51,20 @@
   }
 
   /* ============================================================
+     PEDIDO SHOP — Últimos 6 chars + mayúsculas
+     ============================================================ */
+  .shop-order-cell {
+    font-weight: 500;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  /* ============================================================
      ANGULAR MATERIAL OVERRIDES (ENCAPSULADOS)
      ============================================================ */
-  /* Nota: todos los ng-deep están anidados bajo .auto-billing-page */
-  ::ng-deep .auto-billing-page {
+
+  // ESTA ES LA FORMA CORRECTA DE USAR ng-deep
+  & ::ng-deep .auto-billing-page {
     .mat-mdc-paginator {
       background-color: #ffffff;
       border-top: 1px solid #e0e0e0;
@@ -82,7 +92,6 @@
       font-size: 13px;
     }
 
-    /* Ejemplo seguro de override específico */
     .billing-table .mat-mdc-form-field-infix {
       padding: 0 8px;
     }
