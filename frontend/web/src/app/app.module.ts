@@ -28,9 +28,6 @@ import { AddCommentsDialogComponent } from './dialogs/add-comments-dialog/add-co
 import { ViewSapOrdersDialogComponent } from './dialogs/view-sap-orders-dialog/view-sap-orders-dialog.component';
 import { ViewShipmentsDialogComponent } from './dialogs/view-shipments-dialog/view-shipments-dialog.component';
 
-// 🔹 Directivas
-import { LimitEntiresDirective } from './directives/limit-entires.directive';
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -43,10 +40,7 @@ import { LimitEntiresDirective } from './directives/limit-entires.directive';
     RequestSignatureDialogComponent,
     AddCommentsDialogComponent,
     ViewSapOrdersDialogComponent,
-    ViewShipmentsDialogComponent,
-
-    // 🔹 Custom directives
-    LimitEntiresDirective
+    ViewShipmentsDialogComponent
   ],
   imports: [
     BrowserModule,
