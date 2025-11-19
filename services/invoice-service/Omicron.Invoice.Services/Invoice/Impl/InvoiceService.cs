@@ -143,7 +143,8 @@ namespace Omicron.Invoice.Services.Invoice.Impl
                 var slResponse = await this.serviceLayerService.PostAsync(ServiceConstants.SLCreateInvoiceUrl, JsonConvert.SerializeObject(request));
                 if (!slResponse.Success)
                 {
-                    throw new CustomServiceException(slResponse.ExceptionMessage);
+                    var dataError = slResponse.UserError ?? slResponse.Code.ToString();
+                    throw new CustomServiceException(dataError);
                 }
 
                 var invoiceId = JsonConvert.DeserializeObject<int>(slResponse.Response.ToString());
