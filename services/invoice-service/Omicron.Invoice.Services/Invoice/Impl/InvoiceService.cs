@@ -141,6 +141,11 @@ namespace Omicron.Invoice.Services.Invoice.Impl
                 request.CfdiDriverVersion = cfdiVersion;
 
                 var slResponse = await this.serviceLayerService.PostAsync(ServiceConstants.SLCreateInvoiceUrl, JsonConvert.SerializeObject(request));
+                if (!slResponse.Success)
+                {
+                    throw new CustomServiceException(slResponse.ExceptionMessage);
+                }
+
                 var invoiceId = JsonConvert.DeserializeObject<int>(slResponse.Response.ToString());
                 await this.UpdateSuccessResult(invoice, invoiceId);
                 return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null, null);
