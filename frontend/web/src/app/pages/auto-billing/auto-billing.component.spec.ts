@@ -23,6 +23,7 @@ describe('AutoBillingComponent', () => {
   let matDialogMock: jasmine.SpyObj<MatDialog>;
   let observableServiceMock: jasmine.SpyObj<ObservableService>;
   let autoBillingServiceMock: jasmine.SpyObj<AutoBillingService>;
+  let observableServiceSpy: jasmine.SpyObj<ObservableService>;
 
   const result: AutoBillingModel = {
     requestId: 'REQ001',
@@ -47,6 +48,10 @@ describe('AutoBillingComponent', () => {
     matDialogMock = jasmine.createSpyObj('MatDialog', ['open']);
     observableServiceMock = jasmine.createSpyObj('ObservableService', ['setUrlActive']);
     autoBillingServiceMock = jasmine.createSpyObj('AutoBillingService', ['getAllAutoBilling']);
+
+    observableServiceSpy = jasmine.createSpyObj('ObservableService', [
+      'setUrlActive'
+    ]);
 
     // **AQUI EL FIX IMPORTANTE**
     autoBillingServiceMock.getAllAutoBilling.and.returnValue(
