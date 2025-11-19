@@ -114,6 +114,17 @@
             width: 4.31%;
         }
     }
+
+    .no-registers {
+        margin: 15px 0px;
+        width: 100%;
+        height: 8%;
+        display: flex;
+        justify-content: center;
+        color: #5f606c !important;
+        font-size: 1.5em;
+        font-family: omicron-medium, Arial, Helvetica, sans-serif !important;
+    }
 }
 
 .billing-table-container {
