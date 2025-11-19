@@ -12,6 +12,8 @@ import { AutoBillingService } from 'src/app/services/autoBilling.service';
 import { AutoBillingModel } from 'src/app/model/http/autoBilling.model';
 import { ViewSapOrdersDialogComponent } from 'src/app/dialogs/view-sap-orders-dialog/view-sap-orders-dialog.component';
 import { ViewShipmentsDialogComponent } from 'src/app/dialogs/view-shipments-dialog/view-shipments-dialog.component';
+import { ObservableService } from 'src/app/services/observable.service';
+import { HttpServiceTOCall } from 'src/app/constants/const';
 
 @Component({
   selector: 'app-auto-billing',
@@ -50,8 +52,11 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
 
   constructor(
     private autoBillingService: AutoBillingService,
-    private dialog: MatDialog
-  ) {}
+    private dialog: MatDialog,
+    private observableService: ObservableService,
+  ) {
+    this.observableService.setUrlActive(HttpServiceTOCall.HISTORY_BILLING);
+  }
 
   /**
    * Initializes component and loads the first page (offset 0, limit 20).
