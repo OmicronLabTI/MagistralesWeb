@@ -28,6 +28,13 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         public string CardCode { get; set; }
 
         /// <summary>
+        /// Gets or sets the Card Name.
+        /// </summary>
+        /// <value>CardName.</value>
+        [JsonProperty("CardName")]
+        public string CardName { get; set; }
+
+        /// <summary>
         /// Gets or sets the Reference Number.
         /// </summary>
         /// <value>Reference Number.</value>
