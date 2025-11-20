@@ -1,12 +1,16 @@
 /* ============================================================
    AUTO-BILLING PAGE WRAPPER
    ============================================================ */
+/* Main wrapper for the Auto-Billing page layout.
+   Defines a vertical structure where the table section grows
+   to occupy the available space. */
 .auto-billing-page {
   display: flex;
   flex-direction: column;
   height: 100%;
   background-color: #fff;
 
+  /* Container for the main table content. */
   .table-section {
     flex: 1;
     padding: 16px;
@@ -15,14 +19,20 @@
   /* ============================================================
      TABLE SCROLL CONTAINER
      ============================================================ */
+  /* Handles horizontal scrolling for wide billing tables.
+     Vertical scroll is disabled to keep header and layout aligned.
+     Includes custom scrollbar styling for better UX consistency. */
   .table-scroll-container {
     width: 100%;
     overflow-x: auto;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
+
+    /* Firefox scrollbar styling */
     scrollbar-width: thin;
     scrollbar-color: #b0b0b0 #f7f7f7;
 
+    /* WebKit scrollbar customization */
     &::-webkit-scrollbar {
       height: 8px;
     }
@@ -41,6 +51,8 @@
   /* ============================================================
      BILLING TABLE CORE
      ============================================================ */
+  /* Base table styling for the billing data grid.
+     Ensures consistent width, spacing, and collapse behavior. */
   .billing-table {
     width: 100%;
     min-width: 1000px;
@@ -51,8 +63,10 @@
   }
 
   /* ============================================================
-     PEDIDO SHOP — Últimos 6 chars + mayúsculas
+     SHOP ORDER CELL CUSTOMIZATION
      ============================================================ */
+  /* Highlights the Shop Order column by applying uppercase
+     formatting and a bolder visual weight. */
   .shop-order-cell {
     font-weight: 500;
     text-transform: uppercase;
@@ -60,21 +74,27 @@
   }
 
   /* ============================================================
-     ANGULAR MATERIAL OVERRIDES (ENCAPSULADOS)
+     ANGULAR MATERIAL OVERRIDES (ENCAPSULATED)
      ============================================================ */
-
-  // ESTA ES LA FORMA CORRECTA DE USAR ng-deep
+  /* This is the correct and safe way to use ng-deep.
+     All Material overrides are scoped strictly inside
+     .auto-billing-page to avoid style leakage into other
+     components due to ViewEncapsulation behavior. */
   & ::ng-deep .auto-billing-page {
+
+    /* Paginator restyling */
     .mat-mdc-paginator {
       background-color: #ffffff;
       border-top: 1px solid #e0e0e0;
     }
 
+    /* Header row appearance */
     .mat-mdc-header-row {
       background-color: #f8f9fa;
       font-weight: 600;
     }
 
+    /* Header cell appearance (for MDC tables) */
     .mat-mdc-header-cell {
       color: #333;
       font-size: 14px;
@@ -82,18 +102,38 @@
       letter-spacing: 0.3px;
     }
 
+    /* Standard cell styling */
     .mat-mdc-cell {
       font-size: 14px;
       color: #555;
       white-space: nowrap;
     }
 
+    /* Menu item styling */
     .mat-mdc-menu-item {
       font-size: 13px;
     }
 
+    /* Form field padding adjustment */
     .billing-table .mat-mdc-form-field-infix {
       padding: 0 8px;
     }
   }
+
+} /* End of .auto-billing-page */
+
+
+/* ============================================================
+   BLACK COLOR FOR LEGACY TABLE HEADERS
+   ============================================================ */
+/* These legacy Angular Material tables use .mat-header-cell.
+   This override applies the UX-required typography and color.
+   It is 100% safe because it is wrapped inside .auto-billing-page,
+   meaning it cannot leak into other components. */
+.auto-billing-page .mat-header-cell {
+  color: #000 !important;
+  font-family: 'Frutiger Next', sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  line-height: 20px !important;
 }
