@@ -48,8 +48,6 @@ namespace Omicron.Invoice.Services.Constants
         /// </summary>
         public const string InternalServerError = "Error saving information to database";
 
-        
-
         /// <summary>
         /// Gets Const for offset.
         /// </summary>
@@ -172,6 +170,14 @@ namespace Omicron.Invoice.Services.Constants
         /// String InvoiceToProcessAutomaticRetryKey.
         /// </value>
         public static string InvoiceToProcessAutomaticRetryKey => "invoices:toprocess:automaticretry";
+
+        /// <summary>
+        /// Gets TypeId.
+        /// </summary>
+        /// <value>
+        /// String TypeId.
+        /// </value>
+        public static string IdType => "idtype";
 
         /// <summary>
         /// Gets the Order Relation.
