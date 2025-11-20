@@ -81,6 +81,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
                 var order = new CreateOrderDto
                 {
                     CardCode = saleOrderModel.CardCode,
+                    CardName = saleOrderModel.BillingAddress,
                     DocumentDate = DateTime.Now,
                     DueDate = DateTime.Now.AddDays(10),
                     ShippingCode = saleOrderModel.ShippinAddress,
