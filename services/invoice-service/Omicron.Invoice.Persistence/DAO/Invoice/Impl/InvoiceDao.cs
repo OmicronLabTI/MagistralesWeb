@@ -33,10 +33,16 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
         }
 
         /// <inheritdoc/>
-        public async Task<List<InvoiceModel>> GetInvoicesNotCreatedByStatus(List<string> status, int offset, int limit)
+        public async Task<List<InvoiceModel>> GetInvoicesNotCreatedByStatus(
+            List<string> status,
+            List<string> typeInvoices,
+            List<string> billingTypes,
+            int offset,
+            int limit)
         {
-            return await this.context.Invoice
-                .Where(x => status.Contains(x.Status))
+            var filter = this.BuildInvoiceFilter(status, typeInvoices, billingTypes);
+
+            return await filter
                 .OrderBy(x => x.CreateDate)
                 .Skip(offset)
                 .Take(limit)
@@ -48,11 +54,13 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
         }
 
         /// <inheritdoc/>
-        public async Task<int> GetInvoicesCount(List<string> status)
+        public async Task<int> GetInvoicesCount(
+            List<string> status,
+            List<string> typeInvoices,
+            List<string> billingTypes)
         {
-            return await this.context.Invoice
-                .Where(x => status.Contains(x.Status))
-                .CountAsync();
+            var filter = this.BuildInvoiceFilter(status, typeInvoices, billingTypes);
+            return await filter.CountAsync();
         }
 
         /// <inheritdoc/>
@@ -164,7 +172,7 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
         /// </summary>
         /// <param name="invoiceIds">A list of invoice identifiers for which to load SAP orders.</param>
         /// <returns>
-        /// A task representing the asynchronous operation.  
+        /// A task representing the asynchronous operation.
         /// The task result contains a dictionary where each key represents an invoice ID and the value
         /// is a list of <see cref="InvoiceSapOrderModel"/> objects linked to that invoice.
         /// </returns>
@@ -238,6 +246,27 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
         {
             this.context.InvoiceError.UpdateRange(invoiceErrors);
             await this.context.SaveChangesAsync();
+        }
+
+        private IQueryable<InvoiceModel> BuildInvoiceFilter(
+            List<string> status,
+            List<string> typeInvoices,
+            List<string> billingTypes)
+        {
+            var filter = this.context.Invoice
+                .Where(x => status.Contains(x.Status));
+
+            if (typeInvoices != null && typeInvoices.Any())
+            {
+                filter = filter.Where(x => typeInvoices.Contains(x.TypeInvoice));
+            }
+
+            if (billingTypes != null && billingTypes.Any())
+            {
+                filter = filter.Where(x => billingTypes.Contains(x.BillingType));
+            }
+
+            return filter;
         }
     }
 }

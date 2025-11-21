@@ -420,8 +420,11 @@ namespace Omicron.Invoice.Services.Invoice.Impl
                 var limit = int.Parse(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Limit, ServiceConstants.Limit));
                 var status = ServiceUtils.SplitStringList(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Status, ServiceConstants.InvoiceCreationErrorStatus));
 
-                listInvoices = await this.invoiceDao.GetInvoicesNotCreatedByStatus(status, offset, limit);
-                total = await this.invoiceDao.GetInvoicesCount(status);
+                var typeInvoices = ServiceUtils.SplitStringList(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.TypeInvoice, string.Empty));
+                var billingTypes = ServiceUtils.SplitStringList(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.BillingType, string.Empty));
+
+                listInvoices = await this.invoiceDao.GetInvoicesNotCreatedByStatus(status, typeInvoices, billingTypes, offset, limit);
+                total = await this.invoiceDao.GetInvoicesCount(status, typeInvoices, billingTypes);
 
                 return (listInvoices, total);
             }
