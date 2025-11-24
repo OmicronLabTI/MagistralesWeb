@@ -32,10 +32,12 @@ namespace Omicron.SapFile.Services.Utils
         /// </summary>
         /// <param name="account">Object to mapper.</param>
         /// <param name="key">Object to modelDao.</param>
-        public AzureServices(string account, string key)
+        /// <param name="loggerProxy">Logger Proxy.</param>
+        public AzureServices(string account, string key, ILoggerProxy loggerProxy)
         {
             this.azureAccount = account;
             this.azureKey = key;
+            this._loggerProxy = loggerProxy;
         }
 
         /// <summary>
