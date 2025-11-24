@@ -28,6 +28,8 @@ import {
   invoicesMock,
   manualRetryResponseMock
 } from 'src/mocks/invoicesMock';
+import { automaticBillingBillingTypeConst, automaticBillingInvoiceTypeConst,
+  automaticBillingStatusConst } from 'src/app/constants/automatic_billing_constants';
 
 /**
  * Mock seguro para evitar errores tslint y tipado correcto.
@@ -167,5 +169,36 @@ describe('AutomaticBillingComponent', () => {
 
     component.manualChangesApplied(invoicesDashboardMock[0]);
     expect(invoicesDashboardMock[0].manualChangeApplied).toBe(false);
+  });
+  it('should seeDetail for SAP orders', () => {
+    spyOn(matDialog, 'open');
+    component.seeDetail(invoicesDashboardMock[0], true);
+    expect(matDialog.open).toHaveBeenCalled();
+  });
+  it('should seeDetail for remissions', () => {
+    spyOn(matDialog, 'open');
+    component.seeDetail(invoicesDashboardMock[0], false);
+    expect(matDialog.open).toHaveBeenCalled();
+  });
+  it('should onSelectionChangeStatus', () => {
+    component.statusColumnSelectedOptions = [
+      automaticBillingStatusConst.error
+    ];
+    component.onSelectionChangeStatus();
+    expect(component.lastOptionStatus).toEqual(automaticBillingStatusConst.error);
+  });
+  it('should onSelectionChangeInvoiceType', () => {
+    component.invoiceTypeColumnSelectedOptions = [
+      automaticBillingInvoiceTypeConst.generic
+    ];
+    component.onSelectionChangeInvoiceType();
+    expect(component.lastOptionInvoiceType).toEqual(automaticBillingInvoiceTypeConst.generic);
+  });
+  it('should onSelectionChangeBillingType', () => {
+    component.billingTypeColumSelectedOptions = [
+      automaticBillingBillingTypeConst.parcial
+    ];
+    component.onSelectionChangeBillingType();
+    expect(component.lastOptionBillingType).toEqual(automaticBillingBillingTypeConst.parcial);
   });
 });

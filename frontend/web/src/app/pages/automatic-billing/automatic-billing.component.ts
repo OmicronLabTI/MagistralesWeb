@@ -32,7 +32,9 @@ import {
 } from '@angular/material';
 import {
   automaticBillingTableColumns,
-  automaticBillingStatusConst
+  automaticBillingStatusConst,
+  automaticBillingInvoiceTypeConst,
+  automaticBillingBillingTypeConst
 } from 'src/app/constants/automatic_billing_constants';
 import {
   CONST_NUMBER,
@@ -85,24 +87,51 @@ export class AutomaticBillingComponent implements OnInit {
   limit = CONST_NUMBER.ten;
   queryString = CONST_STRING.empty;
   statusFilter = CONST_STRING.empty;
+  invoiceTypeFilter = CONST_STRING.empty;
+  billingTypeFilter = CONST_STRING.empty;
 
   /** Status constants and filters */
   automaticBillingStatus = automaticBillingStatusConst;
-  filters = [
+  automaticBillingInvoiceType = automaticBillingInvoiceTypeConst;
+  automaticBillingBillingType = automaticBillingBillingTypeConst;
+
+  filtersStatus = [
     automaticBillingStatusConst.error,
     automaticBillingStatusConst.sent,
     automaticBillingStatusConst.creating
+  ];
+
+  filterInvoiceType = [
+    automaticBillingInvoiceTypeConst.generic,
+    automaticBillingInvoiceTypeConst.non_generic
+  ];
+
+  filterBillingType = [
+    automaticBillingBillingTypeConst.parcial,
+    automaticBillingBillingTypeConst.completa
   ];
 
   /** Selected filter options for status */
-  selectedOptions: string[] = [
+  statusColumnSelectedOptions: string[] = [
     automaticBillingStatusConst.error,
     automaticBillingStatusConst.sent,
     automaticBillingStatusConst.creating
   ];
 
+  invoiceTypeColumnSelectedOptions: string[] = [
+    automaticBillingInvoiceTypeConst.generic,
+    automaticBillingInvoiceTypeConst.non_generic
+  ];
+
+  billingTypeColumSelectedOptions: string[] = [
+    automaticBillingBillingTypeConst.parcial,
+    automaticBillingBillingTypeConst.completa
+  ];
+
   /** Tracks the last selected status option */
-  lastOption: string | null = null;
+  lastOptionStatus: string | null = null;
+  lastOptionInvoiceType: string | null = null;
+  lastOptionBillingType: string | null = null;
 
   constructor(
     private invoicesService: InvoicesService,
@@ -127,7 +156,7 @@ export class AutomaticBillingComponent implements OnInit {
    * Fetches automatic billing data from the backend using current filters.
    */
   getData(): void {
-    this.setStatusFilters();
+    this.setFilters();
     this.getQueryString();
 
     this.invoicesService.getAutomaticBillingTableData(this.queryString).subscribe({
@@ -144,27 +173,36 @@ export class AutomaticBillingComponent implements OnInit {
    * Ensures "errorMessage" field displays "NO APLICA" when empty or invalid.
    */
   private shapeData(): void {
-    this.dataSource.data.forEach(row =>
+    this.dataSource.data.forEach(row => {
       row.errorMessage = this.dataService.calculateTernary(
         this.dataService.validateValidString(row.errorMessage),
         row.errorMessage,
         'NO APLICA'
-      )
-    );
+      );
+      row.typeInvoice = this.dataService.calculateTernary(
+        row.typeInvoice === automaticBillingInvoiceTypeConst.non_generic,
+        'Con datos fiscales',
+        row.typeInvoice
+      );
+    });
   }
 
   /**
    * Combines selected status filters into a comma-separated string.
    */
-  private setStatusFilters(): void {
-    this.statusFilter = this.selectedOptions.join(',');
+  private setFilters(): void {
+    this.statusFilter = this.statusColumnSelectedOptions.join(',');
+    this.invoiceTypeFilter = this.invoiceTypeColumnSelectedOptions.join(',');
+    this.billingTypeFilter = this.billingTypeColumSelectedOptions.join(',');
   }
 
   /**
    * Builds the query string for backend request.
    */
   private getQueryString(): void {
-    this.queryString = `status=${this.statusFilter}&offset=${this.offset}&limit=${this.limit}`;
+    this.queryString =
+      `status=${this.statusFilter}&invoiceType=${this.invoiceTypeFilter}&billingType=${this.billingTypeFilter}` +
+      `&offset=${this.offset}&limit=${this.limit}`;
   }
 
   /**
@@ -313,9 +351,21 @@ export class AutomaticBillingComponent implements OnInit {
   /**
    * Handles selection changes for the status filter menu.
    */
-  onSelectionChenge(): void {
-    this.lastOption = this.selectedOptions.length === 1
-      ? this.selectedOptions[0]
+  onSelectionChangeStatus(): void {
+    this.lastOptionStatus = this.statusColumnSelectedOptions.length === 1
+      ? this.statusColumnSelectedOptions[0]
+      : null;
+  }
+
+  onSelectionChangeInvoiceType(): void {
+    this.lastOptionInvoiceType = this.invoiceTypeColumnSelectedOptions.length === 1
+      ? this.invoiceTypeColumnSelectedOptions[0]
+      : null;
+  }
+
+  onSelectionChangeBillingType(): void {
+    this.lastOptionBillingType = this.billingTypeColumSelectedOptions.length === 1
+      ? this.billingTypeColumSelectedOptions[0]
       : null;
   }
 
@@ -323,6 +373,14 @@ export class AutomaticBillingComponent implements OnInit {
    * Checks if a given filter is the last remaining active one.
    */
   isLastStatusFilter(filter: string): boolean {
-    return this.lastOption === filter;
+    return this.lastOptionStatus === filter;
+  }
+
+  isLastInvoiceFilter(filter: string): boolean {
+    return this.lastOptionInvoiceType === filter;
+  }
+
+  isLastBillingTypeFilter(filter: string): boolean {
+    return this.lastOptionBillingType === filter;
   }
 }
