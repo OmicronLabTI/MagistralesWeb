@@ -59,6 +59,7 @@ namespace Omicron.SapFile.Services.Utils
             {
                 this._loggerProxy.Error(
                     $"Omicron.SapFile.Azure - Error to download the recipe to server in {fileRoute}. Error: {ex.Message} - {ex.InnerException} - {ex.StackTrace}");
+                throw;
             }
         }
     }
