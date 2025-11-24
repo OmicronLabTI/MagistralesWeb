@@ -181,12 +181,8 @@ namespace Omicron.Invoice.Services.Invoice.Impl
         /// <inheritdoc/>
         public async Task<ResultDto> GetInvoices(Dictionary<string, string> parameters)
         {
-            var offset = int.Parse(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Offset, ServiceConstants.OffsetDefault));
-            var limit = int.Parse(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Limit, ServiceConstants.Limit));
-            var status = ServiceUtils.SplitStringList(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Status, ServiceConstants.SuccessfulInvoiceCreationStatus));
+            var (listInvoices, total) = await this.GetInvoiceModels(parameters);
 
-            var listInvoices = await this.invoiceDao.GetInvoicesNotCreatedByStatus(status, offset, limit);
-            var total = await this.invoiceDao.GetInvoicesCount(status);
             var usersids = listInvoices.Select(x => x.AlmacenUser).Distinct().ToList();
             var listUsers = await this.GetUsersById(usersids);
 
@@ -243,93 +239,7 @@ namespace Omicron.Invoice.Services.Invoice.Impl
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, invoices, null, null);
         }
 
-        private static List<InvoiceErrorDto> CreateListInvoicesToReturn(List<InvoiceModel> listInvoices, List<UserModel> users)
-        {
-            var userDictionary = users.ToDictionary(u => u.Id, u => u);
-            var listToReturn = new List<InvoiceErrorDto>();
-
-            listInvoices.ForEach(x =>
-            {
-                userDictionary.TryGetValue(x.AlmacenUser, out var user);
-
-                var invoice = new InvoiceErrorDto
-                {
-                    Id = x.Id,
-                    CreateDate = x.CreateDate.ToString("dd/MM/yyyy HH:mm:ss"),
-                    AlmacenUser = user == null ? string.Empty : $"{user.FirstName} {user.LastName}",
-                    Status = x.Status,
-                    DxpOrderId = x.DxpOrderId,
-                    TypeInvoice = x.TypeInvoice,
-                    BillingType = x.BillingType,
-                    ErrorMessage = GetErrorMessageForInvoice(x.InvoiceError, x),
-                    UpdateDate = x.UpdateDate?.ToString("dd/MM/yyyy HH:mm:ss"),
-                    RetryNumber = x.RetryNumber,
-                    ManualChangeApplied = x.ManualChangeApplied,
-                    IsProcessing = x.IsProcessing,
-                    RemissionId = x.Remissions == null ? new List<int>() : x.Remissions.Select(x => x.RemissionId).Order().Distinct().ToList(),
-                    SapOrderId = x.SapOrders == null ? new List<int>() : x.SapOrders.Select(x => x.SapOrderId).Order().Distinct().ToList(),
-                };
-                listToReturn.Add(invoice);
-            });
-
-            return listToReturn.OrderBy(i => ServiceConstants.StatusOrder[i.Status]).ToList();
-        }
-
-        private static string GetErrorMessageForInvoice(InvoiceErrorModel error, InvoiceModel invoice)
-        {
-            return error?.ErrorMessage
-                ?? error?.Error
-                ?? invoice.ErrorMessage
-                ?? null;
-        }
-
-        private async Task<List<UserModel>> GetUsersById(List<string> userIds)
-        {
-            var users = await this.usersService.GetUsersById(userIds, ServiceConstants.GetUsersById);
-            return JsonConvert.DeserializeObject<List<UserModel>>(users.Response.ToString());
-        }
-
-        private async Task<(InvoiceErrorModel, bool)> GetDataBaseInvoiceError(string exceptionMessage)
-        {
-            var errors = await this.invoiceDao.GetAllErrors();
-            var selectedError = errors.Where(x => this.ContainsExact(exceptionMessage, x.Code)).FirstOrDefault();
-            return (selectedError ?? new InvoiceErrorModel() { ErrorMessage = exceptionMessage }, selectedError != default);
-        }
-
-        private bool ContainsExact(string source, string search)
-        {
-            if (string.IsNullOrEmpty(source) || string.IsNullOrEmpty(search))
-            {
-                return false;
-            }
-
-            var pattern = $@"\b{System.Text.RegularExpressions.Regex.Escape(search)}\b";
-            return System.Text.RegularExpressions.Regex.IsMatch(
-                source,
-                pattern,
-                System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-        }
-
-        private async Task UpdateSuccessResult(InvoiceModel invoice, int invoiceId)
-        {
-            invoice.InvoiceCreateDate = DateTime.Now;
-            invoice.IsProcessing = false;
-            invoice.IdFacturaSap = invoiceId;
-            invoice.Status = ServiceConstants.SuccessfulInvoiceCreationStatus;
-            if (invoice.ErrorMessage != null)
-            {
-                invoice.UpdateDate = DateTime.Now;
-            }
-
-            await this.invoiceDao.UpdateInvoices(new List<InvoiceModel> { invoice });
-        }
-
-        private async Task<InvoicesDataDto> ValidateHasInvoice(List<int> remissions)
-        {
-            var result = await this.sapAdapter.PostSapAdapter(remissions, ServiceConstants.ValidateInvoiceUrl);
-            return JsonConvert.DeserializeObject<InvoicesDataDto>(result.Response.ToString());
-        }
-
+        /// <inheritdoc/>
         public async Task<ResultDto> GetAutoBillingAsync(Dictionary<string, string> parameters)
         {
             var offset = int.Parse(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Offset, ServiceConstants.OffsetDefault));
@@ -395,6 +305,7 @@ namespace Omicron.Invoice.Services.Invoice.Impl
                     LastUpdateDate = inv.UpdateDate?.ToString("dd/MM/yy HH:mm:ss"),
                 });
             }
+
             rows = rows.OrderBy(r => r.Id).ToList();
             return ServiceUtils.CreateResult(
                 success: true,
@@ -408,6 +319,117 @@ namespace Omicron.Invoice.Services.Invoice.Impl
                     startDate = startDate,
                     endDate = endDate,
                 });
+        }
+
+        private static List<InvoiceErrorDto> CreateListInvoicesToReturn(List<InvoiceModel> listInvoices, List<UserModel> users)
+        {
+            var userDictionary = users.ToDictionary(u => u.Id, u => u);
+            var listToReturn = new List<InvoiceErrorDto>();
+
+            listInvoices.ForEach(x =>
+            {
+                userDictionary.TryGetValue(x.AlmacenUser, out var user);
+
+                var invoice = new InvoiceErrorDto
+                {
+                    Id = x.Id,
+                    CreateDate = x.CreateDate.ToString("dd/MM/yyyy HH:mm:ss"),
+                    AlmacenUser = user == null ? string.Empty : $"{user.FirstName} {user.LastName}",
+                    Status = x.Status,
+                    DxpOrderId = x.DxpOrderId,
+                    TypeInvoice = x.TypeInvoice,
+                    BillingType = x.BillingType,
+                    ErrorMessage = GetErrorMessageForInvoice(x.InvoiceError, x),
+                    UpdateDate = x.UpdateDate?.ToString("dd/MM/yyyy HH:mm:ss"),
+                    RetryNumber = x.RetryNumber,
+                    ManualChangeApplied = x.ManualChangeApplied,
+                    IsProcessing = x.IsProcessing,
+                    RemissionId = x.Remissions == null ? new List<int>() : x.Remissions.Select(x => x.RemissionId).Order().Distinct().ToList(),
+                    SapOrderId = x.SapOrders == null ? new List<int>() : x.SapOrders.Select(x => x.SapOrderId).Order().Distinct().ToList(),
+                };
+                listToReturn.Add(invoice);
+            });
+
+            return listToReturn.OrderBy(i => ServiceConstants.StatusOrder[i.Status]).ToList();
+        }
+
+        private static string GetErrorMessageForInvoice(InvoiceErrorModel error, InvoiceModel invoice)
+        {
+            return error?.ErrorMessage
+                ?? error?.Error
+                ?? invoice.ErrorMessage
+                ?? null;
+        }
+
+        private static bool ContainsExact(string source, string search)
+        {
+            if (string.IsNullOrEmpty(source) || string.IsNullOrEmpty(search))
+            {
+                return false;
+            }
+
+            var pattern = $@"\b{System.Text.RegularExpressions.Regex.Escape(search)}\b";
+            return System.Text.RegularExpressions.Regex.IsMatch(
+                source,
+                pattern,
+                System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        }
+
+        private async Task<List<UserModel>> GetUsersById(List<string> userIds)
+        {
+            var users = await this.usersService.GetUsersById(userIds, ServiceConstants.GetUsersById);
+            return JsonConvert.DeserializeObject<List<UserModel>>(users.Response.ToString());
+        }
+
+        private async Task<(InvoiceErrorModel, bool)> GetDataBaseInvoiceError(string exceptionMessage)
+        {
+            var errors = await this.invoiceDao.GetAllErrors();
+            var selectedError = errors.Where(x => ContainsExact(exceptionMessage, x.Code)).FirstOrDefault();
+            return (selectedError ?? new InvoiceErrorModel() { ErrorMessage = exceptionMessage }, selectedError != default);
+        }
+
+        private async Task UpdateSuccessResult(InvoiceModel invoice, int invoiceId)
+        {
+            invoice.InvoiceCreateDate = DateTime.Now;
+            invoice.IsProcessing = false;
+            invoice.IdFacturaSap = invoiceId;
+            invoice.Status = ServiceConstants.SuccessfulInvoiceCreationStatus;
+            if (invoice.ErrorMessage != null)
+            {
+                invoice.UpdateDate = DateTime.Now;
+            }
+
+            await this.invoiceDao.UpdateInvoices(new List<InvoiceModel> { invoice });
+        }
+
+        private async Task<InvoicesDataDto> ValidateHasInvoice(List<int> remissions)
+        {
+            var result = await this.sapAdapter.PostSapAdapter(remissions, ServiceConstants.ValidateInvoiceUrl);
+            return JsonConvert.DeserializeObject<InvoicesDataDto>(result.Response.ToString());
+        }
+
+        private async Task<(List<InvoiceModel>, int)> GetInvoiceModels(Dictionary<string, string> parameters)
+        {
+            var listInvoices = new List<InvoiceModel>();
+            int total = 0;
+            var typeId = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.IdType, null);
+
+            if (typeId == null)
+            {
+                var offset = int.Parse(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Offset, ServiceConstants.OffsetDefault));
+                var limit = int.Parse(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Limit, ServiceConstants.Limit));
+                var status = ServiceUtils.SplitStringList(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Status, ServiceConstants.InvoiceCreationErrorStatus));
+
+                var typeInvoices = ServiceUtils.SplitStringList(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.TypeInvoice, string.Empty));
+                var billingTypes = ServiceUtils.SplitStringList(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.BillingType, string.Empty));
+
+                listInvoices = await this.invoiceDao.GetInvoicesNotCreatedByStatus(status, typeInvoices, billingTypes, offset, limit);
+                total = await this.invoiceDao.GetInvoicesCount(status, typeInvoices, billingTypes);
+
+                return (listInvoices, total);
+            }
+
+            return (listInvoices, total);
         }
     }
 }
