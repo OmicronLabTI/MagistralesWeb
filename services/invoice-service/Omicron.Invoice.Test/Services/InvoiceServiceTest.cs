@@ -254,6 +254,157 @@ namespace Omicron.Invoice.Test.Services
         }
 
         /// <summary>
+        /// Filtro por Tipo de Factura - Genérica.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Test]
+        public async Task GetInvoices_WithTypeInvoiceFilter()
+        {
+            // Arrange
+            var dic = new Dictionary<string, string>
+            {
+                { ServiceConstants.Offset, "0" },
+                { ServiceConstants.Limit, "10" },
+                { ServiceConstants.Status, "Error al crear,Creando factura" },
+                { ServiceConstants.TypeInvoice, "Genérica" },
+                { ServiceConstants.BillingType, "Parcial,Completa" },
+            };
+
+            var taskQueue = new Mock<IBackgroundTaskQueue>();
+            var serviceScopeFactoryMock = new Mock<IServiceScopeFactory>();
+            var sapAdapterServiceMock = new Mock<ISapAdapter>();
+            var servicelayerServiceMock = new Mock<ISapServiceLayerAdapterService>();
+            var logger = new Mock<Serilog.ILogger>();
+            var catalogServiceMock = new Mock<ICatalogsService>();
+            var redisServiceMock = new Mock<IRedisService>();
+            var mockUserService = new Mock<IUsersService>();
+
+            mockUserService
+                .Setup(m => m.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUsersResponse()));
+
+            var localService = new InvoiceService(
+                this.invoiceDao,
+                taskQueue.Object,
+                serviceScopeFactoryMock.Object,
+                logger.Object,
+                sapAdapterServiceMock.Object,
+                servicelayerServiceMock.Object,
+                catalogServiceMock.Object,
+                redisServiceMock.Object,
+                mockUserService.Object);
+
+            // Act
+            var response = await localService.GetInvoices(dic);
+
+            // Assert
+            var result = response.Response as List<InvoiceErrorDto>;
+            Assert.That(response, Is.Not.Null);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.All.Matches<InvoiceErrorDto>(x => x.TypeInvoice == "Genérica"));
+        }
+
+        /// <summary>
+        /// Filtro por Forma de Facturación.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Test]
+        public async Task GetInvoices_WithBillingTypeFilter()
+        {
+            // Arrange
+            var dic = new Dictionary<string, string>
+            {
+                { ServiceConstants.Offset, "0" },
+                { ServiceConstants.Limit, "10" },
+                { ServiceConstants.Status, "Error al crear,Creando factura" },
+                { ServiceConstants.TypeInvoice, "Genérica,No genérica" },
+                { ServiceConstants.BillingType, "Parcial" },
+            };
+
+            var taskQueue = new Mock<IBackgroundTaskQueue>();
+            var serviceScopeFactoryMock = new Mock<IServiceScopeFactory>();
+            var sapAdapterServiceMock = new Mock<ISapAdapter>();
+            var servicelayerServiceMock = new Mock<ISapServiceLayerAdapterService>();
+            var logger = new Mock<Serilog.ILogger>();
+            var catalogServiceMock = new Mock<ICatalogsService>();
+            var redisServiceMock = new Mock<IRedisService>();
+            var mockUserService = new Mock<IUsersService>();
+
+            mockUserService
+                .Setup(m => m.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUsersResponse()));
+
+            var localService = new InvoiceService(
+                this.invoiceDao,
+                taskQueue.Object,
+                serviceScopeFactoryMock.Object,
+                logger.Object,
+                sapAdapterServiceMock.Object,
+                servicelayerServiceMock.Object,
+                catalogServiceMock.Object,
+                redisServiceMock.Object,
+                mockUserService.Object);
+
+            // Act
+            var response = await localService.GetInvoices(dic);
+
+            // Assert
+            var result = response.Response as List<InvoiceErrorDto>;
+            Assert.That(response, Is.Not.Null);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.All.Matches<InvoiceErrorDto>(x => x.BillingType == "Parcial"));
+        }
+
+        /// <summary>
+        /// Sin filtros nuevos - valores default.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Test]
+        public async Task GetInvoices_WithoutFilters()
+        {
+            // Arrange
+            var dic = new Dictionary<string, string>
+    {
+        { ServiceConstants.Offset, "0" },
+        { ServiceConstants.Limit, "10" },
+        { ServiceConstants.Status, "Error al crear,Creando factura" },
+    };
+
+            var taskQueue = new Mock<IBackgroundTaskQueue>();
+            var serviceScopeFactoryMock = new Mock<IServiceScopeFactory>();
+            var sapAdapterServiceMock = new Mock<ISapAdapter>();
+            var servicelayerServiceMock = new Mock<ISapServiceLayerAdapterService>();
+            var logger = new Mock<Serilog.ILogger>();
+            var catalogServiceMock = new Mock<ICatalogsService>();
+            var redisServiceMock = new Mock<IRedisService>();
+            var mockUserService = new Mock<IUsersService>();
+
+            mockUserService
+                .Setup(m => m.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUsersResponse()));
+
+            var localService = new InvoiceService(
+                this.invoiceDao,
+                taskQueue.Object,
+                serviceScopeFactoryMock.Object,
+                logger.Object,
+                sapAdapterServiceMock.Object,
+                servicelayerServiceMock.Object,
+                catalogServiceMock.Object,
+                redisServiceMock.Object,
+                mockUserService.Object);
+
+            // Act
+            var response = await localService.GetInvoices(dic);
+
+            // Assert
+            var result = response.Response as List<InvoiceErrorDto>;
+            Assert.That(response, Is.Not.Null);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.All.InstanceOf<InvoiceErrorDto>());
+        }
+
+        /// <summary>
         /// Method Validate GetAllAsync.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
