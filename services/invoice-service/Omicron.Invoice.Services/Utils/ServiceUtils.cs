@@ -147,5 +147,20 @@ namespace Omicron.Invoice.Services.Utils
                         .Select(s => s.Trim())
                         .ToList();
         }
+
+        /// <summary>
+        /// GetDateRangeFromParameters.
+        /// </summary>
+        /// <param name="value">value.</param>
+        /// <returns>dates.</returns>
+        public static List<int> SplitIntList(string value)
+        {
+            return string.IsNullOrWhiteSpace(value)
+                ? new List<int>()
+                : value.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                       .Select(s => int.Parse(s.Trim()))
+                       .ToList();
+        }
+
     }
 }

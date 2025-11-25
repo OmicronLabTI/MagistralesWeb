@@ -410,16 +410,15 @@ namespace Omicron.Invoice.Services.Invoice.Impl
 
         private async Task<(List<InvoiceModel>, int)> GetInvoiceModels(Dictionary<string, string> parameters)
         {
-            var listInvoices = new List<InvoiceModel>();
+            List<InvoiceModel> listInvoices;
             int total = 0;
             var typeId = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.IdType, null);
+            var offset = int.Parse(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Offset, ServiceConstants.OffsetDefault));
+            var limit = int.Parse(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Limit, ServiceConstants.Limit));
 
             if (typeId == null)
             {
-                var offset = int.Parse(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Offset, ServiceConstants.OffsetDefault));
-                var limit = int.Parse(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Limit, ServiceConstants.Limit));
                 var status = ServiceUtils.SplitStringList(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Status, ServiceConstants.InvoiceCreationErrorStatus));
-
                 var typeInvoices = ServiceUtils.SplitStringList(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.TypeInvoice, string.Empty));
                 var billingTypes = ServiceUtils.SplitStringList(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.BillingType, string.Empty));
 
@@ -429,6 +428,21 @@ namespace Omicron.Invoice.Services.Invoice.Impl
                 return (listInvoices, total);
             }
 
+            var id = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Id, string.Empty);
+
+            listInvoices = typeId switch
+            {
+                ServiceConstants.IdPedidoSapType => await this.invoiceDao.GetInvoicesByPedidoSap(ServiceUtils.SplitIntList(id), offset, limit),
+
+                ServiceConstants.IdPedidoDxpType => await this.invoiceDao.GetInvoicesByPedidoDxp(id, offset, limit),
+
+                ServiceConstants.IdInvoiceType => await this.invoiceDao.GetInvoicesByInvoiceId(id, offset, limit),
+
+                _ => new List<InvoiceModel>()
+            };
+
+            listInvoices = listInvoices.Where(x => x.Status != ServiceConstants.SuccessfulInvoiceCreationStatus).ToList();
+            total = listInvoices.Count;
             return (listInvoices, total);
         }
     }

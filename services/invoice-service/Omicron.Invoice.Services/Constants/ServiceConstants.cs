@@ -49,6 +49,30 @@ namespace Omicron.Invoice.Services.Constants
         public const string InternalServerError = "Error saving information to database";
 
         /// <summary>
+        /// Gets IdPedidoSapType.
+        /// </summary>
+        /// <value>
+        /// String IdPedidoSapType.
+        /// </value>
+        public const string IdPedidoSapType = "pedidosap";
+
+        /// <summary>
+        /// Gets IdInvoiceType.
+        /// </summary>
+        /// <value>
+        /// String IdInvoiceType.
+        /// </value>
+        public const string IdInvoiceType = "invoice";
+
+        /// <summary>
+        /// Gets IdPedidoDxpType.
+        /// </summary>
+        /// <value>
+        /// String IdPedidoDxpType.
+        /// </value>
+        public const string IdPedidoDxpType = "pedidodxp";
+
+        /// <summary>
         /// Gets Const for offset.
         /// </summary>
         public static string Offset => "offset";
@@ -188,6 +212,14 @@ namespace Omicron.Invoice.Services.Constants
         /// String TypeId.
         /// </value>
         public static string IdType => "idtype";
+
+        /// <summary>
+        /// Gets TypeId.
+        /// </summary>
+        /// <value>
+        /// String TypeId.
+        /// </value>
+        public static string Id => "id";
 
         /// <summary>
         /// Gets the Order Relation.
