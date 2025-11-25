@@ -6,6 +6,8 @@
 // </copyright>
 // </summary>
 
+using System.Collections.Generic;
+
 namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
 {
     /// <summary>
@@ -238,6 +240,50 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
         {
             this.context.InvoiceError.UpdateRange(invoiceErrors);
             await this.context.SaveChangesAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<InvoiceModel>> GetInvoicesByPedidoSap(List<int> pedidosSap, int offset, int limit)
+        {
+            return await this.context.Invoice
+                .Where(i => i.SapOrders.Any(so => pedidosSap.Contains(so.SapOrderId)))
+                .OrderBy(x => x.CreateDate)
+                .Skip(offset)
+                .Take(limit)
+                .Include(i => i.Remissions)
+                .Include(i => i.SapOrders)
+                .Include(i => i.InvoiceError)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<InvoiceModel>> GetInvoicesByPedidoDxp(string pedidoDxp, int offset, int limit)
+        {
+            return await this.context.Invoice
+                .Where(x => x.DxpOrderId.Contains(pedidoDxp))
+                .OrderBy(x => x.CreateDate)
+                .Skip(offset)
+                .Take(limit)
+                .Include(x => x.Remissions)
+                .Include(x => x.SapOrders)
+                .Include(x => x.InvoiceError)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<InvoiceModel>> GetInvoicesByInvoiceId(string id, int offset, int limit)
+        {
+            return await this.context.Invoice
+                .Where(x => x.Id.Contains(id))
+                .OrderBy(x => x.CreateDate)
+                .Skip(offset)
+                .Take(limit)
+                .Include(x => x.Remissions)
+                .Include(x => x.SapOrders)
+                .Include(x => x.InvoiceError)
+                .ToListAsync();
         }
     }
 }

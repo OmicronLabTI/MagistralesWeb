@@ -229,7 +229,7 @@ namespace Omicron.Invoice.Test.Services
             var serviceScopeFactoryMock = new Mock<IServiceScopeFactory>();
             var sapAdapterServiceMock = new Mock<ISapAdapter>();
             var servicelayerServiceMock = new Mock<ISapServiceLayerAdapterService>();
-            var logger = new Mock<Serilog.ILogger>();
+            var logger = new Mock<ILogger>();
             var catalogServiceMock = new Mock<ICatalogsService>();
             var redisServiceMock = new Mock<IRedisService>();
             var mockUserService = new Mock<IUsersService>();
@@ -250,7 +250,141 @@ namespace Omicron.Invoice.Test.Services
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Count, Is.EqualTo(10));
             Assert.That(result, Is.All.InstanceOf<InvoiceErrorDto>());
-            Assert.That(response.Comments, Is.EqualTo(12));
+            Assert.That(response.Comments, Is.EqualTo(16));
+        }
+
+        /// <summary>
+        /// Method Validate GetAllAsync.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Test]
+        public async Task GetInvoicesSearchByInvoiceId()
+        {
+            // arrange
+            var dic = new Dictionary<string, string>
+            {
+                { ServiceConstants.IdType, "invoice" },
+                { ServiceConstants.Id, "8a8c6e" },
+                { ServiceConstants.Offset, "0" },
+                { ServiceConstants.Limit, "10" },
+            };
+
+            var taskQueue = new Mock<IBackgroundTaskQueue>();
+            var serviceScopeFactoryMock = new Mock<IServiceScopeFactory>();
+            var sapAdapterServiceMock = new Mock<ISapAdapter>();
+            var servicelayerServiceMock = new Mock<ISapServiceLayerAdapterService>();
+            var logger = new Mock<ILogger>();
+            var catalogServiceMock = new Mock<ICatalogsService>();
+            var redisServiceMock = new Mock<IRedisService>();
+            var mockUserService = new Mock<IUsersService>();
+
+            mockUserService
+                .Setup(m => m.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUsersResponse()));
+
+            var localService = new InvoiceService(this.invoiceDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object, mockUserService.Object);
+
+            // act
+            var response = await localService.GetInvoices(dic);
+
+            // assert
+            var result = response.Response as List<InvoiceErrorDto>;
+
+            Assert.That(response, Is.Not.Null);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(1));
+            Assert.That(response.Response, Is.All.InstanceOf<InvoiceErrorDto>());
+            Assert.That(response.Comments, Is.EqualTo(1));
+        }
+
+        /// <summary>
+        /// Method Validate GetAllAsync.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Test]
+        public async Task GetInvoicesSearchByPedidoDxp()
+        {
+            // arrange
+            var dic = new Dictionary<string, string>
+            {
+                { ServiceConstants.IdType, "pedidodxp" },
+                { ServiceConstants.Id, "3f4dc9" },
+                { ServiceConstants.Offset, "0" },
+                { ServiceConstants.Limit, "10" },
+            };
+
+            var taskQueue = new Mock<IBackgroundTaskQueue>();
+            var serviceScopeFactoryMock = new Mock<IServiceScopeFactory>();
+            var sapAdapterServiceMock = new Mock<ISapAdapter>();
+            var servicelayerServiceMock = new Mock<ISapServiceLayerAdapterService>();
+            var logger = new Mock<ILogger>();
+            var catalogServiceMock = new Mock<ICatalogsService>();
+            var redisServiceMock = new Mock<IRedisService>();
+            var mockUserService = new Mock<IUsersService>();
+
+            mockUserService
+                .Setup(m => m.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUsersResponse()));
+
+            var localService = new InvoiceService(this.invoiceDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object, mockUserService.Object);
+
+            // act
+            var response = await localService.GetInvoices(dic);
+
+            // assert
+            var result = response.Response as List<InvoiceErrorDto>;
+
+            Assert.That(response, Is.Not.Null);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(1));
+            Assert.That(response.Response, Is.All.InstanceOf<InvoiceErrorDto>());
+            Assert.That(response.Comments, Is.EqualTo(1));
+        }
+
+        /// <summary>
+        /// Method Validate GetAllAsync.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Test]
+        public async Task GetInvoicesSearchByPedidoSap()
+        {
+            // arrange
+            var dic = new Dictionary<string, string>
+            {
+                { ServiceConstants.IdType, "pedidosap" },
+                { ServiceConstants.Id, "177299, 177304" },
+                { ServiceConstants.Offset, "0" },
+                { ServiceConstants.Limit, "10" },
+            };
+
+            var taskQueue = new Mock<IBackgroundTaskQueue>();
+            var serviceScopeFactoryMock = new Mock<IServiceScopeFactory>();
+            var sapAdapterServiceMock = new Mock<ISapAdapter>();
+            var servicelayerServiceMock = new Mock<ISapServiceLayerAdapterService>();
+            var logger = new Mock<ILogger>();
+            var catalogServiceMock = new Mock<ICatalogsService>();
+            var redisServiceMock = new Mock<IRedisService>();
+            var mockUserService = new Mock<IUsersService>();
+
+            mockUserService
+                .Setup(m => m.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUsersResponse()));
+
+            var localService = new InvoiceService(this.invoiceDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object, mockUserService.Object);
+
+            // act
+            var response = await localService.GetInvoices(dic);
+
+            // assert
+            var result = response.Response as List<InvoiceErrorDto>;
+
+            Assert.That(response, Is.Not.Null);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(2));
+            Assert.That(response.Response, Is.All.InstanceOf<InvoiceErrorDto>());
+            Assert.That(response.Comments, Is.EqualTo(2));
+            Assert.That(result.Any(x => x.Id == "37d61da2-0c1d-4df0-b6a0-f740274e3893"), Is.True);
+            Assert.That(result.Any(x => x.Id == "1ba6a7b1-f92a-4d6b-90b0-e3b83ee7ca40"), Is.True);
         }
 
         /// <summary>

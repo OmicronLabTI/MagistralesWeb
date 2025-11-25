@@ -10,6 +10,7 @@ try
                     .MinimumLevel.Information()
                     .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                     .MinimumLevel.Override("System", LogEventLevel.Warning)
+                    .WriteTo.Console()
                     .WriteTo.Seq(builder.Configuration["Serilog:WriteTo:1:Args:serverUrl"])
                     .CreateLogger();
     builder.Host.UseSerilog(Log.Logger);
