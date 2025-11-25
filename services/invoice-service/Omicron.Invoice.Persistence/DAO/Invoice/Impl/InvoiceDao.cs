@@ -294,7 +294,6 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
                 .ToListAsync();
         }
 
-        /// <inheritdoc/>
         private IQueryable<InvoiceModel> BuildInvoiceFilter(
             List<string> status,
             List<string> typeInvoices,

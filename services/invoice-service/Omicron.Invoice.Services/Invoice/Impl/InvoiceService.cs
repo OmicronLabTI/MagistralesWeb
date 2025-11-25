@@ -421,7 +421,6 @@ namespace Omicron.Invoice.Services.Invoice.Impl
             if (typeId == null)
             {
                 var status = ServiceUtils.SplitStringList(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Status, ServiceConstants.InvoiceCreationErrorStatus));
-
                 var typeInvoices = ServiceUtils.SplitStringList(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.TypeInvoice, string.Empty));
                 var billingTypes = ServiceUtils.SplitStringList(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.BillingType, string.Empty));
 
