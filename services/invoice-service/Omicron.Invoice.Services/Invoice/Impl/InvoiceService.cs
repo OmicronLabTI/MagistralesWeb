@@ -6,8 +6,6 @@
 // </copyright>
 // </summary>
 
-using Microsoft.Extensions.Azure;
-
 namespace Omicron.Invoice.Services.Invoice.Impl
 {
     /// <summary>
