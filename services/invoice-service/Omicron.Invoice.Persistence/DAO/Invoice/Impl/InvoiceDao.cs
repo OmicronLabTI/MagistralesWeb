@@ -6,8 +6,6 @@
 // </copyright>
 // </summary>
 
-using System.Collections.Generic;
-
 namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
 {
     /// <summary>
