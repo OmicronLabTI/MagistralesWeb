@@ -46,17 +46,21 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice
         /// Method for GetInvoices.
         /// </summary>
         /// <param name="status">The status.</param>
+        /// <param name="typeInvoices">The typeInvoices.</param>
+        /// <param name="billingTypes">The billingTypes.</param>
         /// <param name="offset">The offset.</param>
         /// <param name="limit">The limit.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        Task<List<InvoiceModel>> GetInvoicesNotCreatedByStatus(List<string> status, int offset, int limit);
+        Task<List<InvoiceModel>> GetInvoicesNotCreatedByStatus(List<string> status, List<string> typeInvoices, List<string> billingTypes, int offset, int limit);
 
         /// <summary>
         /// Method for GetInvoicesCount.
         /// </summary>
         /// <param name="status">The status.</param>
+        /// <param name="typeInvoices">The typeInvoices.</param>
+        /// <param name="billingTypes">The billingTypes.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        Task<int> GetInvoicesCount(List<string> status);
+        Task<int> GetInvoicesCount(List<string> status, List<string> typeInvoices, List<string> billingTypes);
 
         /// <summary>
         /// Method for GetInvoicesCount.
