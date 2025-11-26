@@ -165,5 +165,32 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice
         /// <param name="invoiceErrors">List of errors to update.</param>
         /// <returns>Task.</returns>
         Task UpdateInvoiceErrors(List<InvoiceErrorModel> invoiceErrors);
+
+        /// <summary>
+        /// Update invoice errors from catalog.
+        /// </summary>
+        /// <param name="pedidosSap">List of pedidos sap.</param>
+        /// <param name="offset">The offset.</param>
+        /// <param name="limit">The limit.</param>
+        /// <returns>Task.</returns>
+        Task<List<InvoiceModel>> GetInvoicesByPedidoSap(List<int> pedidosSap, int offset, int limit);
+
+        /// <summary>
+        /// Update invoice errors from catalog.
+        /// </summary>
+        /// <param name="pedidoDxp">pedido dxp.</param>
+        /// <param name="offset">The offset.</param>
+        /// <param name="limit">The limit.</param>
+        /// <returns>Task.</returns>
+        Task<List<InvoiceModel>> GetInvoicesByPedidoDxp(string pedidoDxp, int offset, int limit);
+
+        /// <summary>
+        /// Update invoice errors from catalog.
+        /// </summary>
+        /// <param name="id">pedido dxp.</param>
+        /// <param name="offset">The offset.</param>
+        /// <param name="limit">The limit.</param>
+        /// <returns>Task.</returns>
+        Task<List<InvoiceModel>> GetInvoicesByInvoiceId(string id, int offset, int limit);
     }
 }

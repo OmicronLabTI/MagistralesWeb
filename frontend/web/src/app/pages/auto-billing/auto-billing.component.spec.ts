@@ -23,7 +23,6 @@ describe('AutoBillingComponent', () => {
   let matDialogMock: jasmine.SpyObj<MatDialog>;
   let observableServiceMock: jasmine.SpyObj<ObservableService>;
   let autoBillingServiceMock: jasmine.SpyObj<AutoBillingService>;
-  let observableServiceSpy: jasmine.SpyObj<ObservableService>;
 
   const result: AutoBillingModel = {
     requestId: 'REQ001',
@@ -49,11 +48,6 @@ describe('AutoBillingComponent', () => {
     observableServiceMock = jasmine.createSpyObj('ObservableService', ['setUrlActive']);
     autoBillingServiceMock = jasmine.createSpyObj('AutoBillingService', ['getAllAutoBilling']);
 
-    observableServiceSpy = jasmine.createSpyObj('ObservableService', [
-      'setUrlActive'
-    ]);
-
-    // **AQUI EL FIX IMPORTANTE**
     autoBillingServiceMock.getAllAutoBilling.and.returnValue(
       of({
         items: [result],
@@ -84,7 +78,7 @@ describe('AutoBillingComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AutoBillingComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    fixture.detectChanges(); // This already triggers ngOnInit
   });
 
   // =====================================
@@ -96,15 +90,14 @@ describe('AutoBillingComponent', () => {
   });
 
   it('should load data and populate table on init', fakeAsync(() => {
-    component.ngOnInit();
     tick();
 
-    expect(autoBillingServiceMock.getAllAutoBilling).toHaveBeenCalledWith(0, 20);
+    // Updated expectation: default pageSize = 10
+    expect(autoBillingServiceMock.getAllAutoBilling).toHaveBeenCalledWith(0, 10);
     expect(component.dataSource.data.length).toBe(1);
     expect(component.dataSource.data[0].sapInvoiceId).toBe('SAP001');
   }));
 
-  // Test de paginador
   it('should reload data when paginator emits page event', fakeAsync(() => {
     spyOn(component, 'loadPageData').and.callThrough();
 
