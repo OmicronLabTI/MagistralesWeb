@@ -1,0 +1,70 @@
+<div class="dialog-content">
+
+  <!-- Header -->
+  <div class="header">
+    <h2>Búsqueda y filtros avanzados</h2>
+    <button mat-icon-button (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <p class="subtitle">
+    Selecciona el tipo de búsqueda para después poder capturar el valor correspondiente.
+  </p>
+
+  <!-- Form -->
+  <form #f="ngForm" class="form">
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Tipo de búsqueda</mat-label>
+      <mat-select [(ngModel)]="selectedSearchType" name="type" (selectionChange)="validateForm()">
+        <mat-option *ngFor="let t of searchTypes" [value]="t.value">
+          {{ t.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Captura el valor a buscar</mat-label>
+      <input matInput name="value" [(ngModel)]="searchValue" (ngModelChange)="validateForm()">
+    </mat-form-field>
+
+    <div class="dates">
+      <mat-form-field appearance="outline" class="half">
+        <mat-label>Fecha de</mat-label>
+        <input matInput [matDatepicker]="pickerFrom" [(ngModel)]="dateFrom" name="dateFrom" (dateChange)="validateForm()">
+        <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFrom></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half">
+        <mat-label>Fecha hasta</mat-label>
+        <input matInput [matDatepicker]="pickerTo" [(ngModel)]="dateTo" name="dateTo" (dateChange)="validateForm()">
+        <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+        <mat-datepicker #pickerTo></mat-datepicker>
+      </mat-form-field>
+    </div>
+
+    <p class="subtitle-small">Selecciona un rango de fecha</p>
+
+<div class="footer">
+  <button
+    mat-stroked-button
+    color="primary"
+    type="button"
+    [disabled]="!canClear"
+    (click)="clear()">
+    Limpiar selección
+  </button>
+
+  <button
+    mat-flat-button
+    color="primary"
+    type="button"
+    [disabled]="!formValid"
+    (click)="apply()">
+    Aplicar y buscar
+  </button>
+</div>
+  </form>
+</div>

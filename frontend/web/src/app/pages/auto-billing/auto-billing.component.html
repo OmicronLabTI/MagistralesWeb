@@ -1,75 +1,80 @@
 <div class="auto-billing-page">
   <div class="header-fixed"></div>
 
+  <!-- ===================== FILTER ACTION BUTTONS ===================== -->
+<div class="filter-actions">
+
+  <button mat-raised-button color="primary" class="btn-search" (click)="openAdvancedFiltersDialog()">
+    <mat-icon>search</mat-icon>
+    Buscar
+  </button>
+
+  <button mat-stroked-button class="btn-clear" (click)="onLimpiar()">
+    <mat-icon>delete_sweep</mat-icon>
+    Limpiar filtros
+  </button>
+
+</div>
+  <!-- ================================================================= -->
+
   <div class="table-section">
 
     <div class="table-scroll-container">
       <table mat-table [dataSource]="dataSource" class="billing-table mat-elevation-z2">
 
+        <!-- === TU TABLA COMPLETA (SIN CAMBIOS) === -->
         <!-- SAP Invoice ID -->
         <ng-container matColumnDef="sapInvoiceId">
           <th mat-header-cell *matHeaderCellDef>ID Factura SAP</th>
           <td mat-cell *matCellDef="let e">{{ e.sapInvoiceId }}</td>
         </ng-container>
 
-        <!-- SAP Creation Date -->
         <ng-container matColumnDef="sapCreationDate">
           <th mat-header-cell *matHeaderCellDef>Fecha<br>creación SAP</th>
           <td mat-cell *matCellDef="let e">{{ e.sapCreationDate }}</td>
         </ng-container>
 
-        <!-- Invoice Type -->
         <ng-container matColumnDef="invoiceType">
           <th mat-header-cell *matHeaderCellDef>Tipo Factura</th>
           <td mat-cell *matCellDef="let e">{{ e.invoiceType }}</td>
         </ng-container>
 
-        <!-- Billing Mode -->
         <ng-container matColumnDef="billingMode">
           <th mat-header-cell *matHeaderCellDef>Forma<br>facturación</th>
           <td mat-cell *matCellDef="let e">{{ e.billingMode }}</td>
         </ng-container>
 
-        <!-- Origin User -->
         <ng-container matColumnDef="originUser">
           <th mat-header-cell *matHeaderCellDef>Usuario<br>Almacén</th>
           <td mat-cell *matCellDef="let e">{{ e.originUser }}</td>
         </ng-container>
 
-        <!-- Pedido Shop (últimos 6 chars + tooltip completo uppercase) -->
         <ng-container matColumnDef="shopOrder">
           <th mat-header-cell *matHeaderCellDef>Pedido Shop</th>
-
-          <td
-            mat-cell
-            *matCellDef="let e"
-            class="shop-order-cell"
-            [matTooltip]="e.shopOrder ? e.shopOrder.toUpperCase() : ''"
-            matTooltipPosition="above"
-          >
+          <td mat-cell
+              *matCellDef="let e"
+              class="shop-order-cell"
+              [matTooltip]="e.shopOrder ? e.shopOrder.toUpperCase() : ''"
+              matTooltipPosition="above">
             {{ e.shopOrder ? e.shopOrder.slice(-6).toUpperCase() : '' }}
           </td>
         </ng-container>
 
-        <!-- SAP Orders -->
         <ng-container matColumnDef="sapOrder">
           <th mat-header-cell *matHeaderCellDef>Pedido SAP</th>
           <td mat-cell *matCellDef="let e">{{ e.sapOrders?.length || 0 }}</td>
         </ng-container>
 
-        <!-- Remissions -->
         <ng-container matColumnDef="shipments">
           <th mat-header-cell *matHeaderCellDef>Remisiones</th>
           <td mat-cell *matCellDef="let e">{{ e.remissions?.length || 0 }}</td>
         </ng-container>
 
-        <!-- Retries -->
         <ng-container matColumnDef="retries">
           <th mat-header-cell *matHeaderCellDef>Reintentos</th>
           <td mat-cell *matCellDef="let e">{{ e.retries }}</td>
         </ng-container>
 
-        <!-- Actions -->
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef>Acciones</th>
           <td mat-cell *matCellDef="let e">
@@ -90,7 +95,6 @@
       </table>
     </div>
 
-    <!-- paginator -->
     <mat-paginator
       [pageSizeOptions]="[5, 10, 15, 20]"
       [pageSize]="10"

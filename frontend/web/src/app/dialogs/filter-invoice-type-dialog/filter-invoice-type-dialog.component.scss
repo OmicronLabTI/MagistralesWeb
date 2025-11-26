@@ -1,0 +1,90 @@
+.dialog-content {
+  width: 390px;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+  }
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 14px;
+  color:#000000;
+  margin-bottom: 16px;
+}
+
+.subtitle-small {
+  font-size: 13px;
+  margin-left: 8px;
+  margin-top: -20px;
+  color: #666666;
+}
+
+/* Form layout */
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.full {
+  width: 100%;
+}
+
+/* Fechas */
+.dates {
+  display: flex;
+  gap: 12px;
+  .half {
+    flex: 1;
+    min-width: 0; /* !! CLAVE para evitar overflow */
+  }
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+/* Color activo #0070B7 */
+:host ::ng-deep .mat-flat-button.mat-primary:not([disabled]) {
+  background-color: #0070B7 !important;
+  color: white !important;
+}
+
+:host ::ng-deep .mat-stroked-button.mat-primary:not([disabled]) {
+  border-color: #0070B7 !important;
+  color: #0070B7 !important;
+}
+
+/* Estado deshabilitado */
+:host ::ng-deep button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+:host ::ng-deep 
+.mat-form-field:not(.mat-form-field-appearance-legacy)
+ .mat-form-field-prefix .mat-icon-button .mat-datepicker-toggle-default-icon,
+:host ::ng-deep 
+.mat-form-field:not(.mat-form-field-appearance-legacy)
+ .mat-form-field-suffix .mat-icon-button .mat-datepicker-toggle-default-icon {
+  
+  margin: 0px !important;
+  margin-top: 12px !important;
+  margin-left: 16px !important;
+}
