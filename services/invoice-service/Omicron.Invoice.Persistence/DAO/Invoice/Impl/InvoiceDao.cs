@@ -141,27 +141,35 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
         }
 
         /// <summary>
-        /// Retrieves the base dataset for the AutoBilling grid, applying optional filters and pagination.
+        /// Obtiene las facturas de facturación automática con filtros aplicados.
+        /// Incluye las relaciones SapOrders y Remissions en la misma consulta.
         /// </summary>
-        /// <param name="status">
-        /// A list of invoice statuses used to filter results.
-        /// If null or empty, all invoices are returned.
-        /// </param>
-        /// <param name="offset">The number of records to skip, used for pagination.</param>
-        /// <param name="limit">The maximum number of records to retrieve.</param>
-        /// <returns>
-        /// A task representing the asynchronous operation.
-        /// The task result contains a <see cref="List{InvoiceModel}"/> collection representing
-        /// the filtered invoices ordered by creation date (descending).
-        /// </returns>
-        public async Task<List<InvoiceModel>> GetAutoBillingBaseAsync(List<string> status, int offset, int limit)
+        /// <param name="status">Lista de estados de factura para filtrar.</param>
+        /// <param name="typeInvoices">Lista de tipos de factura para filtrar (Genéricas, Con datos fiscales).</param>
+        /// <param name="billingTypes">Lista de formas de facturación para filtrar (Parcial, Completa).</param>
+        /// <param name="startDate">Fecha de inicio para filtrar por fecha de creación en SAP.</param>
+        /// <param name="endDate">Fecha de fin para filtrar por fecha de creación en SAP.</param>
+        /// <param name="offset">Número de registros a omitir (paginación).</param>
+        /// <param name="limit">Número máximo de registros a retornar.</param>
+        /// <returns>Lista de facturas con relaciones incluidas.</returns>
+        public async Task<List<InvoiceModel>> GetAutoBillingByFilters(
+            List<string> status,
+            List<string> typeInvoices,
+            List<string> billingTypes,
+            DateTime startDate,
+            DateTime endDate,
+            int offset,
+            int limit)
         {
-            return await this.context.Invoice
-                .AsNoTracking()
-                .Where(x => status == null || status.Count == 0 || status.Contains(x.Status))
+            var filter = this.BuildAutoBillingFilter(status, typeInvoices, billingTypes, startDate, endDate);
+
+            return await filter
                 .OrderByDescending(x => x.InvoiceCreateDate)
                 .Skip(offset)
                 .Take(limit)
+                .Include(x => x.Remissions)
+                .Include(x => x.SapOrders)
+                .AsNoTracking()
                 .ToListAsync()
                 .ConfigureAwait(false);
         }
@@ -207,21 +215,24 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
         }
 
         /// <summary>
-        /// Retrieves the total number of invoices matching the provided AutoBilling status filters.
+        /// Obtiene el conteo total de facturas de facturación automática con filtros aplicados.
         /// </summary>
-        /// <param name="status">
-        /// A list of invoice statuses used to filter results.
-        /// If null or empty, all invoices are counted.
-        /// </param>
-        /// <returns>
-        /// A task representing the asynchronous operation.
-        /// The task result contains the total number of matching invoices.
-        /// </returns>
-        public async Task<int> GetAutoBillingCountAsync(List<string> status)
+        /// <param name="status">Lista de estados de factura para filtrar.</param>
+        /// <param name="typeInvoices">Lista de tipos de factura para filtrar.</param>
+        /// <param name="billingTypes">Lista de formas de facturación para filtrar.</param>
+        /// <param name="startDate">Fecha de inicio para filtrar.</param>
+        /// <param name="endDate">Fecha de fin para filtrar.</param>
+        /// <returns>Número total de facturas que coinciden con los filtros.</returns>
+        public async Task<int> GetAutoBillingCount(
+            List<string> status,
+            List<string> typeInvoices,
+            List<string> billingTypes,
+            DateTime startDate,
+            DateTime endDate)
         {
-            return await this.context.Invoice
-                .AsNoTracking()
-                .Where(x => status == null || status.Count == 0 || status.Contains(x.Status))
+            var filter = this.BuildAutoBillingFilter(status, typeInvoices, billingTypes, startDate, endDate);
+
+            return await filter
                 .CountAsync()
                 .ConfigureAwait(false);
         }
@@ -255,6 +266,31 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
         {
             var filter = this.context.Invoice
                 .Where(x => status.Contains(x.Status));
+
+            if (typeInvoices != null && typeInvoices.Any())
+            {
+                filter = filter.Where(x => typeInvoices.Contains(x.TypeInvoice));
+            }
+
+            if (billingTypes != null && billingTypes.Any())
+            {
+                filter = filter.Where(x => billingTypes.Contains(x.BillingType));
+            }
+
+            return filter;
+        }
+
+        private IQueryable<InvoiceModel> BuildAutoBillingFilter(
+            List<string> status,
+            List<string> typeInvoices,
+            List<string> billingTypes,
+            DateTime startDate,
+            DateTime endDate)
+        {
+            var filter = this.context.Invoice
+                .Where(x => status == null || status.Count == 0 || status.Contains(x.Status));
+
+            filter = filter.Where(x => x.InvoiceCreateDate >= startDate && x.InvoiceCreateDate <= endDate);
 
             if (typeInvoices != null && typeInvoices.Any())
             {
