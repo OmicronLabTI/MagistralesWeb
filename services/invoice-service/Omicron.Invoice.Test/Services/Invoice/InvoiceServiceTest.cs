@@ -18,6 +18,7 @@ namespace Omicron.Invoice.Test.Services.Invoice
         /// Validates successful retrieval of AutoBilling data.
         /// Ensures that the service correctly returns data when the DAO contains results.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Test]
         public async Task GetAutoBillingAsync_Success()
         {
@@ -32,14 +33,36 @@ namespace Omicron.Invoice.Test.Services.Invoice
             var mockCatalogs = new Mock<ICatalogsService>();
             var mockRedis = new Mock<IRedisService>();
 
-            mockDao.Setup(x => x.GetAutoBillingBaseAsync(It.IsAny<List<string>>(), 0, 10))
-                .ReturnsAsync(new List<InvoiceModel> { new InvoiceModel { Id = "INV-001", AlmacenUser = "U001" } });
-            mockDao.Setup(x => x.GetAutoBillingCountAsync(It.IsAny<List<string>>())).ReturnsAsync(1);
-            mockDao.Setup(x => x.GetSapOrdersByInvoiceIdsAsync(It.IsAny<List<string>>()))
-                .ReturnsAsync(new Dictionary<string, List<InvoiceSapOrderModel>>());
-            mockDao.Setup(x => x.GetRemissionsByInvoiceIdsAsync(It.IsAny<List<string>>()))
-                .ReturnsAsync(new Dictionary<string, List<InvoiceRemissionModel>>());
-            mockDao.Setup(x => x.GetAllErrors()).ReturnsAsync(new List<InvoiceErrorModel>());
+            mockDao.Setup(x => x.GetAutoBillingByFilters(
+                    It.IsAny<List<string>>(),
+                    It.IsAny<List<string>>(),
+                    It.IsAny<List<string>>(),
+                    It.IsAny<DateTime>(),
+                    It.IsAny<DateTime>(),
+                    0,
+                    10))
+                .ReturnsAsync(new List<InvoiceModel>
+                {
+                    new InvoiceModel
+                    {
+                        Id = "INV-001",
+                        AlmacenUser = "U001",
+                        InvoiceCreateDate = DateTime.Now,
+                        SapOrders = new List<InvoiceSapOrderModel>(),
+                        Remissions = new List<InvoiceRemissionModel>(),
+                    },
+                });
+
+            mockDao.Setup(x => x.GetAutoBillingCount(
+                    It.IsAny<List<string>>(),
+                    It.IsAny<List<string>>(),
+                    It.IsAny<List<string>>(),
+                    It.IsAny<DateTime>(),
+                    It.IsAny<DateTime>()))
+                .ReturnsAsync(1);
+
+            mockDao.Setup(x => x.GetAllErrors())
+                .ReturnsAsync(new List<InvoiceErrorModel>());
 
             mockUsers
                 .Setup(x => x.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
@@ -80,6 +103,7 @@ namespace Omicron.Invoice.Test.Services.Invoice
         /// Validates correct handling when no AutoBilling records are found.
         /// Ensures that the service still returns a successful response even when the dataset is empty.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Test]
         public async Task GetAutoBillingAsync_EmptyResult()
         {
@@ -94,9 +118,26 @@ namespace Omicron.Invoice.Test.Services.Invoice
             var mockCatalogs = new Mock<ICatalogsService>();
             var mockRedis = new Mock<IRedisService>();
 
-            mockDao.Setup(x => x.GetAutoBillingBaseAsync(It.IsAny<List<string>>(), 0, 10))
+            mockDao.Setup(x => x.GetAutoBillingByFilters(
+                    It.IsAny<List<string>>(),
+                    It.IsAny<List<string>>(),
+                    It.IsAny<List<string>>(),
+                    It.IsAny<DateTime>(),
+                    It.IsAny<DateTime>(),
+                    0,
+                    10))
                 .ReturnsAsync(new List<InvoiceModel>());
-            mockDao.Setup(x => x.GetAutoBillingCountAsync(It.IsAny<List<string>>())).ReturnsAsync(0);
+
+            mockDao.Setup(x => x.GetAutoBillingCount(
+                    It.IsAny<List<string>>(),
+                    It.IsAny<List<string>>(),
+                    It.IsAny<List<string>>(),
+                    It.IsAny<DateTime>(),
+                    It.IsAny<DateTime>()))
+                .ReturnsAsync(0);
+
+            mockDao.Setup(x => x.GetAllErrors())
+                .ReturnsAsync(new List<InvoiceErrorModel>());
 
             mockUsers
                 .Setup(x => x.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))

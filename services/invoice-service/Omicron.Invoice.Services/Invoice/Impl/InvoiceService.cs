@@ -428,60 +428,64 @@ namespace Omicron.Invoice.Services.Invoice.Impl
             List<InvoiceModel> listInvoices,
             List<InvoiceErrorModel> errorCatalog)
             {
-                if (!listInvoices.Any())
-                {
-                    return new List<AutoBillingRowDto>();
-                }
+            if (listInvoices == null || !listInvoices.Any())
+            {
+                return new List<AutoBillingRowDto>();
+            }
 
-                var userIds = listInvoices
+            var userIds = listInvoices
                     .Select(x => x.AlmacenUser)
                     .Where(x => !string.IsNullOrWhiteSpace(x))
                     .Distinct()
                     .ToList();
-                var listUsers = await this.GetUsersById(userIds);
-                var userMap = listUsers.ToDictionary(u => u.Id, u => u);
 
-                var rows = new List<AutoBillingRowDto>();
-                foreach (var inv in listInvoices)
+            var listUsers = await this.GetUsersById(userIds);
+            var userMap = listUsers != null && listUsers.Any()
+                ? listUsers.ToDictionary(u => u.Id, u => u)
+                : new Dictionary<string, UserModel>();
+
+            var rows = new List<AutoBillingRowDto>();
+            foreach (var inv in listInvoices)
+            {
+                userMap.TryGetValue(inv.AlmacenUser ?? string.Empty, out var user);  // ✅ Manejar null en AlmacenUser
+
+                var sapOrders = inv.SapOrders?.ToList() ?? new List<InvoiceSapOrderModel>();
+                var remissions = inv.Remissions?.ToList() ?? new List<InvoiceRemissionModel>();
+
+                string lastErrorMessage;
+                if (string.IsNullOrEmpty(inv.ErrorMessage))
                 {
-                    userMap.TryGetValue(inv.AlmacenUser, out var user);
-                    var sapOrders = inv.SapOrders?.ToList() ?? new List<InvoiceSapOrderModel>();
-                    var remissions = inv.Remissions?.ToList() ?? new List<InvoiceRemissionModel>();
-
-                    string lastErrorMessage;
-                    if (string.IsNullOrEmpty(inv.ErrorMessage))
-                    {
-                        lastErrorMessage = "NO APLICA";
-                    }
-                    else
-                    {
-                        var match = errorCatalog.FirstOrDefault(e => inv.ErrorMessage.Contains(e.Code));
-                        lastErrorMessage = match != null ? match.ErrorMessage : inv.ErrorMessage;
-                    }
-
-                    rows.Add(new AutoBillingRowDto
-                    {
-                        Id = inv.Id,
-                        IdFacturaSap = inv.IdFacturaSap?.ToString(),
-                        InvoiceCreateDate = inv.InvoiceCreateDate?.ToString("dd/MM/yy HH:mm:ss"),
-                        TypeInvoice = inv.TypeInvoice,
-                        BillingType = inv.BillingType,
-                        AlmacenUser = user == null ? string.Empty : $"{user.FirstName} {user.LastName}",
-                        DxpOrderId = inv.DxpOrderId,
-                        ShopTransaction = "T001",
-                        SapOrdersCount = sapOrders.Count,
-                        RemissionsCount = remissions.Count,
-                        RetryNumber = inv.RetryNumber,
-                        SapOrders = sapOrders,
-                        Remissions = remissions,
-                        LastErrorMessage = lastErrorMessage,
-                        LastUpdateDate = inv.UpdateDate?.ToString("dd/MM/yy HH:mm:ss"),
-                    });
+                    lastErrorMessage = "NO APLICA";
+                }
+                else
+                {
+                    var match = errorCatalog?.FirstOrDefault(e => inv.ErrorMessage.Contains(e.Code));  // ✅ Manejar null en errorCatalog
+                    lastErrorMessage = match != null ? match.ErrorMessage : inv.ErrorMessage;
                 }
 
-                rows = rows.OrderBy(r => r.Id).ToList();
-
-                return rows;
+                rows.Add(new AutoBillingRowDto
+                {
+                    Id = inv.Id,
+                    IdFacturaSap = inv.IdFacturaSap?.ToString(),
+                    InvoiceCreateDate = inv.InvoiceCreateDate?.ToString("dd/MM/yy HH:mm:ss"),
+                    TypeInvoice = inv.TypeInvoice,
+                    BillingType = inv.BillingType,
+                    AlmacenUser = user == null ? string.Empty : $"{user.FirstName} {user.LastName}",
+                    DxpOrderId = inv.DxpOrderId,
+                    ShopTransaction = "T001",
+                    SapOrdersCount = sapOrders.Count,
+                    RemissionsCount = remissions.Count,
+                    RetryNumber = inv.RetryNumber,
+                    SapOrders = sapOrders,
+                    Remissions = remissions,
+                    LastErrorMessage = lastErrorMessage,
+                    LastUpdateDate = inv.UpdateDate?.ToString("dd/MM/yy HH:mm:ss"),
+                });
             }
+
+            rows = rows.OrderBy(r => r.Id).ToList();
+
+            return rows;
+        }
     }
 }
