@@ -258,10 +258,17 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.OrderToGenerateQR = this.dataService.calculateAndValueList([
       this.dataSource.data != null,
       this.dataSource.data.some(t => t.isChecked),
-      this.someChildrenOrderIsChecked()
+      this.dataService.calculateOrValueList([
+        this.noChildrenOrders(),
+        this.someChildrenOrderIsChecked()
+      ])
     ]);
     this.showOnSplitProcessMessage(completed);
     this.getButtonsToUnLooked();
+  }
+
+  noChildrenOrders(): boolean {
+    return this.dataSource.data.every(parentOrder => parentOrder.childOrders.length === 0);
   }
 
   setAllChildrenOrdersChecked(order: IPedidoDetalleReq, completed: boolean) {
