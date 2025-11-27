@@ -10,10 +10,9 @@ import { InvoiceFilterResult } from 'src/app/model/dialog/InvoiceFilterResult';
 export class FilterInvoiceTypeDialogComponent {
 
   searchTypes = [
-    { label: 'Cliente', value: 'CLIENTE' },
-    { label: 'Correo', value: 'EMAIL' },
-    { label: 'Referencia', value: 'REF' },
-    { label: 'Folio', value: 'FOLIO' }
+    { label: 'ID Factura SAP', value: 'ID Factura SAP' },
+    { label: 'Pedido SAP', value: 'NO Pedido SAP' },
+    { label: 'Pedido shop', value: 'Pedido shop' },
   ];
 
   selectedSearchType = '';
