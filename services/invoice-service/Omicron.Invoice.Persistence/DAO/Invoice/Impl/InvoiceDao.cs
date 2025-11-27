@@ -163,7 +163,7 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
         {
             var filter = this.BuildAutoBillingFilter(status, typeInvoices, billingTypes, startDate, endDate);
 
-            return await filter
+            var invoices = await filter
                 .OrderByDescending(x => x.InvoiceCreateDate)
                 .Skip(offset)
                 .Take(limit)
@@ -172,6 +172,8 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
                 .AsNoTracking()
                 .ToListAsync()
                 .ConfigureAwait(false);
+
+            return invoices;
         }
 
         /// <summary>
