@@ -7,68 +7,76 @@
 
   /* Tipografía base corporativa */
   font-family: "omicron-medium", sans-serif;
+}
 
-  /* Encapsulamos TODOS los estilos Material */
-  :host ::ng-deep & {
+/* Tipografía de componentes Material que sí están dentro del diálogo */
+:host ::ng-deep .mat-form-field-label,
+:host ::ng-deep .mat-input-element,
+:host ::ng-deep .mat-select-value-text,
+:host ::ng-deep .mat-datepicker-toggle-default-icon,
+:host ::ng-deep .mat-calendar-body-cell-content,
+:host ::ng-deep .mat-calendar-body-label,
+:host ::ng-deep .mat-calendar-period-button,
+:host ::ng-deep .mat-calendar-table-header th,
+:host ::ng-deep .mat-calendar-table-header td,
+:host ::ng-deep .mat-button,
+:host ::ng-deep .mat-stroked-button,
+:host ::ng-deep .mat-flat-button {
+  font-family: "omicron-medium", sans-serif !important;
+  font-size: 14px !important;
+}
 
-    /**************************************
-     * Tipografía Material interna – SOLO font-size
-     **************************************/
-    .mat-form-field-label,
-    .mat-input-element,
-    .mat-select-value-text,
-    .mat-option-text,
-    .mat-datepicker-toggle-default-icon,
-    .mat-calendar-body-cell-content,
-    .mat-calendar-body-label,
-    .mat-calendar-period-button,
-    .mat-calendar-table-header th,
-    .mat-calendar-table-header td,
-    .mat-button,
-    .mat-stroked-button,
-    .mat-flat-button {
-      font-family: "omicron-medium", sans-serif !important;
-      font-size: 14px !important; /* ← ÚNICO cambio para tamaño */
-    }
+/* ========= AQUI LO IMPORTANTE =========
+   Opciones del mat-select en el overlay
+   (NO USAR :host, solo ::ng-deep) */
+::ng-deep .filter-select-panel .mat-option,
+::ng-deep .filter-select-panel .mat-option-text,
+::ng-deep .filter-select-panel .mat-selected {
+  font-family: "omicron-medium", sans-serif !important;
+  font-size: 14px !important;
+  height: 42px !important;
+  display: flex !important;
+  align-items: center !important;
+}
 
-    /* Encabezados */
-    .header h2 {
-      font-family: "omicron-bold", sans-serif !important;
-    }
+/* Texto seleccionado dentro del mat-select (el que se ve en el campo) */
+:host ::ng-deep .mat-select-value-text {
+  font-family: "omicron-medium", sans-serif !important;
+  font-size: 14px !important;
+}
 
-    /**************************************
-     * Botones activos (#0070B7)
-     **************************************/
-    .mat-flat-button.mat-primary:not([disabled]) {
-      background-color: #0070B7 !important;
-      color: #ffffff !important;
-    }
+/* Encabezados */
+:host ::ng-deep .header h2 {
+  font-family: "omicron-bold", sans-serif !important;
+}
 
-    .mat-stroked-button.mat-primary:not([disabled]) {
-      border-color: #0070B7 !important;
-      color: #0070B7 !important;
-    }
+/* Botones activos (#0070B7) */
+:host ::ng-deep .mat-flat-button.mat-primary:not([disabled]) {
+  background-color: #0070B7 !important;
+  color: #ffffff !important;
+}
 
-    /**************************************
-     * Estado deshabilitado
-     **************************************/
-    button[disabled] {
-      opacity: 0.5;
-      cursor: not-allowed !important;
-    }
+:host ::ng-deep .mat-stroked-button.mat-primary:not([disabled]) {
+  border-color: #0070B7 !important;
+  color: #0070B7 !important;
+}
 
-    /**************************************
-     * Ajuste del ícono del datepicker
-     **************************************/
-    .mat-form-field:not(.mat-form-field-appearance-legacy)
-      .mat-form-field-prefix .mat-icon-button .mat-datepicker-toggle-default-icon,
-    .mat-form-field:not(.mat-form-field-appearance-legacy)
-      .mat-form-field-suffix .mat-icon-button .mat-datepicker-toggle-default-icon {
-      margin: 0px !important;
-      margin-top: 12px !important;
-      margin-left: 16px !important;
-    }
-  }
+/* Estado deshabilitado */
+:host ::ng-deep button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}
+
+/* Ajuste del ícono del datepicker */
+:host ::ng-deep
+  .mat-form-field:not(.mat-form-field-appearance-legacy)
+  .mat-form-field-prefix .mat-icon-button .mat-datepicker-toggle-default-icon,
+:host ::ng-deep
+  .mat-form-field:not(.mat-form-field-appearance-legacy)
+  .mat-form-field-suffix .mat-icon-button .mat-datepicker-toggle-default-icon {
+  margin: 0px !important;
+  margin-top: 12px !important;
+  margin-left: 16px !important;
 }
 
 /* Header */
@@ -116,14 +124,14 @@
 
   .half {
     flex: 1;
-    min-width: 0; /* evita overflow y scroll horizontal */
+    min-width: 0;
   }
 }
 
 /* Footer */
 .footer {
   display: flex;
-  justify-content: flex-end; /* alineados a la izquierda */
-  gap: 12px; /* separación solicitada */
+  justify-content: flex-end;
+  gap: 12px;
   margin-top: 8px;
 }

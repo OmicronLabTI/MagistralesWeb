@@ -2,16 +2,12 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
-
 import { AutoBillingService } from 'src/app/services/autoBilling.service';
 import { AutoBillingModel } from 'src/app/model/http/autoBilling.model';
 import { ViewSapOrdersDialogComponent } from 'src/app/dialogs/view-sap-orders-dialog/view-sap-orders-dialog.component';
 import { ViewShipmentsDialogComponent } from 'src/app/dialogs/view-shipments-dialog/view-shipments-dialog.component';
-
 import { ObservableService } from 'src/app/services/observable.service';
 import { HttpServiceTOCall } from 'src/app/constants/const';
-
-// IMPORTA TU NUEVO POPUP AQUÍ
 import { FilterInvoiceTypeDialogComponent } from 'src/app/dialogs/filter-invoice-type-dialog/filter-invoice-type-dialog.component';
 
 @Component({
@@ -102,24 +98,26 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
       }
     });
   }
+  openAdvancedFiltersDialog(): void {
+    const dialogRef = this.dialog.open(FilterInvoiceTypeDialogComponent, {
+      panelClass: 'advanced-filter-dialog',
+      disableClose: true,
+      width: 'auto',
+      maxWidth: '95vw'
+    });
 
-  // =============================================
-  //     NUEVO POPUP — AVANZADO DE BÚSQUEDA
-  // =============================================
-openAdvancedFiltersDialog(): void {
-this.dialog.open(FilterInvoiceTypeDialogComponent, {
-  panelClass: 'advanced-filter-dialog',
-  disableClose: true,
-  width: 'auto',
-  maxWidth: '95vw'
-});
-}
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
 
-  // =============================================
-  //     LIMPIAR FILTROS
-  // =============================================
+      console.log('Filtro seleccionado:', result);
+
+      console.log(result);
+    });
+  }
+
   clearFilters(): void {
-    // Limpia los filtros en tu servicio, query params, variables, etc.
     this.loadPageData(0, 10);
   }
 }

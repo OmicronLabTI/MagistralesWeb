@@ -15,56 +15,89 @@
   <!-- Form -->
   <form #f="ngForm" class="form">
 
+    <!-- SELECT CON panelClass -->
     <mat-form-field appearance="outline" class="full">
       <mat-label>Tipo de búsqueda</mat-label>
-      <mat-select [(ngModel)]="selectedSearchType" name="type" (selectionChange)="validateForm()">
+
+      <mat-select
+        [(ngModel)]="selectedSearchType"
+        name="type"
+        (selectionChange)="validateForm()"
+        panelClass="filter-select-panel"
+      >
         <mat-option *ngFor="let t of searchTypes" [value]="t.value">
           {{ t.label }}
         </mat-option>
       </mat-select>
     </mat-form-field>
 
+    <!-- Input -->
     <mat-form-field appearance="outline" class="full">
       <mat-label>Captura el valor a buscar</mat-label>
-      <input matInput name="value" [(ngModel)]="searchValue" (ngModelChange)="validateForm()">
+      <input
+        matInput
+        name="value"
+        [(ngModel)]="searchValue"
+        (ngModelChange)="validateForm()"
+      >
     </mat-form-field>
 
+    <!-- Fechas -->
     <div class="dates">
+
       <mat-form-field appearance="outline" class="half">
         <mat-label>Fecha de</mat-label>
-        <input matInput [matDatepicker]="pickerFrom" [(ngModel)]="dateFrom" name="dateFrom" (dateChange)="validateForm()">
+        <input
+          matInput
+          [matDatepicker]="pickerFrom"
+          [(ngModel)]="dateFrom"
+          name="dateFrom"
+          (dateChange)="validateForm()"
+        >
         <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
         <mat-datepicker #pickerFrom></mat-datepicker>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="half">
         <mat-label>Fecha hasta</mat-label>
-        <input matInput [matDatepicker]="pickerTo" [(ngModel)]="dateTo" name="dateTo" (dateChange)="validateForm()">
+        <input
+          matInput
+          [matDatepicker]="pickerTo"
+          [(ngModel)]="dateTo"
+          name="dateTo"
+          (dateChange)="validateForm()"
+        >
         <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
         <mat-datepicker #pickerTo></mat-datepicker>
       </mat-form-field>
+
     </div>
 
     <p class="subtitle-small">Selecciona un rango de fecha</p>
 
-<div class="footer">
-  <button
-    mat-stroked-button
-    color="primary"
-    type="button"
-    [disabled]="!canClear"
-    (click)="clear()">
-    Limpiar selección
-  </button>
+    <!-- Footer -->
+    <div class="footer">
 
-  <button
-    mat-flat-button
-    color="primary"
-    type="button"
-    [disabled]="!formValid"
-    (click)="apply()">
-    Aplicar y buscar
-  </button>
-</div>
+      <button
+        mat-stroked-button
+        color="primary"
+        type="button"
+        [disabled]="!canClear"
+        (click)="clear()">
+        Limpiar selección
+      </button>
+
+      <button
+        mat-flat-button
+        color="primary"
+        type="button"
+        [disabled]="!formValid"
+        (click)="apply()">
+        Aplicar y buscar
+      </button>
+
+    </div>
+
   </form>
+
 </div>
