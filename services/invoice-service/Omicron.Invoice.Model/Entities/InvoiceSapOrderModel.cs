@@ -5,6 +5,7 @@
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
+
 namespace Omicron.Invoice.Model.Entities
 {
     /// <summary>
@@ -37,6 +38,7 @@ namespace Omicron.Invoice.Model.Entities
         /// <summary>
         /// Gets or sets navigation property to the invoice.
         /// </summary>
+        [JsonIgnore]
         public InvoiceModel Invoice { get; set; }
     }
 }
