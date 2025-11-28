@@ -7,7 +7,7 @@
       Buscar
     </button>
 
-    <button mat-stroked-button class="btn-clear" (click)="onLimpiar()">
+    <button mat-stroked-button class="btn-clear" (click)="onClear()">
       <mat-icon>delete_sweep</mat-icon>
       Limpiar filtros
     </button>
@@ -42,7 +42,7 @@
         <ng-container matColumnDef="billingMode">
           <th mat-header-cell *matHeaderCellDef>
             <div class="header-filter" (click)="openFilter($event, 'billing')">
-              <span>Forma facturación</span>
+              <span>Forma<br/>facturación</span>
               <mat-icon class="arrow">expand_more</mat-icon>
             </div>
           </th>

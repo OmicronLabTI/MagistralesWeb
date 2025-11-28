@@ -10,6 +10,7 @@ import { ViewSapOrdersDialogComponent } from 'src/app/dialogs/view-sap-orders-di
 import { ViewShipmentsDialogComponent } from 'src/app/dialogs/view-shipments-dialog/view-shipments-dialog.component';
 import { ObservableService } from 'src/app/services/observable.service';
 import { HttpServiceTOCall } from 'src/app/constants/const';
+import { FilterInvoiceTypeDialogComponent } from 'src/app/dialogs/filter-invoice-type-dialog/filter-invoice-type-dialog.component';
 
 @Component({
   selector: 'app-auto-billing',
@@ -58,22 +59,22 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
     this.observableService.setUrlActive(HttpServiceTOCall.HISTORY_BILLING);
   }
 
-ngOnInit(): void {
-  this.loadPageData(0, 10);
+  ngOnInit(): void {
+    this.loadPageData(0, 10);
 
-  document.addEventListener('click', (event: any) => {
-    if (!this.showFilter) return;
+    document.addEventListener('click', (event: any) => {
+      if (!this.showFilter) return;
 
-    const clickedInsidePopup =
-      event.target.closest('.filter-box') ||
-      event.target.closest('.header-filter');
+      const clickedInsidePopup =
+        event.target.closest('.filter-box') ||
+        event.target.closest('.header-filter');
 
-    if (!clickedInsidePopup) {
-      this.showFilter = false;
-      console.log('Seleccionado:', this.currentOptions);
-    }
-  });
-}
+      if (!clickedInsidePopup) {
+        this.showFilter = false;
+        console.log('Seleccionado:', this.currentOptions);
+      }
+    });
+  }
 
   ngAfterViewInit(): void {
     this.paginator.page.subscribe(event => {
@@ -137,9 +138,27 @@ ngOnInit(): void {
     });
   }
 
-  onLimpiar(): void {
+  onClear(): void {
     this.invoiceOptions.forEach(x => x.selected = false);
     this.billingOptions.forEach(x => x.selected = false);
     this.loadPageData(0, 10);
+  }
+  openAdvancedFiltersDialog(): void {
+    const dialogRef = this.dialog.open(FilterInvoiceTypeDialogComponent, {
+      panelClass: 'advanced-filter-dialog',
+      disableClose: true,
+      width: 'auto',
+      maxWidth: '95vw'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
+
+      console.log('Filtro seleccionado:', result);
+
+      console.log(result);
+    });
   }
 }
