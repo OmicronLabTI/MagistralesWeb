@@ -305,6 +305,19 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
                 .ToListAsync();
         }
 
+        /// <inheritdoc/>
+        public async Task<List<InvoiceModel>> GetInvoicesByIdFacturaSap(int id, int offset, int limit)
+        {
+            return await this.context.Invoice
+                .Where(x => x.IdFacturaSap == id)
+                .OrderBy(x => x.CreateDate)
+                .Skip(offset)
+                .Take(limit)
+                .Include(x => x.Remissions)
+                .Include(x => x.SapOrders)
+                .ToListAsync();
+        }
+
         private IQueryable<InvoiceModel> BuildInvoiceFilter(
             List<string> status,
             List<string> typeInvoices,
