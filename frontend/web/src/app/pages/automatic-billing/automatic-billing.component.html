@@ -144,7 +144,7 @@ This template is used within the AutoBillingComponent in Angular.
                 (selectionChange)="onSelectionChangeInvoiceType()">
                 <mat-list-option (click)="$event.stopPropagation()" *ngFor="let filter of filterInvoiceType"
                   [value]="filter" [disabled]="isLastInvoiceFilter(filter)">
-                  {{ filter }}
+                  {{ filter === automaticBillingInvoiceType.non_generic ? 'Con datos fiscales' : filter}}
                 </mat-list-option>
               </mat-selection-list>
             </mat-menu>
