@@ -29,7 +29,7 @@ namespace Omicron.Invoice.Test.Services.CatalogsInvoice
         public void Init()
         {
             var options = new DbContextOptionsBuilder<DatabaseContext>()
-                .UseInMemoryDatabase(databaseName: $"TemporalCatalogsInvoiceServiceTestDB_{Guid.NewGuid()}")  // ✅ GUID único
+                .UseInMemoryDatabase(databaseName: $"TemporalCatalogsInvoiceServiceTestDB_{Guid.NewGuid()}")
                 .Options;
 
             this.context = new DatabaseContext(options);
@@ -383,7 +383,7 @@ namespace Omicron.Invoice.Test.Services.CatalogsInvoice
 
                 // Invalid - empty Error
                 worksheet.Cell(4, 1).Value = "INVALID2";
-                worksheet.Cell(4, 2).Value = "";
+                worksheet.Cell(4, 2).Value = string.Empty;
                 worksheet.Cell(4, 3).Value = "Error with empty error field";
                 worksheet.Cell(4, 4).Value = "NO";
 
