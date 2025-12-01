@@ -32,6 +32,7 @@ class HistoricViewController: UIViewController {
         // Configuración de la tabla
         tableView.dataSource = self
         tableView.delegate = self
+        searchBar.delegate = self
 
         // Opcional: altura automática para filas expandibles
         tableView.estimatedRowHeight = 44
@@ -163,7 +164,14 @@ class HistoricViewController: UIViewController {
     // MARK: - Navigation
     
 }
-extension HistoricViewController: UITableViewDataSource, UITableViewDelegate {
+extension HistoricViewController: UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText.isEmpty {
+            historicViewModel.searchFilter.onNext(String())
+            historicViewModel.searchDidTap.onNext(())
+        }
+    }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // Contamos todas las filas visibles: 1 por cada ParentOrders + sus hijos si están expandidos
