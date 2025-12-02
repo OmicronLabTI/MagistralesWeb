@@ -1,5 +1,5 @@
 /* ============================================================
-   AUTO-BILLING PAGE WRAPPER  (ENCAPSULADOR PRINCIPAL)
+   AUTO-BILLING PAGE WRAPPER (ENCAPSULADOR PRINCIPAL)
    ============================================================ */
 .auto-billing-page {
   display: flex;
@@ -133,30 +133,30 @@
   }
 
   /* ============================================================
-     ANGULAR MATERIAL OVERRIDES (ENCAPSULADOS)
+     ANGULAR MATERIAL OVERRIDES (ENCAPSULADOS AQUI)
      ============================================================ */
-  & ::ng-deep .mat-mdc-paginator {
+  ::ng-deep .mat-mdc-paginator {
     background-color: #ffffff;
     border-top: 1px solid #e0e0e0;
   }
 
-  & ::ng-deep .mat-mdc-header-row {
+  ::ng-deep .mat-mdc-header-row {
     background-color: #f8f9fa;
   }
 
-  & ::ng-deep .mat-mdc-header-cell {
+  ::ng-deep .mat-mdc-header-cell {
     color: #333;
     font-size: 14px;
     text-transform: uppercase;
     letter-spacing: 0.3px;
   }
 
-  & ::ng-deep .mat-mdc-cell {
+  ::ng-deep .mat-mdc-cell {
     font-size: 14px;
     color: #555;
   }
 
-  & ::ng-deep .mat-mdc-menu-item {
+  ::ng-deep .mat-mdc-menu-item {
     font-size: 13px;
   }
 }
@@ -172,9 +172,8 @@
 }
 
 /* ============================================================
-   POPUP DE CHECKBOXES (TOTALMENTE ENCAPSULADO)
+   POPUP DE CHECKBOXES (ENCAPSULADO)
    ============================================================ */
-
 .filter-overlay {
   position: fixed;
   z-index: 99999;
@@ -198,7 +197,7 @@
     padding: 6px 4px;
   }
 
-  /* === EL ::ng-deep QUEDA ENCAPSULADO SOLO PARA ESTE POPUP === */
+  /* Aquí ::ng-deep queda controlado SOLO dentro del popup */
   ::ng-deep .mdc-checkbox__background {
     border-radius: 4px !important;
   }
@@ -209,11 +208,11 @@
     border-color: #0070B7 !important;
   }
 
-  ::ng-deep .mdc-checkbox__native-control:enabled:not(:checked) ~ .mdc-checkbox__background {
+  ::ng-deep .mdc-checkbox__native-control:enabled:not(:checked)
+    ~ .mdc-checkbox__background {
     border-color: #555 !important;
   }
 
-  /* Etiqueta del checkbox */
   ::ng-deep .mat-checkbox-label {
     font-family: "omicron-medium", sans-serif !important;
     font-size: 14px !important;
