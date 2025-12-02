@@ -218,6 +218,12 @@ export class AutomaticBillingComponent implements OnInit {
     return event;
   }
 
+  applyFilters(): void {
+    this.pageIndex = 0;
+    this.offset = 0;
+    this.getData();
+  }
+
   /**
    * Opens confirmation dialog for manual adjustment.
    * If confirmed, sends backend update.

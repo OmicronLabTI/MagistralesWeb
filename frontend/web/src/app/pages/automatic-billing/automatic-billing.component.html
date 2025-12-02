@@ -90,7 +90,7 @@ This template is used within the AutoBillingComponent in Angular.
             <button mat-icon-button [matMenuTriggerFor]="menuStatus">
               <mat-icon>expand_more</mat-icon>
             </button>
-            <mat-menu #menuStatus="matMenu" yPosition="below" (closed)="getData()">
+            <mat-menu #menuStatus="matMenu" yPosition="below" (closed)="applyFilters()">
               <mat-selection-list [(ngModel)]="statusColumnSelectedOptions"
                 (selectionChange)="onSelectionChangeStatus()">
                 <mat-list-option (click)="$event.stopPropagation()" *ngFor="let filter of filtersStatus"
@@ -139,7 +139,7 @@ This template is used within the AutoBillingComponent in Angular.
             <button mat-icon-button [matMenuTriggerFor]="menuInvoiceType">
               <mat-icon>expand_more</mat-icon>
             </button>
-            <mat-menu #menuInvoiceType="matMenu" yPosition="below" (closed)="getData()">
+            <mat-menu #menuInvoiceType="matMenu" yPosition="below" (closed)="applyFilters()">
               <mat-selection-list [(ngModel)]="invoiceTypeColumnSelectedOptions"
                 (selectionChange)="onSelectionChangeInvoiceType()">
                 <mat-list-option (click)="$event.stopPropagation()" *ngFor="let filter of filterInvoiceType"
@@ -165,7 +165,7 @@ This template is used within the AutoBillingComponent in Angular.
               <button mat-icon-button [matMenuTriggerFor]="menuBillingType">
                 <mat-icon>expand_more</mat-icon>
               </button>
-              <mat-menu #menuBillingType="matMenu" yPosition="below" (closed)="getData()">
+              <mat-menu #menuBillingType="matMenu" yPosition="below" (closed)="applyFilters()">
                 <mat-selection-list [(ngModel)]="billingTypeColumSelectedOptions"
                   (selectionChange)="onSelectionChangeBillingType()">
                   <mat-list-option (click)="$event.stopPropagation()" *ngFor="let filter of filterBillingType"
