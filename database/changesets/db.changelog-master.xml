@@ -19,4 +19,5 @@
   <include file="changesets/db.changelog-sp-21.xml"/>
   <include file="changesets/db.changelog-sp-22.xml"/>
   <include file="changesets/db.changelog-sp-23.xml"/>
+  <include file="changesets/db.changelog-sp-24.xml"/>
 </databaseChangeLog>
