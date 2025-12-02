@@ -201,7 +201,7 @@ extension OrderDetailViewController {
         }).disposed(by: disposeBag)
         orderDetailViewModel.splitButtonEnableFlag.subscribe(onNext: { [weak self] typeOrder in
             guard let self = self else { return }
-            splitButton.isEnabled = typeOrder != OrderRelationTypes.hija
+            // splitButton.isEnabled = typeOrder != OrderRelationTypes.hija
         }).disposed(by: disposeBag)
     }
     
