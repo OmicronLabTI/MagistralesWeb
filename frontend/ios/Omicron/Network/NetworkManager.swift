@@ -243,6 +243,12 @@ class NetworkManager: SessionProtocol {
         let res: Observable<SplitOrderResponse> = makeRequest(request: req)
         return res
     }
+    
+    func cancelChildOrder(_ data: [CancelChildOrderRequest]) -> Observable<CancelChildOrderResponse> {
+        let req: ApiService = ApiService.cancelChildOrder(data: data)
+        let res: Observable<CancelChildOrderResponse> = makeRequest(request: req)
+        return res
+    }
 
     private func makeRequest<T: BaseMappable>(
         request: ApiService, needsVPN: Bool = false) -> Observable<T> {

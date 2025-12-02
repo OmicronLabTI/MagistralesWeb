@@ -37,6 +37,7 @@ enum ApiService {
     case getWarehousesByItemcode(data: WarehouseByProductRequest)
     case postSplitOrder(data: SplitOrderRequest)
     case getHistoric(data: HistoricRequestModel)
+    case cancelChildOrder(data: [CancelChildOrderRequest])
 }
 
 extension ApiService: AuthorizedTargetType {
@@ -112,6 +113,8 @@ extension ApiService: AuthorizedTargetType {
             return "/pedidos/separate/order"
         case .getHistoric:
             return "/pedidos/open/productionorders"
+        case .cancelChildOrder:
+            return "/pedidos/fabOrder/cancel"
         }
     }
     var method: Moya.Method {
@@ -144,7 +147,8 @@ extension ApiService: AuthorizedTargetType {
             return .get
         case .deleteItemOfOrdenDetail,
              .changeStatusOrder,
-             .assingLots:
+             .assingLots,
+             .cancelChildOrder:
             return .put
         }
     }
@@ -175,6 +179,8 @@ extension ApiService: AuthorizedTargetType {
         case .packageOrders(let data):
             return .requestJSONEncodable(data)
         case .assingLots(let data):
+            return .requestJSONEncodable(data)
+        case .cancelChildOrder(let data):
             return .requestJSONEncodable(data)
         case .getComponents(let data):
             return .requestParameters(parameters: data.toDictionary(), encoding: URLEncoding.queryString)
@@ -266,6 +272,12 @@ extension ApiService: AuthorizedTargetType {
             return data
         case .assingLots:
             guard let url = Bundle.main.url(forResource: "assingBatchesResponse", withExtension: "json"),
+                let data = try? Data(contentsOf: url) else {
+                    return Data()
+            }
+            return data
+        case .cancelChildOrder:
+            guard let url = Bundle.main.url(forResource: "cancelChildOrderMock", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()
             }

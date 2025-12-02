@@ -99,5 +99,14 @@ namespace Omicron.Pedidos.Entities.Model.Db
         /// </value>
         [Column("consecutiveindex")]
         public int ConsecutiveIndex { get; set; }
+
+        /// <summary>
+        /// Gets or sets userid.
+        /// </summary>
+        /// <value>
+        /// String userid.
+        /// </value>
+        [Column("cancelorderuserid")]
+        public string CancelOrderUserId { get; set; }
     }
 }

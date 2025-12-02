@@ -276,7 +276,7 @@ class OrderDetailTest: XCTestCase {
 
     func testHideButtonsModel() {
         let model = HideButtons(process: true, finished: false, pending: false,
-                                addComp: false, save: false, seeBatches: false, saveChanges: false, splitOrder: false)
+                                addComp: false, save: false, seeBatches: false, saveChanges: false, splitOrder: false, cancelOrder: true)
         XCTAssertNotNil(model)
         XCTAssertTrue(model.process)
         XCTAssertFalse(model.finished)
@@ -294,5 +294,13 @@ class OrderDetailTest: XCTestCase {
             warehouse: "MP", components: [components])
         self.orderDetailViewModel?.updateObjectToSend = order
         self.orderDetailViewModel?.updateComponents()
+    }
+    
+    func testcancelChildOrderRequest() {
+        let req = CancelChildOrderRequest(userId: "2bf2d6b7-babd-4a2b-8c6e-8ac35c0e1478", order: 226777)
+        orderDetailViewModel?.showAlert.subscribe(onNext: { res in
+            XCTAssertEqual(res, CommonStrings.processSuccess)
+        }).disposed(by: disposeBag!)
+        self.orderDetailViewModel?.cancelChildOrderRequest(request: req)
     }
 }

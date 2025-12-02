@@ -198,4 +198,23 @@ class OrderDetailViewModel {
             self.dataError.onNext(Constants.Errors.errorData.rawValue)
         }).disposed(by: disposeBag)
     }
+    
+    func cancelChildOrderRequest(request: CancelChildOrderRequest) {
+        let req: [CancelChildOrderRequest] = [request]
+        self.loading.onNext(true)
+        networkManager.cancelChildOrder(req).subscribe(onNext: {
+            [weak self] res in
+            guard let self = self else { return }
+            self.loading.onNext(false)
+            if res.code == 200 {
+                self.showAlert.onNext(CommonStrings.processSuccess)
+                return
+            }
+        }, onError: {
+            [weak self] _ in
+            guard let self = self else { return }
+            self.loading.onNext(false)
+            self.dataError.onNext(Constants.Errors.errorData.rawValue)
+        }).disposed(by: disposeBag)
+    }
 }

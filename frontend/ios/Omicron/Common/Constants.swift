@@ -28,6 +28,7 @@ struct Constants {
         case unassignBatches = "Desasigna los lotes de la orden de fabricación [fabOrder] para poder dividirla."
         case onGoingSplitProcess = "La orden de fabricación seleccionada ya tiene un proceso de división en curso. Por favor espera a que finalice antes de intentar dividirla nuevamente."
         case changeStatusParentOrders = "No es posible modificar el estatus de órdenes de fabricación padre: [fabOrders]"
+        case hasBatchesForCancel = "No es posible cancelar la orden hija porque tiene lotes asignados."
     }
     enum Tags: Int {
         case loading = 101
@@ -236,6 +237,7 @@ struct CommonStrings {
     static let warehousesChangesConfirm = "Existen cambios sin guardar, ¿Deseas cambiar de Fórmula sin guardar los cambios?"
     static let succesSplitOrder = "Estamos dividiendo la orden. Estará visible en \"[status]\" en cuanto se complete"
     static let errorSplitOrder = "Error al dividir la orden de fabricación"
+    static let cancelOrderConfirmationMssg = "¿Estás seguro de cancelar la orden?"
 }
 struct FontsNames {
     static let SFProDisplayBold = "SFProDisplay-Bold"
@@ -267,6 +269,7 @@ struct StatusNameConstants {
     static let createBulk = "Crear granel"
     static let addComponentAndLots = "Agregar componente y asignar lotes"
     static let splitOrder = "Dividir orden"
+    static let cancelOrder = "Cancelar orden"
 }
 struct ImageButtonNames {
     static let assigned = "showAssignedDetailButton.png"
