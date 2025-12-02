@@ -33,18 +33,20 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
   ];
 
   dataSource = new MatTableDataSource<AutoBillingModel>([]);
-
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   invoiceOptions = [
-    { label: 'Genérica', selected: false },
-    { label: 'Con datos fiscales', selected: false }
+    { label: 'Genérica', selected: true },
+    { label: 'Con datos fiscales', selected: true }
   ];
 
   billingOptions = [
-    { label: 'Completa', selected: false },
-    { label: 'Parcial', selected: false }
+    { label: 'Completa', selected: true },
+    { label: 'Parcial', selected: true }
   ];
+
+  previousInvoiceSelection = '';
+  previousBillingSelection = '';
 
   showFilter = false;
   popupPosition: any = {};
@@ -63,7 +65,9 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
     this.loadPageData(0, 10);
 
     document.addEventListener('click', (event: any) => {
-      if (!this.showFilter) return;
+      if (!this.showFilter) {
+        return;
+      }
 
       const clickedInsidePopup =
         event.target.closest('.filter-box') ||
@@ -71,7 +75,17 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
 
       if (!clickedInsidePopup) {
         this.showFilter = false;
-        console.log('Seleccionado:', this.currentOptions);
+
+        const currentInvoices = this.getSelectedInvoiceTypes();
+        const currentBilling = this.getSelectedBillingTypes();
+
+        const filtersChanged =
+          currentInvoices !== this.previousInvoiceSelection ||
+          currentBilling !== this.previousBillingSelection;
+
+        if (filtersChanged) {
+          this.loadPageData(0, this.paginator ? this.paginator.pageSize : 10);
+        }
       }
     });
   }
@@ -79,7 +93,10 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.paginator.page.subscribe(event => {
       const sizeChanged = event.pageSize !== this.paginator.pageSize;
-      if (sizeChanged) this.paginator.pageIndex = 0;
+
+      if (sizeChanged) {
+        this.paginator.pageIndex = 0;
+      }
 
       const offset = this.paginator.pageIndex * event.pageSize;
       const limit = event.pageSize;
@@ -88,15 +105,45 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
     });
   }
 
-  loadPageData(offset: number, limit: number): void {
-    this.autoBillingService.getAllAutoBilling(offset, limit)
-      .subscribe(response => {
-        this.dataSource.data = response.items;
-        if (this.paginator) this.paginator.length = response.total;
-      });
+  getSelectedInvoiceTypes(): string {
+    return this.invoiceOptions
+      .filter(x => x.selected)
+      .map(x => x.label)
+      .join(',');
   }
 
-  openFilter(event: MouseEvent, type: string) {
+  getSelectedBillingTypes(): string {
+    return this.billingOptions
+      .filter(x => x.selected)
+      .map(x => x.label)
+      .join(',');
+  }
+
+  loadPageData(offset: number, limit: number): void {
+    const today = new Date();
+    const past5 = new Date();
+    past5.setDate(today.getDate() - 5);
+
+    const billing = this.getSelectedBillingTypes();
+    const invoices = this.getSelectedInvoiceTypes();
+
+    this.autoBillingService.getAllAutoBilling(
+      offset,
+      limit,
+      past5,
+      today,
+      billing,
+      invoices
+    ).subscribe(response => {
+      this.dataSource.data = response.items;
+
+      if (this.paginator) {
+        this.paginator.length = response.total;
+      }
+    });
+  }
+
+  openFilter(event: MouseEvent, type: string): void {
     const target = event.target as HTMLElement;
     const rect = target.getBoundingClientRect();
 
@@ -109,32 +156,37 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
       ? this.invoiceOptions
       : this.billingOptions;
 
+    this.previousInvoiceSelection = this.getSelectedInvoiceTypes();
+    this.previousBillingSelection = this.getSelectedBillingTypes();
+
     this.showFilter = true;
   }
 
+  toggleOption(option: any): void {
+    option.selected = !option.selected;
+  }
+
   openSapOrdersDialog(row: AutoBillingModel): void {
-    if (!row.sapOrders || row.sapOrders.length === 0) return;
+    if (!row.sapOrders || row.sapOrders.length === 0) {
+      return;
+    }
 
     this.dialog.open(ViewSapOrdersDialogComponent, {
       width: '800px',
       panelClass: 'custom-dialog-container',
-      data: {
-        invoiceId: row.sapInvoiceId,
-        orders: row.sapOrders
-      }
+      data: { invoiceId: row.sapInvoiceId, orders: row.sapOrders }
     });
   }
 
   openShipmentsDialog(row: AutoBillingModel): void {
-    if (!row.remissions || row.remissions.length === 0) return;
+    if (!row.remissions || row.remissions.length === 0) {
+      return;
+    }
 
     this.dialog.open(ViewShipmentsDialogComponent, {
       width: '800px',
       panelClass: 'custom-dialog-container',
-      data: {
-        invoiceId: row.sapInvoiceId,
-        remissions: row.remissions
-      }
+      data: { invoiceId: row.sapInvoiceId, remissions: row.remissions }
     });
   }
 
@@ -143,6 +195,7 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
     this.billingOptions.forEach(x => x.selected = false);
     this.loadPageData(0, 10);
   }
+
   openAdvancedFiltersDialog(): void {
     const dialogRef = this.dialog.open(FilterInvoiceTypeDialogComponent, {
       panelClass: 'advanced-filter-dialog',
@@ -155,9 +208,6 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
       if (!result) {
         return;
       }
-
-      console.log('Filtro seleccionado:', result);
-
       console.log(result);
     });
   }

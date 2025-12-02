@@ -8,11 +8,10 @@ import { InvoiceFilterResult } from 'src/app/model/dialog/InvoiceFilterResult';
   styleUrls: ['./filter-invoice-type-dialog.component.scss']
 })
 export class FilterInvoiceTypeDialogComponent {
-
   searchTypes = [
     { label: 'ID Factura SAP', value: 'ID Factura SAP' },
     { label: 'Pedido SAP', value: 'NO Pedido SAP' },
-    { label: 'Pedido shop', value: 'Pedido shop' },
+    { label: 'Pedido shop', value: 'Pedido shop' }
   ];
 
   selectedSearchType = '';
@@ -23,9 +22,9 @@ export class FilterInvoiceTypeDialogComponent {
   formValid = false;
   canClear = false;
 
-  constructor(public dialogRef: MatDialogRef<FilterInvoiceTypeDialogComponent>) { }
+  constructor(public dialogRef: MatDialogRef<FilterInvoiceTypeDialogComponent>) {}
 
-  validateForm() {
+  validateForm(): void {
     this.formValid =
       !!this.selectedSearchType &&
       !!this.searchValue &&
@@ -39,18 +38,19 @@ export class FilterInvoiceTypeDialogComponent {
       !!this.dateTo;
   }
 
-  clear() {
+  clear(): void {
     this.selectedSearchType = '';
     this.searchValue = '';
     this.dateFrom = null;
     this.dateTo = null;
-
     this.formValid = false;
     this.canClear = false;
   }
 
-  apply() {
-    if (!this.formValid) return;
+  apply(): void {
+    if (!this.formValid) {
+      return;
+    }
 
     const result: InvoiceFilterResult = {
       type: this.selectedSearchType,
@@ -62,7 +62,7 @@ export class FilterInvoiceTypeDialogComponent {
     this.dialogRef.close(result);
   }
 
-  close() {
+  close(): void {
     this.dialogRef.close();
   }
 }
