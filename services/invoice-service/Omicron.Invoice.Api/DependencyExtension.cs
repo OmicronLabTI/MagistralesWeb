@@ -28,6 +28,10 @@ namespace Omicron.Invoice.Api
             {
                 options.Filters.Add<CustomActionFilterAttribute>();
                 options.Filters.Add<GlobalExceptionFilterAttribute>();
+            }).AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler =
+                    System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
             });
 
             webApplication.Services.AddFacade();

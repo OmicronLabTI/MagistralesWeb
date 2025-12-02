@@ -113,6 +113,16 @@ namespace Omicron.Invoice.Services.Constants
         public static string BillingType => "billingType";
 
         /// <summary>
+        /// Gets Const for the date for search.
+        /// </summary>
+        public static string StartDate => "startDate";
+
+        /// <summary>
+        /// Gets Const for the date for search.
+        /// </summary>
+        public static string EndDate => "endDate";
+
+        /// <summary>
         /// Gets error update.
         /// </summary>
         public static string ErrorUpdateInvoice => "No es posible actializar el registro. No requiere ajuste manual o ya se actualizo";

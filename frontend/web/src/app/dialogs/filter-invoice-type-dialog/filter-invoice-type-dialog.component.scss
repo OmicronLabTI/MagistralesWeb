@@ -1,0 +1,157 @@
+/* ============================================================
+   CONTENEDOR DEL DIÁLOGO
+   ============================================================ */
+.dialog-content {
+  width: 390px;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+
+  /* Tipografía base corporativa */
+  font-family: "omicron-medium", sans-serif;
+}
+
+/* ============================================================
+   TIPOGRAFÍA MATERIAL (ENCAPSULADA EN .dialog-content)
+   ============================================================ */
+:host ::ng-deep .dialog-content .mat-form-field-label,
+:host ::ng-deep .dialog-content .mat-input-element,
+:host ::ng-deep .dialog-content .mat-select-value-text,
+:host ::ng-deep .dialog-content .mat-datepicker-toggle-default-icon,
+:host ::ng-deep .dialog-content .mat-calendar-body-cell-content,
+:host ::ng-deep .dialog-content .mat-calendar-body-label,
+:host ::ng-deep .dialog-content .mat-calendar-period-button,
+:host ::ng-deep .dialog-content .mat-calendar-table-header th,
+:host ::ng-deep .dialog-content .mat-calendar-table-header td,
+:host ::ng-deep .dialog-content .mat-button,
+:host ::ng-deep .dialog-content .mat-stroked-button,
+:host ::ng-deep .dialog-content .mat-flat-button {
+  font-family: "omicron-medium", sans-serif !important;
+  font-size: 14px !important;
+}
+
+/* ============================================================
+   OPCIONES DEL MAT-SELECT (OVERLAY CON panelClass)
+   (YA VIENE ENCAPSULADO POR LA CLASE filter-select-panel)
+   ============================================================ */
+::ng-deep .filter-select-panel .mat-option,
+::ng-deep .filter-select-panel .mat-option-text,
+::ng-deep .filter-select-panel .mat-selected {
+  font-family: "omicron-medium", sans-serif !important;
+  font-size: 14px !important;
+  height: 42px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Texto seleccionado dentro del mat-select (el que se ve en el campo) */
+:host ::ng-deep .dialog-content .mat-select-value-text {
+  font-family: "omicron-medium", sans-serif !important;
+  font-size: 14px !important;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+:host ::ng-deep .dialog-content .header h2 {
+  font-family: "omicron-bold", sans-serif !important;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+  }
+}
+
+/* ============================================================
+   BOTONES
+   ============================================================ */
+:host ::ng-deep .dialog-content .mat-flat-button.mat-primary:not([disabled]) {
+  background-color: #0070B7 !important;
+  color: #ffffff !important;
+}
+
+:host ::ng-deep .dialog-content .mat-stroked-button.mat-primary:not([disabled]) {
+  border-color: #0070B7 !important;
+  color: #0070B7 !important;
+}
+
+:host ::ng-deep .dialog-content button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}
+
+/* ============================================================
+   AJUSTE DEL ÍCONO DEL DATEPICKER
+   ============================================================ */
+:host ::ng-deep
+  .dialog-content
+  .mat-form-field:not(.mat-form-field-appearance-legacy)
+  .mat-form-field-prefix .mat-icon-button .mat-datepicker-toggle-default-icon,
+:host ::ng-deep
+  .dialog-content
+  .mat-form-field:not(.mat-form-field-appearance-legacy)
+  .mat-form-field-suffix .mat-icon-button .mat-datepicker-toggle-default-icon {
+  margin: 0px !important;
+  margin-top: 12px !important;
+  margin-left: 16px !important;
+}
+
+/* ============================================================
+   TEXTOS
+   ============================================================ */
+.subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: #000000;
+  margin-bottom: 16px;
+}
+
+.subtitle-small {
+  font-size: 13px;
+  margin-left: 8px;
+  margin-top: -20px;
+  color: #666666;
+}
+
+/* ============================================================
+   FORM
+   ============================================================ */
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.full {
+  width: 100%;
+}
+
+/* ============================================================
+   FECHAS
+   ============================================================ */
+.dates {
+  display: flex;
+  gap: 12px;
+
+  .half {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}

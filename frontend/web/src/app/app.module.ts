@@ -27,6 +27,7 @@ import { AddCommentsDialogComponent } from './dialogs/add-comments-dialog/add-co
 // 🔹 Nuevos diálogos (SAP Orders / Shipments)
 import { ViewSapOrdersDialogComponent } from './dialogs/view-sap-orders-dialog/view-sap-orders-dialog.component';
 import { ViewShipmentsDialogComponent } from './dialogs/view-shipments-dialog/view-shipments-dialog.component';
+import { FilterInvoiceTypeDialogComponent } from './dialogs/filter-invoice-type-dialog/filter-invoice-type-dialog.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { ViewShipmentsDialogComponent } from './dialogs/view-shipments-dialog/vi
     RequestSignatureDialogComponent,
     AddCommentsDialogComponent,
     ViewSapOrdersDialogComponent,
-    ViewShipmentsDialogComponent
+    ViewShipmentsDialogComponent,
+    FilterInvoiceTypeDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -75,7 +77,8 @@ import { ViewShipmentsDialogComponent } from './dialogs/view-shipments-dialog/vi
     RequestSignatureDialogComponent,
     AddCommentsDialogComponent,
     ViewSapOrdersDialogComponent,
-    ViewShipmentsDialogComponent
+    ViewShipmentsDialogComponent,
+    FilterInvoiceTypeDialogComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

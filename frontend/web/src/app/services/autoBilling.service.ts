@@ -19,37 +19,40 @@ export class AutoBillingService {
 
   getAllAutoBilling(
     offset: number,
-    limit: number
+    limit: number,
+    startDate: Date,
+    endDate: Date,
+    billingType: string,
+    invoiceType: string
   ): Observable<{ items: AutoBillingModel[]; total: number }> {
-    const today = new Date();
-    const past5 = new Date();
-    past5.setDate(today.getDate() - 5);
 
     const formatDate = (d: Date): string => {
-      return d.toISOString().split('T')[0];
+      return new Date(d).toISOString().split('T')[0];
     };
 
     const params = {
       offset: String(offset),
       limit: String(limit),
       status: 'Creación exitosa',
-      startDate: formatDate(past5),
-      endDate: formatDate(today)
+      startDate: formatDate(startDate),
+      endDate: formatDate(endDate),
+      billingType,
+      invoiceType
     };
 
     return this.consume.httpGet<AutoBillingApiResponse>(this.API_URL, params).pipe(
       map((api: AutoBillingApiResponse) => {
         const rows = api && api.response ? api.response : [];
-        const total = api && api.comments ? api.comments.total : 0;
+        const total = api && api.comments && api.comments.total ? api.comments.total : 0;
 
         const mapped: AutoBillingModel[] = rows.map((item: AutoBillingApiItem) => {
-          const sapOrders = item.sapOrders.map(s => ({
+          const sapOrders = item.sapOrders.map((s) => ({
             id: s.id,
             idpedidosap: s.sapOrderId,
             idinvoice: s.idInvoice
           }));
 
-          const remissions = item.remissions.map(r => ({
+          const remissions = item.remissions.map((r) => ({
             id: r.id,
             idremission: r.remissionId,
             idinvoice: r.idInvoice

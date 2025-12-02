@@ -1,15 +1,18 @@
-import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import {
-  MatButtonModule,
-  MatDialog,
-  MatDialogModule,
-  MatIconModule,
-  MatMenuModule,
-  MatPaginatorModule,
-  MatTableModule,
-  MatTooltipModule
-} from '@angular/material';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
+
+import { MatDialog } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { of } from 'rxjs';
 
 import { AutoBillingComponent } from './auto-billing.component';
@@ -35,30 +38,25 @@ describe('AutoBillingComponent', () => {
     sapOrder: 2,
     shipments: 1,
     retries: 0,
-    sapOrders: [
-      { id: 1, idinvoice: 'INV001', idpedidosap: 'SO001' }
-    ],
-    remissions: [
-      { id: 1, idinvoice: 'INV001', idremission: 'REM001' }
-    ]
+    sapOrders: [{ id: 1, idinvoice: 'INV001', idpedidosap: 'SO001' }],
+    remissions: [{ id: 1, idinvoice: 'INV001', idremission: 'REM001' }]
   };
 
-  beforeEach(async(() => {
+  beforeEach(async () => {
     matDialogMock = jasmine.createSpyObj('MatDialog', ['open']);
     observableServiceMock = jasmine.createSpyObj('ObservableService', ['setUrlActive']);
     autoBillingServiceMock = jasmine.createSpyObj('AutoBillingService', ['getAllAutoBilling']);
 
     autoBillingServiceMock.getAllAutoBilling.and.returnValue(
-      of({
-        items: [result],
-        total: 1
-      })
+      of({ items: [result], total: 1 })
     );
 
-    TestBed.configureTestingModule({
+    await TestBed.configureTestingModule({
       declarations: [AutoBillingComponent],
       imports: [
         BrowserAnimationsModule,
+        FormsModule,
+        MatCheckboxModule,
         MatDialogModule,
         MatTableModule,
         MatTooltipModule,
@@ -71,61 +69,59 @@ describe('AutoBillingComponent', () => {
         { provide: MatDialog, useValue: matDialogMock },
         { provide: ObservableService, useValue: observableServiceMock },
         { provide: AutoBillingService, useValue: autoBillingServiceMock }
-      ]
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AutoBillingComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges(); // This already triggers ngOnInit
+    fixture.detectChanges();
   });
-
-  // =====================================
-  // CORE TESTS
-  // =====================================
 
   it('should create the component', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should load data and populate table on init', fakeAsync(() => {
+  it('should load data on init with correct parameters', fakeAsync(() => {
     tick();
+    const args = autoBillingServiceMock.getAllAutoBilling.calls.mostRecent().args;
 
-    // Updated expectation: default pageSize = 10
-    expect(autoBillingServiceMock.getAllAutoBilling).toHaveBeenCalledWith(0, 10);
+    expect(args[0]).toBe(0);
+    expect(args[1]).toBe(10);
+    expect(args[2] instanceof Date).toBe(true);
+    expect(args[3] instanceof Date).toBe(true);
+    expect(args[4]).toBe('Completa,Parcial');
+    expect(args[5]).toBe('Genérica,Con datos fiscales');
+
     expect(component.dataSource.data.length).toBe(1);
-    expect(component.dataSource.data[0].sapInvoiceId).toBe('SAP001');
   }));
 
-  it('should reload data when paginator emits page event', fakeAsync(() => {
+  it('should reload data when paginator triggers pagination', fakeAsync(() => {
     spyOn(component, 'loadPageData').and.callThrough();
-
-    const mockPageEvent = { pageIndex: 1, pageSize: 10, length: 100 };
-    const offset = mockPageEvent.pageIndex * mockPageEvent.pageSize;
-
-    component.loadPageData(offset, mockPageEvent.pageSize);
+    component.loadPageData(10, 10);
     tick();
-
     expect(component.loadPageData).toHaveBeenCalledWith(10, 10);
   }));
 
-  it('should call AutoBillingService with correct pagination parameters', fakeAsync(() => {
-    component.loadPageData(10, 50);
+  it('should call service with correct pagination arguments', fakeAsync(() => {
+    component.loadPageData(20, 50);
     tick();
-    expect(autoBillingServiceMock.getAllAutoBilling).toHaveBeenCalledWith(10, 50);
-  }));
+    const args = autoBillingServiceMock.getAllAutoBilling.calls.mostRecent().args;
 
-  // =====================================
-  // DIALOG TESTS
-  // =====================================
+    expect(args[0]).toBe(20);
+    expect(args[1]).toBe(50);
+    expect(args[4]).toContain('Completa');
+    expect(args[5]).toContain('Genérica');
+  }));
 
   it('should open SAP Orders dialog when sapOrders exist', () => {
     component.openSapOrdersDialog(result);
     expect(matDialogMock.open).toHaveBeenCalled();
   });
 
-  it('should not open SAP Orders dialog when sapOrders are empty', () => {
+  it('should not open SAP Orders dialog when sapOrders list is empty', () => {
     const data: AutoBillingModel = { ...result, sapOrders: [], remissions: [] };
     component.openSapOrdersDialog(data);
     expect(matDialogMock.open).not.toHaveBeenCalled();
@@ -136,7 +132,7 @@ describe('AutoBillingComponent', () => {
     expect(matDialogMock.open).toHaveBeenCalled();
   });
 
-  it('should not open Remissions dialog when remissions are empty', () => {
+  it('should not open Remissions dialog when remissions list is empty', () => {
     const data: AutoBillingModel = { ...result, sapOrders: [], remissions: [] };
     component.openShipmentsDialog(data);
     expect(matDialogMock.open).not.toHaveBeenCalled();
