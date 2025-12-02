@@ -115,6 +115,14 @@ namespace Omicron.Pedidos.Services.Pedidos
                     await this.pedidosDao.UpdateParentOrder();
                 }
             }
+
+            var childOrder = await this.pedidosDao.GetDetailOrderById(resetOrdersToCancel.OrderId);
+
+            if (childOrder != null)
+            {
+                childOrder.CancelOrderUserId = resetOrdersToCancel.UserId;
+                await this.pedidosDao.UpdateParentOrder();
+            }
         }
 
         /// <summary>

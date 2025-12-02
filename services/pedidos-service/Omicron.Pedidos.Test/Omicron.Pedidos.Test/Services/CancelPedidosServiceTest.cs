@@ -203,9 +203,58 @@ namespace Omicron.Pedidos.Test.Services
             // assert
             var updatedParentOrder = await this.context.ProductionOrderSeparationModel
                 .FirstOrDefaultAsync(x => x.OrderId == 1001);
+            var childOrder = await this.context.ProductionOrderSeparationDetailModel
+                .FirstOrDefaultAsync(x => x.DetailOrderId == 2001);
 
             Assert.That(updatedParentOrder, Is.Not.Null);
             Assert.That(updatedParentOrder.AvailablePieces, Is.EqualTo(15)); // 10 + 5 piezas devueltas
+            Assert.That(childOrder.CancelOrderUserId, Is.Not.Null);
+        }
+
+        /// <summary>
+        /// ResetAvailablePiecesForCancelledOrder.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        [Test]
+        public async Task ResetAvailablePiecesForCancelledOrderChildOrder()
+        {
+            // arrange
+            var parentOrder = new ProductionOrderSeparationModel
+            {
+                Id = 1,
+                OrderId = 1001,
+                AvailablePieces = 10,
+            };
+            var detailOrder = new ProductionOrderSeparationDetailModel
+            {
+                Id = 1,
+                OrderId = 1001,
+                DetailOrderId = 2001,
+                AssignedPieces = 5,
+            };
+
+            this.context.ProductionOrderSeparationModel.Add(parentOrder);
+            this.context.ProductionOrderSeparationDetailModel.Add(detailOrder);
+            await this.context.SaveChangesAsync();
+
+            this.pedidosDao = new PedidosDao(this.context);
+            this.cancelPedidosService = this.BuildService(null, "Ok");
+
+            var orderToReset = new OrderIdModel
+            {
+                UserId = this.userId,
+                OrderId = 2002, // ID de la orden hija
+            };
+
+            // act
+            await ((CancelPedidosService)this.cancelPedidosService)
+                .ResetAvailablePiecesForCancelledOrder(orderToReset);
+
+            // assert
+            var childOrder = await this.context.ProductionOrderSeparationDetailModel
+                .FirstOrDefaultAsync(x => x.DetailOrderId == 2001);
+
+            Assert.That(childOrder.CancelOrderUserId, Is.Null);
         }
 
         /// <summary>
