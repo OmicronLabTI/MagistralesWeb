@@ -506,8 +506,6 @@ namespace Omicron.Invoice.Services.Invoice.Impl
                 });
             }
 
-            rows = rows.OrderBy(r => r.Id).ToList();
-
             return rows;
         }
     }
