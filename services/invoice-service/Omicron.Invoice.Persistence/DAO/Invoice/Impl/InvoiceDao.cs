@@ -164,7 +164,7 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
             var filter = this.BuildAutoBillingFilter(status, typeInvoices, billingTypes, startDate, endDate);
 
             var invoices = await filter
-                .OrderByDescending(x => x.InvoiceCreateDate)
+                .OrderBy(x => x.IdFacturaSap)
                 .Skip(offset)
                 .Take(limit)
                 .Include(x => x.Remissions)
