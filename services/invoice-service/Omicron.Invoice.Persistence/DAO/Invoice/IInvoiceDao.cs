@@ -192,5 +192,14 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice
         /// <param name="limit">The limit.</param>
         /// <returns>Task.</returns>
         Task<List<InvoiceModel>> GetInvoicesByInvoiceId(string id, int offset, int limit);
+
+        /// <summary>
+        /// Update invoice errors from catalog.
+        /// </summary>
+        /// <param name="id">Factura Sap.</param>
+        /// <param name="offset">The offset.</param>
+        /// <param name="limit">The limit.</param>
+        /// <returns>Task.</returns>
+        Task<List<InvoiceModel>> GetInvoicesByIdFacturaSap(int id, int offset, int limit);
     }
 }

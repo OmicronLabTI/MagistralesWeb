@@ -385,36 +385,41 @@ namespace Omicron.Invoice.Services.Invoice.Impl
             return (listInvoices, total);
         }
 
-        private async Task<(List<InvoiceModel> invoices, int total, DateTime startDate, DateTime endDate)> GetAutoBillingModels(
-            Dictionary<string, string> parameters)
+        private async Task<(List<InvoiceModel> invoices, int total, DateTime startDate, DateTime endDate)> GetAutoBillingModels(Dictionary<string, string> parameters)
+        {
+            List<InvoiceModel> invoices;
+            int total = 0;
+            var offset = int.Parse(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Offset, ServiceConstants.OffsetDefault));
+            var limit = int.Parse(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Limit, ServiceConstants.Limit));
+            var status = ServiceUtils.SplitStringList(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Status, ServiceConstants.SuccessfulInvoiceCreationStatus));
+
+            var typeInvoices = ServiceUtils.SplitStringList(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.TypeInvoice, string.Empty));
+            var billingTypes = ServiceUtils.SplitStringList(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.BillingType, string.Empty));
+
+            var typeId = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.IdType, null);
+
+            var now = DateTime.Now;
+            var startDateStr = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.StartDate, null);
+            var endDateStr = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.EndDate, null);
+            var startDate = string.IsNullOrWhiteSpace(startDateStr)
+                ? now.Date.AddDays(-4)
+                : DateTime.Parse(startDateStr);
+            var endDate = string.IsNullOrWhiteSpace(endDateStr)
+                ? now.Date.AddDays(1).AddTicks(-1)
+                : DateTime.Parse(endDateStr);
+
+            if (typeId == null)
             {
-                var offset = int.Parse(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Offset, ServiceConstants.OffsetDefault));
-                var limit = int.Parse(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Limit, ServiceConstants.Limit));
-                var status = ServiceUtils.SplitStringList(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Status, ServiceConstants.SuccessfulInvoiceCreationStatus));
+                invoices = await this.invoiceDao.GetAutoBillingByFilters(
+                status,
+                typeInvoices,
+                billingTypes,
+                startDate,
+                endDate,
+                offset,
+                limit);
 
-                var typeInvoices = ServiceUtils.SplitStringList(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.TypeInvoice, string.Empty));
-                var billingTypes = ServiceUtils.SplitStringList(ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.BillingType, string.Empty));
-
-                var now = DateTime.Now;
-                var startDateStr = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.StartDate, null);
-                var endDateStr = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.EndDate, null);
-                var startDate = string.IsNullOrWhiteSpace(startDateStr)
-                    ? now.Date.AddDays(-4)
-                    : DateTime.Parse(startDateStr);
-                var endDate = string.IsNullOrWhiteSpace(endDateStr)
-                    ? now.Date.AddDays(1).AddTicks(-1)
-                    : DateTime.Parse(endDateStr);
-
-                var invoices = await this.invoiceDao.GetAutoBillingByFilters(
-                    status,
-                    typeInvoices,
-                    billingTypes,
-                    startDate,
-                    endDate,
-                    offset,
-                    limit);
-
-                var total = await this.invoiceDao.GetAutoBillingCount(
+                total = await this.invoiceDao.GetAutoBillingCount(
                     status,
                     typeInvoices,
                     billingTypes,
@@ -423,6 +428,25 @@ namespace Omicron.Invoice.Services.Invoice.Impl
 
                 return (invoices, total, startDate, endDate);
             }
+
+            var id = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Id, string.Empty);
+
+            invoices = typeId switch
+            {
+                ServiceConstants.IdInvoiceType => await this.invoiceDao.GetInvoicesByIdFacturaSap(int.Parse(id), offset, limit),
+
+                ServiceConstants.IdPedidoDxpType => await this.invoiceDao.GetInvoicesByPedidoDxp(id, offset, limit),
+
+                ServiceConstants.IdPedidoSapType => await this.invoiceDao.GetInvoicesByPedidoSap(ServiceUtils.SplitIntList(id), offset, limit),
+
+                _ => new List<InvoiceModel>()
+            };
+
+            invoices = invoices.Where(x => x.Status == ServiceConstants.SuccessfulInvoiceCreationStatus).ToList();
+            total = invoices.Count;
+
+            return (invoices, total, startDate, endDate);
+        }
 
         private async Task<List<AutoBillingRowDto>> CreateAutoBillingRowsToReturn(
             List<InvoiceModel> listInvoices,
@@ -447,7 +471,7 @@ namespace Omicron.Invoice.Services.Invoice.Impl
             var rows = new List<AutoBillingRowDto>();
             foreach (var inv in listInvoices)
             {
-                userMap.TryGetValue(inv.AlmacenUser ?? string.Empty, out var user);  // ✅ Manejar null en AlmacenUser
+                userMap.TryGetValue(inv.AlmacenUser ?? string.Empty, out var user);
 
                 var sapOrders = inv.SapOrders?.ToList() ?? new List<InvoiceSapOrderModel>();
                 var remissions = inv.Remissions?.ToList() ?? new List<InvoiceRemissionModel>();
@@ -459,7 +483,7 @@ namespace Omicron.Invoice.Services.Invoice.Impl
                 }
                 else
                 {
-                    var match = errorCatalog?.FirstOrDefault(e => inv.ErrorMessage.Contains(e.Code));  // ✅ Manejar null en errorCatalog
+                    var match = errorCatalog?.FirstOrDefault(e => inv.ErrorMessage.Contains(e.Code));
                     lastErrorMessage = match != null ? match.ErrorMessage : inv.ErrorMessage;
                 }
 
@@ -472,7 +496,6 @@ namespace Omicron.Invoice.Services.Invoice.Impl
                     BillingType = inv.BillingType,
                     AlmacenUser = user == null ? string.Empty : $"{user.FirstName} {user.LastName}",
                     DxpOrderId = inv.DxpOrderId,
-                    ShopTransaction = "T001",
                     SapOrdersCount = sapOrders.Count,
                     RemissionsCount = remissions.Count,
                     RetryNumber = inv.RetryNumber,

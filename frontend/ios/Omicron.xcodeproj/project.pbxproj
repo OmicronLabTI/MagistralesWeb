@@ -16,6 +16,10 @@
 		051D8A042E7B170E00BAD568 /* getHistoric.json in Resources */ = {isa = PBXBuildFile; fileRef = 051D8A022E7B16FA00BAD568 /* getHistoric.json */; };
 		051D8A052E7B170E00BAD568 /* getHistoric.json in Resources */ = {isa = PBXBuildFile; fileRef = 051D8A022E7B16FA00BAD568 /* getHistoric.json */; };
 		051D8A062E7B170E00BAD568 /* getHistoric.json in Resources */ = {isa = PBXBuildFile; fileRef = 051D8A022E7B16FA00BAD568 /* getHistoric.json */; };
+		055BCC8A2EDE542A00733776 /* cancelChildOrderMock.json in Sources */ = {isa = PBXBuildFile; fileRef = 055BCC892EDE541D00733776 /* cancelChildOrderMock.json */; };
+		055BCC8B2EDE542A00733776 /* cancelChildOrderMock.json in Sources */ = {isa = PBXBuildFile; fileRef = 055BCC892EDE541D00733776 /* cancelChildOrderMock.json */; };
+		055BCC8C2EDE542A00733776 /* cancelChildOrderMock.json in Sources */ = {isa = PBXBuildFile; fileRef = 055BCC892EDE541D00733776 /* cancelChildOrderMock.json */; };
+		055BCC8D2EDE542A00733776 /* cancelChildOrderMock.json in Sources */ = {isa = PBXBuildFile; fileRef = 055BCC892EDE541D00733776 /* cancelChildOrderMock.json */; };
 		05B553882E39418100F2F0E5 /* SplitOrderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B553872E39417600F2F0E5 /* SplitOrderModel.swift */; };
 		05B553892E39418100F2F0E5 /* SplitOrderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B553872E39417600F2F0E5 /* SplitOrderModel.swift */; };
 		05B5538A2E39418100F2F0E5 /* SplitOrderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B553872E39417600F2F0E5 /* SplitOrderModel.swift */; };
@@ -663,6 +667,7 @@
 		0511BBAD2E4122F8002EC973 /* SplitOrderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitOrderTest.swift; sourceTree = "<group>"; };
 		051D89FC2E7B0B9300BAD568 /* HistoricTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricTableViewCell.swift; sourceTree = "<group>"; };
 		051D8A022E7B16FA00BAD568 /* getHistoric.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = getHistoric.json; sourceTree = "<group>"; };
+		055BCC892EDE541D00733776 /* cancelChildOrderMock.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = cancelChildOrderMock.json; sourceTree = "<group>"; };
 		05B553872E39417600F2F0E5 /* SplitOrderModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitOrderModel.swift; sourceTree = "<group>"; };
 		05C7301C2E830DC90077AD9B /* ChildrenOrderRowViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildrenOrderRowViewCell.swift; sourceTree = "<group>"; };
 		05C730532E8495BA0077AD9B /* HistoricTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricTest.swift; sourceTree = "<group>"; };
@@ -1571,6 +1576,7 @@
 		980F234124DA115E0073E2C8 /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
+				055BCC892EDE541D00733776 /* cancelChildOrderMock.json */,
 				051D8A022E7B16FA00BAD568 /* getHistoric.json */,
 				112ACAF02E271E5700AF41E9 /* warehouses.json */,
 				1EC2920A254B4C9F002FD4E3 /* connect.json */,
@@ -2550,6 +2556,7 @@
 				490B6996268E98ED00DBE9F1 /* ExtensionsUI.swift in Sources */,
 				490B6997268E98ED00DBE9F1 /* ComponentsModel.swift in Sources */,
 				490B6998268E98ED00DBE9F1 /* SignaturePadModel.swift in Sources */,
+				055BCC8C2EDE542A00733776 /* cancelChildOrderMock.json in Sources */,
 				11ACB7DA29AE7F9200FE3E32 /* SupplieTableViewCell.swift in Sources */,
 				490B6999268E98ED00DBE9F1 /* Constants.swift in Sources */,
 				F3D21DEE298A4F610099B94A /* OrderDetailViewControllerExtension.swift in Sources */,
@@ -2664,6 +2671,7 @@
 				49CF65D725F2D4AB002CD598 /* ExtensionsUI.swift in Sources */,
 				49CF65D825F2D4AB002CD598 /* ComponentsModel.swift in Sources */,
 				49CF65D925F2D4AB002CD598 /* SignaturePadModel.swift in Sources */,
+				055BCC8B2EDE542A00733776 /* cancelChildOrderMock.json in Sources */,
 				11ACB7D829AE7F9200FE3E32 /* SupplieTableViewCell.swift in Sources */,
 				49CF65DA25F2D4AB002CD598 /* Constants.swift in Sources */,
 				F3D21DEC298A4F610099B94A /* OrderDetailViewControllerExtension.swift in Sources */,
@@ -2778,6 +2786,7 @@
 				49CF665A25F2D821002CD598 /* ExtensionsUI.swift in Sources */,
 				49CF665B25F2D821002CD598 /* ComponentsModel.swift in Sources */,
 				49CF665C25F2D821002CD598 /* SignaturePadModel.swift in Sources */,
+				055BCC8A2EDE542A00733776 /* cancelChildOrderMock.json in Sources */,
 				11ACB7D929AE7F9200FE3E32 /* SupplieTableViewCell.swift in Sources */,
 				49CF665D25F2D821002CD598 /* Constants.swift in Sources */,
 				F3D21DED298A4F610099B94A /* OrderDetailViewControllerExtension.swift in Sources */,
@@ -2892,6 +2901,7 @@
 				986EA24725083BF200ACE26A /* ExtensionsUI.swift in Sources */,
 				987BDFE4250986A700D9C6E4 /* ComponentsModel.swift in Sources */,
 				7CF2EA3C24F6C66B0005602F /* SignaturePadModel.swift in Sources */,
+				055BCC8D2EDE542A00733776 /* cancelChildOrderMock.json in Sources */,
 				11ACB7D729AE7F9200FE3E32 /* SupplieTableViewCell.swift in Sources */,
 				98C8C03C24AFCC7B00018A88 /* Constants.swift in Sources */,
 				F3D21DEB298A4F610099B94A /* OrderDetailViewControllerExtension.swift in Sources */,
@@ -3131,7 +3141,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 34;
+				CURRENT_PROJECT_VERSION = 37;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 4574497W4X;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -3360,7 +3370,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 34;
+				CURRENT_PROJECT_VERSION = 37;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 4574497W4X;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -3387,7 +3397,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 34;
+				CURRENT_PROJECT_VERSION = 37;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 4574497W4X;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -3574,7 +3584,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 34;
+				CURRENT_PROJECT_VERSION = 37;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 4574497W4X;
 				ENABLE_TESTING_SEARCH_PATHS = YES;

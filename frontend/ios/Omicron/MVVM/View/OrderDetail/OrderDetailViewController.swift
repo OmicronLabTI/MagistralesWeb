@@ -35,6 +35,8 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, AcceptBu
     @IBOutlet weak var hashtagLabel: UILabel!
     @IBOutlet weak var saveWarehousesChangesButton: UIButton!
     @IBOutlet weak var splitButton: UIButton!
+    @IBOutlet weak var cancelChildOrderButton: UIButton!
+    
     // MARK: Outlets from table header
     @IBOutlet weak var htCode: UILabel!
     @IBOutlet weak var htDescription: UILabel!
@@ -324,6 +326,8 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, AcceptBu
                                                  titleColor: OmicronColors.blue)
         UtilsManager.shared.setStyleButtonStatus(button: self.splitButton, title: StatusNameConstants.splitOrder,
                                                  color: OmicronColors.blue, backgroudColor: OmicronColors.blue)
+        UtilsManager.shared.setStyleButtonStatus(button: self.cancelChildOrderButton, title: StatusNameConstants.cancelOrder,
+                                                 color: OmicronColors.redColor, titleColor: OmicronColors.redColor)
         UtilsManager.shared.labelsStyle(label: self.titleLabel, text: CommonStrings.components, fontSize: 22)
         UtilsManager.shared.labelsStyle(label: self.htCode, text: CommonStrings.code, fontSize: 19,
                                         typeFont: CommonStrings.bold)
@@ -386,23 +390,24 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, AcceptBu
     }
     func showButtonsByStatusType(statusType: String) {
         var hideBtn = HideButtons(
-            process: true, finished: true, pending: true, addComp: true, save: true, seeBatches: true, saveChanges: true, splitOrder: true)
+            process: true, finished: true, pending: true, addComp: true, save: true, seeBatches: true, saveChanges: true, splitOrder: true,
+            cancelOrder: true)
         switch statusType {
         case StatusNameConstants.assignedStatus:
             hideBtn = HideButtons(process: false, finished: true, pending: false,
-                                  addComp: true, save: true, seeBatches: true, saveChanges: true, splitOrder: true)
+                                  addComp: true, save: true, seeBatches: true, saveChanges: true, splitOrder: true, cancelOrder: true)
         case StatusNameConstants.inProcessStatus:
             hideBtn = HideButtons(process: true, finished: false, pending: false,
-                                  addComp: false, save: true, seeBatches: false, saveChanges: false, splitOrder: false)
+                                  addComp: false, save: true, seeBatches: false, saveChanges: false, splitOrder: false, cancelOrder: false)
         case StatusNameConstants.penddingStatus:
             hideBtn = HideButtons(process: false, finished: true, pending: true,
-                                  addComp: true, save: true, seeBatches: false, saveChanges: true, splitOrder: true)
+                                  addComp: true, save: true, seeBatches: false, saveChanges: true, splitOrder: true, cancelOrder: true)
         case StatusNameConstants.finishedStatus:
             hideBtn = HideButtons(process: true, finished: true, pending: true,
-                                  addComp: false, save: true, seeBatches: false, saveChanges: true, splitOrder: true)
+                                  addComp: false, save: true, seeBatches: false, saveChanges: true, splitOrder: true, cancelOrder: true)
         case StatusNameConstants.reassignedStatus:
             hideBtn = HideButtons(process: true, finished: false, pending: false,
-                                  addComp: false, save: true, seeBatches: false, saveChanges: false, splitOrder: false)
+                                  addComp: false, save: true, seeBatches: false, saveChanges: false, splitOrder: false, cancelOrder: false)
         default: break
         }
         self.changeHidePropertyOfButtons(hideBtn)
@@ -417,6 +422,7 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, AcceptBu
         self.seeLotsButton.isHidden = hideBtns.seeBatches
         self.saveWarehousesChangesButton.isHidden = hideBtns.saveChanges
         self.splitButton.isHidden = hideBtns.splitOrder
+        self.cancelChildOrderButton.isHidden = hideBtns.cancelOrder
     }
     func sendIndexToDelete(index: Int) {
         orderDetailViewModel.deleteItemFromTable(indexs: [index])
@@ -532,6 +538,43 @@ class OrderDetailViewController: UIViewController, SelectedPickerInput, AcceptBu
                 self.disableButtonsForFatherOrder( String() ,onProcess: value)
             }
             self.present(navigationVC, animated: true, completion: nil)
+        }
+    }
+    
+    
+    @IBAction func cancelOrderButtonAction(_ sender: Any) {
+        let someHasBatches = someComponentHasBatches()
+        let req = CancelChildOrderRequest(
+            userId: Persistence.shared.getUserData()?.id ?? String(),
+            order: orderDetail[0].productionOrderID ?? 0
+        )
+        if someHasBatches {
+            let mssg = Constants.Errors.hasBatchesForCancel.rawValue
+            let alert = UIAlertController(
+                title: mssg,
+                message: nil,
+                preferredStyle: .alert)
+            let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: nil)
+            alert.addAction(okAction)
+            self.present(alert, animated: true, completion: nil)
+            return
+        } else {
+            let mssg = CommonStrings.cancelOrderConfirmationMssg
+            let alert = UIAlertController(
+                title: mssg,
+                message: nil,
+                preferredStyle: .alert
+            )
+            let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive,
+                                             handler: {[weak self] _ in
+                                                self?.dismiss(animated: true, completion: nil)})
+            let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default,
+                                         handler: { [weak self] _ in
+                self?.orderDetailViewModel.cancelChildOrderRequest(request: req)
+            })
+            alert.addAction(cancelAction)
+            alert.addAction(okAction)
+            present(alert, animated: true, completion: nil)
         }
     }
     

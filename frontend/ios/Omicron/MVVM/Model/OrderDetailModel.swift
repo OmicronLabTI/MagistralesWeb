@@ -223,6 +223,27 @@ class ChangeStatusRequest: Codable {
         self.userRoleType = userType
     }
 }
+
+class CancelChildOrderRequest: Codable {
+    var userId: String
+    var orderId: Int
+    init(userId: String, order: Int) {
+        self.userId = userId
+        self.orderId = order
+    }
+}
+
+class CancelChildOrderResponse: HttpResponse {
+    var response: [CancelChildOrderRequest]?
+    required init?(map: Map) {
+        super.init(map: map)
+    }
+    override func mapping(map: Map) {
+        super.mapping(map: map)
+        response <- map["response"]
+    }
+}
+
 class ChangeStatusRespose: HttpResponse {
     var response: String?
     required init?(map: Map) {
