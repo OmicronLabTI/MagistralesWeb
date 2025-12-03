@@ -349,7 +349,11 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
             var filter = this.context.Invoice
                 .Where(x => status == null || status.Count == 0 || status.Contains(x.Status));
 
-            filter = filter.Where(x => x.InvoiceCreateDate >= startDate && x.InvoiceCreateDate <= endDate);
+            var startDateNormalized = startDate.Date;
+            var endDateInclusive = endDate.Date.AddDays(1);
+
+            filter = filter.Where(x => x.InvoiceCreateDate >= startDateNormalized
+                                     && x.InvoiceCreateDate < endDateInclusive);
 
             if (typeInvoices != null && typeInvoices.Any())
             {

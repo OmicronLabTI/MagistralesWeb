@@ -403,10 +403,10 @@ namespace Omicron.Invoice.Services.Invoice.Impl
             var endDateStr = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.EndDate, null);
             var startDate = string.IsNullOrWhiteSpace(startDateStr)
                 ? now.Date.AddDays(-4)
-                : DateTime.Parse(startDateStr);
+                : DateTime.Parse(startDateStr).Date;
             var endDate = string.IsNullOrWhiteSpace(endDateStr)
-                ? now.Date.AddDays(1).AddTicks(-1)
-                : DateTime.Parse(endDateStr);
+                ? now.Date
+                : DateTime.Parse(endDateStr).Date;
 
             if (typeId == null)
             {
