@@ -207,8 +207,6 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
   }
 
   openAdvancedFiltersDialog(): void {
-    console.log('Okiii');
-
     const dialogRef = this.dialog.open(FilterInvoiceTypeDialogComponent, {
       panelClass: 'advanced-filter-dialog',
       disableClose: true,
