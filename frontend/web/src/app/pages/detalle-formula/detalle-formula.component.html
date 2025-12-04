@@ -70,7 +70,7 @@
             <button mat-raised-button
                 (click)="goToAddComponent(['/addComponent', oldDataFormulaDetail.baseDocument,
                                                             oldDataFormulaDetail.productionOrderId, oldDataFormulaDetail.code , oldDataFormulaDetail.productDescription,
-                                                            oldDataFormulaDetail.hasMissingStock ? 1 : 0, isFromDetail ? 1 : 0, detailOrders.toString()])"
+                                                            oldDataFormulaDetail.hasMissingStock ? 1 : 0, isFromDetail ? 1 : 0, detailOrders.toString(), oldDataFormulaDetail.plannedQuantity])"
                 [ngClass]="!oldDataFormulaDetail.onSplitProcess ? 'button-blue' : 'disable-button'"
                 [disabled]="oldDataFormulaDetail.onSplitProcess">
                 Agregar componente
