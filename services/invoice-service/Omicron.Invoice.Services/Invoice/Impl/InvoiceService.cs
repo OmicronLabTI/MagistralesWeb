@@ -503,6 +503,7 @@ namespace Omicron.Invoice.Services.Invoice.Impl
                     Remissions = remissions,
                     LastErrorMessage = lastErrorMessage,
                     LastUpdateDate = inv.UpdateDate?.ToString("dd/MM/yy HH:mm:ss"),
+                    Status = inv.Status,
                 });
             }
 

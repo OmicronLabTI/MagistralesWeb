@@ -30,6 +30,8 @@ export class AutoBillingService {
       return new Date(d).toISOString().split('T')[0];
     };
 
+    invoiceType = invoiceType.replace('Con datos fiscales', 'No genérica');
+
     const params = {
       offset: String(offset),
       limit: String(limit),
