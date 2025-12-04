@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -19,6 +19,7 @@ describe('FilterInvoiceTypeDialogComponent', () => {
   let component: FilterInvoiceTypeDialogComponent;
   let fixture: ComponentFixture<FilterInvoiceTypeDialogComponent>;
   let dialogRefMock: jasmine.SpyObj<MatDialogRef<FilterInvoiceTypeDialogComponent>>;
+  const dataMock = true;
 
   beforeEach(async(() => {
     dialogRefMock = jasmine.createSpyObj('MatDialogRef', ['close']);
@@ -40,7 +41,8 @@ describe('FilterInvoiceTypeDialogComponent', () => {
       ],
 
       providers: [
-        { provide: MatDialogRef, useValue: dialogRefMock }
+        { provide: MatDialogRef, useValue: dialogRefMock },
+        { provide: MAT_DIALOG_DATA, useValue: dataMock },
       ]
     }).compileComponents();
   }));
@@ -51,25 +53,18 @@ describe('FilterInvoiceTypeDialogComponent', () => {
     fixture.detectChanges();
   });
 
-  // =============================
-  // TESTS
-  // =============================
-
   it('should create component', () => {
     expect(component).toBeTruthy();
   });
 
   it('should start with form invalid and clear disabled', () => {
-    component.validateForm();
     expect(component.formValid).toBe(false);
     expect(component.canClear).toBe(false);
   });
 
-  it('should validate form when all required fields are filled', () => {
+  it('should validate form when ID Factura SAP and value are filled', () => {
     component.selectedSearchType = 'ID Factura SAP';
     component.searchValue = '123';
-    component.dateFrom = new Date();
-    component.dateTo = new Date();
 
     component.validateForm();
     expect(component.formValid).toBe(true);
@@ -107,14 +102,9 @@ describe('FilterInvoiceTypeDialogComponent', () => {
     expect(dialogRefMock.close).not.toHaveBeenCalled();
   });
 
-  it('should close dialog with correct data when form is valid', () => {
-    const d1 = new Date();
-    const d2 = new Date();
-
+  it('should close dialog with correct data when form is valid for ID Factura SAP', () => {
     component.selectedSearchType = 'ID Factura SAP';
     component.searchValue = '777';
-    component.dateFrom = d1;
-    component.dateTo = d2;
     component.formValid = true;
 
     component.apply();
@@ -122,8 +112,8 @@ describe('FilterInvoiceTypeDialogComponent', () => {
     expect(dialogRefMock.close).toHaveBeenCalledWith({
       type: 'ID Factura SAP',
       value: '777',
-      from: d1,
-      to: d2
+      from: null,
+      to: null
     });
   });
 

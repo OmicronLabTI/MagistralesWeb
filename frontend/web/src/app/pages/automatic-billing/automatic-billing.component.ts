@@ -34,13 +34,15 @@ import {
   automaticBillingTableColumns,
   automaticBillingStatusConst,
   automaticBillingInvoiceTypeConst,
-  automaticBillingBillingTypeConst
+  automaticBillingBillingTypeConst,
+  advanceFiltersTypes
 } from 'src/app/constants/automatic_billing_constants';
 import {
   CONST_NUMBER,
   CONST_STRING,
   HttpServiceTOCall
 } from 'src/app/constants/const';
+import { FilterInvoiceTypeDialogComponent } from 'src/app/dialogs/filter-invoice-type-dialog/filter-invoice-type-dialog.component';
 import {
   ManualAdjustmentConfirmedDialogComponent
 } from 'src/app/dialogs/manual-adjustment-confirmed-dialog/manual-adjustment-confirmed-dialog.component';
@@ -56,6 +58,7 @@ import {
 } from 'src/app/model/http/autoBilling.model';
 import {
   AutomaticBilling,
+  AutomaticBillingAdvanceFilters,
   ManualRetryequest
 } from 'src/app/model/http/invoices';
 import { DataService } from 'src/app/services/data.service';
@@ -89,6 +92,8 @@ export class AutomaticBillingComponent implements OnInit {
   statusFilter = CONST_STRING.empty;
   invoiceTypeFilter = CONST_STRING.empty;
   billingTypeFilter = CONST_STRING.empty;
+  advanceFilter = CONST_STRING.empty;
+  filtersObtained = new AutomaticBillingAdvanceFilters();
 
   /** Status constants and filters */
   automaticBillingStatus = automaticBillingStatusConst;
@@ -137,7 +142,7 @@ export class AutomaticBillingComponent implements OnInit {
     private invoicesService: InvoicesService,
     private errorService: ErrorService,
     private observableService: ObservableService,
-    private dataService: DataService,
+    public dataService: DataService,
     private dialog: MatDialog,
     private localStorageService: LocalStorageService
   ) {
@@ -196,13 +201,23 @@ export class AutomaticBillingComponent implements OnInit {
     this.billingTypeFilter = this.billingTypeColumSelectedOptions.join(',');
   }
 
+
+  clearFilters(): void {
+    this.advanceFilter = '';
+    this.applyFilters();
+  }
+
   /**
    * Builds the query string for backend request.
    */
   private getQueryString(): void {
-    this.queryString =
-      `status=${this.statusFilter}&invoiceType=${this.invoiceTypeFilter}&billingType=${this.billingTypeFilter}` +
-      `&offset=${this.offset}&limit=${this.limit}`;
+    const inTableFilters = `&status=${this.statusFilter}&invoiceType=${this.invoiceTypeFilter}&billingType=${this.billingTypeFilter}`;
+    const isAdvanceSearch = this.dataService.calculateTernary(
+      this.dataService.validateValidString(this.advanceFilter),
+      this.advanceFilter,
+      inTableFilters
+    );
+    this.queryString = `&offset=${this.offset}&limit=${this.limit}` + isAdvanceSearch;
   }
 
   /**
@@ -330,6 +345,33 @@ export class AutomaticBillingComponent implements OnInit {
         }
       });
     }
+  }
+
+  openAdvancedFiltersDialog(): void {
+    const dialogRef = this.dialog.open(FilterInvoiceTypeDialogComponent, {
+      panelClass: 'advanced-filter-dialog',
+      disableClose: true,
+      width: 'auto',
+      maxWidth: '95vw',
+      data: true,
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.filtersObtained.type = result.type;
+        this.filtersObtained.value = result.value;
+        this.getTypeOfFilter(this.filtersObtained);
+      }
+    });
+  }
+
+  getTypeOfFilter(filter: AutomaticBillingAdvanceFilters): void {
+    Object.entries(advanceFiltersTypes).forEach(([key, value]) => {
+      if (value === filter.type) {
+        this.advanceFilter = `&idtype=${key}&id=${filter.value}`;
+        this.applyFilters();
+      }
+    });
   }
 
   /**
