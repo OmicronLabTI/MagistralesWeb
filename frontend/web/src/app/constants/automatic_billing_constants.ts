@@ -30,3 +30,9 @@ export const automaticBillingBillingTypeConst = {
     parcial: 'Parcial',
     completa: 'Completa'
 };
+
+export const advanceFiltersTypes: Record<string, string> = {
+    invoice: 'ID Factura SAP',
+    pedidosap: 'Pedido SAP',
+    pedidodxp: 'Pedido shop'
+};

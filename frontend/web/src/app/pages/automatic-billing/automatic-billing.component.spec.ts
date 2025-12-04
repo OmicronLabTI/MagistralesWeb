@@ -201,4 +201,23 @@ describe('AutomaticBillingComponent', () => {
     component.onSelectionChangeBillingType();
     expect(component.lastOptionBillingType).toEqual(automaticBillingBillingTypeConst.parcial);
   });
+  it('should clearFilters', () => {
+    component.clearFilters();
+    expect(component.advanceFilter).toEqual('');
+  });
+  it('should applyFilters', () => {
+    component.applyFilters();
+    expect(invoiceServiceSpy.getAutomaticBillingTableData).toHaveBeenCalled();
+  });
+  it('should openAdvancedFiltersDialog', () => {
+    const filters = {
+      type: 'ID Factura SAP',
+      value: 'sds6ss'
+    };
+    spyOn(matDialog, 'open').and.returnValue({
+      afterClosed: () => of(filters)
+    } as MatDialogRef<any>);
+    component.openAdvancedFiltersDialog();
+    expect(invoiceServiceSpy.getAutomaticBillingTableData).toHaveBeenCalled();
+  });
 });

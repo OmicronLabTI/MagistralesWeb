@@ -19,12 +19,8 @@
     <mat-form-field appearance="outline" class="full">
       <mat-label>Tipo de búsqueda</mat-label>
 
-      <mat-select
-        [(ngModel)]="selectedSearchType"
-        name="type"
-        (selectionChange)="validateForm()"
-        panelClass="filter-select-panel"
-      >
+      <mat-select [(ngModel)]="selectedSearchType" name="type" (selectionChange)="validateForm()"
+        panelClass="filter-select-panel">
         <mat-option *ngFor="let t of searchTypes" [value]="t.value">
           {{ t.label }}
         </mat-option>
@@ -34,65 +30,41 @@
     <!-- Input -->
     <mat-form-field appearance="outline" class="full">
       <mat-label>Captura el valor a buscar</mat-label>
-      <input
-        matInput
-        name="value"
-        [(ngModel)]="searchValue"
-        (ngModelChange)="validateForm()"
-      >
+      <input matInput name="value" [(ngModel)]="searchValue" (ngModelChange)="validateForm()">
     </mat-form-field>
 
     <!-- Fechas -->
-    <div class="dates">
+    <ng-container *ngIf="!data">
+      <div class="dates">
 
-      <mat-form-field appearance="outline" class="half">
-        <mat-label>Fecha de</mat-label>
-        <input
-          matInput
-          [matDatepicker]="pickerFrom"
-          [(ngModel)]="dateFrom"
-          name="dateFrom"
-          (dateChange)="validateForm()"
-        >
-        <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
-        <mat-datepicker #pickerFrom></mat-datepicker>
-      </mat-form-field>
+        <mat-form-field appearance="outline" class="half">
+          <mat-label>Fecha de</mat-label>
+          <input matInput [matDatepicker]="pickerFrom" [(ngModel)]="dateFrom" name="dateFrom"
+            (dateChange)="validateForm()">
+          <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFrom></mat-datepicker>
+        </mat-form-field>
 
-      <mat-form-field appearance="outline" class="half">
-        <mat-label>Fecha hasta</mat-label>
-        <input
-          matInput
-          [matDatepicker]="pickerTo"
-          [(ngModel)]="dateTo"
-          name="dateTo"
-          (dateChange)="validateForm()"
-        >
-        <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
-        <mat-datepicker #pickerTo></mat-datepicker>
-      </mat-form-field>
+        <mat-form-field appearance="outline" class="half">
+          <mat-label>Fecha hasta</mat-label>
+          <input matInput [matDatepicker]="pickerTo" [(ngModel)]="dateTo" name="dateTo" (dateChange)="validateForm()">
+          <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+          <mat-datepicker #pickerTo></mat-datepicker>
+        </mat-form-field>
 
-    </div>
+      </div>
 
-    <p class="subtitle-small">Selecciona un rango de fecha</p>
+      <p class="subtitle-small">Selecciona un rango de fecha</p>
+    </ng-container>
 
     <!-- Footer -->
     <div class="footer">
 
-      <button
-        mat-stroked-button
-        color="primary"
-        type="button"
-        [disabled]="!canClear"
-        (click)="clear()">
+      <button mat-stroked-button color="primary" type="button" [disabled]="!canClear" (click)="clear()">
         Limpiar selección
       </button>
 
-      <button
-        mat-flat-button
-        color="primary"
-        type="button"
-        [disabled]="!formValid"
-        (click)="apply()">
+      <button mat-flat-button color="primary" type="button" [disabled]="!formValid" (click)="apply()">
         Aplicar y buscar
       </button>
 

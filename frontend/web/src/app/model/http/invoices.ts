@@ -39,3 +39,8 @@ export class IManualRetryResponseIds {
     processedIds: string[];
     skippedIds: string[];
 }
+
+export class AutomaticBillingAdvanceFilters {
+    type: string;
+    value: string;
+}

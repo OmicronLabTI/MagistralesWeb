@@ -31,9 +31,14 @@ This template is used within the AutoBillingComponent in Angular.
   <!-- =============================================================== -->
   <!-- Filter section (currently disabled, reserved for future filters) -->
   <!-- =============================================================== -->
-  <div class="filter-section" *ngIf="false">
-    <button mat-raised-button class="button-blue-user-list">
-      Clear Filters
+  <div class="filter-section">
+    <button mat-raised-button class="button-blue-user-list" (click)="openAdvancedFiltersDialog()">
+      <mat-icon>search</mat-icon>
+      Buscar
+    </button>
+    <button mat-raised-button class="button-blue-user-list" (click)="clearFilters()">
+      <img src="assets/icons/eraser.svg" alt="delete filters">
+      Limpiar filtros
     </button>
   </div>
 
@@ -333,7 +338,8 @@ This template is used within the AutoBillingComponent in Angular.
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
       <div class="no-registers" *ngIf="dataSource.data.length === 0">
-        <span>No hay peticiones registradas</span>
+        <span *ngIf="!dataService.validateValidString(advanceFilter)">No hay peticiones registradas</span>
+        <span *ngIf="dataService.validateValidString(advanceFilter)">No se encontrarón resultados con la búsqueda indicada.</span>
       </div>
     </div>
 
