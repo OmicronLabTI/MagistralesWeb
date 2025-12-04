@@ -47,6 +47,8 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
 
   previousInvoiceSelection = '';
   previousBillingSelection = '';
+  idtype = '';
+  id = '';
 
   showFilter = false;
   popupPosition: any = {};
@@ -126,21 +128,27 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
 
     const billing = this.getSelectedBillingTypes();
     const invoices = this.getSelectedInvoiceTypes();
+    const id = this.id;
+    const idType = this.idtype;
 
-    this.autoBillingService.getAllAutoBilling(
-      offset,
-      limit,
-      past5,
-      today,
-      billing,
-      invoices
-    ).subscribe(response => {
-      this.dataSource.data = response.items;
+    this.autoBillingService
+      .getAllAutoBilling(
+        offset,
+        limit,
+        past5,
+        today,
+        billing,
+        invoices,
+        idType,
+        id
+      )
+      .subscribe(response => {
+        this.dataSource.data = response.items;
 
-      if (this.paginator) {
-        this.paginator.length = response.total;
-      }
-    });
+        if (this.paginator) {
+          this.paginator.length = response.total;
+        }
+      });
   }
 
   openFilter(event: MouseEvent, type: string): void {
@@ -191,12 +199,16 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
   }
 
   onClear(): void {
-    this.invoiceOptions.forEach(x => x.selected = false);
-    this.billingOptions.forEach(x => x.selected = false);
+    this.invoiceOptions.forEach(x => x.selected = true);
+    this.billingOptions.forEach(x => x.selected = true);
+    this.idtype = '';
+    this.id = '';
     this.loadPageData(0, 10);
   }
 
   openAdvancedFiltersDialog(): void {
+    console.log('Okiii');
+
     const dialogRef = this.dialog.open(FilterInvoiceTypeDialogComponent, {
       panelClass: 'advanced-filter-dialog',
       disableClose: true,
@@ -208,7 +220,14 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
       if (!result) {
         return;
       }
-      console.log(result);
+
+      this.idtype = result.type
+        .replace('ID Factura SAP', 'invoice')
+        .replace('Pedido SAP', 'pedidosap')
+        .replace('Pedido shop', 'pedidodxp');
+
+      this.id = result.value;
+      this.loadPageData(0, 10);
     });
   }
 }
