@@ -110,5 +110,10 @@ namespace Omicron.Invoice.Common.DTOs.Responses.Invoices
         /// formatted as "dd/MM/yy HH:mm:ss".
         /// </summary>
         public string LastUpdateDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Status.
+        /// </summary>
+        public string Status { get; set; }
     }
 }
