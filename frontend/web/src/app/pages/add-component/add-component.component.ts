@@ -90,7 +90,6 @@ export class AddComponentComponent implements OnInit, OnDestroy {
   ];
 
   totalPieces = CONST_NUMBER.zero;
-
   constructor(
     private titleService: Title,
     private route: ActivatedRoute,

@@ -86,6 +86,14 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public static string ExecuteFinalizationSteps => "{LogBase} - Execute Finalization Steps {ProductionOrderId}";
 
         /// <summary>
+        /// Gets AlreadyBeingProcessedByAnotherPod.
+        /// </summary>
+        /// <value>
+        /// AlreadyBeingProcessedByAnotherPod.
+        /// </value>
+        public static string AlreadyBeingProcessedByAnotherPod => "{LogBase} - ProductionOrder {ProductionOrderId} Already being processed by another pod. LockKey={LockKey} Pod={PodName} ";
+
+        /// <summary>
         /// Gets StepNotRecognized.
         /// </summary>
         /// <value>
