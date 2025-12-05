@@ -1,5 +1,9 @@
 import {
-  Component, OnInit, AfterViewInit, ViewChild, ElementRef
+  Component,
+  OnInit,
+  AfterViewInit,
+  ViewChild,
+  ElementRef
 } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -160,13 +164,11 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
       left: rect.left + 'px'
     };
 
-    this.currentOptions = type === 'invoice'
-      ? this.invoiceOptions
-      : this.billingOptions;
+    this.currentOptions =
+      type === 'invoice' ? this.invoiceOptions : this.billingOptions;
 
     this.previousInvoiceSelection = this.getSelectedInvoiceTypes();
     this.previousBillingSelection = this.getSelectedBillingTypes();
-
     this.showFilter = true;
   }
 
@@ -182,7 +184,13 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
     this.dialog.open(ViewSapOrdersDialogComponent, {
       width: '800px',
       panelClass: 'custom-dialog-container',
-      data: { invoiceId: row.sapInvoiceId, orders: row.sapOrders }
+      data: {
+        invoiceId: row.sapInvoiceId,
+        orders: row.sapOrders,
+        status: row.status,
+        updateDate: row.lastUpdateDate,
+        isFromAutomaticBilling: true
+      }
     });
   }
 
@@ -194,13 +202,19 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
     this.dialog.open(ViewShipmentsDialogComponent, {
       width: '800px',
       panelClass: 'custom-dialog-container',
-      data: { invoiceId: row.sapInvoiceId, remissions: row.remissions }
+      data: {
+        invoiceId: row.sapInvoiceId,
+        remissions: row.remissions,
+        status: row.status,
+        updateDate: row.lastUpdateDate,
+        isFromAutomaticBilling: true
+      }
     });
   }
 
   onClear(): void {
-    this.invoiceOptions.forEach(x => x.selected = true);
-    this.billingOptions.forEach(x => x.selected = true);
+    this.invoiceOptions.forEach(x => (x.selected = true));
+    this.billingOptions.forEach(x => (x.selected = true));
     this.idtype = '';
     this.id = '';
     this.loadPageData(0, 10);

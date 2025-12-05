@@ -15,6 +15,11 @@
             <b>Estatus: </b><img src="assets/icons/billing_history_sent.svg" alt="Sent">{{data.status}}
           </div>
         </ng-container>
+        <ng-container *ngIf="data.status === automaticBillingStatus.created">
+          <div class="info-containers-width status-container sent-color">
+            <b>Estatus: </b><img src="assets/icons/billing_history_sent.svg" alt="Sent">{{data.status}}
+          </div>
+        </ng-container>
         <ng-container *ngIf="data.status === automaticBillingStatus.creating">
           <div class="info-containers-width status-container creating-color">
             <b>Estatus: </b><img src="assets/icons/billing_history_on_process.svg" alt="Creating">{{data.status}}

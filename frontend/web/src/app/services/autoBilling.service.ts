@@ -65,6 +65,7 @@ export class AutoBillingService {
           }));
 
           return {
+            id: item.id,
             requestId: item.id,
             sapInvoiceId: item.idFacturaSap,
             sapCreationDate: item.invoiceCreateDate,
@@ -76,7 +77,9 @@ export class AutoBillingService {
             shipments: item.remissionsCount,
             retries: item.retryNumber,
             sapOrders,
-            remissions
+            remissions,
+            status: item.status,
+            lastUpdateDate: item.lastUpdateDate
           };
         });
 

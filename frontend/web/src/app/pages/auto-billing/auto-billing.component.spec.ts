@@ -27,7 +27,9 @@ describe('AutoBillingComponent', () => {
   let observableServiceMock: jasmine.SpyObj<ObservableService>;
   let autoBillingServiceMock: jasmine.SpyObj<AutoBillingService>;
 
+  // 🔥 AutoBillingModel COMPLETO (obligatorio en strict mode)
   const result: AutoBillingModel = {
+    id: '1',
     requestId: 'REQ001',
     sapInvoiceId: 'SAP001',
     sapCreationDate: '2025-11-12',
@@ -39,7 +41,9 @@ describe('AutoBillingComponent', () => {
     shipments: 1,
     retries: 0,
     sapOrders: [{ id: 1, idinvoice: 'INV001', idpedidosap: 'SO001' }],
-    remissions: [{ id: 1, idinvoice: 'INV001', idremission: 'REM001' }]
+    remissions: [{ id: 1, idinvoice: 'INV001', idremission: 'REM001' }],
+    lastUpdateDate: new Date(),
+    status: 'created'
   };
 
   beforeEach(async () => {
@@ -47,6 +51,7 @@ describe('AutoBillingComponent', () => {
     observableServiceMock = jasmine.createSpyObj('ObservableService', ['setUrlActive']);
     autoBillingServiceMock = jasmine.createSpyObj('AutoBillingService', ['getAllAutoBilling']);
 
+    // Retorna lista con el objeto COMPLETO
     autoBillingServiceMock.getAllAutoBilling.and.returnValue(
       of({ items: [result], total: 1 })
     );
@@ -122,7 +127,11 @@ describe('AutoBillingComponent', () => {
   });
 
   it('should not open SAP Orders dialog when sapOrders list is empty', () => {
-    const data: AutoBillingModel = { ...result, sapOrders: [], remissions: [] };
+    const data: AutoBillingModel = {
+      ...result,
+      sapOrders: [],
+      remissions: []
+    };
     component.openSapOrdersDialog(data);
     expect(matDialogMock.open).not.toHaveBeenCalled();
   });
@@ -133,7 +142,11 @@ describe('AutoBillingComponent', () => {
   });
 
   it('should not open Remissions dialog when remissions list is empty', () => {
-    const data: AutoBillingModel = { ...result, sapOrders: [], remissions: [] };
+    const data: AutoBillingModel = {
+      ...result,
+      sapOrders: [],
+      remissions: []
+    };
     component.openShipmentsDialog(data);
     expect(matDialogMock.open).not.toHaveBeenCalled();
   });
