@@ -133,6 +133,24 @@
     }
 }
 
+.custom-checkbox-styles {
+    ::ng-deep .mat-list-option .mat-pseudo-checkbox {
+        order: 1 !important;
+        margin-right: 12px;
+        margin-left: 0;
+    }
+
+    ::ng-deep .mat-pseudo-checkbox-checked {
+        background-color: #0070B7 !important;
+        border-color: #0070B7 !important;
+    }
+
+    ::ng-deep .mat-pseudo-checkbox-disabled {
+        background-color: #B3B3B3 !important;
+        border-color: #B3B3B3 !important;
+    }
+}
+
 .billing-table-container {
     ::ng-deep .custom-tooltip {
         min-width: fit-content !important;
@@ -156,15 +174,5 @@
 
     ::ng-deep .mat-slide-toggle.mat-disabled.mat-checked .mat-slide-toggle-bar {
         background-color: #4CAF50;
-    }
-
-    ::ng-deep .mat-pseudo-checkbox-checked {
-        background-color: #0081c2 !important;
-        border-color: #0081c2 !important;
-    }
-
-    ::ng-deep .mat-pseudo-checkbox-disabled {
-        background-color: #B3B3B3 !important;
-        border-color: #B3B3B3 !important;
     }
 }
