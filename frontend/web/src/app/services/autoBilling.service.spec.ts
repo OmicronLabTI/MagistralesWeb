@@ -31,8 +31,10 @@ export class AutoBillingService {
       response: AutoBillingModel[];
       comments: { total: number };
     }>(this.API_URL, params).pipe(
-      map((api) => ({
+      map(api => ({
         items: api.response.map(item => ({
+          id: item.id != null ? item.id : 'N/A',
+
           requestId: item.requestId,
           sapInvoiceId: item.sapInvoiceId,
           sapCreationDate: item.sapCreationDate,
@@ -44,17 +46,28 @@ export class AutoBillingService {
           shipments: item.shipments,
           retries: item.retries,
 
-          sapOrders: item.sapOrders.map((s: SapOrderModel) => ({
-            id: s.id,
-            idpedidosap: s.idpedidosap,
-            idinvoice: s.idinvoice
-          })),
+          sapOrders: (item.sapOrders != null ? item.sapOrders : []).map(
+            (s: SapOrderModel) => ({
+              id: s.id,
+              idpedidosap: s.idpedidosap,
+              idinvoice: s.idinvoice
+            })
+          ),
 
-          remissions: item.remissions.map((r: RemissionModel) => ({
-            id: r.id,
-            idremission: r.idremission,
-            idinvoice: r.idinvoice
-          }))
+          remissions: (item.remissions != null ? item.remissions : []).map(
+            (r: RemissionModel) => ({
+              id: r.id,
+              idremission: r.idremission,
+              idinvoice: r.idinvoice
+            })
+          ),
+
+          lastUpdateDate:
+            item.lastUpdateDate != null
+              ? new Date(item.lastUpdateDate)
+              : new Date(),
+
+          status: item.status != null ? item.status : 'created'
         })),
         total: api.comments.total
       }))
