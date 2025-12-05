@@ -203,7 +203,13 @@ export class AutomaticBillingComponent implements OnInit {
 
 
   clearFilters(): void {
+    this.statusColumnSelectedOptions = [...this.filtersStatus];
+    this.invoiceTypeColumnSelectedOptions = [...this.filterInvoiceType];
+    this.billingTypeColumSelectedOptions = [...this.filterBillingType];
     this.advanceFilter = '';
+    this.onSelectionChangeStatus();
+    this.onSelectionChangeInvoiceType();
+    this.onSelectionChangeBillingType();
     this.applyFilters();
   }
 
@@ -421,14 +427,14 @@ export class AutomaticBillingComponent implements OnInit {
    * Checks if a given filter is the last remaining active one.
    */
   isLastStatusFilter(filter: string): boolean {
-    return this.lastOptionStatus === filter;
+    return this.lastOptionStatus === filter || this.dataService.validateValidString(this.advanceFilter);
   }
 
   isLastInvoiceFilter(filter: string): boolean {
-    return this.lastOptionInvoiceType === filter;
+    return this.lastOptionInvoiceType === filter || this.dataService.validateValidString(this.advanceFilter);
   }
 
   isLastBillingTypeFilter(filter: string): boolean {
-    return this.lastOptionBillingType === filter;
+    return this.lastOptionBillingType === filter || this.dataService.validateValidString(this.advanceFilter);
   }
 }
