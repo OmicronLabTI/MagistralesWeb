@@ -11,7 +11,7 @@ export class FilterInvoiceTypeDialogComponent {
   searchTypes = [
     { label: 'ID Factura SAP', value: 'ID Factura SAP' },
     { label: 'Pedido SAP', value: 'Pedido SAP' },
-    { label: 'Pedido shop', value: 'Pedido shop' }
+    { label: 'Pedido Shop', value: 'Pedido shop' }
   ];
 
   selectedSearchType = '';
