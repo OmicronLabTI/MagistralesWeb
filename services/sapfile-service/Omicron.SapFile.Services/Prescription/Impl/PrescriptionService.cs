@@ -44,7 +44,7 @@ namespace Omicron.SapFile.Services.Prescription.Impl
                 this._loggerProxy.Info($"Omicron.SapFile.Prescription Service - Test The following medical prescriptions will be downloaded {JsonConvert.SerializeObject(prescriptionUrls)}");
                 var azureKey = ConfigurationManager.AppSettings[ServiceConstants.AzureKey];
                 var azureAccountName = ConfigurationManager.AppSettings[ServiceConstants.AzureAccountName];
-                var azureObj = new AzureServices(azureAccountName, azureKey);
+                var azureObj = new AzureServices(azureAccountName, azureKey, this._loggerProxy);
                 List<string> routeArray = new List<string>();
                 string fileName = string.Empty;
                 var containerRoute = string.Empty;
