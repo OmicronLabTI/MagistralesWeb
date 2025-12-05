@@ -203,7 +203,13 @@ export class AutomaticBillingComponent implements OnInit {
 
 
   clearFilters(): void {
+    this.statusColumnSelectedOptions = [...this.filtersStatus];
+    this.invoiceTypeColumnSelectedOptions = [...this.filterInvoiceType];
+    this.billingTypeColumSelectedOptions = [...this.filterBillingType];
     this.advanceFilter = '';
+    this.onSelectionChangeStatus();
+    this.onSelectionChangeInvoiceType();
+    this.onSelectionChangeBillingType();
     this.applyFilters();
   }
 
