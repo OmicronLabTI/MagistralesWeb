@@ -27,6 +27,7 @@ export class FilterInvoiceTypeDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: boolean
   ) {
     this.setDefaultDateRange();
+    this.setLabelForAutomaticBilling();
   }
 
   get isIdFacturaSap(): boolean {
@@ -56,6 +57,10 @@ export class FilterInvoiceTypeDialogComponent {
 
     this.dateFrom = fromCandidate < yearStart ? yearStart : fromCandidate;
     this.dateTo = today;
+  }
+
+  private setLabelForAutomaticBilling(): void {
+    this.searchTypes[0].label = this.data ? 'ID Petición' : 'ID Factura SAP';
   }
 
   private isDateRangeValid(): boolean {
