@@ -367,7 +367,7 @@ namespace Omicron.Invoice.Services.Invoice.Impl
                 return (listInvoices, total);
             }
 
-            var id = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Id, string.Empty);
+            var id = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Id, string.Empty).ToLower();
 
             listInvoices = typeId switch
             {
@@ -429,7 +429,7 @@ namespace Omicron.Invoice.Services.Invoice.Impl
                 return (invoices, total, startDate, endDate);
             }
 
-            var id = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Id, string.Empty);
+            var id = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Id, string.Empty).ToLower();
 
             invoices = typeId switch
             {
