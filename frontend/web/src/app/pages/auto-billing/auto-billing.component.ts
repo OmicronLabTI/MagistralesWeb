@@ -2,8 +2,10 @@ import {
   Component,
   OnInit,
   AfterViewInit,
-  ViewChild
+  ViewChild,
+  HostListener
 } from '@angular/core';
+
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
@@ -40,9 +42,6 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<AutoBillingModel>([]);
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
-  // ================================================
-  // OPCIONES DE FILTRO (con disabled dinámico)
-  // ================================================
   invoiceOptions = [
     { label: 'Genérica', selected: true, disabled: false },
     { label: 'Con datos fiscales', selected: true, disabled: false }
@@ -65,8 +64,7 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
 
   isAdvancedSearchActive = false;
 
-  FILTER_STORAGE_KEY = 'historyBillingFilters';
-  DATE_STORAGE_KEY = 'historyBillingDates';
+  lastFilterState = { invoices: '', billing: '' };
 
   constructor(
     private autoBillingService: AutoBillingService,
@@ -76,60 +74,50 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
     this.observableService.setUrlActive(HttpServiceTOCall.HISTORY_BILLING);
   }
 
-  // ============================================================
-  // INIT
-  // ============================================================
   ngOnInit(): void {
-    const storedFilters = localStorage.getItem(this.FILTER_STORAGE_KEY);
-    const storedDates = localStorage.getItem(this.DATE_STORAGE_KEY);
+    const today = new Date();
+    const past5 = new Date();
+    past5.setDate(today.getDate() - 4);
 
-    if (storedFilters) {
-      const f = JSON.parse(storedFilters);
-      this.invoiceOptions = f.invoiceOptions;
-      this.billingOptions = f.billingOptions;
-      this.id = f.id;
-      this.idtype = f.idtype;
-    }
+    this.startDate = past5;
+    this.endDate = today;
 
-    if (storedDates) {
-      const d = JSON.parse(storedDates);
-      this.startDate = new Date(d.startDate);
-      this.endDate = new Date(d.endDate);
-    } else {
-      const today = new Date();
-      const past5 = new Date();
-      past5.setDate(today.getDate() - 5);
-
-      this.startDate = past5;
-      this.endDate = today;
-
-      localStorage.setItem(
-        this.DATE_STORAGE_KEY,
-        JSON.stringify({
-          startDate: this.startDate,
-          endDate: this.endDate
-        })
-      );
-    }
-
-    // Estado de filtros avanzados
     this.updateAdvancedSearchState();
     this.loadPageData(0, 10);
+  }
 
-    // Cerrar popup con clic fuera
-    document.addEventListener('click', (event: any) => {
-      if (!this.showFilter) {
-        return;
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.showFilter) {
+      return;
+    }
+
+    const clicked = event.target as HTMLElement;
+
+    const inside =
+      clicked.closest('.filter-box') ||
+      clicked.closest('.header-filter');
+
+    if (!inside) {
+      this.showFilter = false;
+
+      const currentInvoices = this.getSelectedInvoiceTypes();
+      const currentBilling = this.getSelectedBillingTypes();
+
+      const changed =
+        currentInvoices !== this.lastFilterState.invoices ||
+        currentBilling !== this.lastFilterState.billing;
+
+      if (changed && !this.isAdvancedSearchActive) {
+        let size = 10;
+
+        if (this.paginator && this.paginator.pageSize) {
+          size = this.paginator.pageSize;
+        }
+
+        this.loadPageData(0, size);
       }
-
-      const inside =
-        event.target.closest('.filter-box') ||
-        event.target.closest('.header-filter');
-
-      if (!inside) {
-        this.showFilter = false;
-      }
-    });
+    }
   }
 
   ngAfterViewInit(): void {
@@ -147,9 +135,6 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
     });
   }
 
-  // ============================================================
-  // FILTROS
-  // ============================================================
   getSelectedInvoiceTypes(): string {
     return this.invoiceOptions
       .filter(x => x.selected)
@@ -164,35 +149,23 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
       .join(',');
   }
 
-  // ============================================================
-  // HABILITAR / DESHABILITAR FILTROS
-  // ============================================================
   updateAdvancedSearchState(): void {
     this.isAdvancedSearchActive =
-      this.id && this.id.trim() !== '' &&
-      this.idtype && this.idtype.trim() !== '';
+      this.id.trim() !== '' &&
+      this.idtype.trim() !== '';
 
-    // Bloquear filtros pero mostrarlos
-    this.invoiceOptions.forEach(x => { x.disabled = this.isAdvancedSearchActive; });
-    this.billingOptions.forEach(x => { x.disabled = this.isAdvancedSearchActive; });
+    this.invoiceOptions.forEach(x => {
+      x.disabled = this.isAdvancedSearchActive;
+    });
+
+    this.billingOptions.forEach(x => {
+      x.disabled = this.isAdvancedSearchActive;
+    });
   }
 
-  // ============================================================
-  // CARGA DE DATOS
-  // ============================================================
   loadPageData(offset: number, limit: number): void {
     const invoices = this.getSelectedInvoiceTypes();
     const billing = this.getSelectedBillingTypes();
-
-    localStorage.setItem(
-      this.FILTER_STORAGE_KEY,
-      JSON.stringify({
-        invoiceOptions: this.invoiceOptions,
-        billingOptions: this.billingOptions,
-        id: this.id,
-        idtype: this.idtype
-      })
-    );
 
     this.updateAdvancedSearchState();
 
@@ -216,16 +189,12 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
       });
   }
 
-  // ============================================================
-  // POPUP DE FILTROS (BLOQUEADO EN BÚSQUEDA AVANZADA)
-  // ============================================================
   openFilter(event: MouseEvent, type: string): void {
     if (this.isAdvancedSearchActive) {
-      return; // NO ABRIR POPUP
+      return;
     }
 
-    const target = event.target as HTMLElement;
-    const rect = target.getBoundingClientRect();
+    const rect = (event.target as HTMLElement).getBoundingClientRect();
 
     this.popupPosition = {
       top: rect.bottom + 'px',
@@ -235,19 +204,20 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
     this.currentOptions =
       type === 'invoice' ? this.invoiceOptions : this.billingOptions;
 
+    this.lastFilterState = {
+      invoices: this.getSelectedInvoiceTypes(),
+      billing: this.getSelectedBillingTypes()
+    };
+
     this.showFilter = true;
   }
 
   toggleOption(option: any): void {
-    if (option.disabled) {
-      return;
+    if (!option.disabled) {
+      option.selected = !option.selected;
     }
-    option.selected = !option.selected;
   }
 
-  // ============================================================
-  // DIALOGS
-  // ============================================================
   openSapOrdersDialog(row: AutoBillingModel): void {
     if (!row.sapOrders || row.sapOrders.length === 0) {
       return;
@@ -272,9 +242,6 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
     });
   }
 
-  // ============================================================
-  // CLEAR - REACTIVAR FILTROS
-  // ============================================================
   onClear(): void {
     this.invoiceOptions.forEach(x => {
       x.selected = true;
@@ -290,23 +257,16 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
     this.idtype = '';
     this.isAdvancedSearchActive = false;
 
-    // Reset fechas
     const today = new Date();
     const past5 = new Date();
-    past5.setDate(today.getDate() - 5);
+    past5.setDate(today.getDate() - 4);
 
     this.startDate = past5;
     this.endDate = today;
 
-    localStorage.removeItem(this.FILTER_STORAGE_KEY);
-    localStorage.removeItem(this.DATE_STORAGE_KEY);
-
     this.loadPageData(0, 10);
   }
 
-  // ============================================================
-  // BÚSQUEDA AVANZADA
-  // ============================================================
   openAdvancedFiltersDialog(): void {
     const dialogRef = this.dialog.open(FilterInvoiceTypeDialogComponent, {
       panelClass: 'advanced-filter-dialog',
