@@ -224,7 +224,7 @@ This template is used within the AutoBillingComponent in Angular.
             Pedido SAP
           </th>
           <td mat-cell *matCellDef="let element" class="sap-order-column color-text-intables tdcell-center tdcell">
-            {{ element.sapOrderId[0] }}
+            {{ element.sapOrderId.length }}
           </td>
         </ng-container>
 
@@ -237,7 +237,7 @@ This template is used within the AutoBillingComponent in Angular.
             Remisiones
           </th>
           <td mat-cell *matCellDef="let element" class="remissions-column color-text-intables tdcell-center tdcell">
-            {{ element.remissionId[0] }}
+            {{ element.remissionId.length }}
           </td>
         </ng-container>
 

@@ -68,5 +68,12 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Invoices
         /// <value>Invoice Lines.</value>
         [JsonProperty("DocumentLines")]
         public List<CreateInvoiceDocumentLinesDto> InvoiceDocumentLines { get; set; }
+
+        /// <summary>
+        /// Gets or sets the BxpTimbrado.
+        /// </summary>
+        /// <value>BxpTimbrado.</value>
+        [JsonProperty("PayToCode")]
+        public string InvoiceId { get; set; }
     }
 }
