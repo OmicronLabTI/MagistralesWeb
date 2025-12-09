@@ -36,5 +36,11 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Invoices
         /// </summary>
         /// <value>IdDeliveries.</value>
         public List<int> IdDeliveries { get; set; }
+
+        /// <summary>
+        /// Gets or sets the InvoiceType.
+        /// </summary>
+        /// <value>InvoiceType.</value>
+        public string InvoiceId { get; set; }
     }
 }

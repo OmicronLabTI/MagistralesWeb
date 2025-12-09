@@ -68,5 +68,11 @@ namespace Omicron.Invoice.Common.DTOs.Requests.Invoices
         /// Billing type string.
         /// </value>
         public string BillingType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the InvoiceType.
+        /// </summary>
+        /// <value>InvoiceType.</value>
+        public string InvoiceId { get; set; }
     }
 }

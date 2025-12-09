@@ -109,6 +109,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Invoices.Impl
                     CfdiDriverVersion = createInvoiceDocumentInfo.CfdiDriverVersion,
                     Comments = comment,
                     InvoiceDocumentLines = documentLines,
+                    InvoiceId = createInvoiceDocumentInfo.InvoiceId,
                 };
 
                 this.logger.Information(LogsConstants.CreateInvoiceOnSap, logBase, JsonConvert.SerializeObject(invoiceRequest));
