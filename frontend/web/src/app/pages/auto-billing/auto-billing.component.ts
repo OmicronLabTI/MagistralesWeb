@@ -2,16 +2,17 @@ import {
   Component,
   OnInit,
   AfterViewInit,
-  ViewChild,
-  ElementRef
+  ViewChild
 } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
+
 import { AutoBillingService } from 'src/app/services/autoBilling.service';
 import { AutoBillingModel } from 'src/app/model/http/autoBilling.model';
 import { ViewSapOrdersDialogComponent } from 'src/app/dialogs/view-sap-orders-dialog/view-sap-orders-dialog.component';
 import { ViewShipmentsDialogComponent } from 'src/app/dialogs/view-shipments-dialog/view-shipments-dialog.component';
+
 import { ObservableService } from 'src/app/services/observable.service';
 import { HttpServiceTOCall } from 'src/app/constants/const';
 import { FilterInvoiceTypeDialogComponent } from 'src/app/dialogs/filter-invoice-type-dialog/filter-invoice-type-dialog.component';
@@ -39,18 +40,19 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<AutoBillingModel>([]);
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
+  // ================================================
+  // OPCIONES DE FILTRO (con disabled dinámico)
+  // ================================================
   invoiceOptions = [
-    { label: 'Genérica', selected: true },
-    { label: 'Con datos fiscales', selected: true }
+    { label: 'Genérica', selected: true, disabled: false },
+    { label: 'Con datos fiscales', selected: true, disabled: false }
   ];
 
   billingOptions = [
-    { label: 'Completa', selected: true },
-    { label: 'Parcial', selected: true }
+    { label: 'Completa', selected: true, disabled: false },
+    { label: 'Parcial', selected: true, disabled: false }
   ];
 
-  previousInvoiceSelection = '';
-  previousBillingSelection = '';
   idtype = '';
   id = '';
 
@@ -58,49 +60,83 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
   popupPosition: any = {};
   currentOptions: any[] = [];
 
+  startDate: Date;
+  endDate: Date;
+
+  isAdvancedSearchActive = false;
+
+  FILTER_STORAGE_KEY = 'historyBillingFilters';
+  DATE_STORAGE_KEY = 'historyBillingDates';
+
   constructor(
     private autoBillingService: AutoBillingService,
     private dialog: MatDialog,
-    private observableService: ObservableService,
-    private host: ElementRef
+    private observableService: ObservableService
   ) {
     this.observableService.setUrlActive(HttpServiceTOCall.HISTORY_BILLING);
   }
 
+  // ============================================================
+  // INIT
+  // ============================================================
   ngOnInit(): void {
+    const storedFilters = localStorage.getItem(this.FILTER_STORAGE_KEY);
+    const storedDates = localStorage.getItem(this.DATE_STORAGE_KEY);
+
+    if (storedFilters) {
+      const f = JSON.parse(storedFilters);
+      this.invoiceOptions = f.invoiceOptions;
+      this.billingOptions = f.billingOptions;
+      this.id = f.id;
+      this.idtype = f.idtype;
+    }
+
+    if (storedDates) {
+      const d = JSON.parse(storedDates);
+      this.startDate = new Date(d.startDate);
+      this.endDate = new Date(d.endDate);
+    } else {
+      const today = new Date();
+      const past5 = new Date();
+      past5.setDate(today.getDate() - 5);
+
+      this.startDate = past5;
+      this.endDate = today;
+
+      localStorage.setItem(
+        this.DATE_STORAGE_KEY,
+        JSON.stringify({
+          startDate: this.startDate,
+          endDate: this.endDate
+        })
+      );
+    }
+
+    // Estado de filtros avanzados
+    this.updateAdvancedSearchState();
     this.loadPageData(0, 10);
 
+    // Cerrar popup con clic fuera
     document.addEventListener('click', (event: any) => {
       if (!this.showFilter) {
         return;
       }
 
-      const clickedInsidePopup =
+      const inside =
         event.target.closest('.filter-box') ||
         event.target.closest('.header-filter');
 
-      if (!clickedInsidePopup) {
+      if (!inside) {
         this.showFilter = false;
-
-        const currentInvoices = this.getSelectedInvoiceTypes();
-        const currentBilling = this.getSelectedBillingTypes();
-
-        const filtersChanged =
-          currentInvoices !== this.previousInvoiceSelection ||
-          currentBilling !== this.previousBillingSelection;
-
-        if (filtersChanged) {
-          this.loadPageData(0, this.paginator ? this.paginator.pageSize : 10);
-        }
       }
     });
   }
 
   ngAfterViewInit(): void {
     this.paginator.page.subscribe(event => {
-      const sizeChanged = event.pageSize !== this.paginator.pageSize;
+      const changed = event.pageSize !== this.paginator.pageSize;
 
-      if (sizeChanged) {
+      if (changed) {
         this.paginator.pageIndex = 0;
       }
 
@@ -111,6 +147,9 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // ============================================================
+  // FILTROS
+  // ============================================================
   getSelectedInvoiceTypes(): string {
     return this.invoiceOptions
       .filter(x => x.selected)
@@ -125,26 +164,48 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
       .join(',');
   }
 
-  loadPageData(offset: number, limit: number): void {
-    const today = new Date();
-    const past5 = new Date();
-    past5.setDate(today.getDate() - 5);
+  // ============================================================
+  // HABILITAR / DESHABILITAR FILTROS
+  // ============================================================
+  updateAdvancedSearchState(): void {
+    this.isAdvancedSearchActive =
+      this.id && this.id.trim() !== '' &&
+      this.idtype && this.idtype.trim() !== '';
 
-    const billing = this.getSelectedBillingTypes();
+    // Bloquear filtros pero mostrarlos
+    this.invoiceOptions.forEach(x => { x.disabled = this.isAdvancedSearchActive; });
+    this.billingOptions.forEach(x => { x.disabled = this.isAdvancedSearchActive; });
+  }
+
+  // ============================================================
+  // CARGA DE DATOS
+  // ============================================================
+  loadPageData(offset: number, limit: number): void {
     const invoices = this.getSelectedInvoiceTypes();
-    const id = this.id;
-    const idType = this.idtype;
+    const billing = this.getSelectedBillingTypes();
+
+    localStorage.setItem(
+      this.FILTER_STORAGE_KEY,
+      JSON.stringify({
+        invoiceOptions: this.invoiceOptions,
+        billingOptions: this.billingOptions,
+        id: this.id,
+        idtype: this.idtype
+      })
+    );
+
+    this.updateAdvancedSearchState();
 
     this.autoBillingService
       .getAllAutoBilling(
         offset,
         limit,
-        past5,
-        today,
+        this.startDate,
+        this.endDate,
         billing,
         invoices,
-        idType,
-        id
+        this.idtype,
+        this.id
       )
       .subscribe(response => {
         this.dataSource.data = response.items;
@@ -155,7 +216,14 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
       });
   }
 
+  // ============================================================
+  // POPUP DE FILTROS (BLOQUEADO EN BÚSQUEDA AVANZADA)
+  // ============================================================
   openFilter(event: MouseEvent, type: string): void {
+    if (this.isAdvancedSearchActive) {
+      return; // NO ABRIR POPUP
+    }
+
     const target = event.target as HTMLElement;
     const rect = target.getBoundingClientRect();
 
@@ -167,15 +235,19 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
     this.currentOptions =
       type === 'invoice' ? this.invoiceOptions : this.billingOptions;
 
-    this.previousInvoiceSelection = this.getSelectedInvoiceTypes();
-    this.previousBillingSelection = this.getSelectedBillingTypes();
     this.showFilter = true;
   }
 
   toggleOption(option: any): void {
+    if (option.disabled) {
+      return;
+    }
     option.selected = !option.selected;
   }
 
+  // ============================================================
+  // DIALOGS
+  // ============================================================
   openSapOrdersDialog(row: AutoBillingModel): void {
     if (!row.sapOrders || row.sapOrders.length === 0) {
       return;
@@ -184,13 +256,7 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
     this.dialog.open(ViewSapOrdersDialogComponent, {
       width: '800px',
       panelClass: 'custom-dialog-container',
-      data: {
-        invoiceId: row.sapInvoiceId,
-        orders: row.sapOrders,
-        status: row.status,
-        updateDate: row.lastUpdateDate,
-        isFromAutomaticBilling: true
-      }
+      data: row
     });
   }
 
@@ -202,24 +268,45 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
     this.dialog.open(ViewShipmentsDialogComponent, {
       width: '800px',
       panelClass: 'custom-dialog-container',
-      data: {
-        invoiceId: row.sapInvoiceId,
-        remissions: row.remissions,
-        status: row.status,
-        updateDate: row.lastUpdateDate,
-        isFromAutomaticBilling: true
-      }
+      data: row
     });
   }
 
+  // ============================================================
+  // CLEAR - REACTIVAR FILTROS
+  // ============================================================
   onClear(): void {
-    this.invoiceOptions.forEach(x => (x.selected = true));
-    this.billingOptions.forEach(x => (x.selected = true));
-    this.idtype = '';
+    this.invoiceOptions.forEach(x => {
+      x.selected = true;
+      x.disabled = false;
+    });
+
+    this.billingOptions.forEach(x => {
+      x.selected = true;
+      x.disabled = false;
+    });
+
     this.id = '';
+    this.idtype = '';
+    this.isAdvancedSearchActive = false;
+
+    // Reset fechas
+    const today = new Date();
+    const past5 = new Date();
+    past5.setDate(today.getDate() - 5);
+
+    this.startDate = past5;
+    this.endDate = today;
+
+    localStorage.removeItem(this.FILTER_STORAGE_KEY);
+    localStorage.removeItem(this.DATE_STORAGE_KEY);
+
     this.loadPageData(0, 10);
   }
 
+  // ============================================================
+  // BÚSQUEDA AVANZADA
+  // ============================================================
   openAdvancedFiltersDialog(): void {
     const dialogRef = this.dialog.open(FilterInvoiceTypeDialogComponent, {
       panelClass: 'advanced-filter-dialog',
@@ -239,6 +326,8 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
         .replace('Pedido shop', 'pedidodxp');
 
       this.id = result.value;
+
+      this.updateAdvancedSearchState();
       this.loadPageData(0, 10);
     });
   }
