@@ -100,7 +100,7 @@
     <div class="no-registers" *ngIf="dataSource.data.length === 0">
       <span>No se encontrarón resultados con la búsqueda indicada.</span>
     </div>
-    <div *ngIf="dataSource.data.length !== 0">
+    <div [style.display]="isEmptyResults ? 'none' : 'block'">
       <mat-paginator [pageSizeOptions]="[5,10,15,20]" [pageSize]="10"></mat-paginator>
     </div>
   </div>
@@ -108,11 +108,8 @@
   <!-- POPUP PERSONALIZADO -->
   <div class="filter-overlay" *ngIf="showFilter" [ngStyle]="popupPosition">
     <div class="filter-box">
-      <mat-checkbox 
-      *ngFor="let opt of currentOptions" 
-      [(ngModel)]="opt.selected" 
-      [disabled]="opt.disabled" 
-      (change)="onOptionChanged(i)">
+      <mat-checkbox *ngFor="let opt of currentOptions" [(ngModel)]="opt.selected" [disabled]="opt.disabled"
+        (change)="onOptionChanged(i)">
         {{ opt.label }}
       </mat-checkbox>
     </div>
