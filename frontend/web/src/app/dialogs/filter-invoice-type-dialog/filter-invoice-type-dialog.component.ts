@@ -49,13 +49,10 @@ export class FilterInvoiceTypeDialogComponent {
 
   private setDefaultDateRange(): void {
     const today = new Date();
-    const currentYear = today.getFullYear();
-    const yearStart = new Date(currentYear, 0, 1);
+    const past5 = new Date();
+    past5.setDate(today.getDate() - 4);
 
-    const fromCandidate = new Date(today);
-    fromCandidate.setDate(today.getDate() - 4);
-
-    this.dateFrom = fromCandidate < yearStart ? yearStart : fromCandidate;
+    this.dateFrom = past5;
     this.dateTo = today;
   }
 
@@ -136,8 +133,8 @@ export class FilterInvoiceTypeDialogComponent {
     const result: InvoiceFilterResult = {
       type: this.selectedSearchType || null,
       value: this.searchValue || null,
-      from: usesOnlyTextSearch ? null : this.dateFrom,
-      to: usesOnlyTextSearch ? null : this.dateTo
+      from: this.dateFrom,
+      to: this.dateTo
     };
 
     this.dialogRef.close(result);

@@ -2,7 +2,6 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -30,7 +29,6 @@ describe('FilterInvoiceTypeDialogComponent', () => {
       imports: [
         FormsModule,
         NoopAnimationsModule,
-
         MatFormFieldModule,
         MatSelectModule,
         MatInputModule,
@@ -42,7 +40,7 @@ describe('FilterInvoiceTypeDialogComponent', () => {
 
       providers: [
         { provide: MatDialogRef, useValue: dialogRefMock },
-        { provide: MAT_DIALOG_DATA, useValue: dataMock },
+        { provide: MAT_DIALOG_DATA, useValue: dataMock }
       ]
     }).compileComponents();
   }));
@@ -73,7 +71,6 @@ describe('FilterInvoiceTypeDialogComponent', () => {
   it('should enable clear when any field has value', () => {
     component.selectedSearchType = 'Pedido SAP';
     component.validateForm();
-
     expect(component.canClear).toBe(true);
   });
 
@@ -107,13 +104,17 @@ describe('FilterInvoiceTypeDialogComponent', () => {
     component.searchValue = '777';
     component.formValid = true;
 
+    // El componente siempre retorna fechas establecidas por defecto
+    const expectedFrom = component.dateFrom;
+    const expectedTo = component.dateTo;
+
     component.apply();
 
     expect(dialogRefMock.close).toHaveBeenCalledWith({
       type: 'ID Factura SAP',
       value: '777',
-      from: null,
-      to: null
+      from: expectedFrom,
+      to: expectedTo
     });
   });
 
