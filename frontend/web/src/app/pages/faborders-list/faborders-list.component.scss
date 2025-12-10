@@ -3,7 +3,9 @@ div.docbase {
 }
 
 .seleccion {
-    width: 2% !important;
+    width: 50px;
+    min-width: 50px;
+    max-width: 50px;
 }
 
 .consecutivo {
@@ -11,47 +13,72 @@ div.docbase {
 }
 
 .pedido {
-    width: 6% !important;
+    width: 95px;
+    min-width: 95px;
+    max-width: 95px;
+    left: 50px !important;
 }
 
 .orden {
-    width: 9%;
+    width: 140px;
+    min-width: 140px;
+    max-width: 140px;
+    left: 145px !important;
 }
 
 .codigoproducto {
-    width: 9% !important;
+    width: 140px;
+    min-width: 140px;
+    max-width: 140px;
+    left: 285px !important;
 }
 
 .descripcion {
-    width: 14%;
+    width: 215px;
+    min-width: 215px;
+    max-width: 215px;
 }
 
 .cantplan {
-    width: 9% !important;
+    width: 140px;
+    min-width: 140px;
+    max-width: 140px;
 }
 
 .batch-order {
-    width: 6% !important;
+    width: 95px;
+    min-width: 95px;
+    max-width: 95px;
 }
 
 .fechaorden {
-    width: 10% !important;
+    width: 155px;
+    min-width: 155px;
+    max-width: 155px;
 }
 
 .fechatermino {
-    width: 10% !important;
+    width: 155px;
+    min-width: 155px;
+    max-width: 155px;
 }
 
 .qfb {
-    width: 8% !important;
+    width: 125px;
+    min-width: 125px;
+    max-width: 125px;
 }
 
 .status {
-    width: 8% !important;
+    width: 110px;
+    min-width: 110px;
+    max-width: 110px;
 }
 
 .tdactions {
-    width: 10% !important;
+    width: 50px;
+    min-width: 50px;
+    max-width: 50px;
 }
 
 .background-color-in-process {
@@ -124,4 +151,3 @@ button.btnToolTip {
 .element-row.expanded-row {
     background-color: #9FD9F9 !important;
 }
-
