@@ -124,6 +124,10 @@ class InboxViewController: UIViewController {
         self.view.endEditing(true)
         self.performSegue(withIdentifier: ViewControllerIdentifiers.supplieViewController, sender: nil)
     }
+    func goToHistoric() {
+        self.view.endEditing(true)
+        self.performSegue(withIdentifier: ViewControllerIdentifiers.historicViewController, sender: nil)
+    }
     func tapBindingButtons() {
         [similarityViewButton.rx.tap.bind(to: inboxViewModel.similarityViewButtonDidTap),
          normalViewButton.rx.tap.bind(to: inboxViewModel.normalViewButtonDidTap),
@@ -201,6 +205,9 @@ class InboxViewController: UIViewController {
         inboxViewModel.goToSuppliesView.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             self?.goToSupplies()
         }).disposed(by: self.disposeBag)
+        inboxViewModel.goToHistoricView.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            self?.goToHistoric()
+        }).disposed(by: self.disposeBag)
         self.modelBindingGrouped()
         self.modelBindingExtension1()
         self.modelBindingExtension3()
@@ -214,24 +221,47 @@ class InboxViewController: UIViewController {
         inboxViewModel.showAlertToChangeOrderOfStatus
             .observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] data in
                 guard let self = self else { return }
-                if data.typeOfStatus == StatusNameConstants.finishedStatus {
-                    self.inboxViewModel.validOrders(indexPathOfOrdersSelected: self.indexPathsSelected)
+                let parentOrders = searchParentOrders(indexPath: self.indexPathsSelected)
+                if !parentOrders.isEmpty &&
+                    data.typeOfStatus != StatusNameConstants.penddingStatus &&
+                    data.typeOfStatus != StatusNameConstants.inProcessStatus {
+                    self.inboxViewModel.showThereParentOrderSelectedMessage(parentOrders: parentOrders)
                     return
+                } else {
+                    continueStatusChange(data: data)
                 }
-                let alert = UIAlertController(title: data.message, message: nil, preferredStyle: .alert)
-                let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive, handler: nil)
-                let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: { [weak self] _ in
-                    guard let self = self else { return }
-                    self.view.isUserInteractionEnabled = false
-                    self.inboxViewModel.changeStatus(indexPath: self.indexPathsSelected,
-                                                     typeOfStatus: data.typeOfStatus)
-                })
-                alert.addAction(cancelAction)
-                alert.addAction(okAction)
-                self.present(alert, animated: true, completion: nil)
             }).disposed(by: self.disposeBag)
         didScrollBinding()
         showKPIViewBinding()
+    }
+    
+    func continueStatusChange(data: MessageToChangeStatus) {
+        if data.typeOfStatus == StatusNameConstants.finishedStatus {
+            self.inboxViewModel.validOrders(indexPathOfOrdersSelected: self.indexPathsSelected)
+            return
+        }
+        let alert = UIAlertController(title: data.message, message: nil, preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive, handler: nil)
+        let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: { [weak self] _ in
+            guard let self = self else { return }
+            self.view.isUserInteractionEnabled = false
+            self.inboxViewModel.changeStatus(indexPath: self.indexPathsSelected,
+                                             typeOfStatus: data.typeOfStatus)
+        })
+        alert.addAction(cancelAction)
+        alert.addAction(okAction)
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func searchParentOrders(indexPath: [IndexPath]?) -> [Order] {
+        var parentOrders = [Order]()
+        for index in indexPath ?? [] {
+            let card = inboxViewModel.sectionOrders[index.section].items[index.row]
+            if card.orderRelationType == OrderRelationTypes.padre {
+                parentOrders.append(card)
+            }
+        }
+        return parentOrders
     }
 
     func didScrollBinding() {

@@ -296,11 +296,6 @@ spec:
                 secretKeyRef:
                   name: omicron-qa
                   key: kafka_eh_fqdn
-            - name: KAFKA_INSERTLOGS_EH_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: omicron-qa
-                  key: kafka_insertlogs_eh_name
             - name: SEQLOG_SVC_SERVICE_HOST_NAME
               valueFrom:
                 secretKeyRef:
@@ -336,6 +331,26 @@ spec:
                 secretKeyRef:
                   name: omicron-qa
                   key: kafka_productionorderpdfgeneration_consumer_group
+            - name: KAFKA_EH_FQDN_2
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: kafka_eh_fqdn
+            - name: KAFKA_RETRYFINALIZEORDER_EH_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: kafka_retryfinalizeorder_eh_name                    
+            - name: KAFKA_EVENTHUB_NET_CONNECTION_RETRYFINALIZEORDER
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: kafka_eventhub_net_connection_retryfinalizeorder
+            - name: KAFKA_RETRYFINALIZEORDER_CONSUMER_GROUP
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: kafka_retryfinalizeorder_consumer_group                  
           ports:
             - containerPort: 5103
           resources:

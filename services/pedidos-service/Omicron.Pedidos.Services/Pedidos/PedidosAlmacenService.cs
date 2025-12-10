@@ -173,6 +173,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     x.StatusAlmacen,
                     x.Comments,
                     x.DeliveryId,
+                    x.MagistralQr,
                 }).ToList();
 
             return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, null);
@@ -254,6 +255,39 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             await this.pedidosDao.UpdateUserOrders(orders);
             var userOrdersComplete = (await this.pedidosDao.GetUserOrderBySaleOrder(orders.Select(x => x.Salesorderid).Distinct().ToList())).ToList();
+            var productionOrders = userOrdersComplete.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(x => int.Parse(x.Productionorderid)).ToList();
+            var parentOrders = await this.pedidosDao.GetProductionOrderSeparationByOrderIdWithPendingPieces(productionOrders);
+
+            var userOrdersToUpdate = new List<UserOrderModel>();
+            var grouped = userOrdersComplete.GroupBy(x => x.Salesorderid).ToList();
+            foreach (var orderData in grouped)
+            {
+                var filterOrders = orderData.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).ToList();
+                var productionOrdersIdWithPendingDivision = parentOrders.Select(x => x.OrderId.ToString()).ToList();
+                var noCancelOrders = filterOrders.Where(x => x.Status != ServiceConstants.Cancelled);
+                if (!filterOrders.Any(forder => productionOrdersIdWithPendingDivision.Contains(forder.Productionorderid)) && noCancelOrders.All(x => x.StatusInvoice == ServiceConstants.Entregado))
+                {
+                    var header = orderData.Where(x => string.IsNullOrEmpty(x.Productionorderid)).Select(x =>
+                    {
+                        x.StatusInvoice = ServiceConstants.Entregado;
+                        x.Status = ServiceConstants.Entregado;
+                        return x;
+                    }).ToList();
+                    userOrdersToUpdate.AddRange(orderData);
+                }
+            }
+
+            await this.pedidosDao.UpdateUserOrders(userOrdersToUpdate);
+            userOrdersComplete = userOrdersComplete.Where(x => ServiceShared.CalculateTernary(x.Status != ServiceConstants.Cancelled, true, parentOrders.Any(po => po.OrderId.ToString() == x.Productionorderid))).Select(x =>
+            {
+                if (userOrdersToUpdate.Any(updated => updated.Id == x.Id))
+                {
+                    x.StatusInvoice = ServiceConstants.Entregado;
+                }
+
+                return x;
+            }).ToList();
+
             var objectToReturn = new
             {
                 SaleOrderId = orders.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList(),

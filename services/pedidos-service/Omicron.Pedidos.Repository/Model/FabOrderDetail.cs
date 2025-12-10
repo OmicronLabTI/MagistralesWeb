@@ -126,5 +126,11 @@ namespace Omicron.Pedidos.Entities.Model
         /// </summary>
         /// <value>The code.</value>
         public bool HasTechnicalAssigned { get; set; }
+
+        /// <summary>
+        /// Gets or sets a OrderRelationType.
+        /// </summary>
+        /// <value>The OrderRelationType.</value>
+        public string OrderRelationType { get; set; }
     }
 }

@@ -59,7 +59,8 @@ export const mockIFormulaReqResponse: IFormulaReq = {
     client: '',
     completeQuantity: 0,
     realEndDate: '',
-    hasMissingStock: false
+    hasMissingStock: false,
+    onSplitProcess: false
 };
 
 export const mockIFormulaDetalleReq: IFormulaDetalleReq[] = [

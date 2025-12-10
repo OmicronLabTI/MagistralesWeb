@@ -159,7 +159,12 @@ describe('FinalizeOrdersComponent', () => {
         isWithError: false,
         isWithErrorBatch: false,
         hasMissingStock: false,
-        batch: ''
+        batch: '',
+        onSplitProcess: false,
+        orderRelationType: '',
+        availablePieces: 0,
+        childOrders: 0,
+        childOrdersDetail: []
       }
     ];
     // component.groupBy(iOrdersReq, iOrdersReq);
@@ -218,7 +223,12 @@ describe('FinalizeOrdersComponent', () => {
         isWithError: false,
         isWithErrorBatch: false,
         hasMissingStock: false,
-        batch: ''
+        batch: '',
+        onSplitProcess: false,
+        orderRelationType: '',
+        availablePieces: 0,
+        childOrders: 0,
+        childOrdersDetail: []
       },
       {
         isChecked: true,
@@ -240,7 +250,12 @@ describe('FinalizeOrdersComponent', () => {
         isWithError: false,
         isWithErrorBatch: false,
         hasMissingStock: false,
-        batch: ''
+        batch: '',
+        onSplitProcess: false,
+        orderRelationType: '',
+        availablePieces: 0,
+        childOrders: 0,
+        childOrdersDetail: []
       }];
     component.ordersIsolated = [{
       isChecked: true,
@@ -262,7 +277,12 @@ describe('FinalizeOrdersComponent', () => {
       isWithError: false,
       isWithErrorBatch: false,
       hasMissingStock: false,
-      batch: ''
+      batch: '',
+      onSplitProcess: false,
+      orderRelationType: '',
+      availablePieces: 0,
+      childOrders: 0,
+      childOrdersDetail: []
     }];
     // orderServiceSpy.getIfExistsBatchCode();
     component.focusOutLote(0);
@@ -294,7 +314,12 @@ describe('FinalizeOrdersComponent', () => {
         isWithError: false,
         isWithErrorBatch: false,
         hasMissingStock: false,
-        batch: ''
+        batch: '',
+        onSplitProcess: false,
+        orderRelationType: '',
+        availablePieces: 0,
+        childOrders: 0,
+        childOrdersDetail: []
       }];
     component.ordersIsolated = [{
       isChecked: true,
@@ -316,7 +341,12 @@ describe('FinalizeOrdersComponent', () => {
       isWithError: false,
       isWithErrorBatch: false,
       hasMissingStock: false,
-      batch: ''
+      batch: '',
+      onSplitProcess: false,
+      orderRelationType: '',
+      availablePieces: 0,
+      childOrders: 0,
+      childOrdersDetail: []
     }];
     // orderServiceSpy.getIfExistsBatchCode();
     component.focusOutLote(0);
@@ -348,7 +378,12 @@ describe('FinalizeOrdersComponent', () => {
         isWithError: false,
         isWithErrorBatch: false,
         hasMissingStock: false,
-        batch: ''
+        batch: '',
+        onSplitProcess: false,
+        orderRelationType: '',
+        availablePieces: 0,
+        childOrders: 0,
+        childOrdersDetail: []
       }];
     component.ordersIsolated = [{
       isChecked: true,
@@ -370,7 +405,12 @@ describe('FinalizeOrdersComponent', () => {
       isWithError: false,
       isWithErrorBatch: false,
       hasMissingStock: false,
-      batch: ''
+      batch: '',
+      onSplitProcess: false,
+      orderRelationType: '',
+      availablePieces: 0,
+      childOrders: 0,
+      childOrdersDetail: []
     }];
     orderServiceSpy.getIfExistsBatchCode.and.callFake(() => {
       return throwError({ error: true });

@@ -1,4 +1,6 @@
-export const FabOrderListMock = {
+import { IOrdersRes } from 'src/app/model/http/ordenfabricacion';
+
+export const FabOrderListMock: IOrdersRes = {
     code: 200,
     userError: null,
     exceptionMessage: null,
@@ -18,7 +20,12 @@ export const FabOrderListMock = {
             unit: 'Pieza',
             hasMissingStock: true,
             quantityFinish: 12,
-            batch: 'L-000001'
+            batch: 'L-000001',
+            onSplitProcess: false,
+            orderRelationType: '',
+            availablePieces: 0,
+            childOrders: 0,
+            childOrdersDetail: []
         },
         {
             docNum: 0,
@@ -33,7 +40,12 @@ export const FabOrderListMock = {
             unit: 'Kilogramo',
             hasMissingStock: false,
             quantityFinish: 12,
-            batch: 'L-000002'
+            batch: 'L-000002',
+            onSplitProcess: false,
+            orderRelationType: '',
+            availablePieces: 0,
+            childOrders: 0,
+            childOrdersDetail: []
         },
         {
             docNum: 0,
@@ -48,7 +60,12 @@ export const FabOrderListMock = {
             unit: 'Pieza',
             hasMissingStock: false,
             quantityFinish: 12,
-            batch: 'L-000003'
+            batch: 'L-000003',
+            onSplitProcess: false,
+            orderRelationType: '',
+            availablePieces: 0,
+            childOrders: 0,
+            childOrdersDetail: []
         },
         {
             docNum: 0,
@@ -63,7 +80,12 @@ export const FabOrderListMock = {
             unit: 'Pieza',
             hasMissingStock: false,
             quantityFinish: 12,
-            batch: 'L-000004'
+            batch: 'L-000004',
+            onSplitProcess: false,
+            orderRelationType: '',
+            availablePieces: 0,
+            childOrders: 0,
+            childOrdersDetail: []
         },
         {
             docNum: 0,
@@ -78,7 +100,12 @@ export const FabOrderListMock = {
             unit: 'Pieza',
             hasMissingStock: false,
             quantityFinish: 12,
-            batch: 'L-000005'
+            batch: 'L-000005',
+            onSplitProcess: false,
+            orderRelationType: '',
+            availablePieces: 0,
+            childOrders: 0,
+            childOrdersDetail: []
         },
         {
             docNum: 0,
@@ -93,7 +120,12 @@ export const FabOrderListMock = {
             unit: 'Pieza',
             hasMissingStock: false,
             quantityFinish: 12,
-            batch: 'L-000006'
+            batch: 'L-000006',
+            onSplitProcess: false,
+            orderRelationType: '',
+            availablePieces: 0,
+            childOrders: 0,
+            childOrdersDetail: []
         },
         {
             docNum: 0,
@@ -108,7 +140,12 @@ export const FabOrderListMock = {
             unit: 'Pieza',
             hasMissingStock: false,
             quantityFinish: 12,
-            batch: 'L-000007'
+            batch: 'L-000007',
+            onSplitProcess: false,
+            orderRelationType: '',
+            availablePieces: 0,
+            childOrders: 0,
+            childOrdersDetail: []
         },
         {
             docNum: 0,
@@ -123,7 +160,12 @@ export const FabOrderListMock = {
             unit: 'Pieza',
             hasMissingStock: false,
             quantityFinish: 12,
-            batch: 'L-000008'
+            batch: 'L-000008',
+            onSplitProcess: false,
+            orderRelationType: '',
+            availablePieces: 0,
+            childOrders: 0,
+            childOrdersDetail: []
         },
         {
             docNum: 0,
@@ -138,7 +180,12 @@ export const FabOrderListMock = {
             unit: 'Pieza',
             hasMissingStock: false,
             quantityFinish: 12,
-            batch: 'L-000009'
+            batch: 'L-000009',
+            onSplitProcess: false,
+            orderRelationType: '',
+            availablePieces: 0,
+            childOrders: 0,
+            childOrdersDetail: []
         },
         {
             docNum: 0,
@@ -153,7 +200,12 @@ export const FabOrderListMock = {
             unit: 'Pieza',
             hasMissingStock: false,
             quantityFinish: 12,
-            batch: 'L-0000010'
+            batch: 'L-0000010',
+            onSplitProcess: false,
+            orderRelationType: '',
+            availablePieces: 0,
+            childOrders: 0,
+            childOrdersDetail: []
         }
     ]
 };

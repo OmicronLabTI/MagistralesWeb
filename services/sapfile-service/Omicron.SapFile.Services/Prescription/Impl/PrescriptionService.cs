@@ -41,10 +41,10 @@ namespace Omicron.SapFile.Services.Prescription.Impl
         {
             try
             {
-                this._loggerProxy.Info($"Omicron.SapFile.Prescription Service - The following medical prescriptions will be downloaded {JsonConvert.SerializeObject(prescriptionUrls)}");
+                this._loggerProxy.Info($"Omicron.SapFile.Prescription Service - Test The following medical prescriptions will be downloaded {JsonConvert.SerializeObject(prescriptionUrls)}");
                 var azureKey = ConfigurationManager.AppSettings[ServiceConstants.AzureKey];
                 var azureAccountName = ConfigurationManager.AppSettings[ServiceConstants.AzureAccountName];
-                var azureObj = new AzureServices(azureAccountName, azureKey);
+                var azureObj = new AzureServices(azureAccountName, azureKey, this._loggerProxy);
                 List<string> routeArray = new List<string>();
                 string fileName = string.Empty;
                 var containerRoute = string.Empty;
@@ -57,7 +57,8 @@ namespace Omicron.SapFile.Services.Prescription.Impl
                     fileName = routeArray.Last();
                     containerRoute = presurl.AzurePrescriptionUrl.Replace(fileName, string.Empty);
                     routeFile = $"{ConfigurationManager.AppSettings[ServiceConstants.PrescriptionFiles]}{fileName}";
-                    await azureObj.SaveToPathFromAzure(containerRoute, fileName, routeFile);
+                    this._loggerProxy.Info($"SaveToPathFromAzure - Url: {containerRoute} - File Name:{fileName} - File Route: {ServiceUtils.ReplaceUrlToDiscC(routeFile)}");
+                    await azureObj.SaveToPathFromAzure(containerRoute, fileName, ServiceUtils.ReplaceUrlToDiscC(routeFile));
                     downloadResult.Add(
                         new PrescriptionServerResponseDto
                         {
@@ -65,7 +66,7 @@ namespace Omicron.SapFile.Services.Prescription.Impl
                             ServerSourcePath = ConfigurationManager.AppSettings[ServiceConstants.PrescriptionFiles],
                             PrescriptionFileName = fileName.Replace(".pdf", ""),
                             PrescriptionFileExtension = Path.GetExtension(fileName).Substring(1),
-                });
+                        });
                 }
 
                 this._loggerProxy.Info($"Omicron.SapFile.Prescription Service - Prescriptions to return {JsonConvert.SerializeObject(downloadResult)}");

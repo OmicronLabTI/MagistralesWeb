@@ -39,6 +39,7 @@ namespace Omicron.Pedidos.Test.Services
             this.context = new DatabaseContext(options);
             this.context.UserOrderModel.AddRange(this.GetUserOrderModel());
             this.context.UserOrderSignatureModel.AddRange(this.GetSignature());
+            this.context.ProductionOrderSeparationModel.AddRange(this.GetProductionOrderSeparation());
             this.context.SaveChanges();
 
             this.sapAdapter = new Mock<ISapAdapter>();
@@ -64,7 +65,7 @@ namespace Omicron.Pedidos.Test.Services
             var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
 
             serviceLayer
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             this.pedidosDao = new PedidosDao(this.context);
@@ -94,7 +95,7 @@ namespace Omicron.Pedidos.Test.Services
             var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
 
             serviceLayer
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             this.sapAdapter
@@ -149,7 +150,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
             serviceLayer
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             var mockSapAdapter = new Mock<ISapAdapter>();
@@ -198,7 +199,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
             serviceLayer
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             var sapAdapterLocal = new Mock<ISapAdapter>();
@@ -232,7 +233,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
             serviceLayer
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             var detalle900 = new CompleteDetailOrderModel { CodigoProducto = "DZ Test 1", IsOmigenomics = false, DescripcionProducto = "dec", FechaOf = "2020/01/01", FechaOfFin = "2020/01/01", IsChecked = false, OrdenFabricacionId = 900, Qfb = "qfb", QtyPlanned = 1, QtyPlannedDetalle = 1, Status = "P", CreatedDate = DateTime.Now, Label = "Pesonalizada", ProductFirmName = string.Empty };
@@ -299,7 +300,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
             serviceLayer
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             var detalle900 = new CompleteDetailOrderModel { CodigoProducto = "DZ Test 1", IsOmigenomics = false, DescripcionProducto = "dec", FechaOf = "2020/01/01", FechaOfFin = "2020/01/01", IsChecked = false, OrdenFabricacionId = 900, Qfb = "qfb", QtyPlanned = 1, QtyPlannedDetalle = 1, Status = "P", CreatedDate = DateTime.Now, Label = "Pesonalizada", ProductFirmName = string.Empty };
@@ -362,7 +363,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
             serviceLayer
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             var detalle900 = new CompleteDetailOrderModel { CodigoProducto = "DZ Test 1", IsOmigenomics = false, DescripcionProducto = "dec", FechaOf = "2020/01/01", FechaOfFin = "2020/01/01", IsChecked = false, OrdenFabricacionId = 900, Qfb = "qfb", QtyPlanned = 1, QtyPlannedDetalle = 1, Status = "P", CreatedDate = DateTime.Now, Label = "Pesonalizada", ProductFirmName = string.Empty };
@@ -426,7 +427,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
             serviceLayer
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             var sapAdapterLocal = new Mock<ISapAdapter>();
@@ -460,7 +461,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
             serviceLayer
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             var detalle900 = new CompleteDetailOrderModel { CodigoProducto = "Aspirina", DescripcionProducto = "dec", FechaOf = "2020/01/01", FechaOfFin = "2020/01/01", IsChecked = false, OrdenFabricacionId = 900, Qfb = "qfb", QtyPlanned = 1, QtyPlannedDetalle = 1, Status = "L", CreatedDate = DateTime.Now, Label = "Pesonalizada", ProductFirmName = string.Empty };
@@ -587,7 +588,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
             serviceLayer
-                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             var mockUsers = new Mock<IUsersService>();
@@ -602,6 +603,139 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.That(result, Is.Not.Null);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <param name="isValidtecnic">Is valid tecnic.</param>
+        /// <returns>the data.</returns>
+        [Test]
+        [TestCase(true)]
+        public async Task ReassignOrderParentOrders(bool isValidtecnic)
+        {
+            var reassign = new ManualAssignModel
+            {
+                DocEntry = new List<int> { 176687 },
+                OrderType = "Pedido",
+                UserId = "abc",
+                UserLogistic = "bd4b2724-3b13-490e-aed2-5c8bfdd7551a",
+            };
+
+            var testOrders = new List<UserOrderModel>
+            {
+                new UserOrderModel { Id = 158, Productionorderid = "227309", Salesorderid = "176687", Status = "Terminado", Userid = "1a663b91-fffa-4298-80c3-aaae35586dc6",  TecnicId = "71af9bfc-98ac-4768-9a4f-c420211b1a66", StatusForTecnic = "Terminado", FinishDate = new DateTime(2020, 8, 29), CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 2 },
+                new UserOrderModel { Id = 159, Productionorderid = "227307", Salesorderid = "176687", Status = "Cancelado", Userid = "1a663b91-fffa-4298-80c3-aaae35586dc6",  TecnicId = "71af9bfc-98ac-4768-9a4f-c420211b1a66", StatusForTecnic = "Asignado", FinishDate = new DateTime(2020, 8, 29), CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 2 },
+                new UserOrderModel { Id = 160, Productionorderid = null, Salesorderid = "176687", Status = "Terminado", Userid = "1a663b91-fffa-4298-80c3-aaae35586dc6",  TecnicId = "71af9bfc-98ac-4768-9a4f-c420211b1a66", StatusForTecnic = "Asignado", FinishDate = new DateTime(2020, 8, 29), CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 2 },
+            };
+
+            var productionOrder = new List<ProductionOrderSeparationModel>
+            {
+                new ProductionOrderSeparationModel { Id = 3,  OrderId = 227307, ProductionDetailCount = 1, TotalPieces = 10, AvailablePieces = 1, Status = "Parcialmente dividida" },
+            };
+
+            var sapAdapterLocal = new Mock<ISapAdapter>();
+            var mockUsers = new Mock<IUsersService>();
+            var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
+            var mockDao = new Mock<IPedidosDao>();
+
+            mockUsers
+                .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetQfbInfoDto(isValidtecnic)));
+
+            mockDao
+                .Setup(m => m.GetUserOrderBySaleOrder(It.IsAny<List<string>>()))
+                .Returns(Task.FromResult<IEnumerable<UserOrderModel>>(testOrders));
+
+            mockDao
+                .Setup(m => m.GetProductionOrderSeparationByOrderId(It.IsAny<List<int>>()))
+                .Returns(Task.FromResult(productionOrder));
+
+            // act
+            var assignPedidosService = new AssignPedidosService(sapAdapterLocal.Object, mockDao.Object, mockUsers.Object, this.kafkaConnector.Object, serviceLayer.Object);
+            var result = await assignPedidosService.ReassignOrder(reassign);
+
+            // assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.ExceptionMessage, Is.Null);
+            Assert.That(result.Response, Is.Null);
+            Assert.That(result.Comments, Is.Null);
+
+            Assert.That(result.UserError, Is.Null);
+            Assert.That(result.Success);
+            Assert.That(result.Code.Equals(200));
+
+            mockDao.Verify(dao => dao.UpdateUserOrders(It.Is<List<UserOrderModel>>(orders => orders.Count == 3)), Times.Once);
+            Assert.That(testOrders.First(x => x.Productionorderid == "227309").Status, Is.Not.EqualTo("Terminado"));
+            Assert.That(testOrders.First(x => x.Productionorderid == "227307").Status, Is.EqualTo("Cancelado"));
+            Assert.That(testOrders.First(x => x.Productionorderid == null).Status, Is.Not.EqualTo("Terminado"));
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <param name="isValidtecnic">Is valid tecnic.</param>
+        /// <returns>the data.</returns>
+        [Test]
+        [TestCase(true)]
+        public async Task ReassignOrderParentOrdersComplete(bool isValidtecnic)
+        {
+            var reassign = new ManualAssignModel
+            {
+                DocEntry = new List<int> { 176687 },
+                OrderType = "Pedido",
+                UserId = "abc",
+                UserLogistic = "bd4b2724-3b13-490e-aed2-5c8bfdd7551a",
+            };
+
+            var testOrders = new List<UserOrderModel>
+            {
+                new UserOrderModel { Id = 158, Productionorderid = "227309", Salesorderid = "176687", Status = "Terminado", Userid = "1a663b91-fffa-4298-80c3-aaae35586dc6",  TecnicId = "71af9bfc-98ac-4768-9a4f-c420211b1a66", StatusForTecnic = "Terminado", FinishDate = new DateTime(2020, 8, 29), CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 2 },
+                new UserOrderModel { Id = 159, Productionorderid = "227307", Salesorderid = "176687", Status = "Cancelado", Userid = "1a663b91-fffa-4298-80c3-aaae35586dc6",  TecnicId = "71af9bfc-98ac-4768-9a4f-c420211b1a66", StatusForTecnic = "Asignado", FinishDate = new DateTime(2020, 8, 29), CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 2 },
+                new UserOrderModel { Id = 160, Productionorderid = null, Salesorderid = "176687", Status = "Terminado", Userid = "1a663b91-fffa-4298-80c3-aaae35586dc6",  TecnicId = "71af9bfc-98ac-4768-9a4f-c420211b1a66", StatusForTecnic = "Asignado", FinishDate = new DateTime(2020, 8, 29), CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 2 },
+            };
+
+            var productionOrder = new List<ProductionOrderSeparationModel>
+            {
+                new ProductionOrderSeparationModel { Id = 3,  OrderId = 227307, ProductionDetailCount = 1, TotalPieces = 10, AvailablePieces = 1, Status = "Completamente dividida" },
+            };
+
+            var sapAdapterLocal = new Mock<ISapAdapter>();
+            var mockUsers = new Mock<IUsersService>();
+            var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
+            var mockDao = new Mock<IPedidosDao>();
+
+            mockUsers
+                .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetQfbInfoDto(isValidtecnic)));
+
+            mockDao
+                .Setup(m => m.GetUserOrderBySaleOrder(It.IsAny<List<string>>()))
+                .Returns(Task.FromResult<IEnumerable<UserOrderModel>>(testOrders));
+
+            mockDao
+                .Setup(m => m.GetProductionOrderSeparationByOrderId(It.IsAny<List<int>>()))
+                .Returns(Task.FromResult(productionOrder));
+
+            // act
+            var assignPedidosService = new AssignPedidosService(sapAdapterLocal.Object, mockDao.Object, mockUsers.Object, this.kafkaConnector.Object, serviceLayer.Object);
+            var result = await assignPedidosService.ReassignOrder(reassign);
+
+            // assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.ExceptionMessage, Is.Null);
+            Assert.That(result.Response, Is.Null);
+            Assert.That(result.Comments, Is.Null);
+
+            Assert.That(result.UserError, Is.Null);
+            Assert.That(result.Success);
+            Assert.That(result.Code.Equals(200));
+
+            mockDao.Verify(dao => dao.UpdateUserOrders(It.Is<List<UserOrderModel>>(orders => orders.Count == 2)), Times.Once);
+            Assert.That(testOrders.First(x => x.Productionorderid == "227309").Status, Is.Not.EqualTo("Terminado"));
+            Assert.That(testOrders.First(x => x.Productionorderid == "227307").Status, Is.EqualTo("Cancelado"));
+            Assert.That(testOrders.First(x => x.Productionorderid == "227307").ReassignmentDate, Is.EqualTo(null));
+            Assert.That(testOrders.First(x => x.Productionorderid == null).Status, Is.Not.EqualTo("Terminado"));
         }
     }
 }

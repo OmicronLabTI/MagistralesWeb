@@ -11,11 +11,11 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
     using Microsoft.EntityFrameworkCore;
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Entities.Model;
-    using System;
-    using System.Linq;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
     using Omicron.Pedidos.Entities.Model.Db;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// dao for pedidos
@@ -67,6 +67,16 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         public async Task<IEnumerable<UserOrderModel>> GetUserOrderByProducionOrder(List<string> listIDs)
         {
             return await this.databaseContext.UserOrderModel.Where(x => listIDs.Contains(x.Productionorderid)).ToListAsync();
+        }
+
+        /// <summary>
+        /// Returns the user orders by SalesOrder (Pedido)
+        /// </summary>
+        /// <param name="separationId">the list ids.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<UserOrderModel>> GetOrdersBySeparationId(string separationId)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => x.SeparationId.Equals(separationId)).ToListAsync();
         }
 
         /// <summary>
@@ -664,6 +674,33 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
                 .ToListAsync();
         }
 
+        /// <inheritdoc/>
+        public async Task<List<ProductionOrderSeparationModel>> GetProductionOrderSeparationByOrderId(List<int> ordersIds)
+        {
+            return await this.databaseContext.ProductionOrderSeparationModel
+                .Where(po => ordersIds.Contains(po.OrderId))
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<ProductionOrderSeparationDetailModel>> GetProductionOrderSeparationDetailBySapOrderId(List<int> ordersIds)
+        {
+            return await this.databaseContext.ProductionOrderSeparationDetailModel
+                .Where(po => ordersIds.Contains((int)po.SapOrder))
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<ProductionOrderSeparationDetailModel>> GetProductionOrderSeparationDetailByDetailOrderId(List<int> ordersIds)
+        {
+            return await this.databaseContext.ProductionOrderSeparationDetailModel
+                .Where(po => ordersIds.Contains(po.DetailOrderId))
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
         private async Task<List<UserOrderModel>> GetSaleOrderForAlmacenCommon(
             IQueryable<UserOrderModel> ordersQuery,
             List<string> statusPending,
@@ -703,13 +740,282 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
 
                 if (productionStatus.Count > 0 &&
                     productionStatus.All(z => z.FinishedLabel == 1) &&
-                    orders.All(z => statusPending.Contains(z.Status) && !orders.All(z => z.Status == secondStatus)))
+                    orders.All(z => !orders.All(z => z.Status == secondStatus)))
                 {
                     orderstoReturn.AddRange(group);
                 }
             }
 
             return orderstoReturn;
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> InsertDetailOrder(ProductionOrderSeparationDetailModel detaildOrder)
+        {
+            this.databaseContext.ProductionOrderSeparationDetailModel.Add(detaildOrder);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> InsertOrder(ProductionOrderSeparationModel orderId)
+        {
+            this.databaseContext.ProductionOrderSeparationModel.Add(orderId);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> UpdateOrder(ProductionOrderSeparationModel orderId)
+        {
+            this.databaseContext.ProductionOrderSeparationModel.Update(orderId);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<int> GetMaxDivision(int orderId)
+        {
+            var maxIndex = await this.databaseContext.ProductionOrderSeparationDetailModel
+            .Where(c => c.OrderId == orderId)
+            .MaxAsync(c => (int?)c.ConsecutiveIndex) ?? 0;
+
+            return maxIndex + 1;
+        }
+
+        /// <inheritdoc/>
+        public async Task<ProductionOrderSeparationModel> GetParentOrderId(int orderId)
+        {
+            return await this.databaseContext.ProductionOrderSeparationModel
+                .FirstOrDefaultAsync(x => x.OrderId == orderId);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ProductionOrderSeparationDetailModel> GetDetailOrderById(int detailOrderId)
+        {
+            return await this.databaseContext.ProductionOrderSeparationDetailModel
+                .FirstOrDefaultAsync(x => x.DetailOrderId == detailOrderId);
+        }
+
+        /// <inheritdoc/>
+        public async Task<OrderFabModel> GetChildOrderWithPieces(int childOrderId)
+        {
+            var childOrderInfo = await (from parent in this.databaseContext.ProductionOrderSeparationModel
+                                        join detail in this.databaseContext.ProductionOrderSeparationDetailModel
+                                        on parent.OrderId equals detail.OrderId
+                                        where detail.DetailOrderId == childOrderId
+                                        select new OrderFabModel
+                                        {
+                                            ParentId = parent.OrderId,
+                                            AvailablePieces = parent.AvailablePieces,
+                                            AssignedPieces = detail.AssignedPieces
+                                        }).FirstOrDefaultAsync();
+
+            return childOrderInfo;
+        }
+
+        /// <inheritdoc/>
+        public async Task<ProductionOrderSeparationModel> GetParentOrderById(int parentOrderId)
+        {
+            return await this.databaseContext.ProductionOrderSeparationModel
+                .FirstOrDefaultAsync(x => x.OrderId == parentOrderId);
+        }
+
+        /// <inheritdoc/>
+        public async Task UpdateParentOrder()
+        {
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<ProductionOrderSeparationDetailLogsModel> GetProductionOrderSeparationDetailLogById(string separationId)
+        {
+            return await this.databaseContext.ProductionOrderSeparationDetailLogsModel.FirstOrDefaultAsync(x => x.Id == separationId);
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> InsertProductionOrderSeparationDetailLogById(ProductionOrderSeparationDetailLogsModel modelToSave)
+        {
+            this.databaseContext.ProductionOrderSeparationDetailLogsModel.AddRange(modelToSave);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> UpdateProductionOrderSeparationDetailLog(ProductionOrderSeparationDetailLogsModel modelToSave)
+        {
+            this.databaseContext.ProductionOrderSeparationDetailLogsModel.UpdateRange(modelToSave);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<ProductionOrderSeparationDetailLogsModel> GetProductionOrderSeparationDetailLogByParentOrderId(int parentId)
+        {
+            return await this.databaseContext.ProductionOrderSeparationDetailLogsModel.FirstOrDefaultAsync(x => x.ParentProductionOrderId == parentId && x.IsSuccessful == false);
+        }
+
+        public async Task<IEnumerable<ProductionOrderSeparationDetailLogsModel>> GetAllFailedDivisionOrders()
+        {
+            return await this.databaseContext.ProductionOrderSeparationDetailLogsModel
+                .Where(x => !x.IsSuccessful)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<ParentOrderDetailModel>> GetParentOrderDetailByOrderId(int parentId)
+        {
+            var ordesrDetail = await (from detail in this.databaseContext.ProductionOrderSeparationDetailModel
+                                      join order in this.databaseContext.UserOrderModel
+                                      on detail.DetailOrderId equals Convert.ToInt32(order.Productionorderid)
+                                      where detail.OrderId == parentId
+                                      select new ParentOrderDetailModel
+                                      {
+                                          DocNum = order.Salesorderid,
+                                          FabOrderId = detail.DetailOrderId,
+                                          Quantity = detail.AssignedPieces,
+                                          CreateDate = detail.CreatedAt.HasValue ? detail.CreatedAt.Value.ToString("dd/MM/yyyy HH:mm:ss") : string.Empty,
+                                          UserCreate = detail.UserId,
+                                          FinishDate = order.FinishDate.HasValue ? order.FinishDate.Value.ToString("dd/MM/yyyy") : string.Empty,
+                                          Qfb = order.Userid,
+                                          Status = order.Status.Equals("Proceso") ? "En Proceso" : order.Status,
+                                          Batch = order.BatchFinalized,
+                                      }).ToListAsync();
+            return ordesrDetail;
+        }
+        public async Task<List<OpenOrderProductionModel>> GetAllOpenParentOrdersByQfb(string qfbId, string partiallyDivided)
+        {
+            if (string.IsNullOrWhiteSpace(qfbId))
+                return new List<OpenOrderProductionModel>();
+
+            var query =
+            from p in this.databaseContext.ProductionOrderSeparationModel.AsNoTracking()
+            join u in this.databaseContext.UserOrderModel.AsNoTracking()
+                on p.OrderId.ToString() equals u.Productionorderid
+            join psd in this.databaseContext.ProductionOrderSeparationDetailModel.AsNoTracking()
+                on p.OrderId equals psd.OrderId into psdGroup
+            from userFirst in psdGroup
+            .OrderBy(x => x.ConsecutiveIndex)
+            .Take(1)
+            .DefaultIfEmpty()
+            where p.Status == partiallyDivided
+               && u.Userid == qfbId
+            select new OpenOrderProductionModel
+            {
+                OrderProductionId = p.OrderId.ToString(),
+                TotalPieces = p.TotalPieces,
+                AvailablePieces = p.AvailablePieces,
+                QfbWhoSplit = userFirst.UserId,
+                DetailOrdersCount = p.ProductionDetailCount,
+                OrderProductionDetail = new List<OpenOrderProductionDetailModel>(),
+                AutoExpandOrderDetail = false
+            };
+            return await query.ToListAsync();
+        }
+
+        public async Task<List<DetailOrderProductionModel>> GetChildrenByParentIds(IEnumerable<int> parentIds, bool excludeCanceled = true)
+        {
+            var ids = parentIds?.Distinct().ToList();
+
+            var query = from d in this.databaseContext.ProductionOrderSeparationDetailModel.AsNoTracking()
+                        join uc in this.databaseContext.UserOrderModel.AsNoTracking()
+                            on d.DetailOrderId.ToString() equals uc.Productionorderid
+                        where ids.Contains(d.OrderId) && (!excludeCanceled || uc.Status != "Cancelado")
+                        orderby d.DetailOrderId
+                        select new DetailOrderProductionModel
+                        {
+                            OrderId = d.OrderId,
+                            DetailOrderId = d.DetailOrderId,
+                            AssignedPieces = d.AssignedPieces,
+                            AssignedQfb = uc.Userid,
+                            Status = uc.Status,
+                            CreatedAt = d.CreatedAt
+                        };
+
+            return await query.ToListAsync();
+        }       
+
+        public async Task<HashSet<int>> FindExistingParentIds(List<int> ids)
+        {
+            var existing = await this.databaseContext.ProductionOrderSeparationModel
+                .AsNoTracking()
+                .Where(p => ids.Contains(p.OrderId))
+                .Select(p => p.OrderId)
+                .Distinct()
+                .ToListAsync();
+
+            return existing.ToHashSet();
+        }
+
+        public async Task<Dictionary<int, int>> FindParentsByChildIds(List<int> childIds)
+        {
+            var rows = await this.databaseContext.ProductionOrderSeparationDetailModel
+                .AsNoTracking()
+                .Where(d => childIds.Contains(d.DetailOrderId))
+                .Select(d => new { d.DetailOrderId, d.OrderId })
+                .ToListAsync();
+
+            return rows
+                .GroupBy(x => x.DetailOrderId)
+                .ToDictionary(g => g.Key, g => g.First().OrderId);
+        }
+        
+        /// <inheritdoc/>
+
+        public async Task<List<OpenOrderProductionModel>> GetParentsAssignedToQfbByIds(List<int> parentIds, string qfbId, string partiallyDivided)
+        {
+            var query =
+                from p in this.databaseContext.ProductionOrderSeparationModel.AsNoTracking()
+                join u in this.databaseContext.UserOrderModel.AsNoTracking()
+                     on p.OrderId.ToString() equals u.Productionorderid
+                join pod in this.databaseContext.ProductionOrderSeparationDetailModel.AsNoTracking()
+                    on p.OrderId equals pod.OrderId
+                where parentIds.Contains(p.OrderId)
+                   && p.Status == partiallyDivided
+                   && u.Userid == qfbId
+                   && pod.ConsecutiveIndex == 1
+                select new OpenOrderProductionModel
+                {
+                    OrderProductionId = p.OrderId.ToString(),
+                    TotalPieces = p.TotalPieces,
+                    AvailablePieces = p.AvailablePieces,
+                    QfbWhoSplit = pod.UserId,
+                    DetailOrdersCount = p.ProductionDetailCount,
+                    OrderProductionDetail = new List<OpenOrderProductionDetailModel>(),
+                    AutoExpandOrderDetail = false
+                };
+
+            return await query.ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<ProductionOrderSeparationModel>> GetProductionOrderSeparationByOrderIdWithPendingPieces(List<int> ordersIds)
+        {
+            return await this.databaseContext.ProductionOrderSeparationModel
+                .Where(po => ordersIds.Contains(po.OrderId) && po.AvailablePieces > 0)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        public async Task<int> UpdateStatusWorkParent(int parentOrderId, string workStatus)
+        {
+            var usersOrders = await this.databaseContext.UserOrderModel
+                           .FirstOrDefaultAsync(x => x.Productionorderid == parentOrderId.ToString());
+
+            if (usersOrders == null) return 0;
+            
+            usersOrders.StatusWorkParent = workStatus;
+            this.databaseContext.UserOrderModel.Update(usersOrders);
+            return await((DatabaseContext)this.databaseContext).SaveChangesAsync();
+        }
+
+        public async Task<bool> IsParentOrder(int productionOrderId)
+        {
+            var isParent = await this.databaseContext.ProductionOrderSeparationModel
+                      .AnyAsync(s => s.OrderId == productionOrderId);
+
+            return isParent;
         }
     }
 }

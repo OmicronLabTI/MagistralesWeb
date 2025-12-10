@@ -47,14 +47,15 @@ namespace Omicron.Pedidos.Services.SapServiceLayerAdapter
         public async Task<ResultModel> PatchAsync(string url, string requestBody)
         {
             ResultModel result;
-            HttpRequestMessage request = new (new HttpMethod("PATCH"), url)
+            HttpRequestMessage request = new
+                (new HttpMethod("PATCH"), url)
             {
                 Content = new StringContent(requestBody, Encoding.UTF8, "application/json"),
             };
 
             using (var response = await this.httpClient.SendAsync(request))
             {
-                result = await ServiceShared.GetResponse(response, this.logger, "Advisor Service - PatchAsync - Error peticion Sap Service Layer.");
+                result = await ServiceShared.GetResponse(response, this.logger, "Pedidos Service - PatchAsync - Error peticion Sap Service Layer.");
             }
 
             return result;
@@ -65,15 +66,17 @@ namespace Omicron.Pedidos.Services.SapServiceLayerAdapter
         /// </summary>
         /// <param name="dataToSend">the orders.</param>
         /// <param name="route">the route.</param>
+        /// <param name="logError">Log Error.</param>
         /// <returns>the return.</returns>
-        public async Task<ResultModel> PostAsync(object dataToSend, string route)
+        public async Task<ResultModel> PostAsync(object dataToSend, string route, string logError = null)
         {
+            logError = logError ?? "Pedidos Service - POST - Error peticion service layer";
             ResultModel result;
             var stringContent = new StringContent(JsonConvert.SerializeObject(dataToSend), UnicodeEncoding.UTF8, "application/json");
             var url = this.httpClient.BaseAddress + route;
             using (var response = await this.httpClient.PostAsync(url, stringContent))
             {
-                result = await ServiceShared.GetResponse(response, this.logger, "Error peticion sapadapter");
+                result = await ServiceShared.GetResponse(response, this.logger, logError);
             }
 
             return result;

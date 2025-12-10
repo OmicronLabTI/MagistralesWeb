@@ -25,6 +25,7 @@ import {
 } from '../model/http/detallepedidos.model';
 import { IComponentsLotesRes, IResponseSaveChanges } from '../model/http/addComponent';
 import { BaseResponseHttp } from '../model/http/commons';
+import { IChildrenOrdersListRes } from '../model/http/ordenfabricacion';
 
 
 @Injectable({
@@ -135,5 +136,9 @@ export class PedidosService {
 
   getProductWarehouses(productId: string) {
     return this.consumeService.httpGet<IProductWarehouses>(`${Endpoints.pedidos.productWarehouses}?itemCode=${productId}`);
+  }
+
+  getChildrenOrders(parentOrderId: number) {
+    return this.consumeService.httpGet<IChildrenOrdersListRes>(`${Endpoints.pedidos.childrenOrdersDetail}/${parentOrderId}`);
   }
 }

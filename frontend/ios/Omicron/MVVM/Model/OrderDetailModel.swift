@@ -34,13 +34,18 @@ class OrderDetail {
     var isChecked: Bool?
     var details: [Detail]?
     var catalogGroupName: String?
+    var shopTransaction: String?
+    var availablePieces: Int?
+    var onSplitProcess: Bool?
+    var orderRelationType: String?
     init() { }
     init(productionOrderID: Int, code: String, productDescription: String, type: String,
          status: String, plannedQuantity: Decimal, unit: String, warehouse: String,
          number: Int, fabDate: String, dueDate: String, startDate: String, endDate: String,
          user: String, origin: String, baseDocument: Int, client: String, completeQuantity: Int,
          realEndDate: String, productLabel: String, container: String, comments: String,
-         isChecked: Bool, details: [Detail], catalogGroupName: String, orderCreateDate: String) {
+         isChecked: Bool, details: [Detail], catalogGroupName: String, orderCreateDate: String,
+         shopTransaction: String, availablePieces: Int, onSplitProcess: Bool, orderRelationType: String) {
         self.productionOrderID = productionOrderID
         self.code = code
         self.productDescription = productDescription
@@ -67,6 +72,10 @@ class OrderDetail {
         self.details = details
         self.catalogGroupName = catalogGroupName
         self.orderCreateDate = orderCreateDate
+        self.shopTransaction = shopTransaction
+        self.availablePieces = availablePieces
+        self.onSplitProcess = onSplitProcess
+        self.orderRelationType = orderRelationType
     }
     required init?(map: Map) {}
 }
@@ -98,6 +107,10 @@ extension OrderDetail: Mappable {
         self.details <- map["details"]
         self.comments <- map["comments"]
         self.catalogGroupName <- map["catalogGroupName"]
+        self.shopTransaction <- map["shopTransaction"]
+        self.availablePieces <- map["availablePieces"]
+        self.orderRelationType <- map["orderRelationType"]
+        self.onSplitProcess <- map["onSplitProcess"]
     }
 }
 class Detail {

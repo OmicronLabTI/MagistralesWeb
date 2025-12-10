@@ -14,7 +14,9 @@ namespace Omicron.Pedidos.Services.Utils
     using System.Threading.Tasks;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Entities.Model.Db;
     using Omicron.Pedidos.Services.Constants;
+    using Omicron.Pedidos.Services.Redis;
 
     /// <summary>
     /// The class for the get orders.
@@ -47,6 +49,7 @@ namespace Omicron.Pedidos.Services.Utils
             var filterFechaFin = parameters.ContainsKey(ServiceConstants.FechaFin);
             var filterFechaIni = parameters.ContainsKey(ServiceConstants.FechaInicio);
             var filterStatus = parameters.ContainsKey(ServiceConstants.Status);
+            var filterParent = parameters.ContainsKey(ServiceConstants.Parent);
 
             if (filterQfb)
             {
@@ -64,6 +67,11 @@ namespace Omicron.Pedidos.Services.Utils
                 listOrders = await GetOrdersFilteredByDate(parameters, filterQfb || filterStatus, listOrders, pedidosDao);
             }
 
+            if (filterParent)
+            {
+                listOrders = await GetOrdersFilteredByParentOrders(listOrders, pedidosDao);
+            }
+
             return listOrders.DistinctBy(x => x.Id).ToList();
         }
 
@@ -73,16 +81,27 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="fabOrderModel">the order.</param>
         /// <param name="userOrders">the user order.</param>
         /// <param name="users">the user.</param>
+        /// <param name="redisService">redis.</param>
+        /// <param name="pedidosDao">dao.</param>
         /// <returns>the data.</returns>
-        public static List<CompleteOrderModel> CreateModels(List<FabricacionOrderModel> fabOrderModel, List<UserOrderModel> userOrders, List<UserModel> users)
+        public static async Task<List<CompleteOrderModel>> CreateModels(List<FabricacionOrderModel> fabOrderModel, List<UserOrderModel> userOrders, List<UserModel> users, IRedisService redisService, IPedidosDao pedidosDao)
         {
             var listToReturn = new List<CompleteOrderModel>();
+
+            var redisKeys = fabOrderModel.Select(x => string.Format(ServiceConstants.ProductionOrderSeparationProcessKey, x.OrdenId)).ToList();
+            var redisValues = await redisService.GetRedisKeys(redisKeys);
+
+            var redisLookup = redisKeys.Zip(redisValues, (key, value) => new { key, value }).ToDictionary(x => int.Parse(x.key.Split(':').Last()), x => !string.IsNullOrEmpty(x.value));
+
+            var parentOrdersId = fabOrderModel.Where(x => x.OrderRelationType == "Y").Select(y => y.OrdenId).ToList();
+            var parentOrders = await pedidosDao.GetProductionOrderSeparationByOrderId(parentOrdersId);
 
             fabOrderModel.ForEach(x =>
             {
                 var userOrder = userOrders.FirstOrDefault(y => y.Productionorderid.Equals(x.OrdenId.ToString()));
                 userOrder ??= new UserOrderModel();
                 var status = userOrder.Status ?? ServiceConstants.Abierto;
+                var parentOrder = parentOrders.FirstOrDefault(y => y.OrderId == x.OrdenId) ?? new ProductionOrderSeparationModel();
 
                 var user = users.FirstOrDefault(y => y.Id.Equals(userOrder.Userid));
 
@@ -100,6 +119,10 @@ namespace Omicron.Pedidos.Services.Utils
                     Unit = x.Unit,
                     HasMissingStock = x.HasMissingStock,
                     Batch = userOrder.BatchFinalized,
+                    OnSplitProcess = redisLookup.TryGetValue(x.OrdenId, out var exists) && exists,
+                    OrderRelationType = x.OrderRelationType = x.OrderRelationType != null ? ServiceShared.GetDictionaryValueString(ServiceConstants.OrderRelation, x.OrderRelationType, ServiceConstants.Complete) : ServiceConstants.Complete,
+                    AvailablePieces = parentOrder.AvailablePieces,
+                    ChildOrders = parentOrder.ProductionDetailCount,
                 };
 
                 listToReturn.Add(fabOrder);
@@ -119,8 +142,7 @@ namespace Omicron.Pedidos.Services.Utils
         private static async Task<List<UserOrderModel>> GetOrdersFilteredByDate(Dictionary<string, string> parameters, bool dataFiltered, List<UserOrderModel> listOrders, IPedidosDao pedidosDao)
         {
             var dateFilter = ServiceUtils.GetDateFilter(parameters);
-
-            var endDate = dateFilter[ServiceConstants.FechaFin].AddHours(23).AddMinutes(59);
+            var endDate = dateFilter[ServiceConstants.FechaFin];
 
             if (dataFiltered)
             {
@@ -136,6 +158,16 @@ namespace Omicron.Pedidos.Services.Utils
                     (await pedidosDao.GetUserOrderByFechaFin(dateFilter[ServiceConstants.FechaInicio], endDate)).ToList(),
                     (await pedidosDao.GetUserOrderByPlanningDate(dateFilter[ServiceConstants.FechaInicio], endDate)).ToList());
             }
+        }
+
+        private static async Task<List<UserOrderModel>> GetOrdersFilteredByParentOrders(List<UserOrderModel> listOrders, IPedidosDao pedidosDao)
+        {
+            var ordersIds = listOrders.Where(y => !string.IsNullOrEmpty(y.Productionorderid)).Select(x => int.Parse(x.Productionorderid)).Distinct().ToList();
+            var childOrders = await pedidosDao.GetProductionOrderSeparationDetailByDetailOrderId(ordersIds);
+            var childOrderIds = childOrders.Select(c => c.DetailOrderId).ToHashSet();
+
+            var listToReturn = listOrders.Where(lo => !string.IsNullOrEmpty(lo.Productionorderid) && !childOrderIds.Contains(int.Parse(lo.Productionorderid))).ToList();
+            return listToReturn;
         }
     }
 }

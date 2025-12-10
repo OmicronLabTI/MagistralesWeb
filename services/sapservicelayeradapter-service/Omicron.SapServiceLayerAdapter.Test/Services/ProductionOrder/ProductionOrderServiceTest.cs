@@ -29,7 +29,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
             this.mockLogger = new Mock<ILogger>();
             var mapperConfiguration = new MapperConfiguration(cfg => cfg.AddProfile<AutoMapperProfile>());
             this.mapper = mapperConfiguration.CreateMapper();
-            this.productionOrderService = new ProductionOrderService(mockServiceLayerClient.Object, this.mockLogger.Object, this.mapper);
+            var mockRedis = new Mock<IRedisService>();
+            this.productionOrderService = new ProductionOrderService(mockServiceLayerClient.Object, this.mockLogger.Object, this.mapper, mockRedis.Object);
         }
 
         /// <summary>
@@ -41,7 +42,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
         {
             var mockServiceLayerClient = new Mock<IServiceLayerClient>();
             var mockLogger = new Mock<ILogger>();
-            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper);
+            var mockRedis = new Mock<IRedisService>();
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper, mockRedis.Object);
 
             mockServiceLayerClient
                 .SetupSequence(x => x.GetAsync(It.IsAny<string>()))
@@ -82,7 +84,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
         {
             var mockServiceLayerClient = new Mock<IServiceLayerClient>();
             var mockLogger = new Mock<ILogger>();
-            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper);
+            var mockRedis = new Mock<IRedisService>();
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper, mockRedis.Object);
 
             mockServiceLayerClient
                 .SetupSequence(x => x.GetAsync(It.IsAny<string>()))
@@ -157,7 +160,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
         {
             var mockServiceLayerClient = new Mock<IServiceLayerClient>();
             var mockLogger = new Mock<ILogger>();
-            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper);
+            var mockRedis = new Mock<IRedisService>();
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper, mockRedis.Object);
 
             mockServiceLayerClient
                 .Setup(x => x.GetAsync(It.IsAny<string>()))
@@ -216,13 +220,62 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
         /// <summary>
         /// validate update formula.
         /// </summary>
+        /// <param name="success">success.</param>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task CreateChildFabOrders(bool success)
+        {
+            var mockServiceLayerClient = new Mock<IServiceLayerClient>();
+            var mockLogger = new Mock<ILogger>();
+            var mockRedis = new Mock<IRedisService>();
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper, mockRedis.Object);
+
+            var productionOrder = GetProductionOrder("boposReleased", 0, 0);
+            mockServiceLayerClient
+                .Setup(x => x.GetAsync("ProductionOrders(123456)"))
+                .Returns(Task.FromResult(GetResult(true, productionOrder)));
+
+            var secondProductionOrder = GetProductionOrder("boposReleased", 0, 0);
+            secondProductionOrder.ProductionOrderLines[0].ItemNo = "TEST";
+
+            mockServiceLayerClient
+                .Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResult(success, secondProductionOrder)));
+
+            mockServiceLayerClient
+                .Setup(x => x.PutAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResult(true, secondProductionOrder)));
+            var request = new CreateChildProductionOrdersDto() { OrderId = 123456, Pieces = 1 };
+            var result = await service.CreateChildFabOrders(request);
+            var response = result.Response as CreateChildOrderResultDto;
+
+            if (success)
+            {
+                Assert.That(result.Success, Is.True);
+                Assert.That(result.Code, Is.EqualTo(200));
+                Assert.That(string.IsNullOrEmpty(response.ErrorMessage), Is.True);
+            }
+            else
+            {
+                Assert.That(result.Success, Is.True);
+                Assert.That(result.Code, Is.EqualTo(200));
+                Assert.That(string.IsNullOrEmpty(response.ErrorMessage), Is.False);
+            }
+        }
+
+        /// <summary>
+        /// validate update formula.
+        /// </summary>
         /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Test]
         public async Task UpdateFormulaWithErrorTest()
         {
             var mockServiceLayerClient = new Mock<IServiceLayerClient>();
             var mockLogger = new Mock<ILogger>();
-            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper);
+            var mockRedis = new Mock<IRedisService>();
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper, mockRedis.Object);
 
             mockServiceLayerClient
                 .Setup(x => x.GetAsync(It.IsAny<string>()))
@@ -280,7 +333,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
         {
             var mockServiceLayerClient = new Mock<IServiceLayerClient>();
             var mockLogger = new Mock<ILogger>();
-            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper);
+            var mockRedis = new Mock<IRedisService>();
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper, mockRedis.Object);
 
             mockServiceLayerClient
                 .SetupSequence(x => x.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
@@ -329,7 +383,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
         {
             var mockServiceLayerClient = new Mock<IServiceLayerClient>();
             var mockLogger = new Mock<ILogger>();
-            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper);
+            var mockRedis = new Mock<IRedisService>();
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper, mockRedis.Object);
 
             mockServiceLayerClient
                 .Setup(x => x.GetAsync(It.IsAny<string>()))
@@ -374,7 +429,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
         {
             var mockServiceLayerClient = new Mock<IServiceLayerClient>();
             var mockLogger = new Mock<ILogger>();
-            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper);
+            var mockRedis = new Mock<IRedisService>();
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper, mockRedis.Object);
 
             mockServiceLayerClient
                 .Setup(x => x.GetAsync(It.IsAny<string>()))
@@ -397,6 +453,78 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
         /// <summary>
         /// validate CancelFabOrderTest.
         /// </summary>
+        /// <param name="successGet">The successGet.</param>
+        /// <param name="successPut">The successPut.</param>
+        /// <param name="successPost">The successPost.</param>
+        /// <param name="status">The status.</param>
+        /// <param name="responseServiceLayerHasError">responseServiceLayerHasError.</param>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
+        [Test]
+        [TestCase(true, true, true, "boposReleased", false)]
+        [TestCase(true, true, true, "boposCancelled", false)]
+        [TestCase(true, false, true, "boposReleased", false)]
+        [TestCase(true, true, false, "boposReleased", false)]
+        [TestCase(true, true, true, "boposReleased", true)]
+        public async Task CancelProductionOrderForSeparationProcess(
+            bool successGet,
+            bool successPut,
+            bool successPost,
+            string status,
+            bool responseServiceLayerHasError)
+        {
+            var mockServiceLayerClient = new Mock<IServiceLayerClient>();
+            var mockLogger = new Mock<ILogger>();
+            var mockRedis = new Mock<IRedisService>();
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper, mockRedis.Object);
+
+            mockServiceLayerClient
+                .Setup(x => x.GetAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResult(successGet, GetProductionOrder(status, 0, 0))));
+
+            mockServiceLayerClient
+               .Setup(x => x.PutAsync(It.IsAny<string>(), It.IsAny<string>()))
+               .Returns(Task.FromResult(GetResult(successPut, null)));
+
+            if (!responseServiceLayerHasError)
+            {
+                mockServiceLayerClient
+                .Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResult(successPost, null)));
+            }
+            else
+            {
+                mockServiceLayerClient
+                .Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .ThrowsAsync(new Exception("Deadlock Error."));
+            }
+
+            var request = new CancelProductionOrderDto()
+            {
+                ProductionOrderId = 100001,
+                SeparationId = Guid.NewGuid().ToString(),
+            };
+            var result = await service.CancelProductionOrderForSeparationProcess(request);
+            var response = result.Response as CancelProductionOrderDto;
+
+            if (!responseServiceLayerHasError && successPut && successPost)
+            {
+                Assert.That(result.Success, Is.True);
+                Assert.That(result.Code, Is.EqualTo(200));
+                Assert.That(result.Response, Is.Not.Null);
+                Assert.That(response.ErrorMessage, Is.Null);
+            }
+            else
+            {
+                Assert.That(result.Success, Is.True);
+                Assert.That(result.Code, Is.EqualTo(200));
+                Assert.That(result.Response, Is.Not.Null);
+                Assert.That(response.ErrorMessage, Is.Not.Null);
+            }
+        }
+
+        /// <summary>
+        /// validate CancelFabOrderTest.
+        /// </summary>
         /// <param name="success">The success.</param>
         /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Test]
@@ -406,7 +534,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
         {
             var mockServiceLayerClient = new Mock<IServiceLayerClient>();
             var mockLogger = new Mock<ILogger>();
-            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper);
+            var mockRedis = new Mock<IRedisService>();
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper, mockRedis.Object);
 
             mockServiceLayerClient
                 .Setup(x => x.GetAsync(It.IsAny<string>()))
@@ -440,7 +569,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
         {
             var mockServiceLayerClient = new Mock<IServiceLayerClient>();
             var mockLogger = new Mock<ILogger>();
-            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper);
+            var mockRedis = new Mock<IRedisService>();
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper, mockRedis.Object);
 
             mockServiceLayerClient
                 .Setup(x => x.GetAsync(It.IsAny<string>()))
@@ -488,7 +618,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
         public async Task PrimaryValidationForProductionOrderFinalizationInSap(bool isOk, string statusSap)
         {
             var mockServiceLayerClient = new Mock<IServiceLayerClient>();
-            var service = new ProductionOrderService(mockServiceLayerClient.Object, this.mockLogger.Object, this.mapper);
+            var mockRedis = new Mock<IRedisService>();
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, this.mockLogger.Object, this.mapper, mockRedis.Object);
 
             var productionOrderRespone = GetProductionOrder(statusSap, 0, 0);
 
@@ -529,7 +660,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
         public async Task PrimaryValidationForProductionOrderFinalizationInSapError()
         {
             var mockServiceLayerClient = new Mock<IServiceLayerClient>();
-            var service = new ProductionOrderService(mockServiceLayerClient.Object, this.mockLogger.Object, this.mapper);
+            var mockRedis = new Mock<IRedisService>();
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, this.mockLogger.Object, this.mapper, mockRedis.Object);
 
             mockServiceLayerClient
                 .SetupSequence(x => x.GetAsync(It.IsAny<string>()))
@@ -589,7 +721,9 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
                 .Setup(x => x.PatchAsync(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(GetResult(true, null)));
 
-            var service = new ProductionOrderService(mockServiceLayerClient.Object, this.mockLogger.Object, this.mapper);
+            var mockRedis = new Mock<IRedisService>();
+
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, this.mockLogger.Object, this.mapper, mockRedis.Object);
 
             var request = new List<CloseProductionOrderDto>
             {
@@ -646,8 +780,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
             mockServiceLayerClient
                 .Setup(x => x.PatchAsync(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(GetResult(true, null)));
-
-            var service = new ProductionOrderService(mockServiceLayerClient.Object, this.mockLogger.Object, this.mapper);
+            var mockRedis = new Mock<IRedisService>();
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, this.mockLogger.Object, this.mapper, mockRedis.Object);
 
             var request = new List<CloseProductionOrderDto>
             {
@@ -709,7 +843,9 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
                 .Setup(x => x.PatchAsync(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(GetResult(false, deadLockResult)));
 
-            var service = new ProductionOrderService(mockServiceLayerClient.Object, this.mockLogger.Object, this.mapper);
+            var mockRedis = new Mock<IRedisService>();
+
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, this.mockLogger.Object, this.mapper, mockRedis.Object);
 
             var request = new List<CloseProductionOrderDto>
             {

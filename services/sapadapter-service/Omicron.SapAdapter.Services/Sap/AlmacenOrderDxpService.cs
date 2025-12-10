@@ -105,6 +105,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var sapOrders = await this.GetSapOrders(sapOrdersByTransactionId, hasChips, userOrders, startDate, endDate, lineProductsTuple, types);
             var ordersByFilter = await this.GetSapOrdersToLookByDoctor(sapOrders.Item1, parameters);
+            ordersByFilter = await this.ExcludeSplitOrders(ordersByFilter);
             var totalFilter = ordersByFilter.Select(x => x.DocNumDxp).Distinct().ToList().Count;
             var listToReturn = this.GetCardOrdersToReturn(ordersByFilter, parameters, sapOrders.Item2, sapOrders.Item3, sapClasification);
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, $"{totalFilter}-{totalFilter}");
@@ -185,6 +186,15 @@ namespace Omicron.SapAdapter.Services.Sap
         private async Task<List<CompleteAlmacenOrderModel>> GetSapOrdersToLookByDoctor(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters)
         {
             return await ServiceUtilsAlmacen.FilterSapOrdersByTypeShipping(sapOrders, parameters, this.proccessPayments, this.redisService, this.catalogsService);
+        }
+
+        private async Task<List<CompleteAlmacenOrderModel>> ExcludeSplitOrders(List<CompleteAlmacenOrderModel> orders)
+        {
+            var docNums = orders.Select(o => o.DocNum).Distinct().ToList();
+            var fabOrderParentOrChild = await this.sapDao.GetOrdersWithChildBySaleOrder(docNums);
+            var ordersWithChildFabOrders = fabOrderParentOrChild.Select(x => x.PedidoId).ToHashSet();
+
+            return orders.Where(x => !ordersWithChildFabOrders.Contains(x.DocNum)).ToList();
         }
 
         private AlmacenOrdersByDoctorModel GetCardOrdersToReturn(

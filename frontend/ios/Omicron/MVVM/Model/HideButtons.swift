@@ -16,8 +16,9 @@ class HideButtons {
     var save: Bool
     var seeBatches: Bool
     var saveChanges: Bool
+    var splitOrder: Bool
     init(process: Bool, finished: Bool, pending: Bool,
-         addComp: Bool, save: Bool, seeBatches: Bool, saveChanges: Bool) {
+         addComp: Bool, save: Bool, seeBatches: Bool, saveChanges: Bool, splitOrder: Bool) {
         self.process = process
         self.finished = finished
         self.pending = pending
@@ -25,5 +26,6 @@ class HideButtons {
         self.save = save
         self.seeBatches = seeBatches
         self.saveChanges = saveChanges
+        self.splitOrder = splitOrder
     }
 }

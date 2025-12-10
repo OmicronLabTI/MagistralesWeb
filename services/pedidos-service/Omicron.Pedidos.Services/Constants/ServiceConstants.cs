@@ -307,11 +307,6 @@ namespace Omicron.Pedidos.Services.Constants
         public const string GetLastIsolatedProductionOrderId = "fabOrder/isolated/last";
 
         /// <summary>
-        /// the route to call the details for the details.
-        /// </summary>
-        public const string GetFabOrdersByPedidoId = "detail/{0}";
-
-        /// <summary>
         /// route to create orders.
         /// </summary>
         public const string CreateFabOrder = "createFabOrder";
@@ -549,6 +544,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// the filter for orders.
         /// </summary>
+        public const string Parent = "parent";
+
+        /// <summary>
+        /// the filter for orders.
+        /// </summary>
         public const string Type = "type";
 
         /// <summary>
@@ -580,6 +580,21 @@ namespace Omicron.Pedidos.Services.Constants
         /// Const for the limit.
         /// </summary>
         public const string Limit = "limit";
+
+        /// <summary>
+        /// Const for the qfbId.
+        /// </summary>
+        public const string QfbId = "qfbId";
+
+        /// <summary>
+        /// Const for the orders.
+        /// </summary>
+        public const string Orders = "orders";
+
+        /// <summary>
+        /// Const for the StatusCancelado.
+        /// </summary>
+        public const string StatusCancelado = "Cancelado";
 
         /// <summary>
         /// delivery contants.
@@ -1048,6 +1063,92 @@ namespace Omicron.Pedidos.Services.Constants
         public const string StepCreatePdf = "PDF Created";
 
         /// <summary>
+        /// Gets ParentOrder.
+        /// </summary>
+        /// <value>
+        /// ParentOrder.
+        /// </value>
+        public const string ParentOrder = "Padre";
+
+        /// <summary>
+        /// CompletelyDivided.
+        /// </summary>
+        public const string CompletelyDivided = "Completamente dividida";
+
+        /// <summary>
+        /// PartiallyDivided.
+        /// </summary>
+        public const string PartiallyDivided = "Parcialmente dividida";
+
+        /// <summary>
+        /// CancelSapStep.
+        /// </summary>
+        public const string StartStep = "StartCancelParentOrderProcess";
+
+        /// <summary>
+        /// CancelSapStep.
+        /// </summary>
+        public const string UpdateCancelParentOrderStep = "UpdateCancelParentOrderProcess";
+
+        /// <summary>
+        /// CancelSapStep.
+        /// </summary>
+        public const string CancelSapStep = "CancelSAP";
+
+        /// <summary>
+        /// CancelPostgresStep.
+        /// </summary>
+        public const string CancelPostgresStep = "CancelPostgres";
+
+        /// <summary>
+        /// SaveHistoryStep.
+        /// </summary>
+        public const string SaveHistoryStep = "SaveHistory";
+
+        /// <summary>
+        /// StepCreateChildOrderSap.
+        /// </summary>
+        public const string StepCreateChildOrderSap = "CreateChildOrderSap";
+
+        /// <summary>
+        /// StepCreateChildOrderSap.
+        /// </summary>
+        public const string StepCreateChildOrderWithComponentsSap = "CreateChildOrderSapWithComponents";
+
+        /// <summary>
+        /// StepCreateChildOrderPostgres.
+        /// </summary>
+        public const string StepCreateChildOrderPostgres = "CreateChildOrderPostgres";
+
+        /// <summary>
+        /// StepCreateChildOrderPostgres.
+        /// </summary>
+        public const string StepSaveChildOrderHistory = "SaveChildOrderHistory";
+
+        /// <summary>
+        /// NotDivisionPending.
+        /// </summary>
+        public const string NotDivisionPending = "No se puede dividir: orden padre en Pendiente.";
+
+        /// <summary>
+        /// EmptyValue.
+        /// </summary>
+        public const string EmptyValue = "";
+
+        /// <summary>
+        /// Gets ProductionDetailCount.
+        /// </summary>
+        /// <value>
+        /// ProductionDetailCount.
+        /// </value>
+        public const int ProductionDetailCount = 1;
+
+        /// <summary>
+        /// the order Complete.
+        /// </summary>
+        public const string Complete = "Completa";
+
+        /// <summary>
         /// Gets DefaultRedisValueTimeToLive.
         /// </summary>
         /// <value>
@@ -1128,14 +1229,6 @@ namespace Omicron.Pedidos.Services.Constants
         public static string ProductionOrderFinalizingRetryCronjob => "production-order-finalizing-retry-cronjob";
 
         /// <summary>
-        /// Gets KafkaInsertLogsConfigName.
-        /// </summary>
-        /// <value>
-        /// KafkaInsertLogsConfigName.
-        /// </value>
-        public static string KafkaInsertLogsConfigName => "insertlogs";
-
-        /// <summary>
         /// Gets KafkaFinalizeProductionOrderSapConfigName.
         /// </summary>
         /// <value>
@@ -1166,6 +1259,54 @@ namespace Omicron.Pedidos.Services.Constants
         /// ErrorOccurredWhileCommunicatingWithServiceLayerAdapter.
         /// </value>
         public static string ErrorOccurredWhileCommunicatingWithServiceLayerAdapter => "An error occurred while communicating with the Service Layer Adapter.";
+
+        /// <summary>
+        /// Gets MinutesToRetrySeparationProductionOrder.
+        /// </summary>
+        /// <value>
+        /// MinutesToRetrySeparationProductionOrder.
+        /// </value>
+        public static int MinutesToRetrySeparationProductionOrder => 5;
+
+        /// <summary>
+        /// Gets CreateChildOrderSapUrl.
+        /// </summary>
+        /// <value>
+        /// CreateChildOrderSapUrl.
+        /// </value>
+        public static string CreateChildOrderSapUrl => "child/order";
+
+        /// <summary>
+        /// Gets ProductionOrderSeparationProcessKey.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderSeparationProcessKey.
+        /// </value>
+        public static string ProductionOrderSeparationProcessKey => "production-order-separation-process:{0}";
+
+        /// <summary>
+        /// Gets ProductionOrderSeparationProcessMessage.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderSeparationProcessMessage.
+        /// </value>
+        public static string ProductionOrderSeparationProcessMessage => "La orden de fabricación seleccionada ya tiene un proceso de división en curso. Por favor espera a que finalice antes de intentar dividirla nuevamente.";
+
+        /// <summary>
+        /// Gets DivisionOrdersToProcessKey.
+        /// </summary>
+        /// <value>
+        /// DivisionOrdersToProcessKey.
+        /// </value>
+        public static string DivisionOrdersToProcessKey => "DivisionOrders:ToProcess";
+
+        /// <summary>
+        /// Gets DivisionProcessingKey.
+        /// </summary>
+        /// <value>
+        /// DivisionProcessingKey.
+        /// </value>
+        public static string DivisionProcessingKey => "DivisionProcessing:{0}:{1}";
 
         /// <summary>
         /// Gets the status of the order.
@@ -1387,6 +1528,14 @@ namespace Omicron.Pedidos.Services.Constants
         public static string DateTimeFormatddMMyyyy => "dd/MM/yyyy";
 
         /// <summary>
+        /// Gets SeparationProcessCancelProductionOrderEndPoint.
+        /// </summary>
+        /// <value>
+        /// String SeparationProcessCancelProductionOrderEndPoint.
+        /// </value>
+        public static string SeparationProcessCancelProductionOrderEndPoint => "separationprocess/cancelproductionorder";
+
+        /// <summary>
         /// Gets list of signatures to assign products DZ in lowercase.
         /// </summary>
         /// <value>
@@ -1397,5 +1546,33 @@ namespace Omicron.Pedidos.Services.Constants
             {
                 "dermazone",
             };
+
+        /// <summary>
+        /// Gets list of signatures to assign products DZ in lowercase.
+        /// </summary>
+        /// <value>
+        /// String SignaturesToAssignProductsDZ.
+        /// </value>
+        public static Dictionary<(bool, string), int> OrderPriorities { get; } = new Dictionary<(bool, string), int>
+        {
+            { (true, "Completa"), 1 },
+            { (true, "Hija"), 2 },
+            { (false, "Padre"), 3 },
+            { (false, "Completa"), 4 },
+            { (false, "Hija"), 5 },
+        };
+
+        /// <summary>
+        /// Gets the Order Relation.
+        /// </summary>
+        /// <value>
+        /// the OrderRelation.
+        /// </value>
+        public static Dictionary<string, string> OrderRelation { get; } = new Dictionary<string, string>
+        {
+            { "Y", "Padre" },
+            { "N", "Hija" },
+            { "SA", "Completa" },
+        };
     }
 }

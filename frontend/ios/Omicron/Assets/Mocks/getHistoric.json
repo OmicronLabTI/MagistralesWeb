@@ -1,0 +1,31 @@
+{
+  "code": 200,
+  "userError": "valio cheto",
+  "exceptionMessage": null,
+  "success": true,
+  "response": [
+    {
+      "orderProductionId": 201294,
+      "totalPieces": 10,
+      "availablePieces": 6,
+      "qfbWhoSplit": "b49b30e1-5232-48f3-be74-axaxaxaxaxax",
+      "detailOrdersCount": 2,
+      "orderProductionDetail": [
+        {
+          "orderProductionDetailId": 201295,
+          "assignedPieces": 2,
+          "assignedQfb": "b49b30e1-5232-48f3-be74-d3f4eebe0b4f",
+          "dateCreated": "08/09/2025 06:39:31"
+        },
+        {
+          "orderProductionDetailId": "201296",
+          "assignedPieces": 2,
+          "assignedQfb": "b49b30e1-5232-48f3-be74-d3f4eebe0b4f",
+          "dateCreated": "09/09/2025 06:39:31"
+        }
+      ],
+      "autoExpandOrderDetail": false
+    }
+  ],
+  "comments": null
+}

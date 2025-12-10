@@ -153,6 +153,13 @@ namespace Omicron.SapAdapter.Entities.Model
         public string Comments { get; set; }
 
         /// <summary>
+        /// Gets or sets OrderRelationType.
+        /// </summary>
+        /// <value>The OrderRelationType.</value>
+        [Column("U_OPadre")]
+        public string OrderRelationType { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether gets.
         /// </summary>
         /// <value>

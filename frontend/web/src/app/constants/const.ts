@@ -374,3 +374,9 @@ export const ClasificationMUConstant = {
     value: 'MU',
     color: '#bc8716'
 };
+
+export enum orderRelationTypes {
+    completa = 'Completa',
+    padre = 'Padre',
+    hija = 'Hija'
+}

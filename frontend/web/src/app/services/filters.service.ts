@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { ConstOrders, ConstStatus, CONST_NUMBER, CONST_STRING, FromToFilter } from '../constants/const';
+import { ConstOrders, ConstStatus, CONST_NUMBER, CONST_STRING, FromToFilter, BoolConst } from '../constants/const';
 import { ParamsPedidos } from '../model/http/pedidos';
 import { DateService } from '../services/date.service';
 import { DataService } from '../services/data.service';
+import { ChildrenOrders } from '../model/http/detallepedidos.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,86 +18,266 @@ export class FiltersService {
   getIsThereOnData(
     dataToSearch: any[],
     status: string,
-    fromToFilter: FromToFilter
+    fromToFilter: FromToFilter,
+    isFromFabOrderList: boolean = false,
   ) {
+    const childrenOrdersChecked = this.getChildrenOrdersChecked(dataToSearch, isFromFabOrderList);
+    const dataChecked = this.getDataChecked(dataToSearch, t => t.isChecked);
+    let evaluateChildrenOrders = false;
+    let enableButton = BoolConst.false;
     switch (fromToFilter) {
       case FromToFilter.fromOrders:
-        return (
-          dataToSearch.filter((t) => this.dataService.calculateAndValueList([t.isChecked, t.pedidoStatus === status]))
-            .length > 0
+        const evaluateStatusAndInProcessfromOrders = dataChecked.every(t =>
+          this.dataService.calculateAndValueList([
+            t.pedidoStatus === status,
+            !t.onSplitProcess
+          ])
         );
+        enableButton = this.dataService.calculateAndValueList([
+          evaluateStatusAndInProcessfromOrders,
+          dataChecked.length !== 0
+        ]);
+        return enableButton;
       case FromToFilter.fromOrdersReassign:
-        return (this.getValidationFromOrderReassign(dataToSearch, status).length > 0);
+        const evaluateStatusAndInProcessOrdersReassign = dataChecked.every(t =>
+          this.dataService.calculateAndValueList([
+            t.isChecked && (
+              this.dataService.calculateOrValueList([
+                t.pedidoStatus === status,
+                t.pedidoStatus === ConstStatus.terminado
+              ])
+            ),
+            !t.onSplitProcess
+          ])
+        );
+        enableButton = this.dataService.calculateAndValueList([
+          evaluateStatusAndInProcessOrdersReassign,
+          dataChecked.length !== 0
+        ]);
+        return enableButton;
       case FromToFilter.fromOrdersCancel:
-        return (
-          dataToSearch.filter(
-            (t) =>
-              this.dataService.calculateAndValueList([
-                t.isChecked,
-                t.pedidoStatus !== status,
-                t.pedidoStatus !== ConstStatus.cancelado,
-                t.pedidoStatus !== ConstStatus.almacenado,
-                t.pedidoStatus !== ConstStatus.rechazado
-              ])
-          ).length > 0
+        const evaluateStatusAndInProcessOrdersCancel = dataChecked.every(t =>
+          this.dataService.calculateAndValueList([
+            t.isChecked,
+            t.pedidoStatus !== status,
+            t.pedidoStatus !== ConstStatus.cancelado,
+            t.pedidoStatus !== ConstStatus.almacenado,
+            t.pedidoStatus !== ConstStatus.rechazado,
+            !t.onSplitProcess
+          ])
         );
+        enableButton = this.dataService.calculateAndValueList([
+          evaluateStatusAndInProcessOrdersCancel,
+          dataChecked.length !== 0
+        ]);
+        return enableButton;
       case FromToFilter.fromDetailOrder:
-        return (
-          dataToSearch.filter(
-            (t) =>
-              this.dataService.calculateAndValueList([
-                t.isChecked,
-                t.status !== status,
-                t.status !== ConstStatus.cancelado,
-                t.status !== ConstStatus.abierto,
-                t.status !== ConstStatus.almacenado
-              ])
-          ).length > 0
+        const evaluateStatusAndInProcessDetailOrder = dataChecked.every(t =>
+          this.dataService.calculateAndValueList([
+            t.isChecked,
+            t.status !== status,
+            t.status !== ConstStatus.cancelado,
+            t.status !== ConstStatus.abierto,
+            t.status !== ConstStatus.almacenado,
+            !t.onSplitProcess
+          ])
         );
+        evaluateChildrenOrders = this.evaluateChildrenForfromDetailOrderCase(childrenOrdersChecked, status);
+        enableButton = this.dataService.calculateOrValueList([
+          this.dataService.calculateAndValueList([
+            evaluateStatusAndInProcessDetailOrder,
+            dataChecked.length !== 0
+          ]),
+          this.dataService.calculateAndValueList([
+            evaluateStatusAndInProcessDetailOrder,
+            evaluateChildrenOrders,
+            childrenOrdersChecked.length !== 0
+          ])
+        ]);
+        return enableButton;
       case FromToFilter.fromOrderIsolatedReassign:
-        return (
-          dataToSearch.filter(
-            (t) =>
-              t.isChecked &&
-              (t.status === status ||
-                t.status === ConstStatus.asignado ||
-                t.status.toLowerCase() ===
-                ConstStatus.enProceso.toLowerCase() ||
-                t.status === ConstStatus.pendiente ||
-                t.status === ConstStatus.terminado)
-          ).length > 0
+        const evaluateStatusAndInProcessIsolatedReassig = dataChecked.every(t =>
+          this.dataService.calculateAndValueList([
+            this.dataService.calculateOrValueList([
+              t.status === status,
+              t.status === ConstStatus.asignado,
+              t.status.toLowerCase() === ConstStatus.enProceso.toLowerCase(),
+              t.status === ConstStatus.pendiente,
+              t.status === ConstStatus.terminado,
+              this.getValidParentOrderToReasign(t)
+            ]),
+            !t.onSplitProcess
+          ])
         );
+        evaluateChildrenOrders = this.evaluateChildrenForfromOrderIsolatedReassignCase(childrenOrdersChecked, status);
+        enableButton = this.dataService.calculateOrValueList([
+          this.dataService.calculateAndValueList([
+            evaluateStatusAndInProcessIsolatedReassig,
+            dataChecked.length !== 0
+          ]),
+          this.dataService.calculateAndValueList([
+            evaluateStatusAndInProcessIsolatedReassig,
+            evaluateChildrenOrders,
+            childrenOrdersChecked.length !== 0
+          ])
+        ]);
+        return enableButton;
       case FromToFilter.fromOrdersIsolatedCancel:
-        return (
-          dataToSearch.filter(
-            (t) =>
-              this.dataService.calculateAndValueList([
-                t.isChecked,
-                t.status !== status,
-                t.status !== ConstStatus.cancelado,
-                t.status !== ConstStatus.almacenado
-              ])
-          ).length > 0
+        const evaluateStatusAndInProcessIsolatedCancel = dataChecked.every(
+          (t) =>
+            this.dataService.calculateAndValueList([
+              t.status !== status,
+              t.status !== ConstStatus.cancelado,
+              t.status !== ConstStatus.almacenado,
+              !t.onSplitProcess
+            ])
         );
+        evaluateChildrenOrders = this.evaluateChildrenForfromOrdersIsolatedCancelCase(childrenOrdersChecked, status);
+        enableButton = this.dataService.calculateOrValueList([
+          this.dataService.calculateAndValueList([
+            evaluateStatusAndInProcessIsolatedCancel,
+            dataChecked.length !== 0
+          ]),
+          this.dataService.calculateAndValueList([
+            evaluateStatusAndInProcessIsolatedCancel,
+            evaluateChildrenOrders,
+            childrenOrdersChecked.length !== 0
+          ]),
+        ]);
+        return enableButton;
       case FromToFilter.fromOrderDetailLabel:
-        return (
-          dataToSearch.filter(
-            (t) =>
-              this.dataService.calculateAndValueList([
-                t.isChecked,
-                t.status !== status,
-                t.status !== ConstStatus.cancelado,
-                t.finishedLabel !== 1
-              ])
-          ).length > 0
+        const evaluateStatusAndInProcessDetailLabel = dataChecked.every(
+          (t) =>
+            this.dataService.calculateAndValueList([
+              t.isChecked,
+              t.status !== status,
+              t.status !== ConstStatus.cancelado,
+              t.finishedLabel !== 1,
+              !t.onSplitProcess
+            ])
         );
+        evaluateChildrenOrders = this.evaluateChildrenForfromOrderDetailLabelCase(childrenOrdersChecked, status);
+        enableButton = this.dataService.calculateOrValueList([
+          this.dataService.calculateAndValueList([
+            evaluateStatusAndInProcessDetailLabel,
+            dataChecked.length !== 0
+          ]),
+          this.dataService.calculateAndValueList([
+            evaluateStatusAndInProcessDetailLabel,
+            evaluateChildrenOrders,
+            childrenOrdersChecked.length !== 0
+          ]),
+        ]);
+        return enableButton;
       default:
-        return (
-          dataToSearch.filter((t) => this.dataService.calculateAndValueList([t.isChecked, t.status === status]))
-            .length > 0
+        const evaluateStatusAndInProcessDefault = dataChecked.every(
+          (t) =>
+            this.dataService.calculateAndValueList([
+              t.status === status,
+              !t.onSplitProcess
+            ])
         );
+        evaluateChildrenOrders = this.evaluateChildrenForDefaultCase(childrenOrdersChecked, status);
+        enableButton = this.dataService.calculateOrValueList([
+          this.dataService.calculateAndValueList([
+            evaluateStatusAndInProcessDefault,
+            dataChecked.length !== 0
+          ]),
+          this.dataService.calculateAndValueList([
+            evaluateStatusAndInProcessDefault,
+            evaluateChildrenOrders,
+            childrenOrdersChecked.length !== 0
+          ]),
+        ]);
+        return enableButton;
     }
   }
+
+  evaluateChildrenForfromOrdersIsolatedCancelCase(orders: ChildrenOrders[], statusToCompare: string): boolean {
+    return orders.every(order =>
+      this.dataService.calculateAndValueList([
+        order.status !== statusToCompare,
+        order.status !== ConstStatus.cancelado,
+        order.status !== ConstStatus.almacenado
+      ])
+    );
+  }
+
+  evaluateChildrenForfromOrderDetailLabelCase(orders: ChildrenOrders[], statusToCompare: string): boolean {
+    return orders.every(order =>
+      this.dataService.calculateAndValueList([
+        order.status !== statusToCompare,
+        order.status !== ConstStatus.cancelado,
+        order.finishedLabel !== 1
+      ])
+    );
+  }
+
+  evaluateChildrenForfromDetailOrderCase(orders: ChildrenOrders[], statusToCompare: string): boolean {
+    return orders.every(order =>
+      this.dataService.calculateAndValueList([
+        order.status !== statusToCompare,
+        order.status !== ConstStatus.cancelado,
+        order.status !== ConstStatus.abierto,
+        order.status !== ConstStatus.almacenado,
+      ])
+    );
+  }
+
+  evaluateChildrenForfromOrderIsolatedReassignCase(orders: ChildrenOrders[], statusToCompare: string): boolean {
+    return orders.every(order =>
+      this.dataService.calculateOrValueList([
+        order.status === statusToCompare,
+        order.status === ConstStatus.asignado,
+        order.status.toLowerCase() === ConstStatus.enProceso.toLowerCase(),
+        order.status === ConstStatus.pendiente,
+        order.status === ConstStatus.terminado,
+      ])
+    );
+  }
+
+  evaluateChildrenForDefaultCase(orders: ChildrenOrders[], statusToCompare: string): boolean {
+    return orders.every(order => this.compareStatus(order.status, statusToCompare));
+  }
+
+  compareStatus(orderStatus: string, statusToCompare: string): boolean {
+    return orderStatus === statusToCompare;
+  }
+
+  getChildrenOrdersChecked(dataToSearch: any[], isFromFabOrderList: boolean = false) {
+    let childrenOrdersChecked = [];
+    if (isFromFabOrderList) {
+      childrenOrdersChecked = this.getChildrenOrdersCheckedForList(dataToSearch);
+    } else {
+      childrenOrdersChecked = this.getChildrenOrdersCheckedForDetail(dataToSearch);
+    }
+    return childrenOrdersChecked;
+  }
+
+  getChildrenOrdersCheckedForList(dataToSearch: any[]) {
+    return dataToSearch.map(parentOrder => parentOrder.childOrdersDetail
+        .filter(childrenOrders => childrenOrders.isChecked))
+        .reduce((acc, childrenOrders) => acc.concat(childrenOrders), []);
+  }
+
+  getChildrenOrdersCheckedForDetail(dataToSearch: any[]) {
+    return dataToSearch.map(parentOrder => parentOrder.childOrders
+        .filter(childrenOrders => childrenOrders.isChecked))
+        .reduce((acc, childrenOrders) => acc.concat(childrenOrders), []);
+  }
+
+  getValidParentOrderToReasign(data: any): boolean {
+    const props = ['status', 'availablePieces'];
+    const containsAllProps = props.every(x => data.hasOwnProperty(x));
+    if (containsAllProps) {
+      return data.status === ConstStatus.cancelado && data.availablePieces > 0;
+    }
+
+    return false;
+  }
+
+  getDataChecked = <T>(data: T[], checked: (prop: T) => boolean): T[] => data.filter(checked);
+
   getItemOnDateWithFilter(
     dataToSearch: any[],
     fromToFilter: FromToFilter,
@@ -111,7 +292,8 @@ export class FiltersService {
               t.status === ConstStatus.asignado ||
               t.status.toLowerCase() === ConstStatus.enProceso.toLowerCase() ||
               t.status === ConstStatus.pendiente ||
-              t.status === ConstStatus.terminado)
+              t.status === ConstStatus.terminado ||
+              this.getValidParentOrderToReasign(t))
         );
       case FromToFilter.fromOrdersReassign:
         return this.getValidationFromOrderReassign(dataToSearch, status);
@@ -122,10 +304,10 @@ export class FiltersService {
 
   getValidationFromOrderReassign(dataToSearch: any[], status: string): any[] {
     return dataToSearch.filter(
-      (t) =>
-        t.isChecked &&
-        (t.pedidoStatus === status ||
-          t.pedidoStatus === ConstStatus.terminado)
+      (t) => this.dataService.calculateAndValueList([
+        t.isChecked && (t.pedidoStatus === status || t.pedidoStatus === ConstStatus.terminado),
+        !t.onSplitProcess
+      ])
     );
   }
 

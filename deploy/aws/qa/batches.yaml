@@ -22,8 +22,73 @@ spec:
               imagePullPolicy: Always
               resources:
                 limits:
-                  memory: "100Mi"  
-                  cpu: "10m"      
+                  memory: "100Mi"
+                  cpu: "10m"
+                requests:
+                  memory: "100Mi"
+                  cpu: "2m"
+              env:
+                - name: DOTNET_ENVIRONMENT
+                  value: Staging
+                - name: REDIS_CONNECTION_STRING
+                  valueFrom:
+                    secretKeyRef:
+                      name: omicron-qa
+                      key: redis_connection_string
+                - name: TZ
+                  value: America/Mexico_City
+                - name: ASPNETCORE_ENVIRONMENT
+                  value: Staging
+                - name: KAFKA_EH_FQDN_2
+                  valueFrom:
+                    secretKeyRef:
+                      name: omicron-qa
+                      key: kafka_eh_fqdn
+                - name: KAFKA_RETRYFINALIZEORDER_EH_NAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: omicron-qa
+                      key: kafka_retryfinalizeorder_eh_name                    
+                - name: KAFKA_EVENTHUB_NET_CONNECTION_RETRYFINALIZEORDER
+                  valueFrom:
+                    secretKeyRef:
+                      name: omicron-qa
+                      key: kafka_eventhub_net_connection_retryfinalizeorder
+                - name: KAFKA_RETRYFINALIZEORDER_CONSUMER_GROUP
+                  valueFrom:
+                    secretKeyRef:
+                      name: omicron-qa
+                      key: kafka_retryfinalizeorder_consumer_group      
+          restartPolicy: OnFailure
+          imagePullSecrets:
+            - name: pullsecret
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: division-productionorderprocess-cronjob
+  namespace: default
+spec:
+  schedule: "*/30 * * * *"
+  timeZone: America/Mexico_City
+  suspend: false # suspende el cron
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      # automountServiceAccountToken: false
+      template:
+        spec:
+          # automountServiceAccountToken: false
+          containers:
+            - name: division-productionorderprocess-container
+              image: 891376991292.dkr.ecr.us-east-2.amazonaws.com/divisionproductionorderprocessmagistrales:latest
+              imagePullPolicy: Always
+              resources:
+                limits:
+                  memory: "100Mi"
+                  cpu: "10m"
                 requests:
                   memory: "100Mi"
                   cpu: "2m"

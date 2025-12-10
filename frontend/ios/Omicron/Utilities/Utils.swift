@@ -31,6 +31,8 @@ class UtilsManager {
         switch typeFont {
         case "bold":
             label.font = .fontDefaultBold(fontSize)
+        case "regular":
+            label.font = .fontDefaultRegular(fontSize)
         default:
             label.font = .fontDefaultMedium(fontSize)
         }
