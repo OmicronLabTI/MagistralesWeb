@@ -72,9 +72,11 @@
   .w-5 {
     width: 5%;
   }
+
   .w-10 {
     width: 10%;
   }
+
   .w-15 {
     width: 15%;
   }
@@ -101,6 +103,86 @@
 
     .column-orders-table-auto-width {
       width: auto;
+    }
+
+    .checkbox-column-width {
+      width: 50px;
+      min-width: 50px;
+      max-width: 50px;
+    }
+
+    .fabOrder-column-width {
+      width: 140px;
+      min-width: 140px;
+      max-width: 140px;
+      left: 50px !important;
+    }
+
+    .itemCode-column-width {
+      width: 115px;
+      min-width: 115px;
+      max-width: 115px;
+      left: 190px !important;
+    }
+
+    .description-column-width {
+      width: 210px;
+      min-width: 210px;
+      max-width: 210px;
+    }
+
+    .plannedQty-column-width {
+      width: 110px;
+      min-width: 110px;
+      max-width: 110px;
+    }
+
+    .fabOrderDate-column-width {
+      width: 165px;
+      min-width: 165px;
+      max-width: 165px;
+    }
+
+    .endDate-column-width {
+      width: 120px;
+      min-width: 120px;
+      max-width: 120px;
+    }
+
+    .availablePieces-column-width {
+      width: 100px;
+      min-width: 100px;
+      max-width: 100px;
+    }
+
+    .childOrders-column-width {
+      width: 80px;
+      min-width: 80px;
+      max-width: 80px;
+    }
+
+    .assignedQFB-column-width {
+      width: 75px;
+      min-width: 75px;
+      max-width: 75px;
+    }
+
+    .labelType-column-width {
+      width: 85px;
+      min-width: 85px;
+      max-width: 85px;
+    }
+
+    .status-column-width {
+      width: 150px;
+      min-width: 150px;
+      max-width: 150px;
+    }
+
+    .actions-column-width {
+      width: 105px;
+      min-width: 105px;
+      max-width: 105px;
     }
 
     .seleccion {
