@@ -43,6 +43,20 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice
         Task InsertInvoices(List<InvoiceModel> invoices);
 
         /// <summary>
+        /// Inserts invoice remissions.
+        /// </summary>
+        /// <param name="remissions">The remissions to insert.</param>
+        /// <returns>the data.</returns>
+        Task InsertRemissions(List<InvoiceRemissionModel> remissions);
+
+        /// <summary>
+        /// Inserts invoice SAP orders.
+        /// </summary>
+        /// <param name="sapOrders">The SAP orders to insert.</param>
+        /// <returns>the data.</returns>
+        Task InsertSapOrders(List<InvoiceSapOrderModel> sapOrders);
+
+        /// <summary>
         /// Method for GetInvoices.
         /// </summary>
         /// <param name="status">The status.</param>

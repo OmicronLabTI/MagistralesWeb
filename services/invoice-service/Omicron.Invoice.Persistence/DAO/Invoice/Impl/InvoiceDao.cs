@@ -33,6 +33,21 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
         }
 
         /// <inheritdoc/>
+        public async Task InsertRemissions(List<InvoiceRemissionModel> remissions)
+        {
+            this.context.Remissions.AddRange(remissions);
+            await this.context.SaveChangesAsync();
+        }
+
+        /// <inheritdoc/>
+
+        public async Task InsertSapOrders(List<InvoiceSapOrderModel> sapOrders)
+        {
+            this.context.InvoiceSapOrderModel.AddRange(sapOrders);
+            await this.context.SaveChangesAsync();
+        }
+
+        /// <inheritdoc/>
         public async Task<List<InvoiceModel>> GetInvoicesNotCreatedByStatus(
             List<string> status,
             List<string> typeInvoices,
