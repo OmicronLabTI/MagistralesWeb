@@ -62,8 +62,8 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
   startDate: Date;
   endDate: Date;
 
-
   lastFilterState = { invoices: '', billing: '' };
+  isEmptyResults = false;
 
   constructor(
     private autoBillingService: AutoBillingService,
@@ -151,7 +151,6 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
     const invoices = this.getSelectedInvoiceTypes();
     const billing = this.getSelectedBillingTypes();
 
-
     this.autoBillingService
       .getAllAutoBilling(
         offset,
@@ -165,6 +164,7 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
       )
       .subscribe(response => {
         this.dataSource.data = response.items;
+        this.isEmptyResults = response.items.length === 0;
 
         if (this.paginator) {
           this.paginator.length = response.total;
@@ -226,9 +226,9 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
       panelClass: 'custom-dialog-container',
       data: {
         invoiceId: row.sapInvoiceId,
-        orders: row.sapOrders,
+        remissions: row.remissions,
         status: row.status,
-        updateDate: row.lastUpdateDate ? row.lastUpdateDate : 'N/A',
+        updateDate: row.lastUpdateDate,
         isFromAutomaticBilling: true
       }
     });
@@ -255,6 +255,7 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
     this.startDate = past5;
     this.endDate = today;
 
+    this.paginator.pageIndex = 0;
     this.loadPageData(0, 10);
   }
 
@@ -268,6 +269,14 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
+        return;
+      }
+      if (result.type == null || result.value == null) {
+        this.startDate = result.from;
+        this.endDate = result.to;
+        this.invoiceOptions.forEach(x => x.disabled = false);
+        this.billingOptions.forEach(x => x.disabled = false);
+        this.loadPageData(0, 10);
         return;
       }
       this.idtype = result.type
@@ -289,7 +298,6 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
         this.invoiceOptions.forEach(x => x.disabled = false);
         this.billingOptions.forEach(x => x.disabled = false);
       }
-
       this.loadPageData(0, 10);
     });
   }
