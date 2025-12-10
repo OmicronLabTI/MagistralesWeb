@@ -69,7 +69,28 @@ namespace Omicron.Invoice.Test.Services
             var redisServiceMock = new Mock<IRedisService>();
             var userServiceMock = new Mock<IUsersService>();
 
-            this.userService = new InvoiceService(this.invoiceDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object, userServiceMock.Object);
+            var invoiceDaoMock = new Mock<IInvoiceDao>();
+
+            invoiceDaoMock.Setup(x => x.InsertInvoices(It.IsAny<List<InvoiceModel>>()))
+                .Returns(Task.CompletedTask);
+
+            invoiceDaoMock.Setup(x => x.InsertRemissions(It.IsAny<List<InvoiceRemissionModel>>()))
+                .Returns(Task.CompletedTask);
+
+            invoiceDaoMock.Setup(x => x.InsertSapOrders(It.IsAny<List<InvoiceSapOrderModel>>()))
+                .Returns(Task.CompletedTask);
+
+            var invoiceService = new InvoiceService(
+                invoiceDaoMock.Object,
+                taskQueue.Object,
+                serviceScopeFactoryMock.Object,
+                logger.Object,
+                sapAdapterServiceMock.Object,
+                servicelayerServiceMock.Object,
+                catalogServiceMock.Object,
+                redisServiceMock.Object,
+                userServiceMock.Object);
+
             var request = new CreateInvoiceDto()
             {
                 CardCode = "C03865",
@@ -83,10 +104,15 @@ namespace Omicron.Invoice.Test.Services
                 BillingType = "Completa",
             };
 
-            var response = await this.userService.RegisterInvoice(request);
+            // Act
+            var response = await invoiceService.RegisterInvoice(request);
 
             // Assert
             Assert.That(response.Code.Equals(200));
+
+            invoiceDaoMock.Verify(x => x.InsertInvoices(It.IsAny<List<InvoiceModel>>()), Times.Once);
+            invoiceDaoMock.Verify(x => x.InsertRemissions(It.Is<List<InvoiceRemissionModel>>(r => r.Count == 3)), Times.Once);
+            invoiceDaoMock.Verify(x => x.InsertSapOrders(It.Is<List<InvoiceSapOrderModel>>(s => s.Count == 3)), Times.Once);
         }
 
         /// <summary>

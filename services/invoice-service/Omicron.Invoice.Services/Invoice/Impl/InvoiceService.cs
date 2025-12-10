@@ -61,18 +61,6 @@ namespace Omicron.Invoice.Services.Invoice.Impl
         /// <inheritdoc/>
         public async Task<ResultDto> RegisterInvoice(CreateInvoiceDto request)
         {
-            var remissions = request.IdDeliveries.Distinct().Select(x => new InvoiceRemissionModel()
-            {
-                RemissionId = x,
-                IdInvoice = request.ProcessId,
-            }).ToList();
-
-            var sapOrders = request.IdSapOrders.Distinct().Select(x => new InvoiceSapOrderModel()
-            {
-                SapOrderId = x,
-                IdInvoice = request.ProcessId,
-            }).ToList();
-
             var invoice = new InvoiceModel()
             {
                 Id = request.ProcessId,
@@ -88,21 +76,30 @@ namespace Omicron.Invoice.Services.Invoice.Impl
                 Payload = JsonConvert.SerializeObject(request),
             };
 
-            invoice.Remissions = request.IdDeliveries.Select(x => new InvoiceRemissionModel()
-            {
-                RemissionId = x,
-                IdInvoice = invoice.Id,
-                Invoice = invoice,
-            }).ToList();
-
-            invoice.SapOrders = request.IdSapOrders.Select(x => new InvoiceSapOrderModel()
-            {
-                SapOrderId = x,
-                IdInvoice = invoice.Id,
-                Invoice = invoice,
-            }).ToList();
-
             await this.invoiceDao.InsertInvoices(new List<InvoiceModel>() { invoice });
+
+            if (request.IdDeliveries != null && request.IdDeliveries.Any())
+            {
+                var remissions = request.IdDeliveries.Distinct().Select(x => new InvoiceRemissionModel()
+                {
+                    RemissionId = x,
+                    IdInvoice = request.ProcessId,
+                }).ToList();
+
+                await this.invoiceDao.InsertRemissions(remissions);
+            }
+
+            if (request.IdSapOrders != null && request.IdSapOrders.Any())
+            {
+                var sapOrders = request.IdSapOrders.Distinct().Select(x => new InvoiceSapOrderModel()
+                {
+                    SapOrderId = x,
+                    IdInvoice = request.ProcessId,
+                }).ToList();
+
+                await this.invoiceDao.InsertSapOrders(sapOrders);
+            }
+
             this.PublishProcessToMediatR(request);
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null, null);
         }
