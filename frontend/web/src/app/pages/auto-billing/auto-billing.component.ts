@@ -271,7 +271,7 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
       if (!result) {
         return;
       }
-      if (result.type == null || result.value) {
+      if (result.type == null || result.value == null) {
         this.startDate = result.from;
         this.endDate = result.to;
         this.invoiceOptions.forEach(x => x.disabled = false);
@@ -298,7 +298,6 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
         this.invoiceOptions.forEach(x => x.disabled = false);
         this.billingOptions.forEach(x => x.disabled = false);
       }
-
       this.loadPageData(0, 10);
     });
   }
