@@ -204,7 +204,7 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
     }
 
     this.dialog.open(ViewSapOrdersDialogComponent, {
-      width: '800px',
+      width: 'auto',
       panelClass: 'custom-dialog-container',
       data: {
         invoiceId: row.sapInvoiceId,
@@ -222,7 +222,7 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
     }
 
     this.dialog.open(ViewShipmentsDialogComponent, {
-      width: '800px',
+      width: 'auto',
       panelClass: 'custom-dialog-container',
       data: {
         invoiceId: row.sapInvoiceId,
