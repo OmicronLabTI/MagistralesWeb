@@ -328,7 +328,7 @@ export class AutomaticBillingComponent implements OnInit {
 
     if (isForSAPorders) {
       this.dialog.open(ViewSapOrdersDialogComponent, {
-        width: '800px',
+        width: 'auto',
         panelClass: 'custom-dialog-container',
         data: {
           invoiceId: row.id,
@@ -340,7 +340,7 @@ export class AutomaticBillingComponent implements OnInit {
       });
     } else {
       this.dialog.open(ViewShipmentsDialogComponent, {
-        width: '800px',
+        width: 'auto',
         panelClass: 'custom-dialog-container',
         data: {
           invoiceId: row.id,
