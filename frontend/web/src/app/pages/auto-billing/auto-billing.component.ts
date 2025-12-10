@@ -62,7 +62,6 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
   startDate: Date;
   endDate: Date;
 
-  isAdvancedSearchActive = false;
 
   lastFilterState = { invoices: '', billing: '' };
 
@@ -81,8 +80,6 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
 
     this.startDate = past5;
     this.endDate = today;
-
-    this.updateAdvancedSearchState();
     this.loadPageData(0, 10);
   }
 
@@ -108,7 +105,7 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
         currentInvoices !== this.lastFilterState.invoices ||
         currentBilling !== this.lastFilterState.billing;
 
-      if (changed && !this.isAdvancedSearchActive) {
+      if (changed) {
         let size = 10;
 
         if (this.paginator && this.paginator.pageSize) {
@@ -149,25 +146,11 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
       .join(',');
   }
 
-  updateAdvancedSearchState(): void {
-    this.isAdvancedSearchActive =
-      this.id.trim() !== '' &&
-      this.idtype.trim() !== '';
-
-    this.invoiceOptions.forEach(x => {
-      x.disabled = this.isAdvancedSearchActive;
-    });
-
-    this.billingOptions.forEach(x => {
-      x.disabled = this.isAdvancedSearchActive;
-    });
-  }
 
   loadPageData(offset: number, limit: number): void {
     const invoices = this.getSelectedInvoiceTypes();
     const billing = this.getSelectedBillingTypes();
 
-    this.updateAdvancedSearchState();
 
     this.autoBillingService
       .getAllAutoBilling(
@@ -190,9 +173,6 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
   }
 
   openFilter(event: MouseEvent, type: string): void {
-    if (this.isAdvancedSearchActive) {
-      return;
-    }
 
     const rect = (event.target as HTMLElement).getBoundingClientRect();
 
@@ -226,7 +206,13 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
     this.dialog.open(ViewSapOrdersDialogComponent, {
       width: '800px',
       panelClass: 'custom-dialog-container',
-      data: row
+      data: {
+        invoiceId: row.sapInvoiceId,
+        orders: row.sapOrders,
+        status: row.status,
+        updateDate: row.lastUpdateDate ? row.lastUpdateDate : 'N/A',
+        isFromAutomaticBilling: true
+      }
     });
   }
 
@@ -238,7 +224,13 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
     this.dialog.open(ViewShipmentsDialogComponent, {
       width: '800px',
       panelClass: 'custom-dialog-container',
-      data: row
+      data: {
+        invoiceId: row.sapInvoiceId,
+        orders: row.sapOrders,
+        status: row.status,
+        updateDate: row.lastUpdateDate ? row.lastUpdateDate : 'N/A',
+        isFromAutomaticBilling: true
+      }
     });
   }
 
@@ -255,7 +247,6 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
 
     this.id = '';
     this.idtype = '';
-    this.isAdvancedSearchActive = false;
 
     const today = new Date();
     const past5 = new Date();
@@ -272,23 +263,48 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
       panelClass: 'advanced-filter-dialog',
       disableClose: true,
       width: 'auto',
-      maxWidth: '95vw'
+      maxWidth: '95vw',
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
         return;
       }
-
       this.idtype = result.type
         .replace('ID Factura SAP', 'invoice')
         .replace('Pedido SAP', 'pedidosap')
         .replace('Pedido shop', 'pedidodxp');
-
       this.id = result.value;
+      const today = new Date();
+      const past5 = new Date();
+      past5.setDate(today.getDate() - 4);
+      this.invoiceOptions.forEach(x => x.selected = true);
+      this.billingOptions.forEach(x => x.selected = true);
+      if (result.to.toDateString() === today.toDateString() && result.from.toDateString() === past5.toDateString()) {
+        this.startDate = result.from;
+        this.endDate = result.to;
+        this.invoiceOptions.forEach(x => x.disabled = true);
+        this.billingOptions.forEach(x => x.disabled = true);
+      } else {
+        this.invoiceOptions.forEach(x => x.disabled = false);
+        this.billingOptions.forEach(x => x.disabled = false);
+      }
 
-      this.updateAdvancedSearchState();
       this.loadPageData(0, 10);
     });
+  }
+
+  onOptionChanged(index: number): void {
+    const selectedCount = this.currentOptions.filter(o => o.selected).length;
+
+    if (selectedCount === 1) {
+      this.currentOptions
+        .filter(o => o.selected)
+        .forEach(o => o.disabled = true);
+
+      return;
+    }
+
+    this.currentOptions.forEach(o => o.disabled = false);
   }
 }
