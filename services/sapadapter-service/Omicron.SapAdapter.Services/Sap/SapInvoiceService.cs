@@ -931,17 +931,24 @@ namespace Omicron.SapAdapter.Services.Sap
             var themeIds = items.Select(x => x.ThemeId).Distinct().ToList();
             var themesResponse = await this.catalogsService.PostCatalogs(themeIds, ServiceConstants.GetThemes);
             var themes = JsonConvert.DeserializeObject<List<ProductColorsDto>>(themesResponse.Response.ToString());
+            List<string> selectedPO = new List<string>();
+
             foreach (var invoice in invoices)
             {
                 var item = items.FirstOrDefault(x => x.ProductoId == invoice.ProductoId);
                 item ??= new ProductoModel { IsMagistral = "N", LargeDescription = string.Empty, ProductoId = string.Empty };
 
-                var dataToSearch = this.GetLookUpData(userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && !string.IsNullOrEmpty(x.MagistralQr) && JsonConvert.DeserializeObject<PedidosMagistralQrModel>(x.MagistralQr).ItemCode == item.ProductoId), lineProducts.Where(x => !string.IsNullOrEmpty(x.ItemCode) && x.ItemCode == item.ProductoId));
+                var usersOrdersToLook = userOrders.FirstOrDefault(x => !string.IsNullOrEmpty(x.Productionorderid) && !selectedPO.Contains(x.Productionorderid) && !string.IsNullOrEmpty(x.MagistralQr) && (decimal)x.Quantity == invoice.Quantity && JsonConvert.DeserializeObject<PedidosMagistralQrModel>(x.MagistralQr).ItemCode == item.ProductoId);
+                var usersList = ServiceUtils.CalculateTernary(usersOrdersToLook != null, new List<UserOrderModel> { usersOrdersToLook }, new List<UserOrderModel>());
+                var lineProductsToLook = lineProducts.Where(x => !string.IsNullOrEmpty(x.ItemCode) && x.ItemCode == item.ProductoId).ToList();
+                var dataToSearch = this.GetLookUpData(usersList, lineProductsToLook);
+                var sapOrdersId = new List<string>();
+                sapOrdersId.AddRange(usersList.Select(x => x.Salesorderid));
+                sapOrdersId.AddRange(lineProductsToLook.Select(x => x.SaleOrderId.ToString()));
                 var filterDeliveryDetails = dataToSearch.Where(x => x.DeliveryId == invoice.BaseEntry.Value).ToList();
                 var deliveryIds = filterDeliveryDetails.Select(x => x.DeliveryId).ToList();
-                var deliveriesDetail = deliveryDetails.FirstOrDefault(x => ServiceShared.CalculateAnd(deliveryIds.Contains(x.DeliveryId), x.ProductoId == invoice.ProductoId));
+                var deliveriesDetail = deliveryDetails.FirstOrDefault(x => ServiceShared.CalculateAnd(deliveryIds.Contains(x.DeliveryId), x.ProductoId == invoice.ProductoId, sapOrdersId.Contains((x.BaseEntry ?? 0).ToString())));
                 var selectedTheme = ServiceShared.GetSelectedTheme(item.ThemeId, themes);
-                List<string> selectedPO = new List<string>();
 
                 foreach (var detail in filterDeliveryDetails)
                 {
