@@ -938,7 +938,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var item = items.FirstOrDefault(x => x.ProductoId == invoice.ProductoId);
                 item ??= new ProductoModel { IsMagistral = "N", LargeDescription = string.Empty, ProductoId = string.Empty };
 
-                var usersOrdersToLook = userOrders.FirstOrDefault(x => !string.IsNullOrEmpty(x.Productionorderid) && !selectedPO.Contains(x.Productionorderid) && !string.IsNullOrEmpty(x.MagistralQr) && (decimal)x.Quantity == invoice.Quantity && JsonConvert.DeserializeObject<PedidosMagistralQrModel>(x.MagistralQr).ItemCode == item.ProductoId);
+                var usersOrdersToLook = userOrders.FirstOrDefault(x => !string.IsNullOrEmpty(x.Productionorderid) && !selectedPO.Contains(x.Productionorderid) && !string.IsNullOrEmpty(x.MagistralQr) && JsonConvert.DeserializeObject<PedidosMagistralQrModel>(x.MagistralQr).ItemCode == item.ProductoId);
                 var usersList = ServiceUtils.CalculateTernary(usersOrdersToLook != null, new List<UserOrderModel> { usersOrdersToLook }, new List<UserOrderModel>());
                 var lineProductsToLook = lineProducts.Where(x => !string.IsNullOrEmpty(x.ItemCode) && x.ItemCode == item.ProductoId).ToList();
                 var dataToSearch = this.GetLookUpData(usersList, lineProductsToLook);
