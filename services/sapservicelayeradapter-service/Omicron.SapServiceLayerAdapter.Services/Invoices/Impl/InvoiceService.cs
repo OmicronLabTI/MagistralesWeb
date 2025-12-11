@@ -217,7 +217,6 @@ namespace Omicron.SapServiceLayerAdapter.Services.Invoices.Impl
                 }))
                 .ToList();
 
-            var body = JsonConvert.SerializeObject(documentLines);
             var comment = string.Format(ServiceConstants.CommentForCreatedInvoice, string.Join(ServiceConstants.Comma, deliveriesById.Select(r => r.Id)));
 
             return (documentLines, comment);
