@@ -232,6 +232,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     x.StatusInvoice,
                     x.UserInvoiceStored,
                     x.InvoiceLineNum,
+                    x.DeliveryId,
                 });
 
             return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, null);
