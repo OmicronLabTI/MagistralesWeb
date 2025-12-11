@@ -212,6 +212,8 @@ namespace Omicron.SapServiceLayerAdapter.Services.Invoices.Impl
                     DocumentBaseType = ServiceConstants.DeliveryBaseTypeForInvoice,
                     DocumentBaseEntry = r.Id,
                     DocumentBaseLine = line.LineNumber,
+                    Container = line.Container,
+                    Label = line.Label,
                 }))
                 .ToList();
 
