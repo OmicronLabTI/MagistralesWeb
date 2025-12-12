@@ -44,3 +44,7 @@ export class AutomaticBillingAdvanceFilters {
     type: string;
     value: string;
 }
+
+export class IMissingSAPOrdersResponse extends BaseResponseHttp {
+    response: number[];
+}

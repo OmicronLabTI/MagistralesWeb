@@ -47,6 +47,9 @@ import {
   ManualAdjustmentConfirmedDialogComponent
 } from 'src/app/dialogs/manual-adjustment-confirmed-dialog/manual-adjustment-confirmed-dialog.component';
 import {
+  ViewMissingSapOrdersDialogComponent
+} from 'src/app/dialogs/view-missing-sap-orders-dialog/view-missing-sap-orders-dialog.component';
+import {
   ViewSapOrdersDialogComponent
 } from 'src/app/dialogs/view-sap-orders-dialog/view-sap-orders-dialog.component';
 import {
@@ -351,6 +354,23 @@ export class AutomaticBillingComponent implements OnInit {
         }
       });
     }
+  }
+
+  seeMissingSAPOrders(row: AutomaticBilling): void {
+    const params = `pedidodxp=${row.dxpOrderId}`;
+    this.invoicesService.getMissingSAPOrders(params).subscribe(res => {
+      this.dialog.open(ViewMissingSapOrdersDialogComponent, {
+        width: 'auto',
+        panelClass: 'custom-dialog-container',
+        data: {
+          dxpOrder: row.dxpOrderId,
+          orders: res.response
+        }
+      });
+    }, error => {
+      this.errorService.httpError(error);
+    }
+    );
   }
 
   openAdvancedFiltersDialog(): void {
