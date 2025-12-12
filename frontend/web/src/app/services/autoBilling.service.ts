@@ -69,7 +69,9 @@ export class AutoBillingService {
             requestId: item.id,
             sapInvoiceId: item.idFacturaSap,
             sapCreationDate: item.invoiceCreateDate,
-            invoiceType: item.typeInvoice,
+            invoiceType: item.typeInvoice === 'No genérica'
+              ? 'Con datos fiscales'
+              : item.typeInvoice,
             billingMode: item.billingType,
             originUser: item.almacenUser,
             shopOrder: item.dxpOrderId,

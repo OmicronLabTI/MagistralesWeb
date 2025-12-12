@@ -25,7 +25,6 @@ describe('FilterInvoiceTypeDialogComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [FilterInvoiceTypeDialogComponent],
-
       imports: [
         FormsModule,
         NoopAnimationsModule,
@@ -37,7 +36,6 @@ describe('FilterInvoiceTypeDialogComponent', () => {
         MatDatepickerModule,
         MatNativeDateModule
       ],
-
       providers: [
         { provide: MatDialogRef, useValue: dialogRefMock },
         { provide: MAT_DIALOG_DATA, useValue: dataMock }
@@ -65,20 +63,23 @@ describe('FilterInvoiceTypeDialogComponent', () => {
     component.searchValue = '123';
 
     component.validateForm();
+
     expect(component.formValid).toBe(true);
   });
 
   it('should enable clear when any field has value', () => {
     component.selectedSearchType = 'Pedido SAP';
+
     component.validateForm();
+
     expect(component.canClear).toBe(true);
   });
 
   it('should clear all fields and reset state', () => {
     component.selectedSearchType = 'Pedido SAP';
     component.searchValue = '999';
-    component.dateFrom = new Date();
-    component.dateTo = new Date();
+    component.dateFrom = new Date(2025, 11, 1);
+    component.dateTo = new Date(2025, 11, 5);
     component.formValid = true;
     component.canClear = true;
 
@@ -86,14 +87,25 @@ describe('FilterInvoiceTypeDialogComponent', () => {
 
     expect(component.selectedSearchType).toBe('');
     expect(component.searchValue).toBe('');
-    expect(component.dateFrom).toBeNull();
-    expect(component.dateTo).toBeNull();
+
+    expect(component.dateFrom).not.toBeNull();
+    expect(component.dateTo).not.toBeNull();
+
+    expect(component.dateFrom instanceof Date).toBe(true);
+    expect(component.dateTo instanceof Date).toBe(true);
+
+    if (component.dateFrom && component.dateTo) {
+      expect(component.dateFrom.getTime())
+        .toBeLessThanOrEqual(component.dateTo.getTime());
+    }
+
     expect(component.formValid).toBe(false);
     expect(component.canClear).toBe(false);
   });
 
   it('should NOT close dialog when form is invalid', () => {
     component.formValid = false;
+
     component.apply();
 
     expect(dialogRefMock.close).not.toHaveBeenCalled();
@@ -104,7 +116,6 @@ describe('FilterInvoiceTypeDialogComponent', () => {
     component.searchValue = '777';
     component.formValid = true;
 
-    // El componente siempre retorna fechas establecidas por defecto
     const expectedFrom = component.dateFrom;
     const expectedTo = component.dateTo;
 

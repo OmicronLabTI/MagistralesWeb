@@ -117,8 +117,7 @@ export class FilterInvoiceTypeDialogComponent {
   clear(): void {
     this.selectedSearchType = '';
     this.searchValue = '';
-    this.dateFrom = null;
-    this.dateTo = null;
+    this.setDefaultDateRange();
     this.formValid = false;
     this.canClear = false;
   }
