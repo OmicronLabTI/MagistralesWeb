@@ -96,6 +96,7 @@ describe('PedidoDetalleComponent', () => {
       'changeRouterForFormula',
       'calculateAndValueList',
       'calculateTernary',
+      'calculateOrValueList',
     ]);
     localStorageServiceSpy.getProductNoLabel.and.returnValue(catalogs);
     localStorageServiceSpy.getUserRole.and.returnValue('4');
@@ -104,6 +105,10 @@ describe('PedidoDetalleComponent', () => {
     dataServiceSpy.getItemOnDataOnlyIds.and.returnValue([]);
     dataServiceSpy.calculateAndValueList.and.callFake((list: boolean[]) => {
       const res = list.every((value) => value === true);
+      return res;
+    });
+    dataServiceSpy.calculateOrValueList.and.callFake((list: boolean[]) => {
+      const res = list.some((value) => value === true);
       return res;
     });
     dataServiceSpy.calculateTernary.and.callFake(<T, U>(validation: boolean, firstValue: T, secondaValue: U): T | U => {

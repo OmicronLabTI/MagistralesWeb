@@ -124,12 +124,14 @@
     <div class="orders-table-conatiner">
         <table mat-table multiTemplateDataRows [dataSource]="dataSource"
             [ngClass]="dataSource.data.length !== 0 ? 'mat-elevation-z8': ''" aria-describedby>
-            <ng-container matColumnDef="seleccion">&nbsp;
+            <ng-container matColumnDef="seleccion" sticky>
                 <th scope="row" mat-header-cell *matHeaderCellDef>
-                    <mat-checkbox [checked]="allComplete" [indeterminate]="someComplete()"
-                        (change)="setAll($event.checked)"></mat-checkbox>
+                    <div class="d-flex align-items-center justify-content-around">
+                        <mat-checkbox [checked]="allComplete" [indeterminate]="someComplete()"
+                            (change)="setAll($event.checked)"></mat-checkbox>
+                    </div>
                 </th>
-                <td mat-cell *matCellDef="let element">
+                <td mat-cell *matCellDef="let element" class=" color-text-intables tdcell checkbox-column-width">
                     <div class="d-flex align-items-center justify-content-around">
                         <mat-checkbox [(ngModel)]="element.isChecked"
                             (ngModelChange)="updateAllComplete($event)"></mat-checkbox>
@@ -141,17 +143,16 @@
                 </td>
             </ng-container>
 
-            <ng-container matColumnDef="ordenFabricacionId">
-                <th scope="row" mat-header-cell *matHeaderCellDef class=""> N° DE ORDEN DE FABRICACIÓN</th>
-                <td mat-cell *matCellDef="let element"
-                    class="color-text-intables tdcell column-orders-table-auto-width"> <span
+            <ng-container matColumnDef="ordenFabricacionId" sticky>
+                <th scope="row" mat-header-cell *matHeaderCellDef class="fabOrder-column-width"> N° DE ORDEN DE FABRICACIÓN</th>
+                <td mat-cell *matCellDef="let element" class="color-text-intables tdcell fabOrder-column-width"> <span
                         *ngIf="element.ordenFabricacionId !== 0">{{element.ordenFabricacionId}}</span> </td>
             </ng-container>
 
-            <ng-container matColumnDef="codigoProducto">
-                <th scope="row" mat-header-cell *matHeaderCellDef class="mobile-hide"> CÓDIGO DEL PRODUCTO </th>
+            <ng-container matColumnDef="codigoProducto" sticky>
+                <th scope="row" mat-header-cell *matHeaderCellDef class="mobile-hide itemCode-column-width"> CÓDIGO DEL PRODUCTO </th>
                 <td mat-cell *matCellDef="let element"
-                    class="color-text-intables tdcell mobile-hide column-orders-table-auto-width">
+                    class="color-text-intables tdcell mobile-hide itemCode-column-width">
                     {{element.codigoProducto}} </td>
             </ng-container>
 
@@ -159,7 +160,7 @@
                 <th scope="row" mat-header-cell *matHeaderCellDef class="mobile-hide"> DESCRIPCIÓN DEL PRODUCTO </th>
                 <td mat-cell matTooltip="{{element.descripcionProducto}}" matTooltipPosition="right"
                     aria-label="Button that displays a tooltip in various positions" *matCellDef="let element"
-                    class="color-text-intables tdcell mobile-hide column-orders-table-auto-width"> {{
+                    class="color-text-intables tdcell mobile-hide description-column-width"> {{
                     (element.descripcionProducto.length > 42) ? (element.descripcionProducto | slice:0:42) + '...' :
                     element.descripcionProducto }} </td>
             </ng-container>
@@ -168,24 +169,24 @@
                 <th scope="row" mat-header-cell *matHeaderCellDef class="mobile-hide centered"> CANTIDAD PLANIFICADA
                 </th>
                 <td mat-cell *matCellDef="let element"
-                    class="color-text-intables tdcell tdcell-center mobile-hide column-orders-table-auto-width">
+                    class="color-text-intables tdcell tdcell-center mobile-hide plannedQty-column-width">
                     {{element.qtyPlanned}} </td>|
                 number:'1.2-2'
             </ng-container>
 
             <ng-container matColumnDef="fechaOF">
-                <th scope="row" mat-header-cell *matHeaderCellDef class="mobile-hide column-orders-table-auto-width">
+                <th scope="row" mat-header-cell *matHeaderCellDef class="mobile-hide">
                     FECHA DE ORDEN DE
                     FABRICACIÓN </th>
                 <td mat-cell *matCellDef="let element"
-                    class="color-text-intables tdcell tdcell-center mobile-hide fechaorden"> {{element.fechaOf}} </td>
+                    class="color-text-intables tdcell tdcell-center mobile-hide fabOrderDate-column-width"> {{element.fechaOf}} </td>
             </ng-container>
 
             <ng-container matColumnDef="fechaOFFin">
                 <th scope="row" mat-header-cell *matHeaderCellDef class="centered mobile-hide"> FECHA DE TÉRMINO (QFB)
                 </th>
                 <td mat-cell *matCellDef="let element"
-                    class="color-text-intables tdcell tdcell-center mobile-hide column-orders-table-auto-width">
+                    class="color-text-intables tdcell tdcell-center mobile-hide endDate-column-width">
                     {{element.fechaOfFin}}
                 </td>
             </ng-container>
@@ -194,7 +195,7 @@
                 <th scope="row" mat-header-cell *matHeaderCellDef class="centered mobile-hide"> PIEZAS DISPONIBLES
                 </th>
                 <td mat-cell *matCellDef="let element"
-                    class="color-text-intables tdcell tdcell-center mobile-hide column-orders-table-auto-width">
+                    class="color-text-intables tdcell tdcell-center mobile-hide availablePieces-column-width">
                     <ng-container *ngIf="element.orderRelationType === 'Padre'">
                         {{element.availablePieces}}
                     </ng-container>
@@ -208,7 +209,7 @@
                 <th scope="row" mat-header-cell *matHeaderCellDef class="centered mobile-hide"> ÓRDENES HIJAS
                 </th>
                 <td mat-cell *matCellDef="let element"
-                    class="color-text-intables tdcell tdcell-center mobile-hide column-orders-table-auto-width">
+                    class="color-text-intables tdcell tdcell-center mobile-hide childOrders-column-width">
                     <ng-container *ngIf="element.orderRelationType === 'Padre'">
                         {{element.childOrdersCount}}
                     </ng-container>
@@ -227,14 +228,14 @@
             <ng-container matColumnDef="qfb">
                 <th scope="row" mat-header-cell *matHeaderCellDef class="centered mobile-hide"> QFB ASIGNADO </th>
                 <td mat-cell *matCellDef="let element"
-                    class="color-text-intables tdcell tdcell-center mobile-hide column-orders-table-auto-width">
+                    class="color-text-intables tdcell tdcell-center mobile-hide assignedQFB-column-width">
                     {{element.qfb}} </td>
             </ng-container>
 
             <ng-container matColumnDef="label">
                 <th scope="row" mat-header-cell *matHeaderCellDef class="centered mobile-hide"> TIPO DE ETIQUETA </th>
                 <td mat-cell *matCellDef="let element"
-                    class="color-text-intables tdcell tdcell-center mobile-hide column-orders-table-auto-width">
+                    class="color-text-intables tdcell tdcell-center mobile-hide labelType-column-width">
                     {{element.label.toUpperCase()}} </td>
             </ng-container>
 
@@ -242,7 +243,7 @@
                 <th scope="row" mat-header-cell *matHeaderCellDef class="centered mobile-hide"> ESTATUS DE LA ORDEN
                 </th>
                 <td mat-cell *matCellDef="let element"
-                    class="color-text-intables tdcell tdcell-center text-center mobile-hide status style-button-status">
+                    class="status-column-width color-text-intables tdcell tdcell-center text-center mobile-hide status style-button-status">
                     <div class="center-status">
                         <button mat-stroked-button [ngClass]="element.class" class="cursor-none">{{element.status |
                             titlecase}}</button>
@@ -253,7 +254,7 @@
             <ng-container matColumnDef="actions">
                 <th scope="row" mat-header-cell *matHeaderCellDef class="centered"> ACCIONES </th>
                 <td mat-cell *matCellDef="let element; let i = index;"
-                    class="tdcell tdcell-center tdactions-centeres-elements column-orders-table-auto-width">
+                    class="tdcell tdcell-center tdactions-centeres-elements actions-column-width">
                     <div class="icons-actions-container">
                         <button mat-icon-button matTooltip="Ver fórmula" class="ico-col-pri"
                             *ngIf="element.ordenFabricacionId !== 0 && localStorageService.getUserRole() !== '5' && localStorageService.getUserRole() !== '4'"
