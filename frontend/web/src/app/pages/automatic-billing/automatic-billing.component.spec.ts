@@ -185,7 +185,7 @@ describe('AutomaticBillingComponent', () => {
     component.seeDetail(invoicesDashboardMock[0], false);
     expect(matDialog.open).toHaveBeenCalled();
   });
-  it('should seeDetail for remissions', () => {
+  it('should seeDetail for seeMissingSAPOrders', () => {
     spyOn(matDialog, 'open');
     component.seeMissingSAPOrders(invoicesDashboardMock[0]);
     expect(matDialog.open).toHaveBeenCalled();
