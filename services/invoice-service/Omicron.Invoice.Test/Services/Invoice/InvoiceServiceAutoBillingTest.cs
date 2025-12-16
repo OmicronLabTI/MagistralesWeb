@@ -23,6 +23,7 @@ namespace Omicron.Invoice.Test.Services.Invoice
         private Mock<ISapServiceLayerAdapterService> mockServiceLayer;
         private Mock<ICatalogsService> mockCatalogs;
         private Mock<IRedisService> mockRedis;
+        private Mock<IProcessPaymentService> processPaymentServiceMock;
         private InvoiceService invoiceService;
 
         [SetUp]
@@ -37,6 +38,7 @@ namespace Omicron.Invoice.Test.Services.Invoice
             this.mockServiceLayer = new Mock<ISapServiceLayerAdapterService>();
             this.mockCatalogs = new Mock<ICatalogsService>();
             this.mockRedis = new Mock<IRedisService>();
+            this.processPaymentServiceMock = new Mock<IProcessPaymentService>();
 
             this.invoiceService = new InvoiceService(
                 this.mockDao.Object,
@@ -47,7 +49,8 @@ namespace Omicron.Invoice.Test.Services.Invoice
                 this.mockServiceLayer.Object,
                 this.mockCatalogs.Object,
                 this.mockRedis.Object,
-                this.mockUsers.Object);
+                this.mockUsers.Object,
+                this.processPaymentServiceMock.Object);
         }
 
         /// <summary>

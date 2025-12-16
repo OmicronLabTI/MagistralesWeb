@@ -73,6 +73,14 @@ namespace Omicron.Invoice.Services.Constants
         public const string IdPedidoDxpType = "pedidodxp";
 
         /// <summary>
+        /// Gets IdPedidoDxpType.
+        /// </summary>
+        /// <value>
+        /// String IdPedidoDxpType.
+        /// </value>
+        public const string GetOrderDetail = "orderdetail/transaction?transactionId={0}";
+
+        /// <summary>
         /// Gets Const for offset.
         /// </summary>
         public static string Offset => "offset";
@@ -230,6 +238,14 @@ namespace Omicron.Invoice.Services.Constants
         /// String TypeId.
         /// </value>
         public static string Id => "id";
+
+        /// <summary>
+        /// Gets TypeId.
+        /// </summary>
+        /// <value>
+        /// String TypeId.
+        /// </value>
+        public static string Delivery => "FL 1";
 
         /// <summary>
         /// Gets the Order Relation.

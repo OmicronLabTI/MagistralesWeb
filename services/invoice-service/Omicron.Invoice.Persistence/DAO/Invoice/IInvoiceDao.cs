@@ -57,6 +57,13 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice
         Task InsertSapOrders(List<InvoiceSapOrderModel> sapOrders);
 
         /// <summary>
+        /// Gets invoice SAP orders.
+        /// </summary>
+        /// <param name="sapOrders">The SAP orders to insert.</param>
+        /// <returns>the data.</returns>
+        Task<List<InvoiceSapOrderModel>> GetSapOrdersById(List<int> sapOrders);
+
+        /// <summary>
         /// Method for GetInvoices.
         /// </summary>
         /// <param name="status">The status.</param>

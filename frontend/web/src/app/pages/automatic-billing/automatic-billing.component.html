@@ -327,6 +327,9 @@ This template is used within the AutoBillingComponent in Angular.
               <button mat-menu-item (click)="seeDetail(element, false)">
                 <span>Ver remisiones</span>
               </button>
+              <button *ngIf="element.dxpOrderId?.length !== 0" mat-menu-item (click)="seeMissingSAPOrders(element)">
+                <span>Pedidos SAP sin facturar</span>
+              </button>
             </mat-menu>
           </td>
         </ng-container>

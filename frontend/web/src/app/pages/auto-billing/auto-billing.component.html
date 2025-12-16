@@ -88,6 +88,8 @@
             <mat-menu #menu="matMenu">
               <button mat-menu-item (click)="openSapOrdersDialog(e)">Ver pedidos SAP</button>
               <button mat-menu-item (click)="openShipmentsDialog(e)">Ver remisiones</button>
+              <button *ngIf="e.shopOrder?.length !== 0" mat-menu-item (click)="seeMissingSAPOrders(e)">
+                Pedidos SAP sin facturar</button>
             </mat-menu>
           </td>
         </ng-container>
