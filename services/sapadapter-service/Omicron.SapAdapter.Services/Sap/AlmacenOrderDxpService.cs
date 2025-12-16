@@ -224,7 +224,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var sale = new AlmacenSalesByDoctorModel
                 {
                     Doctor = orders.FirstOrDefault().Medico,
-                    DxpId = dxpId.GetShortShopTransaction(),
+                    DxpId = dxpId,
                     Address = address,
                     TotalOrders = totalOrders,
                     TotalItems = totalItems,
