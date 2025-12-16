@@ -298,6 +298,8 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
       if (result.type == null || result.value == null) {
         this.startDate = result.from;
         this.endDate = result.to;
+        this.idtype = '';
+        this.id = '';
         this.invoiceOptions.forEach(x => x.disabled = false);
         this.billingOptions.forEach(x => x.disabled = false);
         this.loadPageData(0, 10);
