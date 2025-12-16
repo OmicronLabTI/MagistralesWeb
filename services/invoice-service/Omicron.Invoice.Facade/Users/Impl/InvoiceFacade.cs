@@ -42,6 +42,10 @@ namespace Omicron.Invoice.Facade.Users.Impl
             return await this.invoiceService.GetInvoicesByRemissionId(remissions);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetUninvoicedSapOrders(Dictionary<string, string> parameters)
+            => await this.invoiceService.GetUninvoicedSapOrders(parameters);
+
         /// <summary>
         /// Retrieves automatic billing data (AutoBilling) by invoking the corresponding service layer method.
         /// </summary>
