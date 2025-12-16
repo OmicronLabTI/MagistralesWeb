@@ -19,6 +19,9 @@ import { AutoBillingComponent } from './auto-billing.component';
 import { AutoBillingService } from 'src/app/services/autoBilling.service';
 import { ObservableService } from 'src/app/services/observable.service';
 import { AutoBillingModel } from 'src/app/model/http/autoBilling.model';
+import { InvoicesService } from 'src/app/services/invoices.service';
+import { ErrorService } from 'src/app/services/error.service';
+import { missingSAPOrdersResponseMock } from 'src/mocks/invoicesMock';
 
 describe('AutoBillingComponent', () => {
   let component: AutoBillingComponent;
@@ -26,6 +29,8 @@ describe('AutoBillingComponent', () => {
   let matDialogMock: jasmine.SpyObj<MatDialog>;
   let observableServiceMock: jasmine.SpyObj<ObservableService>;
   let autoBillingServiceMock: jasmine.SpyObj<AutoBillingService>;
+  let invoiceServiceSpy: jasmine.SpyObj<InvoicesService>;
+  let errorServiceSpy: jasmine.SpyObj<ErrorService>;
 
   // 🔥 AutoBillingModel COMPLETO (obligatorio en strict mode)
   const result: AutoBillingModel = {
@@ -50,10 +55,17 @@ describe('AutoBillingComponent', () => {
     matDialogMock = jasmine.createSpyObj('MatDialog', ['open']);
     observableServiceMock = jasmine.createSpyObj('ObservableService', ['setUrlActive']);
     autoBillingServiceMock = jasmine.createSpyObj('AutoBillingService', ['getAllAutoBilling']);
+    invoiceServiceSpy = jasmine.createSpyObj('InvoicesService', [
+      'getMissingSAPOrders',
+    ]);
+    errorServiceSpy = jasmine.createSpyObj('ErrorService', ['httpError']);
 
     // Retorna lista con el objeto COMPLETO
     autoBillingServiceMock.getAllAutoBilling.and.returnValue(
       of({ items: [result], total: 1 })
+    );
+    invoiceServiceSpy.getMissingSAPOrders.and.returnValue(
+      of(missingSAPOrdersResponseMock)
     );
 
     await TestBed.configureTestingModule({
@@ -73,7 +85,9 @@ describe('AutoBillingComponent', () => {
       providers: [
         { provide: MatDialog, useValue: matDialogMock },
         { provide: ObservableService, useValue: observableServiceMock },
-        { provide: AutoBillingService, useValue: autoBillingServiceMock }
+        { provide: AutoBillingService, useValue: autoBillingServiceMock },
+        { provide: InvoicesService, useValue: invoiceServiceSpy },
+        { provide: ErrorService, useValue: errorServiceSpy },
       ],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
@@ -149,5 +163,14 @@ describe('AutoBillingComponent', () => {
     };
     component.openShipmentsDialog(data);
     expect(matDialogMock.open).not.toHaveBeenCalled();
+  });
+  it('should seeDetail for seeMissingSAPOrders', () => {
+    const data: AutoBillingModel = {
+      ...result,
+      sapOrders: [],
+      remissions: []
+    };
+    component.seeMissingSAPOrders(data);
+    expect(matDialogMock.open).toHaveBeenCalled();
   });
 });

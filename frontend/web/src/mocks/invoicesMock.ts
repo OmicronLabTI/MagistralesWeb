@@ -1,4 +1,7 @@
-import { AutomaticBilling, IAutomaticBillingRes, IManualRetrieResponse, IUpdateManualChangeRes } from 'src/app/model/http/invoices';
+import {
+    AutomaticBilling, IAutomaticBillingRes, IManualRetrieResponse,
+    IMissingSAPOrdersResponse, IUpdateManualChangeRes
+} from 'src/app/model/http/invoices';
 
 export const invoicesMock: AutomaticBilling[] = [
     {
@@ -226,4 +229,16 @@ export const manualRetryResponseMock: IManualRetrieResponse = {
         processedIds: [],
         skippedIds: [],
     }
+};
+
+export const missingSAPOrdersResponseMock: IMissingSAPOrdersResponse = {
+    code: 200,
+    response: [
+        123456,
+        789012,
+        345678,
+        123456,
+        789012,
+        345678,
+    ]
 };

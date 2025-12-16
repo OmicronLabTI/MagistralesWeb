@@ -18,6 +18,11 @@ import { ViewShipmentsDialogComponent } from 'src/app/dialogs/view-shipments-dia
 import { ObservableService } from 'src/app/services/observable.service';
 import { HttpServiceTOCall } from 'src/app/constants/const';
 import { FilterInvoiceTypeDialogComponent } from 'src/app/dialogs/filter-invoice-type-dialog/filter-invoice-type-dialog.component';
+import { InvoicesService } from 'src/app/services/invoices.service';
+import {
+  ViewMissingSapOrdersDialogComponent
+} from 'src/app/dialogs/view-missing-sap-orders-dialog/view-missing-sap-orders-dialog.component';
+import { ErrorService } from 'src/app/services/error.service';
 
 @Component({
   selector: 'app-auto-billing',
@@ -68,7 +73,9 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
   constructor(
     private autoBillingService: AutoBillingService,
     private dialog: MatDialog,
-    private observableService: ObservableService
+    private observableService: ObservableService,
+    private invoiceService: InvoicesService,
+    private errorService: ErrorService,
   ) {
     this.observableService.setUrlActive(HttpServiceTOCall.HISTORY_BILLING);
   }
@@ -234,6 +241,23 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
     });
   }
 
+  seeMissingSAPOrders(row: AutoBillingModel): void {
+    const params = `pedidodxp=${row.shopOrder}`;
+    this.invoiceService.getMissingSAPOrders(params).subscribe(res => {
+      this.dialog.open(ViewMissingSapOrdersDialogComponent, {
+        width: 'auto',
+        panelClass: 'custom-dialog-container',
+        data: {
+          dxpOrder: row.shopOrder,
+          orders: res.response
+        }
+      });
+    }, error => {
+      this.errorService.httpError(error);
+    }
+    );
+  }
+
   onClear(): void {
     this.invoiceOptions.forEach(x => {
       x.selected = true;
@@ -274,6 +298,8 @@ export class AutoBillingComponent implements OnInit, AfterViewInit {
       if (result.type == null || result.value == null) {
         this.startDate = result.from;
         this.endDate = result.to;
+        this.idtype = '';
+        this.id = '';
         this.invoiceOptions.forEach(x => x.disabled = false);
         this.billingOptions.forEach(x => x.disabled = false);
         this.loadPageData(0, 10);
