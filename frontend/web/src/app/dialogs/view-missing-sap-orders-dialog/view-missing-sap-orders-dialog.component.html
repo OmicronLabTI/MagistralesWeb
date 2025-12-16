@@ -1,0 +1,34 @@
+<div class="overlay">
+    <div class="dialog-container">
+        <!-- Header -->
+        <div class="dialog-header">
+            <div class="modal-title">
+                <h2>Pedidos SAP sin facturar</h2>
+                <button mat-icon-button class="close-btn" (click)="close()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+            <div class="request-info">
+                <div [matTooltip]="data.dxpOrder" class="info-containers-width">
+                    <b>ID Petición: </b>{{data.dxpOrder.slice(-6).toUpperCase()}}
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla -->
+        <div class="table-wrapper">
+            <table mat-table [dataSource]="dataSource" matSort>
+
+                <!-- Columna ID Remisión -->
+                <ng-container matColumnDef="sapOrder">
+                    <th mat-header-cell *matHeaderCellDef>ID Pedido SAP</th>
+                    <td mat-cell *matCellDef="let e">{{ e }}</td>
+                </ng-container>
+
+                <!-- Filas -->
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </div>
+    </div>
+</div>

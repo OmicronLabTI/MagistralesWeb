@@ -52,3 +52,5 @@ global using System.IO;
 global using Omicron.Invoice.Model.Model.JoinsModels;
 global using Omicron.Invoice.Services.BackgroundTaskQueue.Impl;
 global using Omicron.Invoice.Services.Utils; 
+global using Omicron.Invoice.Services.ProcessPayment;
+global using Omicron.Invoice.Model.Join;

@@ -85,5 +85,26 @@ namespace Omicron.Invoice.Test.Facade
             // Assert
             Assert.That(response != null);
         }
+
+        /// <summary>
+        /// Test for selecting all models.
+        /// </summary>
+        /// <returns>nothing.</returns>
+        [Test]
+        public async Task GetUninvoicedSapOrders()
+        {
+            // arrange
+            var model = new Dictionary<string, string>
+            {
+                { "offset", "0" },
+                { "limit", "10" },
+            };
+
+            // Act
+            var response = await this.invoiceFacade.GetUninvoicedSapOrders(model);
+
+            // Assert
+            Assert.That(response != null);
+        }
     }
 }

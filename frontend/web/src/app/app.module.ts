@@ -28,6 +28,7 @@ import { AddCommentsDialogComponent } from './dialogs/add-comments-dialog/add-co
 import { ViewSapOrdersDialogComponent } from './dialogs/view-sap-orders-dialog/view-sap-orders-dialog.component';
 import { ViewShipmentsDialogComponent } from './dialogs/view-shipments-dialog/view-shipments-dialog.component';
 import { FilterInvoiceTypeDialogComponent } from './dialogs/filter-invoice-type-dialog/filter-invoice-type-dialog.component';
+import { ViewMissingSapOrdersDialogComponent } from './dialogs/view-missing-sap-orders-dialog/view-missing-sap-orders-dialog.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { FilterInvoiceTypeDialogComponent } from './dialogs/filter-invoice-type-
     AddCommentsDialogComponent,
     ViewSapOrdersDialogComponent,
     ViewShipmentsDialogComponent,
-    FilterInvoiceTypeDialogComponent
+    FilterInvoiceTypeDialogComponent,
+    ViewMissingSapOrdersDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -78,7 +80,8 @@ import { FilterInvoiceTypeDialogComponent } from './dialogs/filter-invoice-type-
     AddCommentsDialogComponent,
     ViewSapOrdersDialogComponent,
     ViewShipmentsDialogComponent,
-    FilterInvoiceTypeDialogComponent
+    FilterInvoiceTypeDialogComponent,
+    ViewMissingSapOrdersDialogComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

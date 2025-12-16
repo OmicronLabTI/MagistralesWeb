@@ -48,9 +48,10 @@ namespace Omicron.Invoice.Test.Services
             var catalogServiceMock = new Mock<ICatalogsService>();
             var redisServiceMock = new Mock<IRedisService>();
             var userServiceMock = new Mock<IUsersService>();
+            var processPaymentServiceMock = new Mock<IProcessPaymentService>();
 
             this.invoiceDao = new InvoiceDao(this.context);
-            this.userService = new InvoiceService(this.invoiceDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object, userServiceMock.Object);
+            this.userService = new InvoiceService(this.invoiceDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object, userServiceMock.Object, processPaymentServiceMock.Object);
         }
 
         /// <summary>
@@ -68,6 +69,7 @@ namespace Omicron.Invoice.Test.Services
             var catalogServiceMock = new Mock<ICatalogsService>();
             var redisServiceMock = new Mock<IRedisService>();
             var userServiceMock = new Mock<IUsersService>();
+            var processPaymentServiceMock = new Mock<IProcessPaymentService>();
 
             var invoiceDaoMock = new Mock<IInvoiceDao>();
 
@@ -89,7 +91,8 @@ namespace Omicron.Invoice.Test.Services
                 servicelayerServiceMock.Object,
                 catalogServiceMock.Object,
                 redisServiceMock.Object,
-                userServiceMock.Object);
+                userServiceMock.Object,
+                processPaymentServiceMock.Object);
 
             var request = new CreateInvoiceDto()
             {
@@ -133,8 +136,9 @@ namespace Omicron.Invoice.Test.Services
             var catalogServiceMock = new Mock<ICatalogsService>();
             var redisServiceMock = new Mock<IRedisService>();
             var userServiceMock = new Mock<IUsersService>();
+            var processPaymentServiceMock = new Mock<IProcessPaymentService>();
 
-            this.userService = new InvoiceService(this.invoiceDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object, userServiceMock.Object);
+            this.userService = new InvoiceService(this.invoiceDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object, userServiceMock.Object, processPaymentServiceMock.Object);
             var request = new CreateInvoiceDto()
             {
                 CardCode = "C03865",
@@ -188,6 +192,7 @@ namespace Omicron.Invoice.Test.Services
             var logger = new Mock<Serilog.ILogger>();
             var catalogServiceMock = new Mock<ICatalogsService>();
             var userServiceMock = new Mock<IUsersService>();
+            var processPaymentServiceMock = new Mock<IProcessPaymentService>();
 
             var catalogResult = catalogServiceMock
                 .Setup(x => x.GetParams(It.IsAny<string>()))
@@ -212,7 +217,7 @@ namespace Omicron.Invoice.Test.Services
                 .ThrowsAsync(new System.Exception("C01"));
             }
 
-            this.userService = new InvoiceService(this.invoiceDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object, userServiceMock.Object);
+            this.userService = new InvoiceService(this.invoiceDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object, userServiceMock.Object, processPaymentServiceMock.Object);
             var request = new CreateInvoiceDto()
             {
                 CardCode = "C03865",
@@ -259,12 +264,13 @@ namespace Omicron.Invoice.Test.Services
             var catalogServiceMock = new Mock<ICatalogsService>();
             var redisServiceMock = new Mock<IRedisService>();
             var mockUserService = new Mock<IUsersService>();
+            var processPaymentServiceMock = new Mock<IProcessPaymentService>();
 
             mockUserService
                 .Setup(m => m.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetUsersResponse()));
 
-            var localService = new InvoiceService(this.invoiceDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object, mockUserService.Object);
+            var localService = new InvoiceService(this.invoiceDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object, mockUserService.Object, processPaymentServiceMock.Object);
 
             // act
             var response = await localService.GetInvoices(dic);
@@ -303,12 +309,13 @@ namespace Omicron.Invoice.Test.Services
             var catalogServiceMock = new Mock<ICatalogsService>();
             var redisServiceMock = new Mock<IRedisService>();
             var mockUserService = new Mock<IUsersService>();
+            var processPaymentServiceMock = new Mock<IProcessPaymentService>();
 
             mockUserService
                 .Setup(m => m.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetUsersResponse()));
 
-            var localService = new InvoiceService(this.invoiceDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object, mockUserService.Object);
+            var localService = new InvoiceService(this.invoiceDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object, mockUserService.Object, processPaymentServiceMock.Object);
 
             // act
             var response = await localService.GetInvoices(dic);
@@ -347,12 +354,13 @@ namespace Omicron.Invoice.Test.Services
             var catalogServiceMock = new Mock<ICatalogsService>();
             var redisServiceMock = new Mock<IRedisService>();
             var mockUserService = new Mock<IUsersService>();
+            var processPaymentServiceMock = new Mock<IProcessPaymentService>();
 
             mockUserService
                 .Setup(m => m.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetUsersResponse()));
 
-            var localService = new InvoiceService(this.invoiceDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object, mockUserService.Object);
+            var localService = new InvoiceService(this.invoiceDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object, mockUserService.Object, processPaymentServiceMock.Object);
 
             // act
             var response = await localService.GetInvoices(dic);
@@ -391,12 +399,13 @@ namespace Omicron.Invoice.Test.Services
             var catalogServiceMock = new Mock<ICatalogsService>();
             var redisServiceMock = new Mock<IRedisService>();
             var mockUserService = new Mock<IUsersService>();
+            var processPaymentServiceMock = new Mock<IProcessPaymentService>();
 
             mockUserService
                 .Setup(m => m.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetUsersResponse()));
 
-            var localService = new InvoiceService(this.invoiceDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object, mockUserService.Object);
+            var localService = new InvoiceService(this.invoiceDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object, mockUserService.Object, processPaymentServiceMock.Object);
 
             // act
             var response = await localService.GetInvoices(dic);
@@ -438,6 +447,7 @@ namespace Omicron.Invoice.Test.Services
             var catalogServiceMock = new Mock<ICatalogsService>();
             var redisServiceMock = new Mock<IRedisService>();
             var mockUserService = new Mock<IUsersService>();
+            var processPaymentServiceMock = new Mock<IProcessPaymentService>();
 
             mockUserService
                 .Setup(m => m.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
@@ -452,7 +462,8 @@ namespace Omicron.Invoice.Test.Services
                 servicelayerServiceMock.Object,
                 catalogServiceMock.Object,
                 redisServiceMock.Object,
-                mockUserService.Object);
+                mockUserService.Object,
+                processPaymentServiceMock.Object);
 
             // Act
             var response = await localService.GetInvoices(dic);
@@ -489,6 +500,7 @@ namespace Omicron.Invoice.Test.Services
             var catalogServiceMock = new Mock<ICatalogsService>();
             var redisServiceMock = new Mock<IRedisService>();
             var mockUserService = new Mock<IUsersService>();
+            var processPaymentServiceMock = new Mock<IProcessPaymentService>();
 
             mockUserService
                 .Setup(m => m.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
@@ -503,7 +515,8 @@ namespace Omicron.Invoice.Test.Services
                 servicelayerServiceMock.Object,
                 catalogServiceMock.Object,
                 redisServiceMock.Object,
-                mockUserService.Object);
+                mockUserService.Object,
+                processPaymentServiceMock.Object);
 
             // Act
             var response = await localService.GetInvoices(dic);
@@ -538,6 +551,7 @@ namespace Omicron.Invoice.Test.Services
             var catalogServiceMock = new Mock<ICatalogsService>();
             var redisServiceMock = new Mock<IRedisService>();
             var mockUserService = new Mock<IUsersService>();
+            var processPaymentServiceMock = new Mock<IProcessPaymentService>();
 
             mockUserService
                 .Setup(m => m.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
@@ -552,7 +566,8 @@ namespace Omicron.Invoice.Test.Services
                 servicelayerServiceMock.Object,
                 catalogServiceMock.Object,
                 redisServiceMock.Object,
-                mockUserService.Object);
+                mockUserService.Object,
+                processPaymentServiceMock.Object);
 
             // Act
             var response = await localService.GetInvoices(dic);
@@ -582,8 +597,9 @@ namespace Omicron.Invoice.Test.Services
             var catalogServiceMock = new Mock<ICatalogsService>();
             var redisServiceMock = new Mock<IRedisService>();
             var mockUserService = new Mock<IUsersService>();
+            var processPaymentServiceMock = new Mock<IProcessPaymentService>();
 
-            var localService = new InvoiceService(this.invoiceDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object, mockUserService.Object);
+            var localService = new InvoiceService(this.invoiceDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object, mockUserService.Object, processPaymentServiceMock.Object);
 
             // act
             var response = await localService.UpdateManualChange(dic);
@@ -612,8 +628,9 @@ namespace Omicron.Invoice.Test.Services
             var catalogServiceMock = new Mock<ICatalogsService>();
             var redisServiceMock = new Mock<IRedisService>();
             var mockUserService = new Mock<IUsersService>();
+            var processPaymentServiceMock = new Mock<IProcessPaymentService>();
 
-            var localService = new InvoiceService(this.invoiceDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object, mockUserService.Object);
+            var localService = new InvoiceService(this.invoiceDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object, mockUserService.Object, processPaymentServiceMock.Object);
 
             // act
             var response = await localService.UpdateManualChange(dic);
@@ -638,8 +655,9 @@ namespace Omicron.Invoice.Test.Services
             var catalogServiceMock = new Mock<ICatalogsService>();
             var redisServiceMock = new Mock<IRedisService>();
             var userServiceMock = new Mock<IUsersService>();
+            var processPaymentServiceMock = new Mock<IProcessPaymentService>();
 
-            this.userService = new InvoiceService(this.invoiceDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object, userServiceMock.Object);
+            this.userService = new InvoiceService(this.invoiceDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object, userServiceMock.Object, processPaymentServiceMock.Object);
 
             var response = await this.userService.GetInvoicesByRemissionId(new List<int> { 1 });
 
@@ -671,12 +689,13 @@ namespace Omicron.Invoice.Test.Services
             var catalogServiceMock = new Mock<ICatalogsService>();
             var redisServiceMock = new Mock<IRedisService>();
             var mockUserService = new Mock<IUsersService>();
+            var processPaymentServiceMock = new Mock<IProcessPaymentService>();
 
             mockUserService
                 .Setup(m => m.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetUsersResponse()));
 
-            var localService = new InvoiceService(this.invoiceDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object, mockUserService.Object);
+            var localService = new InvoiceService(this.invoiceDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object, mockUserService.Object, processPaymentServiceMock.Object);
 
             // act
             var response = await localService.GetAutoBillingAsync(dic);
@@ -691,6 +710,56 @@ namespace Omicron.Invoice.Test.Services
             Assert.That(response.Response, Is.All.InstanceOf<AutoBillingRowDto>());
             Assert.That(response.Comments.GetType().GetProperty("total"), Is.Not.Null);
             Assert.That(total, Is.EqualTo(1));
+        }
+
+        /// <summary>
+        /// Method Validate GetAllAsync.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Test]
+        public async Task GetUninvoicedSapOrders()
+        {
+            // arrange
+            var dic = new Dictionary<string, string>
+            {
+                { ServiceConstants.IdPedidoDxpType, "4c0c4d72-6540-43c2-8511-baadeb1afcf4" },
+            };
+
+            var data = new List<OrderDetailModel> 
+            {
+                new OrderDetailModel { Id = 1, OrderId = 5001, ItemCode = "REVE 14", TransactionId = "4c0c4d72-6540-43c2-8511-baadeb1afcf4" },
+                new OrderDetailModel { Id = 2, OrderId = 5002, ItemCode = "REVE 14", TransactionId = "4c0c4d72-6540-43c2-8511-baadeb1afcf4" },
+                new OrderDetailModel { Id = 3, OrderId = 5010, ItemCode = "REVE 14", TransactionId = "4c0c4d72-6540-43c2-8511-baadeb1afcf4" },
+                new OrderDetailModel { Id = 4, OrderId = 5011, ItemCode = "REVE 14", TransactionId = "4c0c4d72-6540-43c2-8511-baadeb1afcf4" },
+            };
+
+            var taskQueue = new Mock<IBackgroundTaskQueue>();
+            var serviceScopeFactoryMock = new Mock<IServiceScopeFactory>();
+            var sapAdapterServiceMock = new Mock<ISapAdapter>();
+            var servicelayerServiceMock = new Mock<ISapServiceLayerAdapterService>();
+            var logger = new Mock<ILogger>();
+            var catalogServiceMock = new Mock<ICatalogsService>();
+            var redisServiceMock = new Mock<IRedisService>();
+            var mockUserService = new Mock<IUsersService>();
+            var processPaymentServiceMock = new Mock<IProcessPaymentService>();
+
+            processPaymentServiceMock
+                .Setup(m => m.GetProcessPayments(It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResultModel(data)));
+
+            var localService = new InvoiceService(this.invoiceDao, taskQueue.Object, serviceScopeFactoryMock.Object, logger.Object, sapAdapterServiceMock.Object, servicelayerServiceMock.Object, catalogServiceMock.Object, redisServiceMock.Object, mockUserService.Object, processPaymentServiceMock.Object);
+
+            // act
+            var response = await localService.GetUninvoicedSapOrders(dic);
+
+            // assert
+            var result = response.Response as List<int>;
+
+            Assert.That(response, Is.Not.Null);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(2));
+            Assert.That(result, Does.Contain(5010));
+            Assert.That(result, Does.Contain(5011));
         }
     }
 }

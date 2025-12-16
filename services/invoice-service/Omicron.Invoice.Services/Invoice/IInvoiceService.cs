@@ -56,6 +56,13 @@ namespace Omicron.Invoice.Services.Invoice
         Task<ResultDto> GetInvoicesByRemissionId(List<int> remissions);
 
         /// <summary>
+        /// Method for get all users.
+        /// </summary>
+        /// <param name="parameters">parameters.</param>
+        /// <returns>A representing the result of the asynchronous operation.</returns>
+        Task<ResultDto> GetUninvoicedSapOrders(Dictionary<string, string> parameters);
+
+        /// <summary>
         /// Retrieves automatic billing (AutoBilling) information based on the specified parameters.
         /// This method serves the Automatic Billing module, returning data formatted
         /// for grid display and including related invoice and SAP order counts.

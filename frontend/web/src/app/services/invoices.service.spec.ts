@@ -43,4 +43,10 @@ describe('InvoicesService', () => {
     service.sendManualRetry(request);
     expect(consumeServiceSpy.httpPost).toHaveBeenCalledWith(Endpoints.invoices.manualRetry, request);
   });
+  it('getMissingSAPOrders', () => {
+    const service: InvoicesService = TestBed.get(InvoicesService);
+    const request = `pedidodxp=e1a4c24a-b511-4d6a-9b52-d0b3f9a91b33`;
+    service.getMissingSAPOrders(request);
+    expect(consumeServiceSpy.httpGet).toHaveBeenCalled();
+  });
 });
