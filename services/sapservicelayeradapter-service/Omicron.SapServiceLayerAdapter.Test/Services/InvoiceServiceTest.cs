@@ -154,6 +154,102 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
         }
 
         /// <summary>
+        /// Test for CreateInvoice_MethodCorrectly.
+        /// </summary>
+        /// <param name="formaPago33">Indicates if the invoice creation in Service Layer is successful.</param>
+        /// <param name="expectedMetodoPago">Indicates if an exception should be thrown.</param>
+        /// <returns>the data.</returns>
+        [Test]
+        [TestCase("04", "PUE")]
+        [TestCase("99", "PPD")]
+        [TestCase("01", "PUE")]
+        [TestCase("03", "PUE")]
+        [TestCase("", "PUE")]
+        [TestCase(null, "PUE")]
+        public async Task CreateInvoice_MethodCorrectly(
+    string formaPago33,
+    string expectedMetodoPago)
+        {
+            // Arrange
+            var createInvoiceDocumentInfo = new CreateInvoiceDocumentDto
+            {
+                CardCode = "C12345",
+                ProcessId = "test-payment-method",
+                CfdiDriverVersion = "CFDi40",
+                IdDeliveries = new List<int> { 1001 },
+            };
+
+            var mockServiceLayerClient = new Mock<IServiceLayerClient>();
+            var mockLogger = new Mock<ILogger>();
+
+            var deliveryMock = new List<DeliveryNoteDto>
+            {
+                new DeliveryNoteDto
+                {
+                    DocEntry = 1001,
+                    DeliveryNoteLines = new List<DeliveryNoteLineDto>
+                    {
+                        new DeliveryNoteLineDto { LineNumber = 0 },
+                    },
+                },
+            };
+
+            var responseDeliveryMock = new ServiceLayerGenericMultipleResultDto<DeliveryNoteDto>
+            {
+                Value = deliveryMock,
+            };
+
+            var deliveryResponseMock = GetGenericResponseModel(200, true, responseDeliveryMock, null);
+
+            var invoiceResponse = new InvoiceDto { DocumentEntry = 999, DocumentNumber = 999 };
+            var invoiceResponseMock = GetGenericResponseModel(200, true, invoiceResponse, null);
+            var invoicePaymentInfo = new InvoicePaymentInfoDto
+            {
+                FormaPago33 = formaPago33,
+            };
+            var getInvoiceResponseMock = GetGenericResponseModel(200, true, invoicePaymentInfo, null);
+
+            var patchResponseMock = GetGenericResponseModel(200, true, null, null);
+
+            mockServiceLayerClient
+                .Setup(sl => sl.GetAsync(It.Is<string>(s => s.Contains("DeliveryNotes"))))
+                .ReturnsAsync(deliveryResponseMock);
+
+            mockServiceLayerClient
+                .Setup(sl => sl.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(invoiceResponseMock);
+
+            mockServiceLayerClient
+                .Setup(sl => sl.GetAsync(It.Is<string>(s => s.Contains("Invoices(999)"))))
+                .ReturnsAsync(getInvoiceResponseMock);
+
+            mockServiceLayerClient
+                .Setup(sl => sl.PatchAsync(It.Is<string>(s => s.Contains("Invoices(999)")), It.IsAny<string>()))
+                .ReturnsAsync(patchResponseMock);
+
+            var invoiceService = new InvoiceService(mockServiceLayerClient.Object, mockLogger.Object);
+
+            // Act
+            var result = await invoiceService.CreateInvoice(createInvoiceDocumentInfo);
+
+            // Assert
+            Assert.That(result.Success, Is.True, "Invoice should be created successfully");
+            Assert.That(result.Code, Is.EqualTo(200));
+
+            mockServiceLayerClient.Verify(
+                sl => sl.GetAsync(It.Is<string>(s => s.Contains("Invoices(999)"))),
+                Times.Once,
+                "Should call GET to read invoice payment info");
+
+            mockServiceLayerClient.Verify(
+                sl => sl.PatchAsync(
+                    It.Is<string>(s => s.Contains("Invoices(999)")),
+                    It.Is<string>(json => json.Contains($"\"U_BXP_METPAGO33\":\"{expectedMetodoPago}\""))),
+                Times.Once,
+                $"Should update U_BXP_METPAGO33 to '{expectedMetodoPago}' when U_BXP_FORMAPAGO33 is '{formaPago33}'");
+        }
+
+        /// <summary>
         /// Test for CreateInvoice method.
         /// </summary>
         /// <param name="isResponseSuccess">Indicates if the invoice creation in Service Layer is successful.</param>
