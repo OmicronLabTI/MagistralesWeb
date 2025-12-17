@@ -123,6 +123,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Invoices.Impl
                 }
 
                 var createdInvoice = JsonConvert.DeserializeObject<InvoiceDto>(invoiceResponse.Response.ToString());
+                await this.ConfigurePaymentMethod(createdInvoice.DocumentEntry);
                 this.logger.Information(LogsConstants.InvoiceCreatedSuccessfully, logBase);
                 return ServiceUtils.CreateResult(true, 200, null, createdInvoice.DocumentNumber, null);
             }
@@ -220,6 +221,38 @@ namespace Omicron.SapServiceLayerAdapter.Services.Invoices.Impl
             var comment = string.Format(ServiceConstants.CommentForCreatedInvoice, string.Join(ServiceConstants.Comma, deliveriesById.Select(r => r.Id)));
 
             return (documentLines, comment);
+        }
+
+        private async Task ConfigurePaymentMethod(int invoiceId)
+        {
+            try
+            {
+                var invoiceResponse = await this.serviceLayerClient.GetAsync(string.Format(ServiceQuerysConstants.QryInvoiceDocumentByDocEntry, invoiceId));
+
+                if (!invoiceResponse.Success)
+                {
+                    this.logger.Warning($"The invoice could not be read {invoiceId} error: {invoiceResponse.UserError}");
+                    return;
+                }
+
+                var invoice = JsonConvert.DeserializeObject<InvoicePaymentInfoDto>(invoiceResponse.Response.ToString());
+
+                var paymentMethod = invoice.FormaPago33 ?? string.Empty;
+                var method = paymentMethod.Trim() == ServiceConstants.PaymentFormat ? ServiceConstants.PaymentPPD : ServiceConstants.PaymentPUE;
+                var updateRequest = new { U_BXP_METPAGO33 = method };
+                var updateResponse = await this.serviceLayerClient.PatchAsync(
+                    string.Format(ServiceQuerysConstants.QryInvoiceDocumentByDocEntry, invoiceId),
+                    JsonConvert.SerializeObject(updateRequest));
+
+                if (!updateResponse.Success)
+                {
+                    this.logger.Error($"Error update U_BXP_METPAGO33 invoice {invoiceId}: {updateResponse.UserError}");
+                }
+            }
+            catch (Exception ex)
+            {
+                this.logger.Error(ex, $"Error calculate payment method for invoice {invoiceId}");
+            }
         }
     }
 }
