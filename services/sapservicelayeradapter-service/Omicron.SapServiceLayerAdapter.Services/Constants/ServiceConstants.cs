@@ -34,6 +34,21 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string StatusLiberado = "R";
 
         /// <summary>
+        /// PaymentCredit.
+        /// </summary>
+        public const string PaymentPPD = "PPD";
+
+        /// <summary>
+        /// PaymentPUE.
+        /// </summary>
+        public const string PaymentPUE = "PUE";
+
+        /// <summary>
+        /// PaymentCredit.
+        /// </summary>
+        public const string PaymentFormat = "99";
+
+        /// <summary>
         /// Custom property cfdi from environment.
         /// </summary>
         public const string CustomPropertyNameCFDI = "CustomPropertiesName:CFDI";
