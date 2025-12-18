@@ -74,7 +74,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
         {
             var orderLine = saleOrder.OrderLines[i];
             var product = createDelivery.FirstOrDefault(x => x.ItemCode.Equals(itemCode) && x.SaleOrderId == saleOrderId);
-            product = product ?? new CreateDeliveryNoteDto { OrderType = ServiceConstants.Magistral };
+            product = product ?? new CreateDeliveryNoteDto { OrderType = string.Empty };
 
             var newDeliveryNote = new BaseDeliveryNoteLineDto()
             {
@@ -92,9 +92,10 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                 BatchNumbers = new List<DeliveryNoteBatchNumbersDto>(),
                 UnitPrice = orderLine.UnitPrice,
                 SalesPersonCode = orderLine.SalesPersonCode,
+                Price = orderLine.Price,
             };
 
-            if (product.OrderType != ServiceConstants.Magistral)
+            if (product.OrderType == ServiceConstants.Linea)
             {
                 var firstBatch = product.Batches.FirstOrDefault();
                 newDeliveryNote.WarehouseCode = firstBatch != null ? firstBatch.WarehouseCode : orderLine.WarehouseCode;
@@ -108,7 +109,8 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                     newDeliveryNote.BatchNumbers.Add(batch);
                 }
             }
-            else
+
+            if (product.OrderType == ServiceConstants.Magistral)
             {
                 var sameProduct = createDelivery.Where(x => x.ItemCode.Equals(itemCode) && x.SaleOrderId == saleOrderId).ToList();
                 var totalPieces = sameProduct.Sum(x => x.Quantity);
