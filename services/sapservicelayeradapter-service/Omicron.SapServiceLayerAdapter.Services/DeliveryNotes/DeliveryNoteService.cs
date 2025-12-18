@@ -165,8 +165,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                     var price = CastStringToDouble(shippingCost.OrderType);
                     this.logger.Information($"The price is {price}");
 
-                    var (correctBaseLineId, total) = await this.GetShippingCostBaseLine(shippingCost?.ShippingCostOrderId ?? 0);
-                    var quantity = 1;
+                    var (correctBaseLineId, total, quantity) = await this.GetShippingCostBaseLine(shippingCost?.ShippingCostOrderId ?? 0);
                     var newDeliveryNote = new BaseDeliveryNoteLineDto()
                     {
                         ItemCode = shippingCost.ItemCode,
@@ -215,7 +214,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             await this.serviceLayerClient.PatchAsync($"Orders({saleOrderId})", JsonConvert.SerializeObject(saleOrderShipping));
         }
 
-        private async Task<(int, double)> GetShippingCostBaseLine(int saleOrderId)
+        private async Task<(int, double, double)> GetShippingCostBaseLine(int saleOrderId)
         {
             var saleOrderShipping = await this.serviceLayerClient.GetAsync(string.Format(ServiceQuerysConstants.QryOrdersDocumentByDocEntry, saleOrderId));
             if (saleOrderShipping.Code == (int)HttpStatusCode.NotFound)
@@ -226,6 +225,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             var saleOrder = JsonConvert.DeserializeObject<OrderDto>(saleOrderShipping.Response.ToString());
             var correctBaseLineId = 0;
             var total = 0.0;
+            var quantity = 0.0;
             for (var i = 0; i < saleOrder.OrderLines.Count; i++)
             {
                 var saleOrderLine = saleOrder.OrderLines[i];
@@ -234,11 +234,12 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                 {
                     correctBaseLineId = saleOrderLine.LineNum;
                     total = saleOrderLine.Total;
+                    quantity = saleOrderLine.Quantity;
                     break;
                 }
             }
 
-            return (correctBaseLineId, total);
+            return (correctBaseLineId, total, quantity);
         }
 
         private async Task<Dictionary<string, string>> CancelDeliveryNote(string type, CancelDeliveryDto deliveryNote, Dictionary<string, string> dictionaryResult)
@@ -447,8 +448,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             var shippingCost = createDelivery.FirstOrDefault(x => x.ItemCode == ServiceConstants.ShippingCostItemCode);
             if (shippingCost != null)
             {
-                var (correctBaseLineId, total) = await this.GetShippingCostBaseLine(shippingCost.ShippingCostOrderId);
-                var quantity = 1;
+                var (correctBaseLineId, total, quantity) = await this.GetShippingCostBaseLine(shippingCost.ShippingCostOrderId);
 
                 var price = CastStringToDouble(shippingCost.OrderType);
                 var newDeliveryNote = new BaseDeliveryNoteLineDto()
@@ -510,8 +510,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
 
                 if (shippingOrder == null)
                 {
-                    var (correctBaseLineId, total) = await this.GetShippingCostBaseLine(shippingCost.ShippingCostOrderId);
-                    var quantity = 1;
+                    var (correctBaseLineId, total, quantity) = await this.GetShippingCostBaseLine(shippingCost.ShippingCostOrderId);
                     var newData = new BaseDeliveryNoteLineDto()
                     {
                         ItemCode = shippingCost.ItemCode,
