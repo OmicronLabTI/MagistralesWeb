@@ -74,7 +74,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
         {
             var orderLine = saleOrder.OrderLines[i];
             var product = createDelivery.FirstOrDefault(x => x.ItemCode.Equals(itemCode) && x.SaleOrderId == saleOrderId);
-            product = product ?? new CreateDeliveryNoteDto { OrderType = ServiceConstants.Magistral };
+            product = product ?? new CreateDeliveryNoteDto { OrderType = string.Empty };
 
             var newDeliveryNote = new BaseDeliveryNoteLineDto()
             {
@@ -92,9 +92,10 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                 BatchNumbers = new List<DeliveryNoteBatchNumbersDto>(),
                 UnitPrice = orderLine.UnitPrice,
                 SalesPersonCode = orderLine.SalesPersonCode,
+                Price = orderLine.Price,
             };
 
-            if (product.OrderType != ServiceConstants.Magistral)
+            if (product.OrderType == ServiceConstants.Linea)
             {
                 var firstBatch = product.Batches.FirstOrDefault();
                 newDeliveryNote.WarehouseCode = firstBatch != null ? firstBatch.WarehouseCode : orderLine.WarehouseCode;
@@ -108,7 +109,8 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                     newDeliveryNote.BatchNumbers.Add(batch);
                 }
             }
-            else
+
+            if (product.OrderType == ServiceConstants.Magistral)
             {
                 var sameProduct = createDelivery.Where(x => x.ItemCode.Equals(itemCode) && x.SaleOrderId == saleOrderId).ToList();
                 var totalPieces = sameProduct.Sum(x => x.Quantity);
@@ -165,17 +167,17 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                     var price = CastStringToDouble(shippingCost.OrderType);
                     this.logger.Information($"The price is {price}");
 
-                    var correctBaseLineId = await this.GetShippingCostBaseLine(shippingCost?.ShippingCostOrderId ?? 0);
+                    var (correctBaseLineId, total, quantity) = await this.GetShippingCostBaseLine(shippingCost?.ShippingCostOrderId ?? 0);
                     var newDeliveryNote = new BaseDeliveryNoteLineDto()
                     {
                         ItemCode = shippingCost.ItemCode,
-                        Quantity = 1,
+                        Quantity = quantity,
                         BaseType = 17,
                         BaseEntry = shippingCost.ShippingCostOrderId,
                         UnitPrice = price,
                         BaseLine = correctBaseLineId,
                         SalesPersonCode = saleOrder.SalesPersonCode,
-                        Price = price,
+                        Price = total * quantity,
                         LineTotal = price,
                     };
                     deliveryNote.DeliveryNoteLines.Add(newDeliveryNote);
@@ -214,7 +216,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             await this.serviceLayerClient.PatchAsync($"Orders({saleOrderId})", JsonConvert.SerializeObject(saleOrderShipping));
         }
 
-        private async Task<int> GetShippingCostBaseLine(int saleOrderId)
+        private async Task<(int, double, double)> GetShippingCostBaseLine(int saleOrderId)
         {
             var saleOrderShipping = await this.serviceLayerClient.GetAsync(string.Format(ServiceQuerysConstants.QryOrdersDocumentByDocEntry, saleOrderId));
             if (saleOrderShipping.Code == (int)HttpStatusCode.NotFound)
@@ -224,6 +226,8 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
 
             var saleOrder = JsonConvert.DeserializeObject<OrderDto>(saleOrderShipping.Response.ToString());
             var correctBaseLineId = 0;
+            var total = 0.0;
+            var quantity = 0.0;
             for (var i = 0; i < saleOrder.OrderLines.Count; i++)
             {
                 var saleOrderLine = saleOrder.OrderLines[i];
@@ -231,11 +235,13 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                 if (itemCode == ServiceConstants.ShippingCostItemCode)
                 {
                     correctBaseLineId = saleOrderLine.LineNum;
+                    total = saleOrderLine.Total;
+                    quantity = saleOrderLine.Quantity;
                     break;
                 }
             }
 
-            return correctBaseLineId;
+            return (correctBaseLineId, total, quantity);
         }
 
         private async Task<Dictionary<string, string>> CancelDeliveryNote(string type, CancelDeliveryDto deliveryNote, Dictionary<string, string> dictionaryResult)
@@ -444,19 +450,19 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             var shippingCost = createDelivery.FirstOrDefault(x => x.ItemCode == ServiceConstants.ShippingCostItemCode);
             if (shippingCost != null)
             {
-                var correctBaseLineId = await this.GetShippingCostBaseLine(shippingCost.ShippingCostOrderId);
+                var (correctBaseLineId, total, quantity) = await this.GetShippingCostBaseLine(shippingCost.ShippingCostOrderId);
 
                 var price = CastStringToDouble(shippingCost.OrderType);
                 var newDeliveryNote = new BaseDeliveryNoteLineDto()
                 {
                     ItemCode = shippingCost.ItemCode,
-                    Quantity = 1,
+                    Quantity = quantity,
                     BaseType = 17,
                     BaseEntry = shippingCost.ShippingCostOrderId,
                     UnitPrice = price,
                     BaseLine = correctBaseLineId,
                     SalesPersonCode = saleOrder.SalesPersonCode,
-                    Price = price,
+                    Price = total * quantity,
                     LineTotal = price,
                 };
                 deliveryNote.DeliveryNoteLines.Add(newDeliveryNote);
@@ -506,17 +512,17 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
 
                 if (shippingOrder == null)
                 {
-                    var correctBaseLineId = await this.GetShippingCostBaseLine(shippingCost.ShippingCostOrderId);
+                    var (correctBaseLineId, total, quantity) = await this.GetShippingCostBaseLine(shippingCost.ShippingCostOrderId);
                     var newData = new BaseDeliveryNoteLineDto()
                     {
                         ItemCode = shippingCost.ItemCode,
-                        Quantity = 1,
+                        Quantity = quantity,
                         BaseType = 17,
                         BaseEntry = shippingCost.ShippingCostOrderId,
                         UnitPrice = price,
                         BaseLine = correctBaseLineId,
                         SalesPersonCode = saleOrder.SalesPersonCode,
-                        Price = price,
+                        Price = total * quantity,
                         LineTotal = price,
                     };
                     deliveryNote.DeliveryNoteLines.Add(newData);

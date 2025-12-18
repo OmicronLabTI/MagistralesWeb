@@ -138,5 +138,12 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// <value>Line Num.</value>
         [JsonProperty("LineNum")]
         public int LineNum { get; set; }
+
+        /// <summary>
+        /// Gets or sets if is omigenomics.
+        /// </summary>
+        /// <value>Is Omigenomics.</value>
+        [JsonProperty("PriceAfterVAT")]
+        public double Total { get; set; }
     }
 }
