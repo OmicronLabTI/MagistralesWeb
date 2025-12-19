@@ -939,8 +939,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 var item = items.FirstOrDefault(x => x.ProductoId == invoice.ProductoId);
                 item ??= new ProductoModel { IsMagistral = "N", LargeDescription = string.Empty, ProductoId = string.Empty };
 
-                var usersOrdersToLook = userOrders.FirstOrDefault(x => !string.IsNullOrEmpty(x.Productionorderid) && !selectedPO.Contains(x.Productionorderid) && !string.IsNullOrEmpty(x.MagistralQr) && JsonConvert.DeserializeObject<PedidosMagistralQrModel>(x.MagistralQr).ItemCode == item.ProductoId && x.Status != ServiceConstants.Cancelado);
-                var usersList = ServiceUtils.CalculateTernary(usersOrdersToLook != null, new List<UserOrderModel> { usersOrdersToLook }, new List<UserOrderModel>());
+                var usersOrdersToLook = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && !selectedPO.Contains(x.Productionorderid) && !string.IsNullOrEmpty(x.MagistralQr) && JsonConvert.DeserializeObject<PedidosMagistralQrModel>(x.MagistralQr).ItemCode == item.ProductoId && x.Status != ServiceConstants.Cancelado);
+                Console.WriteLine(JsonConvert.SerializeObject(usersOrdersToLook, Formatting.Indented));
+                var usersList = ServiceUtils.CalculateTernary(usersOrdersToLook != null, usersOrdersToLook.ToList(), new List<UserOrderModel>());
                 var lineProductToLook = lineProducts.FirstOrDefault(x => !string.IsNullOrEmpty(x.ItemCode) && x.ItemCode == item.ProductoId && !lineProductsIdUsed.Contains(x.Id) && ServiceShared.DeserializeObject(x.BatchName, new List<AlmacenBatchModel>()).Sum(x => x.BatchQty) == invoice.Quantity);
                 var lineProductsList = ServiceUtils.CalculateTernary(lineProductToLook != null, new List<LineProductsModel> { lineProductToLook }, new List<LineProductsModel>());
                 var dataToSearch = this.GetLookUpData(usersList, lineProductsList);
