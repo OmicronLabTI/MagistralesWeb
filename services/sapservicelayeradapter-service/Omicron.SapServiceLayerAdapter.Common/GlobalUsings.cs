@@ -6,3 +6,4 @@ global using Omicron.SapServiceLayerAdapter.Common.DTOs.Delivery;
 global using System.Collections.Generic;
 global using System.Reflection;
 global using System.Text.Json.Serialization;
+global using System.Net;

@@ -6,8 +6,6 @@
 // </copyright>
 // </summary>
 
-using System.Globalization;
-
 namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
 {
     /// <summary>
@@ -647,7 +645,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             return dictResult;
         }
 
-        private async Task CreateReceiptFromProductionOrderId(int productionOrderId, CloseProductionOrderDto closeConfiguration, ProductionOrderDto productionOrder, string logBase)
+        private async Task<InventoryGenEntryDto> GetInventoyGenEntry(int productionOrderId, CloseProductionOrderDto closeConfiguration, ProductionOrderDto productionOrder, string logBase)
         {
             var receiptProduction = new InventoryGenEntryDto();
             var separator = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
@@ -688,6 +686,12 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             line.WarehouseCode = productionOrder.Warehouse;
             receiptProduction.DocumentLines.Add(line);
 
+            return receiptProduction;
+        }
+
+        private async Task CreateReceiptFromProductionOrderId(int productionOrderId, CloseProductionOrderDto closeConfiguration, ProductionOrderDto productionOrder, string logBase)
+        {
+            var receiptProduction = await this.GetInventoyGenEntry(productionOrderId, closeConfiguration, productionOrder, logBase);
             await this.SaveInventoryGenEntry(receiptProduction, productionOrderId, logBase);
         }
 
@@ -743,7 +747,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             }
         }
 
-        private async Task CreateInventoryGenExit(ProductionOrderDto productionOrder, int productionOrderId, string logBase)
+        private InventoryGenExitDto GetInventoryGenExit(ProductionOrderDto productionOrder, int productionOrderId, string logBase)
         {
             var filteredProductionOrderLines = productionOrder.ProductionOrderLines.Where(x => x.ProductionOrderIssueType.Equals(ServiceConstants.ProductionOrderTypeM)).ToList();
 
@@ -760,7 +764,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             if (pendingLines.Count == 0)
             {
                 this.logger.Information($"Production order {productionOrderId} is already fully issued. Nothing to do.", logBase);
-                return;
+                return null;
             }
 
             var inventoryGenExit = new InventoryGenExitDto
@@ -777,6 +781,17 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             };
 
             if (inventoryGenExit.InventoryGenExitLines.Count > 0)
+            {
+                return inventoryGenExit;
+            }
+
+            return null;
+        }
+
+        private async Task CreateInventoryGenExit(ProductionOrderDto productionOrder, int productionOrderId, string logBase)
+        {
+            var inventoryGenExit = this.GetInventoryGenExit(productionOrder, productionOrderId, logBase);
+            if (inventoryGenExit != null)
             {
                 await this.SaveInventoryGenExit(inventoryGenExit, productionOrderId, logBase);
             }
@@ -900,12 +915,6 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                 case ServiceConstants.PrimaryValidationsStep:
                     await this.ExecuteFullFinalizationFlow(productionOrder, logBase);
                     break;
-                case ServiceConstants.CreateInventoryStep:
-                    await this.ExecuteFinalizationFromCreateReceiptStep(productionOrder, logBase);
-                    break;
-                case ServiceConstants.CreateReceiptStep:
-                    await this.ExecuteFinalizationFromCloseProductionOrderStep(productionOrder, logBase);
-                    break;
                 default:
                     this.logger.Error(LogsConstants.StepNotRecognized, logBase, productionOrder.LastStep);
                     break;
@@ -917,33 +926,22 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             var productionOrderSap = await this.GetProductionOrder(productionOrder.FinalizeProductionOrder.ProductionOrderId);
             this.EnsureCloseConfigurationBatches(productionOrder, productionOrderSap);
             this.logger.Information(LogsConstants.CreateInventoryGenExit, logBase, productionOrder.FinalizeProductionOrder.ProductionOrderId);
-            await this.CreateInventoryGenExit(productionOrderSap, productionOrder.FinalizeProductionOrder.ProductionOrderId, logBase);
-            productionOrder.LastStep = ServiceConstants.CreateInventoryStep;
-            var updatedOrder = await this.GetProductionOrder(productionOrder.FinalizeProductionOrder.ProductionOrderId);
-            this.logger.Information(LogsConstants.CreateReceiptFromProductionOrderId, logBase, productionOrder.FinalizeProductionOrder.ProductionOrderId);
-            await this.CreateReceiptFromProductionOrderId(productionOrder.FinalizeProductionOrder.ProductionOrderId, productionOrder, updatedOrder, logBase);
-            productionOrder.LastStep = ServiceConstants.CreateReceiptStep;
-            this.logger.Information(LogsConstants.CloseProductionOrder, logBase, productionOrder.FinalizeProductionOrder.ProductionOrderId);
-            await this.CloseProductionOrder(productionOrder.FinalizeProductionOrder.ProductionOrderId, updatedOrder, logBase);
-            productionOrder.LastStep = ServiceConstants.SuccessfullyClosedInSapStep;
-        }
+            var inventoryExit = this.GetInventoryGenExit(productionOrderSap, productionOrder.FinalizeProductionOrder.ProductionOrderId, logBase);
+            var receiptProduction = await this.GetInventoyGenEntry(productionOrder.FinalizeProductionOrder.ProductionOrderId, productionOrder, productionOrderSap, logBase);
 
-        private async Task ExecuteFinalizationFromCreateReceiptStep(CloseProductionOrderDto productionOrder, string logBase)
-        {
-            var updatedOrder = await this.GetProductionOrder(productionOrder.FinalizeProductionOrder.ProductionOrderId);
-            this.logger.Information(LogsConstants.CreateReceiptFromProductionOrderId, logBase, productionOrder.FinalizeProductionOrder.ProductionOrderId);
-            await this.CreateReceiptFromProductionOrderId(productionOrder.FinalizeProductionOrder.ProductionOrderId, productionOrder, updatedOrder, logBase);
-            productionOrder.LastStep = ServiceConstants.CreateReceiptStep;
-            this.logger.Information(LogsConstants.CloseProductionOrder, logBase, productionOrder.FinalizeProductionOrder.ProductionOrderId);
-            await this.CloseProductionOrder(productionOrder.FinalizeProductionOrder.ProductionOrderId, updatedOrder, logBase);
-            productionOrder.LastStep = ServiceConstants.SuccessfullyClosedInSapStep;
-        }
+            var batchInventoryGenEntries = new BatchOperationDto() { Method = HttpMethod.Post, Body = receiptProduction, ContentId = "PostInventoryGenEntries", Url = ServiceQuerysConstants.QryPostInventoryGenEntries };
+            var batchCloseOrder = new BatchOperationDto() { Method = HttpMethod.Patch, Body = new { ProductionOrderStatus = ServiceConstants.ProductionOrderClosedStatus }, ContentId = "PatchCloseProductionOrder", Url = string.Format(ServiceQuerysConstants.QryProductionOrderById, productionOrder.FinalizeProductionOrder.ProductionOrderId) };
 
-        private async Task ExecuteFinalizationFromCloseProductionOrderStep(CloseProductionOrderDto productionOrder, string logBase)
-        {
-            var updatedOrder = await this.GetProductionOrder(productionOrder.FinalizeProductionOrder.ProductionOrderId);
-            this.logger.Information(LogsConstants.CloseProductionOrder, logBase, productionOrder.FinalizeProductionOrder.ProductionOrderId);
-            await this.CloseProductionOrder(productionOrder.FinalizeProductionOrder.ProductionOrderId, updatedOrder, logBase);
+            var operations = new List<BatchOperationDto>();
+            if (inventoryExit != null)
+            {
+                operations.Add(new BatchOperationDto() { Method = HttpMethod.Post, Body = inventoryExit, ContentId = "PostInventoryGenExists", Url = ServiceQuerysConstants.QryPostInventoryGenExists });
+            }
+
+            operations.Add(batchInventoryGenEntries);
+            operations.Add(batchCloseOrder);
+
+            await this.serviceLayerClient.SendBatchAsync(operations);
             productionOrder.LastStep = ServiceConstants.SuccessfullyClosedInSapStep;
         }
 
