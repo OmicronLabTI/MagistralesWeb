@@ -23,12 +23,16 @@ export class AutoBillingService {
     startDate: Date,
     endDate: Date,
     billingType: string,
-    invoiceType: string
+    invoiceType: string,
+    idtype?: string,
+    id?: string
   ): Observable<{ items: AutoBillingModel[]; total: number }> {
 
     const formatDate = (d: Date): string => {
       return new Date(d).toISOString().split('T')[0];
     };
+
+    invoiceType = invoiceType.replace('Con datos fiscales', 'No genérica');
 
     const params = {
       offset: String(offset),
@@ -37,7 +41,9 @@ export class AutoBillingService {
       startDate: formatDate(startDate),
       endDate: formatDate(endDate),
       billingType,
-      invoiceType
+      invoiceType,
+      idtype,
+      id
     };
 
     return this.consume.httpGet<AutoBillingApiResponse>(this.API_URL, params).pipe(
@@ -46,23 +52,26 @@ export class AutoBillingService {
         const total = api && api.comments && api.comments.total ? api.comments.total : 0;
 
         const mapped: AutoBillingModel[] = rows.map((item: AutoBillingApiItem) => {
-          const sapOrders = item.sapOrders.map((s) => ({
+          const sapOrders = item.sapOrders.map(s => ({
             id: s.id,
             idpedidosap: s.sapOrderId,
             idinvoice: s.idInvoice
           }));
 
-          const remissions = item.remissions.map((r) => ({
+          const remissions = item.remissions.map(r => ({
             id: r.id,
             idremission: r.remissionId,
             idinvoice: r.idInvoice
           }));
 
           return {
+            id: item.id,
             requestId: item.id,
             sapInvoiceId: item.idFacturaSap,
             sapCreationDate: item.invoiceCreateDate,
-            invoiceType: item.typeInvoice,
+            invoiceType: item.typeInvoice === 'No genérica'
+              ? 'Con datos fiscales'
+              : item.typeInvoice,
             billingMode: item.billingType,
             originUser: item.almacenUser,
             shopOrder: item.dxpOrderId,
@@ -70,7 +79,9 @@ export class AutoBillingService {
             shipments: item.remissionsCount,
             retries: item.retryNumber,
             sapOrders,
-            remissions
+            remissions,
+            status: item.status,
+            lastUpdateDate: item.lastUpdateDate
           };
         });
 

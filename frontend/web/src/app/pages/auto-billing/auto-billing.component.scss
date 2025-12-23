@@ -208,8 +208,7 @@
     border-color: #0070B7 !important;
   }
 
-  ::ng-deep .mdc-checkbox__native-control:enabled:not(:checked)
-    ~ .mdc-checkbox__background {
+  ::ng-deep .mdc-checkbox__native-control:enabled:not(:checked)~.mdc-checkbox__background {
     border-color: #555 !important;
   }
 
@@ -217,4 +216,28 @@
     font-family: "omicron-medium", sans-serif !important;
     font-size: 14px !important;
   }
+}
+
+.filter-section {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  padding-top: 10px;
+}
+
+.button-blue-user-list {
+  background-color: #0081C2 !important;
+  color: #fff !important;
+}
+
+.no-registers {
+  margin: 15px 0px;
+  width: 100%;
+  height: 8%;
+  display: flex;
+  justify-content: center;
+  color: #5f606c !important;
+  font-size: 1.5em;
+  font-family: omicron-medium, Arial, Helvetica, sans-serif !important;
 }

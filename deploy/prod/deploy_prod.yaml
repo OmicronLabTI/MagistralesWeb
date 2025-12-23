@@ -850,4 +850,101 @@ spec:
         type: Utilization
         averageUtilization: 80
 ---
-
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: invoice-deployment
+  labels:
+    app: invoice
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: invoice
+  template:
+    metadata:
+      labels:
+        app: invoice
+    spec:
+      containers:
+        - name: invoice
+          image: omicron.azurecr.io/omicronprod/omicron-appiosformulas-invoice-repository:latest
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Prod
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
+            - name: POSTGRESS_NET_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: omicron_net_postgress_db
+            - name: REDIS_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: redis
+            - name: STORAGE_ACCOUNT
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: storage_account
+            - name: STORAGE_ACCOUNT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: storage_account_key
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: 185m
+              memory: 368Mi
+            requests:
+              cpu: 93m # -50% limit (50% del limite)
+              memory: 258Mi # -30% limit (70% del limite)
+      imagePullSecrets:
+        - name: pullsecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: invoice-svc
+  labels:
+    app: invoice
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+  selector:
+    app: invoice
+  type: ClusterIP
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: invoice-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: invoice-deployment
+  minReplicas: 3
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80
+---

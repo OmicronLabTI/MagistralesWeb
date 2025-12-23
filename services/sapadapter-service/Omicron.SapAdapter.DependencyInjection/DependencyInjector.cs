@@ -14,6 +14,7 @@ namespace Omicron.SapAdapter.DependencyInjection
     using Microsoft.Extensions.DependencyInjection;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Context;
+    using Omicron.SapAdapter.Entities.Interceptor;
     using Omicron.SapAdapter.Facade.Sap;
     using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Catalog;
@@ -71,10 +72,11 @@ namespace Omicron.SapAdapter.DependencyInjection
         /// <param name="configuration">Configuration Options.</param>
         public static void AddDbContext(IConfiguration configuration)
         {
-            Services.AddDbContextPool<DatabaseContext>(
-                options => options.UseSqlServer(
-                    configuration.GetConnectionString(nameof(DatabaseContext)),
-                    action => action.EnableRetryOnFailure(3)));
+            Services.AddDbContextPool<DatabaseContext>(options =>
+            {
+                options.UseSqlServer(configuration.GetConnectionString(nameof(DatabaseContext)), action => action.EnableRetryOnFailure(3));
+                options.AddInterceptors(new ReadUncommittedInterceptor());
+            });
         }
 
         /// <summary>

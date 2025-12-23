@@ -1,14 +1,16 @@
 <div class="auto-billing-page">
   <div class="header-fixed"></div>
 
-  <div class="filter-actions">
-    <button mat-raised-button color="primary" class="btn-search" (click)="openAdvancedFiltersDialog()">
+  <!-- ============================================================
+       ACTION FILTER BUTTONS (HOMOLOGADOS)
+       ============================================================ -->
+  <div class="filter-section">
+    <button mat-raised-button class="button-blue-user-list" (click)="openAdvancedFiltersDialog()">
       <mat-icon>search</mat-icon>
       Buscar
     </button>
-
-    <button mat-stroked-button class="btn-clear" (click)="onClear()">
-      <mat-icon>delete_sweep</mat-icon>
+    <button mat-raised-button class="button-blue-user-list" (click)="onClear()">
+      <img src="assets/icons/eraser.svg" alt="delete filters">
       Limpiar filtros
     </button>
   </div>
@@ -42,7 +44,7 @@
         <ng-container matColumnDef="billingMode">
           <th mat-header-cell *matHeaderCellDef>
             <div class="header-filter" (click)="openFilter($event, 'billing')">
-              <span>Forma<br/>facturación</span>
+              <span>Forma<br />facturación</span>
               <mat-icon class="arrow">expand_more</mat-icon>
             </div>
           </th>
@@ -56,9 +58,8 @@
 
         <ng-container matColumnDef="shopOrder">
           <th mat-header-cell *matHeaderCellDef>Pedido Shop</th>
-          <td mat-cell *matCellDef="let e"
-              class="shop-order-cell"
-              [matTooltip]="e.shopOrder ? e.shopOrder.toUpperCase() : ''">
+          <td mat-cell *matCellDef="let e" class="shop-order-cell"
+            [matTooltip]="e.shopOrder ? e.shopOrder.toUpperCase() : ''">
             {{ e.shopOrder ? e.shopOrder.slice(-6).toUpperCase() : '' }}
           </td>
         </ng-container>
@@ -87,6 +88,8 @@
             <mat-menu #menu="matMenu">
               <button mat-menu-item (click)="openSapOrdersDialog(e)">Ver pedidos SAP</button>
               <button mat-menu-item (click)="openShipmentsDialog(e)">Ver remisiones</button>
+              <button *ngIf="e.shopOrder?.length !== 0" mat-menu-item (click)="seeMissingSAPOrders(e)">
+                Pedidos SAP sin facturar</button>
             </mat-menu>
           </td>
         </ng-container>
@@ -96,18 +99,21 @@
       </table>
     </div>
 
-    <mat-paginator [pageSizeOptions]="[5,10,15,20]" [pageSize]="10"></mat-paginator>
+    <div class="no-registers" *ngIf="dataSource.data.length === 0">
+      <span>No se encontrarón resultados con la búsqueda indicada.</span>
+    </div>
+    <div [style.display]="isEmptyResults ? 'none' : 'block'">
+      <mat-paginator [pageSizeOptions]="[5,10,15,20]" [pageSize]="10"></mat-paginator>
+    </div>
   </div>
 
   <!-- POPUP PERSONALIZADO -->
   <div class="filter-overlay" *ngIf="showFilter" [ngStyle]="popupPosition">
     <div class="filter-box">
-      <mat-checkbox
-        *ngFor="let opt of currentOptions"
-        [(ngModel)]="opt.selected">
+      <mat-checkbox *ngFor="let opt of currentOptions" [(ngModel)]="opt.selected" [disabled]="opt.disabled"
+        (change)="onOptionChanged(i)">
         {{ opt.label }}
       </mat-checkbox>
     </div>
   </div>
-
 </div>

@@ -33,6 +33,7 @@ namespace Omicron.Invoice.Test
             new UserModel(),
             new UpdateManualChangeDto(),
             new AutoBillingRowDto(),
+            new OrderDetailModel(),
         };
 
         /// <summary>

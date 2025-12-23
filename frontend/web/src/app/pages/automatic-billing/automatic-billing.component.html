@@ -97,7 +97,7 @@ This template is used within the AutoBillingComponent in Angular.
             </button>
             <mat-menu #menuStatus="matMenu" yPosition="below" (closed)="applyFilters()">
               <mat-selection-list [(ngModel)]="statusColumnSelectedOptions"
-                (selectionChange)="onSelectionChangeStatus()">
+                (selectionChange)="onSelectionChangeStatus()" class="custom-checkbox-styles">
                 <mat-list-option (click)="$event.stopPropagation()" *ngFor="let filter of filtersStatus"
                   [value]="filter" [disabled]="isLastStatusFilter(filter)">
                   {{ filter }}
@@ -146,7 +146,7 @@ This template is used within the AutoBillingComponent in Angular.
             </button>
             <mat-menu #menuInvoiceType="matMenu" yPosition="below" (closed)="applyFilters()">
               <mat-selection-list [(ngModel)]="invoiceTypeColumnSelectedOptions"
-                (selectionChange)="onSelectionChangeInvoiceType()">
+                (selectionChange)="onSelectionChangeInvoiceType()" class="custom-checkbox-styles">
                 <mat-list-option (click)="$event.stopPropagation()" *ngFor="let filter of filterInvoiceType"
                   [value]="filter" [disabled]="isLastInvoiceFilter(filter)">
                   {{ filter === automaticBillingInvoiceType.non_generic ? 'Con datos fiscales' : filter}}
@@ -172,7 +172,7 @@ This template is used within the AutoBillingComponent in Angular.
               </button>
               <mat-menu #menuBillingType="matMenu" yPosition="below" (closed)="applyFilters()">
                 <mat-selection-list [(ngModel)]="billingTypeColumSelectedOptions"
-                  (selectionChange)="onSelectionChangeBillingType()">
+                  (selectionChange)="onSelectionChangeBillingType()" class="custom-checkbox-styles">
                   <mat-list-option (click)="$event.stopPropagation()" *ngFor="let filter of filterBillingType"
                     [value]="filter" [disabled]="isLastBillingTypeFilter(filter)">
                     {{ filter }}
@@ -224,7 +224,7 @@ This template is used within the AutoBillingComponent in Angular.
             Pedido SAP
           </th>
           <td mat-cell *matCellDef="let element" class="sap-order-column color-text-intables tdcell-center tdcell">
-            {{ element.sapOrderId[0] }}
+            {{ element.sapOrderId.length }}
           </td>
         </ng-container>
 
@@ -237,7 +237,7 @@ This template is used within the AutoBillingComponent in Angular.
             Remisiones
           </th>
           <td mat-cell *matCellDef="let element" class="remissions-column color-text-intables tdcell-center tdcell">
-            {{ element.remissionId[0] }}
+            {{ element.remissionId.length }}
           </td>
         </ng-container>
 
@@ -327,6 +327,9 @@ This template is used within the AutoBillingComponent in Angular.
               <button mat-menu-item (click)="seeDetail(element, false)">
                 <span>Ver remisiones</span>
               </button>
+              <button *ngIf="element.dxpOrderId?.length !== 0" mat-menu-item (click)="seeMissingSAPOrders(element)">
+                <span>Pedidos SAP sin facturar</span>
+              </button>
             </mat-menu>
           </td>
         </ng-container>
@@ -339,7 +342,8 @@ This template is used within the AutoBillingComponent in Angular.
       </table>
       <div class="no-registers" *ngIf="dataSource.data.length === 0">
         <span *ngIf="!dataService.validateValidString(advanceFilter)">No hay peticiones registradas</span>
-        <span *ngIf="dataService.validateValidString(advanceFilter)">No se encontrarón resultados con la búsqueda indicada.</span>
+        <span *ngIf="dataService.validateValidString(advanceFilter)">No se encontrarón resultados con la búsqueda
+          indicada.</span>
       </div>
     </div>
 

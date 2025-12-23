@@ -33,6 +33,26 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
         }
 
         /// <inheritdoc/>
+        public async Task InsertRemissions(List<InvoiceRemissionModel> remissions)
+        {
+            this.context.Remissions.AddRange(remissions);
+            await this.context.SaveChangesAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task InsertSapOrders(List<InvoiceSapOrderModel> sapOrders)
+        {
+            this.context.InvoiceSapOrderModel.AddRange(sapOrders);
+            await this.context.SaveChangesAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<InvoiceSapOrderModel>> GetSapOrdersById(List<int> sapOrders)
+        {
+            return await this.context.InvoiceSapOrderModel.Where(x => sapOrders.Contains(x.SapOrderId)).AsNoTracking().ToListAsync();
+        }
+
+        /// <inheritdoc/>
         public async Task<List<InvoiceModel>> GetInvoicesNotCreatedByStatus(
             List<string> status,
             List<string> typeInvoices,
@@ -174,46 +194,6 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
                 .ConfigureAwait(false);
 
             return invoices;
-        }
-
-        /// <summary>
-        /// Retrieves all SAP order entities associated with a collection of invoices.
-        /// Results are grouped by invoice ID and returned as a dictionary.
-        /// </summary>
-        /// <param name="invoiceIds">A list of invoice identifiers for which to load SAP orders.</param>
-        /// <returns>
-        /// A task representing the asynchronous operation.
-        /// The task result contains a dictionary where each key represents an invoice ID and the value
-        /// is a list of <see cref="InvoiceSapOrderModel"/> objects linked to that invoice.
-        /// </returns>
-        public async Task<Dictionary<string, List<InvoiceSapOrderModel>>> GetSapOrdersByInvoiceIdsAsync(List<string> invoiceIds)
-        {
-            return await this.context.InvoiceSapOrderModel
-                .AsNoTracking()
-                .Where(s => invoiceIds.Contains(s.IdInvoice))
-                .GroupBy(s => s.IdInvoice)
-                .ToDictionaryAsync(g => g.Key, g => g.ToList())
-                .ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Retrieves all remission entities associated with a collection of invoices.
-        /// Results are grouped by invoice ID and returned as a dictionary.
-        /// </summary>
-        /// <param name="invoiceIds">A list of invoice identifiers for which to load remission data.</param>
-        /// <returns>
-        /// A task representing the asynchronous operation.
-        /// The task result contains a dictionary where each key represents an invoice ID and the value
-        /// is a list of <see cref="InvoiceRemissionModel"/> objects linked to that invoice.
-        /// </returns>
-        public async Task<Dictionary<string, List<InvoiceRemissionModel>>> GetRemissionsByInvoiceIdsAsync(List<string> invoiceIds)
-        {
-            return await this.context.Remissions
-                .AsNoTracking()
-                .Where(r => invoiceIds.Contains(r.IdInvoice))
-                .GroupBy(r => r.IdInvoice)
-                .ToDictionaryAsync(g => g.Key, g => g.ToList())
-                .ConfigureAwait(false);
         }
 
         /// <summary>

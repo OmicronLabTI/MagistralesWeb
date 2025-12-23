@@ -26,4 +26,6 @@ export interface AutoBillingApiItem {
   sapOrdersCount: number;
   remissionsCount: number;
   retryNumber: number;
+  lastUpdateDate: Date;
+  status: string;
 }

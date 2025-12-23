@@ -11,7 +11,7 @@ export class FilterInvoiceTypeDialogComponent {
   searchTypes = [
     { label: 'ID Factura SAP', value: 'ID Factura SAP' },
     { label: 'Pedido SAP', value: 'Pedido SAP' },
-    { label: 'Pedido shop', value: 'Pedido shop' }
+    { label: 'Pedido Shop', value: 'Pedido shop' }
   ];
 
   selectedSearchType = '';
@@ -27,6 +27,7 @@ export class FilterInvoiceTypeDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: boolean
   ) {
     this.setDefaultDateRange();
+    this.setLabelForAutomaticBilling();
   }
 
   get isIdFacturaSap(): boolean {
@@ -48,14 +49,15 @@ export class FilterInvoiceTypeDialogComponent {
 
   private setDefaultDateRange(): void {
     const today = new Date();
-    const currentYear = today.getFullYear();
-    const yearStart = new Date(currentYear, 0, 1);
+    const past5 = new Date();
+    past5.setDate(today.getDate() - 4);
 
-    const fromCandidate = new Date(today);
-    fromCandidate.setDate(today.getDate() - 4);
-
-    this.dateFrom = fromCandidate < yearStart ? yearStart : fromCandidate;
+    this.dateFrom = past5;
     this.dateTo = today;
+  }
+
+  private setLabelForAutomaticBilling(): void {
+    this.searchTypes[0].label = this.data ? 'ID Petición' : 'ID Factura SAP';
   }
 
   private isDateRangeValid(): boolean {
@@ -115,8 +117,7 @@ export class FilterInvoiceTypeDialogComponent {
   clear(): void {
     this.selectedSearchType = '';
     this.searchValue = '';
-    this.dateFrom = null;
-    this.dateTo = null;
+    this.setDefaultDateRange();
     this.formValid = false;
     this.canClear = false;
   }
@@ -131,8 +132,8 @@ export class FilterInvoiceTypeDialogComponent {
     const result: InvoiceFilterResult = {
       type: this.selectedSearchType || null,
       value: this.searchValue || null,
-      from: usesOnlyTextSearch ? null : this.dateFrom,
-      to: usesOnlyTextSearch ? null : this.dateTo
+      from: this.dateFrom,
+      to: this.dateTo
     };
 
     this.dialogRef.close(result);

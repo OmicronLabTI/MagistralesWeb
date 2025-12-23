@@ -19,5 +19,19 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.DeliveryNotes
         /// <value>Delivery Note Lines.</value>
         [JsonProperty("DocumentLines")]
         public List<DeliveryNoteLineDto> DeliveryNoteLines { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Delivery Note Lines.
+        /// </summary>
+        /// <value>Delivery Note Lines.</value>
+        [JsonProperty("U_ENVASE")]
+        public string Container { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Delivery Note Lines.
+        /// </summary>
+        /// <value>Delivery Note Lines.</value>
+        [JsonProperty("U_ETIQUETA")]
+        public string Label { get; set; }
     }
 }

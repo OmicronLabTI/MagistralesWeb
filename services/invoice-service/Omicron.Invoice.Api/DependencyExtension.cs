@@ -81,6 +81,11 @@ namespace Omicron.Invoice.Api
                 c.BaseAddress = new Uri(webApplication.Configuration["UserService"]);
             })
             .AddTypedClient<IUsersService, UsersService>();
+            webApplication.Services.AddHttpClient("processpayment", c =>
+            {
+                c.BaseAddress = new Uri(webApplication.Configuration["ProccessPaymentsService"]);
+            })
+            .AddTypedClient<IProcessPaymentService, ProcessPaymentService>();
 
             return webApplication.Build();
         }

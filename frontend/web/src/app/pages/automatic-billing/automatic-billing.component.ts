@@ -47,6 +47,9 @@ import {
   ManualAdjustmentConfirmedDialogComponent
 } from 'src/app/dialogs/manual-adjustment-confirmed-dialog/manual-adjustment-confirmed-dialog.component';
 import {
+  ViewMissingSapOrdersDialogComponent
+} from 'src/app/dialogs/view-missing-sap-orders-dialog/view-missing-sap-orders-dialog.component';
+import {
   ViewSapOrdersDialogComponent
 } from 'src/app/dialogs/view-sap-orders-dialog/view-sap-orders-dialog.component';
 import {
@@ -203,7 +206,13 @@ export class AutomaticBillingComponent implements OnInit {
 
 
   clearFilters(): void {
+    this.statusColumnSelectedOptions = [...this.filtersStatus];
+    this.invoiceTypeColumnSelectedOptions = [...this.filterInvoiceType];
+    this.billingTypeColumSelectedOptions = [...this.filterBillingType];
     this.advanceFilter = '';
+    this.onSelectionChangeStatus();
+    this.onSelectionChangeInvoiceType();
+    this.onSelectionChangeBillingType();
     this.applyFilters();
   }
 
@@ -322,7 +331,7 @@ export class AutomaticBillingComponent implements OnInit {
 
     if (isForSAPorders) {
       this.dialog.open(ViewSapOrdersDialogComponent, {
-        width: '800px',
+        width: 'auto',
         panelClass: 'custom-dialog-container',
         data: {
           invoiceId: row.id,
@@ -334,7 +343,7 @@ export class AutomaticBillingComponent implements OnInit {
       });
     } else {
       this.dialog.open(ViewShipmentsDialogComponent, {
-        width: '800px',
+        width: 'auto',
         panelClass: 'custom-dialog-container',
         data: {
           invoiceId: row.id,
@@ -345,6 +354,23 @@ export class AutomaticBillingComponent implements OnInit {
         }
       });
     }
+  }
+
+  seeMissingSAPOrders(row: AutomaticBilling): void {
+    const params = `pedidodxp=${row.dxpOrderId}`;
+    this.invoicesService.getMissingSAPOrders(params).subscribe(res => {
+      this.dialog.open(ViewMissingSapOrdersDialogComponent, {
+        width: 'auto',
+        panelClass: 'custom-dialog-container',
+        data: {
+          dxpOrder: row.dxpOrderId,
+          orders: res.response
+        }
+      });
+    }, error => {
+      this.errorService.httpError(error);
+    }
+    );
   }
 
   openAdvancedFiltersDialog(): void {
@@ -421,14 +447,14 @@ export class AutomaticBillingComponent implements OnInit {
    * Checks if a given filter is the last remaining active one.
    */
   isLastStatusFilter(filter: string): boolean {
-    return this.lastOptionStatus === filter;
+    return this.lastOptionStatus === filter || this.dataService.validateValidString(this.advanceFilter);
   }
 
   isLastInvoiceFilter(filter: string): boolean {
-    return this.lastOptionInvoiceType === filter;
+    return this.lastOptionInvoiceType === filter || this.dataService.validateValidString(this.advanceFilter);
   }
 
   isLastBillingTypeFilter(filter: string): boolean {
-    return this.lastOptionBillingType === filter;
+    return this.lastOptionBillingType === filter || this.dataService.validateValidString(this.advanceFilter);
   }
 }

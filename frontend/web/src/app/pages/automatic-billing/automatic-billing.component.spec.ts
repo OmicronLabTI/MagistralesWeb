@@ -26,7 +26,8 @@ import {
   changesAppliedConfirmMock,
   changesAppliedFailedMock,
   invoicesMock,
-  manualRetryResponseMock
+  manualRetryResponseMock,
+  missingSAPOrdersResponseMock
 } from 'src/mocks/invoicesMock';
 import { automaticBillingBillingTypeConst, automaticBillingInvoiceTypeConst,
   automaticBillingStatusConst } from 'src/app/constants/automatic_billing_constants';
@@ -62,7 +63,8 @@ describe('AutomaticBillingComponent', () => {
     invoiceServiceSpy = jasmine.createSpyObj('InvoicesService', [
       'getAutomaticBillingTableData',
       'adjustmentMade',
-      'sendManualRetry'
+      'sendManualRetry',
+      'getMissingSAPOrders',
     ]);
 
     observableServiceSpy = jasmine.createSpyObj('ObservableService', [
@@ -95,6 +97,9 @@ describe('AutomaticBillingComponent', () => {
 
     invoiceServiceSpy.sendManualRetry.and.returnValue(
       of(manualRetryResponseMock)
+    );
+    invoiceServiceSpy.getMissingSAPOrders.and.returnValue(
+      of(missingSAPOrdersResponseMock)
     );
 
     TestBed.configureTestingModule({
@@ -178,6 +183,11 @@ describe('AutomaticBillingComponent', () => {
   it('should seeDetail for remissions', () => {
     spyOn(matDialog, 'open');
     component.seeDetail(invoicesDashboardMock[0], false);
+    expect(matDialog.open).toHaveBeenCalled();
+  });
+  it('should seeDetail for seeMissingSAPOrders', () => {
+    spyOn(matDialog, 'open');
+    component.seeMissingSAPOrders(invoicesDashboardMock[0]);
     expect(matDialog.open).toHaveBeenCalled();
   });
   it('should onSelectionChangeStatus', () => {

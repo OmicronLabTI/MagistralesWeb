@@ -42,6 +42,13 @@ namespace Omicron.Invoice.Facade.Users
         Task<ResultDto> GetInvoicesByRemissionId(List<int> remissions);
 
         /// <summary>
+        /// Method for get uninvoiced sap orders.
+        /// </summary>
+        /// <param name="parameters">parameters.</param>
+        /// <returns>A representing the result of the asynchronous operation.</returns>
+        Task<ResultDto> GetUninvoicedSapOrders(Dictionary<string, string> parameters);
+
+        /// <summary>
         /// Retrieves automatic billing data (AutoBilling) based on the provided filter parameters.
         /// </summary>
         /// <param name="parameters">

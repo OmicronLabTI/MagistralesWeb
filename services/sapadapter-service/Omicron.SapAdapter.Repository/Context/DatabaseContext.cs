@@ -9,6 +9,7 @@
 namespace Omicron.SapAdapter.Entities.Context
 {
     using Microsoft.EntityFrameworkCore;
+    using Omicron.SapAdapter.Entities.Interceptor;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.DbModels;
 
@@ -169,6 +170,12 @@ namespace Omicron.SapAdapter.Entities.Context
                 table.InvoiceId,
                 table.LineNum,
             });
+        }
+
+        /// <inheritdoc/>
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.AddInterceptors(new ReadUncommittedInterceptor());
         }
     }
 }

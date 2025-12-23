@@ -16,6 +16,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
         private readonly IServiceLayerClient serviceLayerClient;
         private readonly ILogger logger;
         private readonly IMapper mapper;
+        private readonly IRedisService redisService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductionOrderService"/> class.
@@ -23,11 +24,13 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
         /// <param name="serviceLayerClient">The serviceLayerClient.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="mapper">The mapper.</param>
-        public ProductionOrderService(IServiceLayerClient serviceLayerClient, ILogger logger, IMapper mapper)
+        /// <param name="redisService">Redis Service.</param>
+        public ProductionOrderService(IServiceLayerClient serviceLayerClient, ILogger logger, IMapper mapper, IRedisService redisService)
         {
             this.serviceLayerClient = serviceLayerClient.ThrowIfNull(nameof(serviceLayerClient));
             this.logger = logger.ThrowIfNull(nameof(logger));
             this.mapper = mapper.ThrowIfNull(nameof(mapper));
+            this.redisService = redisService.ThrowIfNull(nameof(redisService));
         }
 
         /// <inheritdoc/>
@@ -442,6 +445,16 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                 try
                 {
                     this.logger.Information(LogsConstants.ExecuteFinalizationSteps, logBase, productionOrder.FinalizeProductionOrder.ProductionOrderId);
+
+                    string lockKey = $"lock:finalizeproductionorderinsap:{productionOrder.FinalizeProductionOrder.ProductionOrderId}";
+                    bool acquired = await this.redisService.TryAcquireLockAsync(lockKey, TimeSpan.FromMinutes(15));
+
+                    if (!acquired)
+                    {
+                        string podName = Environment.GetEnvironmentVariable("HOSTNAME") ?? "unknown";
+                        this.logger.Information(LogsConstants.AlreadyBeingProcessedByAnotherPod, logBase, productionOrder.FinalizeProductionOrder.ProductionOrderId, lockKey, podName);
+                    }
+
                     await this.ExecuteFinalizationStepAsync(productionOrder, logBase);
                     processResultResult.Add(
                             GenerateValidationResult(

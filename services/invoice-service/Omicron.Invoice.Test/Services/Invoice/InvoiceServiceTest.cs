@@ -32,6 +32,7 @@ namespace Omicron.Invoice.Test.Services.Invoice
             var mockServiceLayer = new Mock<ISapServiceLayerAdapterService>();
             var mockCatalogs = new Mock<ICatalogsService>();
             var mockRedis = new Mock<IRedisService>();
+            var processPaymentServiceMock = new Mock<IProcessPaymentService>();
 
             mockDao.Setup(x => x.GetAutoBillingByFilters(
                     It.IsAny<List<string>>(),
@@ -83,7 +84,8 @@ namespace Omicron.Invoice.Test.Services.Invoice
                 mockServiceLayer.Object,
                 mockCatalogs.Object,
                 mockRedis.Object,
-                mockUsers.Object);
+                mockUsers.Object,
+                processPaymentServiceMock.Object);
 
             var parameters = new Dictionary<string, string> { { "offset", "0" }, { "limit", "10" } };
 
@@ -117,6 +119,7 @@ namespace Omicron.Invoice.Test.Services.Invoice
             var mockServiceLayer = new Mock<ISapServiceLayerAdapterService>();
             var mockCatalogs = new Mock<ICatalogsService>();
             var mockRedis = new Mock<IRedisService>();
+            var processPaymentServiceMock = new Mock<IProcessPaymentService>();
 
             mockDao.Setup(x => x.GetAutoBillingByFilters(
                     It.IsAny<List<string>>(),
@@ -158,7 +161,8 @@ namespace Omicron.Invoice.Test.Services.Invoice
                 mockServiceLayer.Object,
                 mockCatalogs.Object,
                 mockRedis.Object,
-                mockUsers.Object);
+                mockUsers.Object,
+                processPaymentServiceMock.Object);
 
             var parameters = new Dictionary<string, string> { { "offset", "0" }, { "limit", "10" } };
 

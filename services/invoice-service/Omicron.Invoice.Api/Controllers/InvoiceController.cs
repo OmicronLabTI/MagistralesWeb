@@ -64,6 +64,17 @@ namespace Omicron.Invoice.Api.Controllers
         public async Task<IActionResult> GetInvoicesByRemissionId([FromBody] List<int> remissions)
             => this.Ok(await this.invoiceFacade.GetInvoicesByRemissionId(remissions));
 
+
+        /// <summary>
+        /// Method for get all users.
+        /// </summary>
+        /// <param name="parameters">parameters.</param>
+        /// <returns>A representing the result of the asynchronous operation.</returns>
+        [HttpGet]
+        [Route("/uninvoiced/order")]
+        public async Task<IActionResult> GetUninvoicedSapOrders([FromQuery] Dictionary<string, string> parameters)
+            => this.Ok(await this.invoiceFacade.GetUninvoicedSapOrders(parameters));
+
         /// <summary>
         /// Method Ping.
         /// </summary>

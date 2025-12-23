@@ -223,18 +223,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     arrayStatus);
             }
 
-            var orderToReturn = userOrderByType
-                .Select(x => new
-                {
-                    x.InvoiceId,
-                    x.StatusAlmacen,
-                    x.InvoiceStoreDate,
-                    x.StatusInvoice,
-                    x.UserInvoiceStored,
-                    x.InvoiceLineNum,
-                });
-
-            return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, null);
+            return ServiceUtils.CreateResult(true, 200, null, userOrderByType, null, null);
         }
 
         /// <inheritdoc/>

@@ -20,6 +20,7 @@ namespace Omicron.Invoice.Services.Invoice.Impl
         private readonly ISapServiceLayerAdapterService serviceLayerService;
         private readonly ISapAdapter sapAdapter;
         private readonly IUsersService usersService;
+        private readonly IProcessPaymentService processPaymentService;
         private ICatalogsService catalogsService;
 
         private IRedisService redisService;
@@ -36,6 +37,7 @@ namespace Omicron.Invoice.Services.Invoice.Impl
         /// <param name="catalogsService">the catalog.</param>
         /// <param name="redisService">the redis.</param>
         /// <param name="usersService">the usersService.</param>
+        /// <param name="processPaymentService">the processPaymentService.</param>
         public InvoiceService(
             IInvoiceDao invoiceDao,
             IBackgroundTaskQueue taskQueue,
@@ -45,7 +47,8 @@ namespace Omicron.Invoice.Services.Invoice.Impl
             ISapServiceLayerAdapterService serviceLayerService,
             ICatalogsService catalogsService,
             IRedisService redisService,
-            IUsersService usersService)
+            IUsersService usersService,
+            IProcessPaymentService processPaymentService)
         {
             this.invoiceDao = invoiceDao;
             this.taskQueue = taskQueue.ThrowIfNull(nameof(taskQueue));
@@ -56,23 +59,12 @@ namespace Omicron.Invoice.Services.Invoice.Impl
             this.catalogsService = catalogsService.ThrowIfNull(nameof(catalogsService));
             this.redisService = redisService.ThrowIfNull(nameof(redisService));
             this.usersService = usersService.ThrowIfNull(nameof(usersService));
+            this.processPaymentService = processPaymentService.ThrowIfNull(nameof(processPaymentService));
         }
 
         /// <inheritdoc/>
         public async Task<ResultDto> RegisterInvoice(CreateInvoiceDto request)
         {
-            var remissions = request.IdDeliveries.Distinct().Select(x => new InvoiceRemissionModel()
-            {
-                RemissionId = x,
-                IdInvoice = request.ProcessId,
-            }).ToList();
-
-            var sapOrders = request.IdSapOrders.Distinct().Select(x => new InvoiceSapOrderModel()
-            {
-                SapOrderId = x,
-                IdInvoice = request.ProcessId,
-            }).ToList();
-
             var invoice = new InvoiceModel()
             {
                 Id = request.ProcessId,
@@ -88,21 +80,30 @@ namespace Omicron.Invoice.Services.Invoice.Impl
                 Payload = JsonConvert.SerializeObject(request),
             };
 
-            invoice.Remissions = request.IdDeliveries.Select(x => new InvoiceRemissionModel()
-            {
-                RemissionId = x,
-                IdInvoice = invoice.Id,
-                Invoice = invoice,
-            }).ToList();
-
-            invoice.SapOrders = request.IdSapOrders.Select(x => new InvoiceSapOrderModel()
-            {
-                SapOrderId = x,
-                IdInvoice = invoice.Id,
-                Invoice = invoice,
-            }).ToList();
-
             await this.invoiceDao.InsertInvoices(new List<InvoiceModel>() { invoice });
+
+            if (request.IdDeliveries != null && request.IdDeliveries.Any())
+            {
+                var remissions = request.IdDeliveries.Distinct().Select(x => new InvoiceRemissionModel()
+                {
+                    RemissionId = x,
+                    IdInvoice = request.ProcessId,
+                }).ToList();
+
+                await this.invoiceDao.InsertRemissions(remissions);
+            }
+
+            if (request.IdSapOrders != null && request.IdSapOrders.Any())
+            {
+                var sapOrders = request.IdSapOrders.Distinct().Select(x => new InvoiceSapOrderModel()
+                {
+                    SapOrderId = x,
+                    IdInvoice = request.ProcessId,
+                }).ToList();
+
+                await this.invoiceDao.InsertSapOrders(sapOrders);
+            }
+
             this.PublishProcessToMediatR(request);
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null, null);
         }
@@ -240,6 +241,27 @@ namespace Omicron.Invoice.Services.Invoice.Impl
         }
 
         /// <inheritdoc/>
+        public async Task<ResultDto> GetUninvoicedSapOrders(Dictionary<string, string> parameters)
+        {
+            var transactionId = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.IdPedidoDxpType, string.Empty);
+
+            var result = await this.processPaymentService.GetProcessPayments(string.Format(ServiceConstants.GetOrderDetail, transactionId));
+            var orderDetails = JsonConvert.DeserializeObject<List<OrderDetailModel>>(result.Response.ToString());
+            var allSapOrders = orderDetails.Select(x => x.OrderId).ToList();
+
+            var ordersWithInvoice = (await this.invoiceDao.GetSapOrdersById(allSapOrders)).DistinctBy(x => x.SapOrderId);
+            var pedidosSap = allSapOrders.Where(id => !ordersWithInvoice.Any(x => x.SapOrderId == id)).ToList();
+
+            if (pedidosSap.Count == 1)
+            {
+                var order = orderDetails.FirstOrDefault(x => x.OrderId == pedidosSap.FirstOrDefault());
+                pedidosSap = order.ItemCode == ServiceConstants.Delivery ? new List<int>() : pedidosSap;
+            }
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, pedidosSap, null, null);
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultDto> GetAutoBillingAsync(Dictionary<string, string> parameters)
         {
             var (listInvoices, total, startDate, endDate) = await this.GetAutoBillingModels(parameters);
@@ -367,7 +389,7 @@ namespace Omicron.Invoice.Services.Invoice.Impl
                 return (listInvoices, total);
             }
 
-            var id = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Id, string.Empty);
+            var id = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Id, string.Empty).ToLower();
 
             listInvoices = typeId switch
             {
@@ -429,7 +451,7 @@ namespace Omicron.Invoice.Services.Invoice.Impl
                 return (invoices, total, startDate, endDate);
             }
 
-            var id = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Id, string.Empty);
+            var id = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Id, string.Empty).ToLower();
 
             invoices = typeId switch
             {
@@ -503,6 +525,7 @@ namespace Omicron.Invoice.Services.Invoice.Impl
                     Remissions = remissions,
                     LastErrorMessage = lastErrorMessage,
                     LastUpdateDate = inv.UpdateDate?.ToString("dd/MM/yy HH:mm:ss"),
+                    Status = inv.Status,
                 });
             }
 

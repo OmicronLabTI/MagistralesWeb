@@ -18,7 +18,8 @@ export const automaticBillingTableColumns: string[] = [
 export const automaticBillingStatusConst = {
     sent: 'Enviada a crear',
     creating: 'Creando factura',
-    error: 'Error al crear'
+    error: 'Error al crear',
+    created: 'Creación exitosa'
 };
 
 export const automaticBillingInvoiceTypeConst = {
