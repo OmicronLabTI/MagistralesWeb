@@ -5,6 +5,8 @@
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
+using Omicron.SapServiceLayerAdapter.Common.DTOs.Batch;
+
 namespace Omicron.SapServiceLayerAdapter.Services.ServiceLayer
 {
     /// <summary>
@@ -50,5 +52,12 @@ namespace Omicron.SapServiceLayerAdapter.Services.ServiceLayer
         /// <param name="requestBody">The request body to send with the PATCH request.</param>
         /// <returns>A task representing the asynchronous operation. The task result contains the response data of type <typeparamref name="T"/>.</returns>
         Task<ResultModel> PutAsync(string url, string requestBody);
+
+        /// <summary>
+        /// Sends an HTTP PUT request to the specified URL with the provided request body and returns the response as an asynchronous operation.
+        /// </summary>
+        /// <param name="changeset">The request body to send with the PATCH request.</param>
+        /// <returns>A task representing the asynchronous operation. The task result contains the response data of type <typeparamref name="T"/>.</returns>
+        Task<ResultModel> SendBatchAsync(List<BatchOperationDto> changeset);
     }
 }

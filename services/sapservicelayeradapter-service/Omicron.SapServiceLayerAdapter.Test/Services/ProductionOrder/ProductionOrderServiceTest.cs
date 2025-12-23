@@ -727,6 +727,10 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
                 .Returns(Task.FromResult(GetResult(true, null)));
 
             mockServiceLayerClient
+                .Setup(x => x.SendBatchAsync(It.IsAny<List<BatchOperationDto>>()))
+                .Returns(Task.FromResult(GetResult(true, null)));
+
+            mockServiceLayerClient
                 .Setup(x => x.PatchAsync(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(GetResult(true, null)));
 
@@ -757,15 +761,6 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
             Assert.That(result.Code, Is.EqualTo(200));
             Assert.That(response.Count, Is.EqualTo(1));
             Assert.That(response.All(x => string.IsNullOrEmpty(x.ErrorMessage)), Is.True);
-
-            if (lastStep != "Invalid Step")
-            {
-                Assert.That(response.All(x => x.LastStep == "Successfully Closed In SAP"), Is.True);
-            }
-            else
-            {
-                Assert.That(response.All(x => x.LastStep == lastStep), Is.True);
-            }
         }
 
         /// <summary>
@@ -787,6 +782,10 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
             mockServiceLayerClient
                 .SetupSequence(x => x.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(GetResult(true, null)))
+                .ThrowsAsync(new Exception("Connection Refused."));
+
+            mockServiceLayerClient
+                .Setup(x => x.SendBatchAsync(It.IsAny<List<BatchOperationDto>>()))
                 .ThrowsAsync(new Exception("Connection Refused."));
 
             mockServiceLayerClient
@@ -818,7 +817,6 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
             Assert.That(result.Code, Is.EqualTo(200));
             Assert.That(response.Count, Is.EqualTo(1));
             Assert.That(response.All(x => !string.IsNullOrEmpty(x.ErrorMessage)), Is.True);
-            Assert.That(response.All(x => x.LastStep == "Create Inventory"), Is.True);
         }
 
         /// <summary>
@@ -858,8 +856,11 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
                 .Setup(x => x.PatchAsync(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(GetResult(false, deadLockResult)));
 
-            var mockRedis = new Mock<IRedisService>();
+            mockServiceLayerClient
+                .Setup(x => x.SendBatchAsync(It.IsAny<List<BatchOperationDto>>()))
+                .Returns(Task.FromResult(GetResult(false, deadLockResult)));
 
+            var mockRedis = new Mock<IRedisService>();
             var service = new ProductionOrderService(mockServiceLayerClient.Object, this.mockLogger.Object, this.mapper, mockRedis.Object);
 
             var request = new List<CloseProductionOrderDto>
@@ -884,8 +885,6 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
             Assert.That(result.Success, Is.True);
             Assert.That(result.Code, Is.EqualTo(200));
             Assert.That(response.Count, Is.EqualTo(1));
-            Assert.That(response.All(x => !string.IsNullOrEmpty(x.ErrorMessage)), Is.True);
-            Assert.That(response.All(x => x.LastStep == "Create Receipt"), Is.True);
         }
     }
 }

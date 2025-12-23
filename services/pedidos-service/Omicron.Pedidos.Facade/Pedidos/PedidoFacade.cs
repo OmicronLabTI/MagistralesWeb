@@ -403,6 +403,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
             return this.mapper.Map<ResultDto>(await this.productionOrdersService.GetParentOrderDetail(fabOrder));
         }
 
+        /// <inheritdoc/>
         public async Task<ResultDto> GetOpenOrderProdutions(Dictionary<string, string> parameters)
         {
             return this.mapper.Map<ResultDto>(await this.productionOrdersService.GetOpenOrderProdutions(parameters));

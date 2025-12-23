@@ -113,6 +113,8 @@ namespace Omicron.SapServiceLayerAdapter.Test
             new CreateInvoiceDocumentDto(),
             new CreateInvoiceDocumentLinesDto(),
             new CreateInvoiceDto(),
+            new BatchOperationDto(),
+            new ParsedBatchResultDto(),
         };
 
         /// <summary>
