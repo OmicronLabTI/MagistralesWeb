@@ -376,5 +376,220 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
                 mockLogger.Verify(l => l.Error(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.AtLeastOnce);
             }
         }
+
+        /// <summary>
+        /// Test para verificar que se concatena el comentario de la orden más antigua con comentario válido.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Test]
+        public async Task CreateInvoice_WithOrderComments()
+        {
+            // Arrange
+            var createInvoiceDocumentInfo = new CreateInvoiceDocumentDto
+            {
+                CardCode = "C12345",
+                ProcessId = "test-order-comment",
+                CfdiDriverVersion = "CFDi40",
+                IdDeliveries = new List<int> { 1001 },
+            };
+
+            var mockServiceLayerClient = new Mock<IServiceLayerClient>();
+            var mockLogger = new Mock<ILogger>();
+
+            var deliveryMock = new List<DeliveryNoteDto>
+            {
+                new DeliveryNoteDto
+                {
+                    DocEntry = 1001,
+                    DeliveryNoteLines = new List<DeliveryNoteLineDto>
+                    {
+                        new DeliveryNoteLineDto { LineNumber = 0, BaseEntry = 1722, BaseType = 17 },
+                        new DeliveryNoteLineDto { LineNumber = 1, BaseEntry = 1723, BaseType = 17 },
+                        new DeliveryNoteLineDto { LineNumber = 2, BaseEntry = 1724, BaseType = 17 },
+                    },
+                },
+            };
+
+            var deliveryResponseMock = GetGenericResponseModel(
+                200,
+                true,
+                new ServiceLayerGenericMultipleResultDto<DeliveryNoteDto> { Value = deliveryMock },
+                null);
+
+            var ordersResponseMock = GetGenericResponseModel(
+                200,
+                true,
+                new ServiceLayerGenericMultipleResultDto<OrderCommentDto>
+                {
+                    Value = new List<OrderCommentDto>
+                    {
+                        new OrderCommentDto { DocEntry = 1722, Comments = "tiene bolsa con muestra reve 2", Canceled = "N" },
+                        new OrderCommentDto { DocEntry = 1723, Comments = "tiene bolsa con muestra reve 42", Canceled = "N" },
+                        new OrderCommentDto { DocEntry = 1724, Comments = "tiene bolsa con muestra reve 16", Canceled = "N" },
+                    },
+                },
+                null);
+
+            var invoiceResponseMock = GetGenericResponseModel(
+                200,
+                true,
+                new InvoiceDto { DocumentEntry = 999, DocumentNumber = 999 },
+                null);
+
+            var getInvoicePaymentInfoMock = GetGenericResponseModel(
+                200,
+                true,
+                new InvoicePaymentInfoDto { FormaPago33 = "04" },
+                null);
+
+            var patchResponseMock = GetGenericResponseModel(200, true, null, null);
+
+            // Setup mocks
+            mockServiceLayerClient
+                .Setup(sl => sl.GetAsync(It.Is<string>(s => s.Contains("DeliveryNotes"))))
+                .ReturnsAsync(deliveryResponseMock);
+
+            mockServiceLayerClient
+                .Setup(sl => sl.GetAsync(It.Is<string>(s => s.Contains("Orders?$filter="))))
+                .ReturnsAsync(ordersResponseMock);
+
+            mockServiceLayerClient
+                .Setup(sl => sl.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(invoiceResponseMock);
+
+            mockServiceLayerClient
+                .Setup(sl => sl.GetAsync(It.Is<string>(s => s.Contains("Invoices(999)"))))
+                .ReturnsAsync(getInvoicePaymentInfoMock);
+
+            mockServiceLayerClient
+                .Setup(sl => sl.PatchAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(patchResponseMock);
+
+            var invoiceService = new InvoiceService(mockServiceLayerClient.Object, mockLogger.Object);
+
+            // Act
+            var result = await invoiceService.CreateInvoice(createInvoiceDocumentInfo);
+
+            // Assert
+            Assert.That(result.Success, Is.True, "Invoice should be created successfully");
+            Assert.That(result.Code, Is.EqualTo(200));
+
+            mockServiceLayerClient.Verify(
+                sl => sl.GetAsync(It.Is<string>(s => s.Contains("Orders?$filter=") && s.Contains("CANCELED eq 'N'"))),
+                Times.Once,
+                "Should fetch order comments");
+
+            mockServiceLayerClient.Verify(
+                sl => sl.PostAsync(
+                    It.IsAny<string>(),
+                    It.Is<string>(json => json.Contains("Basado en") && json.Contains("tiene bolsa con muestra reve 2"))),
+                Times.Once,
+                "Should concatenate comment from oldest order (1722)");
+        }
+
+        /// <summary>
+        /// Test para verificar que cuando no hay comentarios de órdenes, solo usa el comentario base.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Test]
+        public async Task CreateInvoice_WithNoOrderComments()
+        {
+            // Arrange
+            var createInvoiceDocumentInfo = new CreateInvoiceDocumentDto
+            {
+                CardCode = "C12345",
+                ProcessId = "test-no-comments",
+                CfdiDriverVersion = "CFDi40",
+                IdDeliveries = new List<int> { 1001 },
+            };
+
+            var mockServiceLayerClient = new Mock<IServiceLayerClient>();
+            var mockLogger = new Mock<ILogger>();
+
+            var deliveryMock = new List<DeliveryNoteDto>
+            {
+                new DeliveryNoteDto
+                {
+                    DocEntry = 1001,
+                    DeliveryNoteLines = new List<DeliveryNoteLineDto>
+                    {
+                        new DeliveryNoteLineDto { LineNumber = 0, BaseEntry = 1722, BaseType = 17 },
+                    },
+                },
+            };
+
+            var deliveryResponseMock = GetGenericResponseModel(
+                200,
+                true,
+                new ServiceLayerGenericMultipleResultDto<DeliveryNoteDto> { Value = deliveryMock },
+                null);
+
+            var ordersResponseMock = GetGenericResponseModel(
+                200,
+                true,
+                new ServiceLayerGenericMultipleResultDto<OrderCommentDto>
+                {
+                    Value = new List<OrderCommentDto>
+                    {
+                new OrderCommentDto { DocEntry = 1722, Comments = string.Empty, Canceled = "N" },
+                    },
+                },
+                null);
+
+            var invoiceResponseMock = GetGenericResponseModel(
+                200,
+                true,
+                new InvoiceDto { DocumentEntry = 999, DocumentNumber = 999 },
+                null);
+
+            var getInvoicePaymentInfoMock = GetGenericResponseModel(
+                200,
+                true,
+                new InvoicePaymentInfoDto { FormaPago33 = "04" },
+                null);
+
+            var patchResponseMock = GetGenericResponseModel(200, true, null, null);
+
+            mockServiceLayerClient
+                .Setup(sl => sl.GetAsync(It.Is<string>(s => s.Contains("DeliveryNotes"))))
+                .ReturnsAsync(deliveryResponseMock);
+
+            mockServiceLayerClient
+                .Setup(sl => sl.GetAsync(It.Is<string>(s => s.Contains("Orders?$filter="))))
+                .ReturnsAsync(ordersResponseMock);
+
+            mockServiceLayerClient
+                .Setup(sl => sl.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(invoiceResponseMock);
+
+            mockServiceLayerClient
+                .Setup(sl => sl.GetAsync(It.Is<string>(s => s.Contains("Invoices(999)"))))
+                .ReturnsAsync(getInvoicePaymentInfoMock);
+
+            mockServiceLayerClient
+                .Setup(sl => sl.PatchAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(patchResponseMock);
+
+            var invoiceService = new InvoiceService(mockServiceLayerClient.Object, mockLogger.Object);
+
+            // Act
+            var result = await invoiceService.CreateInvoice(createInvoiceDocumentInfo);
+
+            // Assert
+            Assert.That(result.Success, Is.True, "Invoice should be created successfully");
+            Assert.That(result.Code, Is.EqualTo(200));
+
+            mockServiceLayerClient.Verify(
+                sl => sl.GetAsync(It.Is<string>(s => s.Contains("Orders?$filter="))),
+                Times.Once,
+                "Should attempt to fetch order comments");
+
+            mockServiceLayerClient.Verify(
+                sl => sl.PostAsync(
+                    It.IsAny<string>(),
+                    It.Is<string>(json => json.Contains("Basado en") && json.Contains("1001") && !json.Contains(", tiene"))),
+                Times.Once,
+                "Should only have base comment without order comment concatenation");
+        }
     }
 }
