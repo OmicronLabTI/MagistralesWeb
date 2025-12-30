@@ -218,9 +218,18 @@ namespace Omicron.SapServiceLayerAdapter.Services.Invoices.Impl
                 }))
                 .ToList();
 
-            var comment = string.Format(ServiceConstants.CommentForCreatedInvoice, string.Join(ServiceConstants.Comma, deliveriesById.Select(r => r.Id)));
+            var baseComment = string.Format(
+                ServiceConstants.CommentForCreatedInvoice,
+                string.Join(ServiceConstants.Comma, deliveriesById.Select(r => r.Id)));
 
-            return (documentLines, comment);
+            var orderComment = await this.GetOldestOrderCommentFromDeliveries(deliveriesById);
+
+            var finalComment = string.IsNullOrWhiteSpace(orderComment)
+                ? baseComment
+                : $"{baseComment}, {orderComment}";
+
+            this.logger.Information($"Invoice comment: {finalComment}");
+            return (documentLines, finalComment);
         }
 
         private async Task ConfigurePaymentMethod(int invoiceId)
@@ -252,6 +261,64 @@ namespace Omicron.SapServiceLayerAdapter.Services.Invoices.Impl
             catch (Exception ex)
             {
                 this.logger.Error(ex, $"Error calculate payment method for invoice {invoiceId}");
+            }
+        }
+
+        private async Task<string> GetOldestOrderCommentFromDeliveries(List<(int Id, DeliveryNoteDto Delivery)> deliveriesById)
+        {
+            try
+            {
+                var orderIds = deliveriesById
+                    .SelectMany(d => d.Delivery.DeliveryNoteLines)
+                    .Where(l => l.BaseEntry > 0 && l.BaseType == ServiceConstants.BaseTypeOrder)
+                    .Select(l => l.BaseEntry.Value)
+                    .Distinct()
+                    .OrderBy(x => x)
+                    .ToList();
+
+                if (!orderIds.Any())
+                {
+                    return null;
+                }
+
+                this.logger.Information($"Fetching comments from {orderIds.Count} orders");
+
+                var allOrders = new List<OrderCommentDto>();
+
+                foreach (var batch in orderIds.Chunk(ServiceConstants.OrdersBatchSize))
+                {
+                    var filter = string.Join(" or ", batch.Select(id => $"DocEntry eq {id}"));
+                    var query = string.Format(ServiceConstants.QryOrdersWithComments, filter);
+
+                    var response = await this.serviceLayerClient.GetAsync(query);
+                    if (response.Success)
+                    {
+                        var result = JsonConvert.DeserializeObject<ServiceLayerGenericMultipleResultDto<OrderCommentDto>>(
+                            response.Response.ToString());
+                        if (result?.Value != null)
+                        {
+                            allOrders.AddRange(result.Value);
+                        }
+                    }
+                }
+
+                var comment = allOrders
+                    .Where(o => !string.IsNullOrWhiteSpace(o.Comments))
+                    .OrderBy(o => o.DocEntry)
+                    .FirstOrDefault()
+                    ?.Comments?.Trim();
+
+                if (comment != null)
+                {
+                    this.logger.Information($"Found comment: {comment}");
+                }
+
+                return comment;
+            }
+            catch (Exception ex)
+            {
+                this.logger.Error(ex, "Error getting order comments");
+                return null;
             }
         }
     }

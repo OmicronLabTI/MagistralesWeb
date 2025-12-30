@@ -494,6 +494,21 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string ProcessCertification = "P";
 
         /// <summary>
+        /// Base type for Sales Order (ORDR) in SAP.
+        /// </summary>
+        public const int BaseTypeOrder = 17;
+
+        /// <summary>
+        /// Batch size for querying multiple orders.
+        /// </summary>
+        public const int OrdersBatchSize = 100;
+
+        /// <summary>
+        /// Data query template for orders with comments.
+        /// </summary>
+        public const string QryOrdersWithComments = "Orders?$filter=({0}) and CANCELED eq 'N'&$select=DocEntry,Comments,CANCELED";
+
+        /// <summary>
         /// Gets ManageBatchNumbers.
         /// </summary>
         /// <value>
