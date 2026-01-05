@@ -308,5 +308,21 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// InvoiceServiceLayerError.
         /// </value>
         public static string InvoiceServiceLayerError => "{LogBase} - Service Layer Error: {UserError}";
+
+        /// <summary>
+        /// Gets InvoiceCommentGenerated.
+        /// </summary>
+        /// <value>
+        /// InvoiceCommentGenerated.
+        /// </value>
+        public static string InvoiceCommentGenerated => "{LogBase} - Invoice Comment Generated: {Comment}";
+
+        /// <summary>
+        /// Gets InvoiceCreatedWithDocEntry.
+        /// </summary>
+        /// <value>
+        /// InvoiceCreatedWithDocEntry.
+        /// </value>
+        public static string InvoiceCreatedWithDocEntry => "{LogBase} - Invoice Created With DocEntry: {DocEntry}";
     }
 }
