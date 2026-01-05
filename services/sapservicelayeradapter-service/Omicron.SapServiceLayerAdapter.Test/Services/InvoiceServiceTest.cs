@@ -423,9 +423,9 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
                 {
                     Value = new List<OrderCommentDto>
                     {
-                        new OrderCommentDto { DocEntry = 1722, Comments = "tiene bolsa con muestra reve 2", Canceled = "N" },
-                        new OrderCommentDto { DocEntry = 1723, Comments = "tiene bolsa con muestra reve 42", Canceled = "N" },
-                        new OrderCommentDto { DocEntry = 1724, Comments = "tiene bolsa con muestra reve 16", Canceled = "N" },
+                        new OrderCommentDto { DocEntry = 1722, Comments = "tiene bolsa con muestra reve 2", Cancelled = "N" },
+                        new OrderCommentDto { DocEntry = 1723, Comments = "tiene bolsa con muestra reve 42", Cancelled = "N" },
+                        new OrderCommentDto { DocEntry = 1724, Comments = "tiene bolsa con muestra reve 16", Cancelled = "N" },
                     },
                 },
                 null);
@@ -475,7 +475,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
             Assert.That(result.Code, Is.EqualTo(200));
 
             mockServiceLayerClient.Verify(
-                sl => sl.GetAsync(It.Is<string>(s => s.Contains("Orders?$filter=") && s.Contains("CANCELED eq 'N'"))),
+                sl => sl.GetAsync(It.Is<string>(s => s.Contains("Orders?$filter=") && s.Contains("Cancelled eq 'N'"))),
                 Times.Once,
                 "Should fetch order comments");
 
@@ -531,7 +531,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
                 {
                     Value = new List<OrderCommentDto>
                     {
-                new OrderCommentDto { DocEntry = 1722, Comments = string.Empty, Canceled = "N" },
+                new OrderCommentDto { DocEntry = 1722, Comments = string.Empty, Cancelled = "N" },
                     },
                 },
                 null);

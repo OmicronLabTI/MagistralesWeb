@@ -318,7 +318,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Invoices.Impl
                             // TEMP
                             foreach (var order in result.Value)
                             {
-                                this.logger.Information($"DEBUG - Order found: DocEntry={order.DocEntry}, Comments={order.Comments}, Canceled={order.Canceled}");
+                                this.logger.Information($"DEBUG - Order found: DocEntry={order.DocEntry}, Comments={order.Comments}, Canceled={order.Cancelled}");
                             }
 
                             allOrders.AddRange(result.Value);

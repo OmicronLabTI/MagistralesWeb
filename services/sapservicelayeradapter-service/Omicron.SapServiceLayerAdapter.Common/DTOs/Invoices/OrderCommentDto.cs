@@ -26,9 +26,9 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Invoices
         public string Comments { get; set; }
 
         /// <summary>
-        /// Gets or sets Canceled status.
+        /// Gets or sets Cancelled status.
         /// </summary>
-        [JsonProperty("CANCELED")]
-        public string Canceled { get; set; }
+        [JsonProperty("Cancelled")]
+        public string Cancelled { get; set; }
     }
 }

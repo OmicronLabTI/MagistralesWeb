@@ -506,7 +506,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// <summary>
         /// Data query template for orders with comments.
         /// </summary>
-        public const string QryOrdersWithComments = "Orders?$filter=({0}) and CANCELED eq 'N'&$select=DocEntry,Comments,CANCELED";
+        public const string QryOrdersWithComments = "Orders?$filter=({0}) and Cancelled eq 'N'&$select=DocEntry,Comments,Cancelled";
 
         /// <summary>
         /// Gets ManageBatchNumbers.
