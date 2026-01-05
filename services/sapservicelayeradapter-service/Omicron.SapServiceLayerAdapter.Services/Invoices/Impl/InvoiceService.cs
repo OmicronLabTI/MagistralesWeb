@@ -272,14 +272,11 @@ namespace Omicron.SapServiceLayerAdapter.Services.Invoices.Impl
             {
                 var orderIds = deliveriesById
                     .SelectMany(d => d.Delivery.DeliveryNoteLines)
-                    .Where(l => l.BaseEntry > 0 && l.BaseType == ServiceConstants.BaseTypeOrder)
+                    .Where(l => l.BaseEntry.HasValue && l.BaseEntry.Value > 0 && l.BaseType == ServiceConstants.BaseTypeOrder)
                     .Select(l => l.BaseEntry.Value)
                     .Distinct()
                     .OrderBy(x => x)
                     .ToList();
-
-                // TEMP
-                this.logger.Information($"DEBUG - Found {orderIds.Count} order IDs: [{string.Join(",", orderIds)}]");
 
                 if (!orderIds.Any())
                 {
@@ -295,44 +292,19 @@ namespace Omicron.SapServiceLayerAdapter.Services.Invoices.Impl
                     var filter = string.Join(" or ", batch.Select(id => $"DocEntry eq {id}"));
                     var query = string.Format(ServiceConstants.QryOrdersWithComments, filter);
 
-                    // TEMP
-                    this.logger.Information($"DEBUG - Query to SAP: {query}");
-
                     var response = await this.serviceLayerClient.GetAsync(query);
 
-                    // TEMP
-                    this.logger.Information($"DEBUG - Response Success: {response.Success}");
                     if (response.Success)
                     {
-                        // TEMP
-                        this.logger.Information($"DEBUG - Response from SAP: {response.Response}");
-
                         var result = JsonConvert.DeserializeObject<ServiceLayerGenericMultipleResultDto<OrderCommentDto>>(
                             response.Response.ToString());
 
-                        // TEMP
-                        this.logger.Information($"DEBUG - Orders returned: {result?.Value?.Count ?? 0}");
-
                         if (result?.Value != null)
                         {
-                            // TEMP
-                            foreach (var order in result.Value)
-                            {
-                                this.logger.Information($"DEBUG - Order found: DocEntry={order.DocEntry}, Comments={order.Comments}, Canceled={order.Cancelled}");
-                            }
-
                             allOrders.AddRange(result.Value);
                         }
                     }
-                    else
-                    {
-                        // TEMP
-                        this.logger.Warning($"DEBUG - Failed to get orders. Error: {response.UserError}");
-                    }
                 }
-
-                // TEMP
-                this.logger.Information($"DEBUG - Total orders retrieved: {allOrders.Count}");
 
                 var comment = allOrders
                     .Where(o => !string.IsNullOrWhiteSpace(o.Comments))
@@ -345,7 +317,6 @@ namespace Omicron.SapServiceLayerAdapter.Services.Invoices.Impl
                     this.logger.Information($"Found comment: {comment}");
                 }
 
-                this.logger.Information($"DEBUG - Final comment: {comment ?? "NULL"}");
                 return comment;
             }
             catch (Exception ex)
