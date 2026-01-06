@@ -487,6 +487,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 return new Tuple<List<LineProductsModel>, List<int>>(lineProducts, new List<int>());
             }
 
+            var sapOrders = (await this.sapDao.GetAllOrdersForAlmacen(startDate, endDate)).ToList();
+            var ordersIds = sapOrders.Where(x => x.DocNum != 0).Select(c => c.DocNum).Distinct().ToList();
+            magistralIds.AddRange(ordersIds);
             var lineProductsResponse = await this.almacenService.PostAlmacenOrders(
                 ServiceConstants.EndPointGetLineProductPedidosByRangeDate,
                 new OrdersFilterDto
