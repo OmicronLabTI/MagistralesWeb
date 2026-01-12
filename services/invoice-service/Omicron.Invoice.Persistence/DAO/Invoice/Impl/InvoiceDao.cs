@@ -161,16 +161,16 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
         }
 
         /// <summary>
-        /// Obtiene las facturas de facturaci�n autom�tica con filtros aplicados.
+        /// Obtiene las facturas de facturaciï¿½n automï¿½tica con filtros aplicados.
         /// Incluye las relaciones SapOrders y Remissions en la misma consulta.
         /// </summary>
         /// <param name="status">Lista de estados de factura para filtrar.</param>
-        /// <param name="typeInvoices">Lista de tipos de factura para filtrar (Gen�ricas, Con datos fiscales).</param>
-        /// <param name="billingTypes">Lista de formas de facturaci�n para filtrar (Parcial, Completa).</param>
-        /// <param name="startDate">Fecha de inicio para filtrar por fecha de creaci�n en SAP.</param>
-        /// <param name="endDate">Fecha de fin para filtrar por fecha de creaci�n en SAP.</param>
-        /// <param name="offset">N�mero de registros a omitir (paginaci�n).</param>
-        /// <param name="limit">N�mero m�ximo de registros a retornar.</param>
+        /// <param name="typeInvoices">Lista de tipos de factura para filtrar (Genï¿½ricas, Con datos fiscales).</param>
+        /// <param name="billingTypes">Lista de formas de facturaciï¿½n para filtrar (Parcial, Completa).</param>
+        /// <param name="startDate">Fecha de inicio para filtrar por fecha de creaciï¿½n en SAP.</param>
+        /// <param name="endDate">Fecha de fin para filtrar por fecha de creaciï¿½n en SAP.</param>
+        /// <param name="offset">Nï¿½mero de registros a omitir (paginaciï¿½n).</param>
+        /// <param name="limit">Nï¿½mero mï¿½ximo de registros a retornar.</param>
         /// <returns>Lista de facturas con relaciones incluidas.</returns>
         public async Task<List<InvoiceModel>> GetAutoBillingByFilters(
             List<string> status,
@@ -197,14 +197,14 @@ namespace Omicron.Invoice.Persistence.DAO.Invoice.Impl
         }
 
         /// <summary>
-        /// Obtiene el conteo total de facturas de facturaci�n autom�tica con filtros aplicados.
+        /// Obtiene el conteo total de facturas de facturaciï¿½n automï¿½tica con filtros aplicados.
         /// </summary>
         /// <param name="status">Lista de estados de factura para filtrar.</param>
         /// <param name="typeInvoices">Lista de tipos de factura para filtrar.</param>
-        /// <param name="billingTypes">Lista de formas de facturaci�n para filtrar.</param>
+        /// <param name="billingTypes">Lista de formas de facturaciï¿½n para filtrar.</param>
         /// <param name="startDate">Fecha de inicio para filtrar.</param>
         /// <param name="endDate">Fecha de fin para filtrar.</param>
-        /// <returns>N�mero total de facturas que coinciden con los filtros.</returns>
+        /// <returns>Nï¿½mero total de facturas que coinciden con los filtros.</returns>
         public async Task<int> GetAutoBillingCount(
             List<string> status,
             List<string> typeInvoices,

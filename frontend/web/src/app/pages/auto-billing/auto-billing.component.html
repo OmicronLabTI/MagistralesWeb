@@ -110,8 +110,7 @@
   <!-- POPUP PERSONALIZADO -->
   <div class="filter-overlay" *ngIf="showFilter" [ngStyle]="popupPosition">
     <div class="filter-box">
-      <mat-checkbox *ngFor="let opt of currentOptions" [(ngModel)]="opt.selected" [disabled]="opt.disabled"
-        (change)="onOptionChanged(i)">
+      <mat-checkbox *ngFor="let opt of currentOptions; let i = index" [(ngModel)]="opt.selected" [disabled]="opt.disabled" (change)="onOptionChanged(i)">
         {{ opt.label }}
       </mat-checkbox>
     </div>

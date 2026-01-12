@@ -124,7 +124,6 @@ namespace Omicron.SapServiceLayerAdapter.Services.Invoices.Impl
                 }
 
                 var createdInvoice = JsonConvert.DeserializeObject<InvoiceDto>(invoiceResponse.Response.ToString());
-                this.logger.Information(LogsConstants.InvoiceCreatedWithDocEntry, logBase, createdInvoice.DocumentEntry);
                 await this.ConfigurePaymentMethod(createdInvoice.DocumentEntry);
                 this.logger.Information(LogsConstants.InvoiceCreatedSuccessfully, logBase);
                 return ServiceUtils.CreateResult(true, 200, null, createdInvoice.DocumentNumber, null);
