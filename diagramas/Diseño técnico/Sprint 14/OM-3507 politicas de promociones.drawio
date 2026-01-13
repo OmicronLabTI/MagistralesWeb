@@ -1,0 +1,87 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/25.0.2 Chrome/128.0.6613.186 Electron/32.2.5 Safari/537.36" version="25.0.2">
+  <diagram name="Página-1" id="B6IFXQN0WrsMkRAtHqt_">
+    <mxGraphModel dx="880" dy="524" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="eMgyHUIMunOpnKXkU3cr-1" value="Actor" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
+          <mxGeometry x="50" y="220" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="eMgyHUIMunOpnKXkU3cr-2" value="&lt;p style=&quot;margin:0px;margin-top:6px;text-align:center;&quot;&gt;&lt;b&gt;Controller&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:8px;&quot;&gt;+GetPromotionPolicies()&lt;br&gt;&lt;/p&gt;" style="align=left;overflow=fill;html=1;dropTarget=0;whiteSpace=wrap;" parent="1" vertex="1">
+          <mxGeometry x="260" y="212.5" width="180" height="75" as="geometry" />
+        </mxCell>
+        <mxCell id="eMgyHUIMunOpnKXkU3cr-3" value="" style="shape=component;jettyWidth=8;jettyHeight=4;" parent="eMgyHUIMunOpnKXkU3cr-2" vertex="1">
+          <mxGeometry x="1" width="20" height="20" relative="1" as="geometry">
+            <mxPoint x="-24" y="4" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eMgyHUIMunOpnKXkU3cr-4" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="eMgyHUIMunOpnKXkU3cr-1" target="eMgyHUIMunOpnKXkU3cr-2" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="90" y="320" as="sourcePoint" />
+            <mxPoint x="140" y="270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eMgyHUIMunOpnKXkU3cr-6" value="CatalogsDxpController" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=0" parent="1" vertex="1">
+          <mxGeometry x="300" y="180" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="eMgyHUIMunOpnKXkU3cr-7" value="&lt;p style=&quot;margin:0px;margin-top:6px;text-align:center;&quot;&gt;&lt;b&gt;Facade&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:8px;&quot;&gt;+ GetPromotionPolicies()&lt;br&gt;&lt;/p&gt;" style="align=left;overflow=fill;html=1;dropTarget=0;whiteSpace=wrap;" parent="1" vertex="1">
+          <mxGeometry x="550" y="212.5" width="180" height="75" as="geometry" />
+        </mxCell>
+        <mxCell id="eMgyHUIMunOpnKXkU3cr-8" value="" style="shape=component;jettyWidth=8;jettyHeight=4;" parent="eMgyHUIMunOpnKXkU3cr-7" vertex="1">
+          <mxGeometry x="1" width="20" height="20" relative="1" as="geometry">
+            <mxPoint x="-24" y="4" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eMgyHUIMunOpnKXkU3cr-9" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="eMgyHUIMunOpnKXkU3cr-2" target="eMgyHUIMunOpnKXkU3cr-7" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="440" y="300" as="sourcePoint" />
+            <mxPoint x="510.71067811865476" y="250" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eMgyHUIMunOpnKXkU3cr-13" value="&lt;p style=&quot;margin:0px;margin-top:6px;text-align:center;&quot;&gt;&lt;b&gt;Service&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:8px;&quot;&gt;+ GetPromotionPolicies()&lt;br&gt;&lt;/p&gt;" style="align=left;overflow=fill;html=1;dropTarget=0;whiteSpace=wrap;" parent="1" vertex="1">
+          <mxGeometry x="810" y="217.5" width="250" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="eMgyHUIMunOpnKXkU3cr-14" value="" style="shape=component;jettyWidth=8;jettyHeight=4;" parent="eMgyHUIMunOpnKXkU3cr-13" vertex="1">
+          <mxGeometry x="1" width="20" height="20" relative="1" as="geometry">
+            <mxPoint x="-24" y="4" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eMgyHUIMunOpnKXkU3cr-15" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="eMgyHUIMunOpnKXkU3cr-7" target="eMgyHUIMunOpnKXkU3cr-13" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="750" y="270" as="sourcePoint" />
+            <mxPoint x="800" y="220" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eMgyHUIMunOpnKXkU3cr-19" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="eMgyHUIMunOpnKXkU3cr-13" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1070" y="370" as="sourcePoint" />
+            <mxPoint x="935" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eMgyHUIMunOpnKXkU3cr-25" value="&lt;p style=&quot;margin:0px;margin-top:6px;text-align:center;&quot;&gt;&lt;b&gt;DAO&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:8px;&quot;&gt;+ GetActivePromotionPolicies()&lt;br&gt;&lt;/p&gt;" style="align=left;overflow=fill;html=1;dropTarget=0;whiteSpace=wrap;" parent="1" vertex="1">
+          <mxGeometry x="827.5" y="350" width="215" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="eMgyHUIMunOpnKXkU3cr-26" value="" style="shape=component;jettyWidth=8;jettyHeight=4;" parent="eMgyHUIMunOpnKXkU3cr-25" vertex="1">
+          <mxGeometry x="1" width="20" height="20" relative="1" as="geometry">
+            <mxPoint x="-24" y="4" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eMgyHUIMunOpnKXkU3cr-30" value="Postgressql" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" parent="1" vertex="1">
+          <mxGeometry x="905" y="490" width="60" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eMgyHUIMunOpnKXkU3cr-31" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="eMgyHUIMunOpnKXkU3cr-25" target="eMgyHUIMunOpnKXkU3cr-30" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="980" y="870" as="sourcePoint" />
+            <mxPoint x="1030" y="820" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eMgyHUIMunOpnKXkU3cr-32" value="&lt;div style=&quot;box-sizing:border-box;width:100%;background:#e4e4e4;padding:2px;&quot;&gt;promotionPolicies&lt;/div&gt;&lt;table style=&quot;width:100%;font-size:1em;&quot; cellpadding=&quot;2&quot; cellspacing=&quot;0&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;PK&lt;/td&gt;&lt;td&gt;Id Int identity&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;br&gt;&lt;/td&gt;&lt;td&gt;PolicyName varchar(300)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;PolicyHtml text&lt;br&gt;Active tinyInt&lt;br&gt;Order tinyInt&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" parent="1" vertex="1">
+          <mxGeometry x="845" y="640" width="180" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="eMgyHUIMunOpnKXkU3cr-33" value="promotionPolicies" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="870" y="610" width="60" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

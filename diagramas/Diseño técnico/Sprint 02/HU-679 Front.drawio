@@ -1,0 +1,165 @@
+<mxfile host="Electron" modified="2024-07-12T17:20:22.761Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.0.2 Chrome/114.0.5735.289 Electron/25.8.4 Safari/537.36" etag="Y4UIXXVIVjfRGOu-2Ocb" version="22.0.2" type="device">
+  <diagram name="Página-1" id="4NQ0GOG-Vl40Yu63HscQ">
+    <mxGraphModel dx="2261" dy="854" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-2" value="" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=3;" parent="1" vertex="1">
+          <mxGeometry x="-100" y="500" width="1260" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-1" value="" style="group" parent="1" vertex="1" connectable="0">
+          <mxGeometry x="-110" y="920" width="1260" height="670" as="geometry" />
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-78" value="" style="endArrow=classic;html=1;rounded=0;" parent="Q2bCh0XgisJVYw2cT9JK-1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="650" y="36" as="sourcePoint" />
+            <mxPoint x="990" y="36" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-79" value="Solicita las promociones del médico" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="Q2bCh0XgisJVYw2cT9JK-1" vertex="1">
+          <mxGeometry x="670" y="10" width="290" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-80" value="Retorna las promociones del médico" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="Q2bCh0XgisJVYw2cT9JK-1" vertex="1">
+          <mxGeometry x="680" y="140" width="290" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-81" value="" style="endArrow=none;html=1;rounded=0;endFill=0;startArrow=classic;startFill=1;dashed=1;" parent="Q2bCh0XgisJVYw2cT9JK-1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="651" y="166" as="sourcePoint" />
+            <mxPoint x="991" y="166" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-82" value="" style="endArrow=classic;html=1;rounded=0;" parent="Q2bCh0XgisJVYw2cT9JK-1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="990" y="80" as="sourcePoint" />
+            <mxPoint x="990" y="130" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="1030" y="80" />
+              <mxPoint x="1030" y="130" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-93" value="" style="endArrow=none;html=1;rounded=0;endFill=0;startArrow=classic;startFill=1;" parent="Q2bCh0XgisJVYw2cT9JK-1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="300" y="210" as="sourcePoint" />
+            <mxPoint x="640" y="210" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-94" value="Renderiza todos los banners de las promociones" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="Q2bCh0XgisJVYw2cT9JK-1" vertex="1">
+          <mxGeometry x="320" y="190" width="290" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-68" value="Backend" style="rounded=1;whiteSpace=wrap;html=1;" parent="Q2bCh0XgisJVYw2cT9JK-1" vertex="1">
+          <mxGeometry x="930" y="314" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-66" value="Médico" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="Q2bCh0XgisJVYw2cT9JK-1" vertex="1">
+          <mxGeometry x="285" y="310" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-67" value="Frontend" style="rounded=1;whiteSpace=wrap;html=1;" parent="Q2bCh0XgisJVYw2cT9JK-1" vertex="1">
+          <mxGeometry x="590" y="314" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-21" value="Médico" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
+          <mxGeometry x="180" y="250" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-22" value="" style="endArrow=classic;html=1;rounded=0;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="200" y="380" as="sourcePoint" />
+            <mxPoint x="540" y="380" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-23" value="Inicia sesión" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="250" y="350" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-24" value="Frontend" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="480" y="270" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-25" value="Backend" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="820" y="270" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-26" value="" style="endArrow=classic;html=1;rounded=0;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="540" y="410" as="sourcePoint" />
+            <mxPoint x="880" y="410" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-27" value="Solicita las promociones nuevas" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="560" y="384" width="290" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-28" value="Retorna la cantidad de promociones nuevas" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="560" y="430" width="290" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-29" value="" style="endArrow=none;html=1;rounded=0;endFill=0;startArrow=classic;startFill=1;dashed=1;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="540" y="456" as="sourcePoint" />
+            <mxPoint x="880" y="456" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-40" value="" style="endArrow=classic;html=1;rounded=0;endFill=1;startArrow=none;startFill=0;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="195" y="900" as="sourcePoint" />
+            <mxPoint x="535" y="900" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-41" value="Ingresa al listado de promociones" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="215" y="880" width="290" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-47" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;dashed=1;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="190" y="1230" as="targetPoint" />
+            <mxPoint x="194.5" y="340" as="sourcePoint" />
+            <Array as="points">
+              <mxPoint x="195" y="341" />
+              <mxPoint x="190" y="341" />
+              <mxPoint x="190" y="1186" />
+              <mxPoint x="191" y="1186" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-48" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=none;endFill=0;" parent="1" source="Q2bCh0XgisJVYw2cT9JK-24" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="540" y="1230" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-49" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=none;endFill=0;" parent="1" source="Q2bCh0XgisJVYw2cT9JK-25" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="880" y="1230" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-20" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="Q2bCh0XgisJVYw2cT9JK-2" target="Q2bCh0XgisJVYw2cT9JK-2" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="80" y="1408" as="sourcePoint" />
+            <mxPoint x="970" y="1408" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-3" value="Alt" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=3;" parent="1" vertex="1">
+          <mxGeometry x="-100" y="500" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-4" value="&lt;b&gt;[Tiene nuevas promociones]&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="255" y="510" width="220" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-69" value="Despliega en el menú la cantidad de promociones pendientes en color rojo" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="210" y="572" width="290" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-70" value="" style="endArrow=none;html=1;rounded=0;startArrow=classic;startFill=1;endFill=0;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="195" y="603" as="sourcePoint" />
+            <mxPoint x="535" y="603" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-73" value="&lt;b&gt;[No tiene promociones nuevas]&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="255" y="670" width="220" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-74" value="Despliega el menú sin el indicador de nuevas promociones" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="210" y="728" width="290" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-75" value="" style="endArrow=none;html=1;rounded=0;startArrow=classic;startFill=1;endFill=0;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="196" y="753" as="sourcePoint" />
+            <mxPoint x="531" y="753" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q2bCh0XgisJVYw2cT9JK-92" value="Marca como vista las promociones nuevas" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="930" y="1010" width="290" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
